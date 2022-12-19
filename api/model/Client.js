@@ -12,7 +12,6 @@ const findByUsername = async (username)=>{
         'MATCH (n:User {username:$name})-[:IS_CLIENT]->() RETURN n',
         {name:username})
 
-    
     const singleRecord = result.records[0];
 
     //whole OBject(node) (with all properies)
@@ -38,7 +37,6 @@ const findAll = async ()=>{
         //return each clients propteries as object
         return el.get(0).properties;
     })
-
     return clients;
 }
 
@@ -91,11 +89,114 @@ const getAllComments = async (username)=>{
 //     }
 //   ]
 
+const commentHouseworker = async(username, comment)=>{
+
+    //our (CLient) username from LocalStore or cookie
+    const ourUsername = 'Novak'; //client
+
+    const result = await session.run(`
+    MATCH (n:Client {username:$client})
+    MATCH (m:HouseWorker {username:$houseworker})
+    CREATE (c:Comment {context:$comment})
+    CREATE (n)-[:COMMENTED]->(c)
+    CREATE (c)-[:BELONGS_TO]->(m)
+    RETURN c`
+    , {client:ourUsername, houseworker:username, comment:comment}
+    )
+
+    const commentResult = result.records[0].get(0).properties;
+
+    return commentResult;
+    
+}
+const deleteComment = async(username, commentID)=>{
+    const ourUsername = "Novak";
+
+    const result = await session.run(`
+    MATCH(n:Client {username:$client})
+    MATCH(m:Houseworker {username:$houseworker})
+    MATCH(c:Comment {id:$commentID})
+    MATCH(n)-[r:COMMENTED]->(c)
+    MATCH(c)-[t:BELONGS_TO]->(m)
+    DELETE r,t,c
+    RETURN n`
+    , {client:ourUsername, houseworker:username, id:commentID}
+    )
+
+    //client is returned
+    return result.records[0].get(0).properties;
+}
+
+const rateHouseworker = async(username, rating)=>{
+    const ourUsername ="Novak";
+
+    const result = await session.run(`
+    MATCH(n:Client {username:$client})
+    MATCH(m:HouseWorker {username:$houseworker})
+    CREATE(n)-[r:RATED {rating:$rating}]->(m)
+    RETURN n, m, r
+
+    `,{client:ourUsername, houseworker:username, rating:rating}
+    );
+
+    //records[0] is record of n(Node Client)
+    //records[2] is the r(relationship:RATED w)
+
+    console.log("RRATE: " + result.records[2].get(0).properties.rating)
+    return result.records[2].get(0).properties.rating;
+}
+
+
+//TEST THIS
+const update = async(username, newValue)=>{
+
+    //newValue must have same property as Client NODE
+    // address	"Zorana Gudzica"
+    // description	"Ambitious, rasponsible, hardworker"
+    // email	"novak@gmail.com"
+    // first_name	"Novak"
+    // last_name	"Veckov"
+    // password	"pw1"
+    // picture	"/"
+    // username "Novak"
+
+    const ourUsername ="Novak";
+
+    const result = await session.run(`
+        MATCH (n:User { username: $client})
+        SET n += { $object }
+        RETURN n
+    `,{client:ourUsername, object:newValue}
+    )
+    // const result = await session.run(`
+    //     MATCH (n:User { username: "Novak"})
+    //     SET n += { password:"pwww" , picture:"//" }
+    // `
+    // )
+    return result.records[0].get(0).properties;
+}
+
+
+
+
+
+
+
+//CHATING 
+
+
+
+
+
 
 module.exports ={
     findByUsername:findByUsername,
     findAll:findAll,
-    findByUsernameAndDelete:findByUsernameAndDelete,
-    getAllComments:getAllComments
+    findByUsernameAndDelete,
+    getAllComments,
+    commentHouseworker,
+    deleteComment,
+    rateHouseworker,
+    update,
 
 }
