@@ -62,11 +62,30 @@ const getComments = async(req,res)=>{
     }
 }
 
+const rateHouseworker = async (req,res)=>{
+    try{
+        // console.log("ASSS:" + req.body);
+        const houseWorker = req.body.houseworker;
+        const rating = req.body.rating;
 
+        const result = await clientModel.rateHouseworker(houseWorker,rating);
+        req.json(result);
+    }
+    catch(err){
+        console.log("Error Rating: " + err);
+        res.send(err).status(400);
+    }
+}
+
+const udpateClient = async(req,res)=>{
+    
+}
 
 
 module.exports = {
     getClientByUsername:getClientByUsername,
     getClients:getClients,
-    getComments:getComments
+    getComments:getComments, 
+    rateHouseworker,
+    udpateClient,
 }
