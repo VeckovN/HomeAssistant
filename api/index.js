@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-
+const bodyParser = require('body-parser');
 
 const clientRoute = require('./routes/clients')
 
@@ -8,8 +8,13 @@ const neo4jSession = require('./db/neo4j');
 
 const app = express();
 
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
+
 app.use("/api/clients", clientRoute);
-app.use(express.json());
+// app.use(express.json());
 
 //#region cors
 var corsOptions={
