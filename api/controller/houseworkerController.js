@@ -18,7 +18,9 @@ const getHouseworkerByUsername = async(req,res)=>{
 
     try{
         const result = await houseworkerModel.findByUsername(HouseworkerUsername);
-        res.json(result);
+        const {password, ...houseworkerData} = result;
+
+        res.json(houseworkerData);
     }
     catch(err){
         console.log("ERROR GetHouseworkerBYUsername: " + err);
@@ -32,7 +34,13 @@ const getHouseworkers = async(req,res)=>{
     
     try{
         const result = await houseworkerModel.findAll();
-        res.json(result);
+
+        const houseworkers = result.map(el =>{
+            const {password, ...houseworkerData} = el;
+            return houseworkerData;
+        })
+
+        res.json(houseworkers);
     }
     catch(err){
         console.log("ERROR GetHouseworkers: " + err);

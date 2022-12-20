@@ -9,7 +9,11 @@ const getClientByUsername = (req,res)=>{
     .then((data)=>{
         //console.log("THEN DATA " + JSON.stringify(data));
         // res.send(data).status(201);
-        res.json(data)
+
+        //prvent password returning
+        const {password, ...clientData} = data;
+        // res.json(data)
+        res.json(clientData)
     })
     .catch(err=>{
         console.log("ERROR: " + err);
@@ -42,7 +46,15 @@ const getClients = async(req,res)=>{
     //with await/async is simplier 
     try{
         const result = await clientModel.findAll();
-        res.json(result);
+        console.log(result);
+        //array of Clients (wiht password)
+        const clients = result.map(el =>{
+            const {password, ...clientData} = el;
+            return clientData;
+        })
+
+        //clients without passwords
+        res.json(clients);
     }
     catch(err){
         console.log("Error getClients: " + err);
