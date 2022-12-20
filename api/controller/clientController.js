@@ -69,7 +69,7 @@ const rateHouseworker = async (req,res)=>{
         const rating = req.body.rating;
 
         const result = await clientModel.rateHouseworker(houseWorker,rating);
-        req.json(result);
+        res.json(result);
     }
     catch(err){
         console.log("Error Rating: " + err);
@@ -77,8 +77,43 @@ const rateHouseworker = async (req,res)=>{
     }
 }
 
+const commentHouseworker = async(req, res)=>{
+    try{
+        const houseworker = req.body.username;
+        const comment = req.body.comment;
+
+        const result = await clientModel.commentHouseworker(houseworker, comment);
+        res.json(result);
+        
+    }
+    catch(err){
+        console.log("Error Comment: " + err);
+        res.send(err).status(400);
+    }
+}
+
 const udpateClient = async(req,res)=>{
-    
+    try{
+        const newInfo = req.body;
+
+        const result = await clientModel.update(newInfo);
+        res.json(result);
+    }
+    catch(err){
+        console.log("Error UpdateClient(Yourself): " + err);
+        res.send(err).status(400);
+    }
+}
+
+
+//Coomment should have the ID
+const deleteCommentById = async(req,res)=>{
+    try{
+
+    }
+    catch(err){
+
+    }
 }
 
 
@@ -88,4 +123,5 @@ module.exports = {
     getComments:getComments, 
     rateHouseworker,
     udpateClient,
+    commentHouseworker
 }

@@ -1,10 +1,12 @@
 const { response } = require('express');
 const session = require('../db/neo4j');
 
-// const findAll = async()=>{
+//When is important to return all properties of Node
+//we can return whole node with RETURN node and return records[0].get(0).properties
 
+//But when we want to reture some properties not all of them
+//we  can return those properties Return node.property1, node.property2
 
-// }
 
 const findByUsername = async (username)=>{
 
@@ -52,26 +54,30 @@ const findByUsernameAndDelete = async (username)=>{
 }
 
 const getAllComments = async (username)=>{
-    const result = await session.run("MATCH(n:Client {username:$name})-[r:COMMENTED]->(m)MATCH(m)-[b:BELONGS_TO]->(c) RETURN m,c",
+    const result = await session.run(`
+    MATCH(n:Client {username:$name})-[r:COMMENTED]->(m)MATCH(m)-[b:BELONGS_TO]->(c) 
+    RETURN m.context,c.username`,
     {name:username})
+
+    //WHEN WE RETURN WHOLE NODE RETURN m, c;
+    // const comments = result.records.map(rec=>{
+    //     //rec.get(0) is first node -> Comment node --- rec.get(0).properties -> (context='example comentar')
+    //     //rec.get(1) is seccodn node -> Houseworker node --- rec.get(1).properties ->(username="Sara", working_hours='200')
+    //     //console.log("re: " + rec.get(0) + "re2: " +rec.get(1));
+    //     const commentProperties = rec.get(0).properties;
+    //     const houseWorkerProperties = rec.get(1).properties;
+    //     return {comment:commentProperties.context, houseworker:houseWorkerProperties.username}
+    // });
 
     const comments = result.records.map(rec=>{
         //rec.get(0) is first node -> Comment node --- rec.get(0).properties -> (context='example comentar')
         //rec.get(1) is seccodn node -> Houseworker node --- rec.get(1).properties ->(username="Sara", working_hours='200')
         //console.log("re: " + rec.get(0) + "re2: " +rec.get(1));
-        const commentProperties = rec.get(0).properties;
-        const houseWorkerProperties = rec.get(1).properties;
-        return {comment:commentProperties.context, houseworker:houseWorkerProperties.username}
+        return {comment:rec.get(0), houseworker:rec.get(1)}
     });
 
     return comments;
 
-    //expected structure
-    // [
-    //     { comment: 'Very responsible', houseworker: 'Sara' },
-    //     { comment: 'Hardworker and good person', houseworker: 'Marko' }
-
-    // ]
 }
 //comments.records;
 // [
@@ -130,29 +136,29 @@ const deleteComment = async(username, commentID)=>{
 const rateHouseworker = async(username, rating)=>{
     const ourUsername ="Novak";
 
+    //MARGE - ON MATCH SET - when Relationship exist we wanna set new rating value not to create another relationsip
     const result = await session.run(`
-    MATCH(n:Client {username:$client})
-    MATCH(m:HouseWorker {username:$houseworker})
-    CREATE(n)-[r:RATED {rating:$rating}]->(m)
-    RETURN n, m, r
-
+        MATCH(n:Client {username:$client})
+        MATCH(m:HouseWorker {username:$houseworker})
+        MERGE (n)-[r:RATED]->(m)
+        ON CREATE SET r.rating = $rating
+        ON MATCH  SET r.rating = $rating
+        RETURN r.rating
     `,{client:ourUsername, houseworker:username, rating:rating}
     );
 
     //records[0] is record of n(Node Client)
     //records[2] is the r(relationship:RATED w)
-
-    console.log("RRATE: " + result.records[2].get(0).properties.rating)
-    return result.records[2].get(0).properties.rating;
+    console.log("RATING : " + result.records[0].get(0))
+    return result.records[0].get(0);
+    //or return n,m,r.rating
+    //return result.records[2].get(0)
 }
 
-
 //TEST THIS
-const update = async(username, newValue)=>{
+const update = async(newValue)=>{
 
     //newValue must have same property as Client NODE
-    // address	"Zorana Gudzica"
-    // description	"Ambitious, rasponsible, hardworker"
     // email	"novak@gmail.com"
     // first_name	"Novak"
     // last_name	"Veckov"
@@ -160,11 +166,11 @@ const update = async(username, newValue)=>{
     // picture	"/"
     // username "Novak"
 
-    const ourUsername ="Novak";
+    const ourUsername ="Novak";    
 
     const result = await session.run(`
         MATCH (n:User { username: $client})
-        SET n += { $object }
+        SET n += $object
         RETURN n
     `,{client:ourUsername, object:newValue}
     )
@@ -178,14 +184,7 @@ const update = async(username, newValue)=>{
 
 
 
-
-
-
-
 //CHATING 
-
-
-
 
 
 
