@@ -1,13 +1,13 @@
 const neo4j = require('neo4j-driver');
-const dotenv = require('dotenv')
+const dotenv = require('dotenv');
 dotenv.config();
 
-//ne4j configuration will be stored in .env
-// const uri='neo4j+s://fd79543d.databases.neo4j.io';
-// const neo4j_user = 'neo4j';
-// const neo4j_password = 'HomeAssistantNeo4j';
+//console.log("OPR: " + process.env.NEO4J_URI +" . " + process.env.NEO4J_USER + " / " + process.env.NEO4J_PASSWORD) ;
 
-const driver = neo4j.driver(process.env.NEO4J_URI, neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASSWORD));
+//WON"T WORK WIHT PASSWORD AND USERNAME FROM .ENV
+// const driver = neo4j.driver(process.env.NEO4J_URI, neo4j.auth.basic(process.env.NEO4J_USER,process.env.NEO4J_PASSWORD));
+const driver = neo4j.driver(process.env.NEO4J_URI, neo4j.auth.basic('neo4j','HomeAssistantNeo4j'));
+
 const session = driver.session();
 
 
