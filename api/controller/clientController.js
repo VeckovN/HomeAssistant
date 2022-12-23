@@ -9,7 +9,7 @@ const getClientByUsername = (req,res)=>{
     .then((data)=>{
         //console.log("THEN DATA " + JSON.stringify(data));
         // res.send(data).status(201);
-
+        
         //prvent password returning
         const {password, ...clientData} = data;
         // res.json(data)
@@ -42,11 +42,10 @@ const getClientByUsername = (req,res)=>{
 }
 
 const getClients = async(req,res)=>{
-
     //with await/async is simplier 
     try{
         const result = await clientModel.findAll();
-        console.log(result);
+        
         //array of Clients (wiht password)
         const clients = result.map(el =>{
             const {password, ...clientData} = el;
@@ -79,7 +78,6 @@ const rateHouseworker = async (req,res)=>{
         // console.log("ASSS:" + req.body);
         const houseWorker = req.body.houseworker;
         const rating = req.body.rating;
-
         const result = await clientModel.rateHouseworker(houseWorker,rating);
         res.json(result);
     }
@@ -93,10 +91,8 @@ const commentHouseworker = async(req, res)=>{
     try{
         const houseworker = req.body.username;
         const comment = req.body.comment;
-
         const result = await clientModel.commentHouseworker(houseworker, comment);
         res.json(result);
-        
     }
     catch(err){
         console.log("Error Comment: " + err);
@@ -104,10 +100,21 @@ const commentHouseworker = async(req, res)=>{
     }
 }
 
+const createClient = async(req,res)=>{
+    try{
+        const clientObj = req.body;
+        const result = await clientModel.create(clientObj);
+        res.json(result);
+    }
+    catch(err){
+        console.log("Error CreateClient: " + err);
+        res.send(err).status(400);
+    }
+}
+
 const udpateClient = async(req,res)=>{
     try{
         const newInfo = req.body;
-
         const result = await clientModel.update(newInfo);
         res.json(result);
     }
@@ -135,5 +142,6 @@ module.exports = {
     getComments:getComments, 
     rateHouseworker,
     udpateClient,
-    commentHouseworker
+    commentHouseworker,
+    createClient
 }

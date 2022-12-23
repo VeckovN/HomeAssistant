@@ -1,4 +1,5 @@
 const express = require('express');
+const {isLogged, checkClient, checkHouseworker} = require('../middleware/checkLoggin');
 
 const {
     getClientByUsername,
@@ -11,11 +12,11 @@ const {
 
 const router = express.Router();
 
-router.get('/', getClients);
-router.get('/:username', getClientByUsername);
-router.get('/comments/:username', getComments);
-router.post('/rate', rateHouseworker);
-router.post('/comment', commentHouseworker);
-router.put('/update',udpateClient);
+router.get('/', checkClient, getClients);
+router.get('/:username',checkHouseworker, getClientByUsername);
+router.get('/comments/:username',checkClient, getComments);
+router.post('/rate', checkClient, rateHouseworker);
+router.post('/comment', checkClient,commentHouseworker);
+router.put('/update', checkClient, udpateClient);
 
 module.exports = router;

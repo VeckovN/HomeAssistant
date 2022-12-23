@@ -9,7 +9,9 @@ const isLogged = (req,res,next)=>{
     next();
 }
 
+
 const checkClient = (req,res,next)=>{
+
     if(!req.session.user)
         //if is authoriazied just move to the other middleware()
         return res.json({error:"User isn't authenticated"})
@@ -21,6 +23,7 @@ const checkClient = (req,res,next)=>{
 }
 
 const checkHouseworker = (req,res,next)=>{
+
     if(!req.session.user)
         //if is authoriazied just move on other middleware()
         return res.json({error:"User isn't authenticated"})
