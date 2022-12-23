@@ -5,10 +5,14 @@ const findByUsername = async (username)=>{
     const result = await session.run(
         'MATCH (n:User {username:$name})-[:IS_HOUSEWORKER]->() RETURN n',
         {name:username})
-    const singleRecord = result.records[0];
-    const node = singleRecord.get(0);
-    const client = node.properties;
-    return client;
+    if(result.records.length == 0)
+        return null
+    else{
+        const singleRecord = result.records[0];
+        const node = singleRecord.get(0);
+        const client = node.properties;
+        return client;
+    }
 }
 
 const findAll = async ()=>{
@@ -117,20 +121,112 @@ const addProfession = async(profession, working_hour)=>{
 }
 
 
+//creating Houseworker without professions
+const create = async(houseworkerObject)=>{
+    //houseworkerObject
+    // {
+    //     username:"Sara", 
+    //     email:"sara@gmail.com", 
+    //     password:"pw1", 
+    //     first_name:"Sara",
+    //     last_name:"Veckov",
+    //     picture:"/",
+    //     city:"Nis",
+    //     address:"Mokranjceva",
+    //     description:"Ambicious, Hardworker",
+    //     gender:"Male"
+    // }
+
+    const {username, email, password, first_name, last_name, picture, address, description, city, gender} = houseworkerObject;
+
+    //WITH Clause is necessary between Create and Other part of query(Create Gender and City)
+    const result = await session.run(`
+    CREATE (n:User 
+        {
+            username:$username, 
+            email:$email, 
+            password:$password, 
+            first_name:$first_name,
+            last_name:$last_name,
+            picture:$picture,
+            address:$address,
+            description:$description
+        }
+        ) 
+        -[:IS_HOUSEWORKER]->
+        (
+         m:HouseWorker
+         {
+             username:$username     
+         })
+    WITH n as user , m as houseworker
+    Match(g:Gender {type:$gender})
+    CREATE(user)-[r:GENDER]->(g)
+
+    MERGE(c:City {name:$city})
+    MERGE(user)-[h:LIVES_IN]->(c)
+    RETURN user,g.type,c.name
+    `
+    ,{username:username, email:email, password:password, first_name:first_name, last_name:last_name, picture:picture, address:address, description:description ,city:city, gender:gender}
+    )
+
+    const user = result.records[0].get(0).properties;
+    const userGender = result.records[0].get(1);
+    const userCity = result.records[0].get(2);
+    return {
+        user, gender:userGender, city:userCity
+    }
+
+}
+
+//UNFINISHED
+//!!!!!! we need also update relationships ->LIVES_IN and GENDER
 const update = async(newValue)=>{
     const ourUsername ="Sara";    
     const result = await session.run(`
-        MATCH (n:User { username: $client})
+        MATCH (n:User { username: $houseworker})
         SET n += $object
         RETURN n
-    `,{client:ourUsername, object:newValue}
+    `,{houseworker:ourUsername, object:newValue}
     )
+
+    //check there is gender and city passed as wanted parametar to update
+
+    if('')
     // const result = await session.run(`
     //     MATCH (n:User { username: "Novak"})
     //     SET n += { password:"pwww" , picture:"//" }
     // `
     // )
     return result.records[0].get(0).properties;
+}
+
+const updateCity = async(city)=>{
+    const ourUsername = "Sara";
+    const result = await session.run(`
+        MATCH(n:User{username:$houseworker})
+        MATCH(n)-[:LIVES_IN]->(c:City)
+        Set c.name = $cityName
+        return c.name
+    `
+    ,{houseworker:ourUsername, cityName:city}
+    )
+    
+    return result.records[0].get(0);
+}
+
+const updateGender = async(gender)=>{
+    const ourUsername = "Sara";
+    const result = await session.run(`
+        MATCH(n:User{username:$houseworker})
+        MATCH(n)-[:GENDER]->(g:Gender)
+        Set g.type = $gender
+        return g.type
+    `
+    ,{houseworker:ourUsername, gender:gender}
+    )
+
+    return result.records[0].get(0);
 }
 
 
@@ -142,6 +238,9 @@ module.exports ={
     getComments,
     getProfessions,
     addProfession,
-    update
+    update,
+    updateCity,
+    updateGender,
+    create
 
 }

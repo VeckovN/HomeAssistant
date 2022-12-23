@@ -1,5 +1,6 @@
 const { response } = require('express');
 const session = require('../db/neo4j');
+const { use } = require('../routes/clients');
 
 //When is important to return all properties of Node
 //we can return whole node with RETURN node and return records[0].get(0).properties
@@ -11,22 +12,28 @@ const session = require('../db/neo4j');
 const findByUsername = async (username)=>{
 
     const result = await session.run(
-        'MATCH (n:User {username:$name})-[:IS_CLIENT]->() RETURN n',
+        `MATCH (n:User {username:$name})-[:IS_CLIENT]->() 
+        RETURN n`,
         {name:username})
 
-    const singleRecord = result.records[0];
+    //if user not exists 
+    console.log("RES: " + result.records.length );
+    if(result.records.length == 0)
+        return null
+    else{
+        const singleRecord = result.records[0];
+        //whole OBject(node) (with all properies)
+        const node = singleRecord.get(0);
+        //to get all properties 
+        const client = node.properties;
 
-    //whole OBject(node) (with all properies)
-    const node = singleRecord.get(0);
-    //to get all properties 
-    const client = node.properties;
+        //show result as JSON
+        // console.log("ALL RESULTS: " + JSON.stringify(allResults));
 
-    //show result as JSON
-    // console.log("ALL RESULTS: " + JSON.stringify(allResults));
-
-    //THIS IS A PROMISE, We return a promise Because we used await to take get result from session.run
-    //return object without password
-    return client;
+        //THIS IS A PROMISE, We return a promise Because we used await to take get result from session.run
+        //return object without password
+        return client;
+    }
 }
 
 const findAll = async ()=>{
@@ -35,10 +42,16 @@ const findAll = async ()=>{
     const result = await session.run(
         'Match(n:User)-[:IS_CLIENT]->() return n'
     )
+
+    //if there isn't users
+    if(result.records.length == 0)
+        return []
+
     const clients = result.records.map(el=>{
         //return each clients propteries as object
         return el.get(0).properties;
     })
+
     return clients;
 }
 
@@ -52,6 +65,7 @@ const findByUsernameAndDelete = async (username)=>{
     //all others client
     return await findAll();
 }
+
 
 const getAllComments = async (username)=>{
     const result = await session.run(`
@@ -155,7 +169,59 @@ const rateHouseworker = async(username, rating)=>{
     //return result.records[2].get(0)
 }
 
-//TEST THIS
+const create = async(clientObject)=>{
+    //client obj
+    // {
+    //     username:"Sara", 
+    //     email:"sara@gmail.com", 
+    //     password:"pw1", 
+    //     first_name:"Sara",
+    //     last_name:"Veckov",
+    //     picture:"/",
+    //     city:"Nis",
+    //     gender:"Male"
+    // }
+    const {username, email, password, first_name, last_name, picture, city, gender} = clientObject;
+
+    //WITH Clause is necessary between Create and Other part of query(Create Gender and City)
+    const result = await session.run(`
+    CREATE (n:User 
+        {
+            username:$username, 
+            email:$email, 
+            password:$password, 
+            first_name:$first_name,
+            last_name:$last_name,
+            picture:$picture
+        }
+        ) 
+        -[:IS_CLIENT]->
+        (
+         m:Client
+         {
+             username:$username     
+         })
+    WITH n as user , m as client
+    Match(g:Gender {type:$gender})
+    CREATE(user)-[r:GENDER]->(g)
+
+    MERGE(c:City {name:$city})
+    MERGE(user)-[h:LIVES_IN]->(c)
+    RETURN user,g.type,c.name
+    `
+    ,{username:username, email:email, password:password, first_name:first_name, last_name:last_name, picture:picture, city:city, gender:gender}
+    )
+
+    const user = result.records[0].get(0).properties;
+    const userGender = result.records[0].get(1);
+    const userCity = result.records[0].get(2);
+    return {
+        user, gender:userGender, city:userCity
+    }
+
+}
+
+//update only client NODE property
 const update = async(newValue)=>{
 
     //newValue must have same property as Client NODE
@@ -182,10 +248,36 @@ const update = async(newValue)=>{
     return result.records[0].get(0).properties;
 }
 
+//update City node with [:LIVES_IN]
+const updateCity = async(city)=>{
+    const ourUsername = "Sara";
+    const result = await session.run(`
+        MATCH(n:User{username:$client})
+        MATCH(n)-[:LIVES_IN]->(c:City)
+        Set c.name = $cityName
+        return c.name
+    `
+    ,{client:ourUsername, cityName:city}
+    )
 
+    return result.records[0].get(0);
+}
+
+const updateGender = async(gender)=>{
+    const ourUsername = "Sara";
+    const result = await session.run(`
+        MATCH(n:User{username:$client})
+        MATCH(n)-[:GENDER]->(g:Gender)
+        Set g.type = $gender
+        return g.type
+    `
+    ,{client:ourUsername, gender:gender}
+    )
+
+    return result.records[0].get(0);
+}
 
 //CHATING 
-
 
 
 module.exports ={
@@ -197,5 +289,7 @@ module.exports ={
     deleteComment,
     rateHouseworker,
     update,
-
+    updateCity,
+    updateGender,
+    create,
 }
