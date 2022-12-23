@@ -1,17 +1,5 @@
 const houseworkerModel = require('../model/HouseWorker');
 
-// module.exports ={
-//     findByUsername,
-//     findAll,
-//     findByUsernameAndDelete,
-//     getRatings,
-//     getComments,
-//     getProfessions,
-//     addProfession,
-//     update
-// }
-
-
 const getHouseworkerByUsername = async(req,res)=>{
     //from LocalStorage or Cookie
     const HouseworkerUsername = req.params.username;
@@ -19,7 +7,6 @@ const getHouseworkerByUsername = async(req,res)=>{
     try{
         const result = await houseworkerModel.findByUsername(HouseworkerUsername);
         const {password, ...houseworkerData} = result;
-
         res.json(houseworkerData);
     }
     catch(err){
@@ -31,15 +18,12 @@ const getHouseworkerByUsername = async(req,res)=>{
 
 
 const getHouseworkers = async(req,res)=>{
-    
     try{
-        const result = await houseworkerModel.findAll();
-
+        const result = await houseworkerModel.findAll();   
         const houseworkers = result.map(el =>{
             const {password, ...houseworkerData} = el;
             return houseworkerData;
         })
-
         res.json(houseworkers);
     }
     catch(err){
