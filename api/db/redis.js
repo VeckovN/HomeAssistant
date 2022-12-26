@@ -11,3 +11,97 @@
 // })
 
 // module.exports = {redisClient, RedisStore, connectRedis}
+
+
+
+//Redis functions with PROMISE for ChatPart 
+const redis = require('redis');
+const session = require('express-session');
+const client = redis.createClient({legacyMode:true});
+
+
+//RedisStore has been created and put session-object in it
+// const RedisStore = connectRedis(session);
+let RedisStore = require("connect-redis")(session)
+
+
+// const incr = (key = "key") =>{//default ="key" if isn't assigned
+//     new Promise((resolve, reject) =>{
+//         client.incr(key, (resolve,reject)=>{
+//             return (err,data)=>{
+//                 if(err){
+//                     reject(err);
+//                 }
+//                 resolve(data);
+//             }
+//         })
+//     })
+// } 
+
+const resolvePromise = (resolve,reject)=>{
+    //redis.get-orWhaterver(key, (err, res) => {
+    return (err,data)=>{
+        if(err)
+            reject(err)
+        resolve(data)
+    }
+}
+
+const incr = (key = "key") =>{//default ="key" if isn't assigned
+    new Promise((resolve, reject) =>{
+        client.incr(key, resolvePromise(resolve, reject));
+    })
+} 
+
+const decr = (key = "key") =>
+    new Promise((resolve, reject) => client.decr(key, resolvePromise(resolve, reject)))
+
+const exists = (key = "key") =>//default ="key" if isn't assigned
+    new Promise((resolve, reject) => client.exists(key, resolvePromise(resolve, reject)))
+
+const set = (key = "key", value) =>
+    new Promise((resolve, reject) => client.set(key, value, resolvePromise(resolve, reject)))
+
+const get = (key = "key") =>
+    new Promise((resolve, reject) => client.get(key, resolvePromise(resolve, reject)))
+
+const hgetall = (key = "key") =>
+    new Promise((resolve, reject) => client.hgetall(key, resolvePromise(resolve, reject)))
+
+const zadd = (key = "key", key2 = "", value) =>
+    new Promise((resolve, reject) => client.zadd(key, key2, value, resolvePromise(resolve, reject)))
+
+const sadd = (key = "key", value) =>
+    new Promise((resolve, reject) => client.sadd(key, value, resolvePromise(resolve, reject)))
+  
+const hmset = (key = "key", values = []) =>
+    new Promise((resolve, reject) => client.hmset(key, values, resolvePromise(resolve, reject)))
+
+const hmget = (key = "key", key2 = "") =>
+    new Promise((resolve, reject) => client.hmget(key, key2, resolvePromise(resolve, reject)))
+
+const sismember = (key = "key", key2 = "") =>
+    new Promise((resolve, reject) => client.sismember(key, key2, resolvePromise(resolve, reject)))
+
+const smembers = (key = "key") =>
+    new Promise((resolve, reject) => client.smembers(key, resolvePromise(resolve, reject)))
+
+const srem = (key = "key", key2 = "") =>
+    new Promise((resolve, reject) => client.srem(key, key2, resolvePromise(resolve, reject)))
+
+module.exports ={
+    client,
+    RedisStore,
+    incr,
+    decr,
+    exists,
+    set,
+    get,
+    hgetall,
+    zadd,
+    sadd,
+    hmget,
+    sismember,
+    smembers,
+    srem
+}
