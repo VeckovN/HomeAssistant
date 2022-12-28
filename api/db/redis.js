@@ -18,12 +18,9 @@
 const redis = require('redis');
 const session = require('express-session');
 const client = redis.createClient({legacyMode:true});
-
-
 //RedisStore has been created and put session-object in it
 // const RedisStore = connectRedis(session);
 let RedisStore = require("connect-redis")(session)
-
 
 // const incr = (key = "key") =>{//default ="key" if isn't assigned
 //     new Promise((resolve, reject) =>{
@@ -68,7 +65,7 @@ const get = (key = "key") =>
 const hgetall = (key = "key") =>
     new Promise((resolve, reject) => client.hgetall(key, resolvePromise(resolve, reject)))
 
-const zadd = (key = "key", key2 = "", value) =>
+const zadd = (key, key2 , value) =>
     new Promise((resolve, reject) => client.zadd(key, key2, value, resolvePromise(resolve, reject)))
 
 const sadd = (key = "key", value) =>
@@ -89,6 +86,16 @@ const smembers = (key = "key") =>
 const srem = (key = "key", key2 = "") =>
     new Promise((resolve, reject) => client.srem(key, key2, resolvePromise(resolve, reject)))
 
+    //key, offset, size
+const zrevrange = (key, value, value2) =>
+    new Promise((resolve, reject)=> client.zrevrange(key, value, value+value2, resolvePromise(resolve, reject)))
+
+const zrem = (key, value) =>
+    new Promise((resolve, reject) =>client.zrem(key,value, resolvePromise(resolve, reject)))
+
+const del = (key)=>
+    new Promise((resolve, reject)=> client.del(key, resolvePromise(resolve, reject) ))
+
 module.exports ={
     client,
     RedisStore,
@@ -100,8 +107,12 @@ module.exports ={
     hgetall,
     zadd,
     sadd,
+    hmset,
     hmget,
     sismember,
     smembers,
-    srem
+    srem,
+    zrevrange,
+    zrem,
+    del
 }
