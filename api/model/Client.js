@@ -223,7 +223,6 @@ const create = async(clientObject)=>{
 
 //update only client NODE property
 const update = async(newValue)=>{
-
     //newValue must have same property as Client NODE
     // email	"novak@gmail.com"
     // first_name	"Novak"
@@ -277,7 +276,22 @@ const updateGender = async(gender)=>{
     return result.records[0].get(0);
 }
 
-//CHATING 
+
+//----------RECOMMENDATIONS
+
+// const recommended
+
+const interestedProfessions = async(professions)=>{
+    // MATCH(n:User)-[:IS_HOUSEWORKER]->(h)-[:OFFERS]-(p:Profession {title:"Kuvar"}) return h, count(h) as add
+    // ORDER BY add desc
+    // LIMIT 5
+}
+
+
+
+//------------CHAT PART-----------
+
+//
 
 
 module.exports ={
