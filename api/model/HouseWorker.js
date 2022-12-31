@@ -229,6 +229,24 @@ const updateGender = async(gender)=>{
     return result.records[0].get(0);
 }
 
+/////////////////////////CHAT PART/////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////
+
+
+
 
 module.exports ={
     findByUsername,
