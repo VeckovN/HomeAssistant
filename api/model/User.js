@@ -4,7 +4,7 @@ const findByUsername = async(username)=>{
 
     //finduser and return userType and userInfo
     const result = await session.run(`
-        MATCH (n:User {username:$name})-[r:IS_CLIENT]->()
+        MATCH (n:User {username:$name})-[r:IS_HOUSEWORKER]->()
         RETURN 
         CASE 
             WHEN TYPE(r) = "IS_CLIENT" THEN "Client"

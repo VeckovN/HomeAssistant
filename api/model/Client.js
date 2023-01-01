@@ -169,6 +169,28 @@ const rateHouseworker = async(username, rating)=>{
     //return result.records[2].get(0)
 }
 
+const rateHouseworker_client = async(client, username, rating)=>{
+    // const ourUsername ="Novak";
+
+    //MARGE - ON MATCH SET - when Relationship exist we wanna set new rating value not to create another relationsip
+    const result = await session.run(`
+        MATCH(n:Client {username:$client})
+        MATCH(m:HouseWorker {username:$houseworker})
+        MERGE (n)-[r:RATED]->(m)
+        ON CREATE SET r.rating = $rating
+        ON MATCH  SET r.rating = $rating
+        RETURN r.rating
+    `,{client:client, houseworker:username, rating:rating}
+    );
+
+    //records[0] is record of n(Node Client)
+    //records[2] is the r(relationship:RATED w)
+    console.log("RATING : " + result.records[0].get(0))
+    return result.records[0].get(0);
+    //or return n,m,r.rating
+    //return result.records[2].get(0)
+}
+
 const create = async(clientObject)=>{
     //client obj
     // {

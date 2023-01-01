@@ -1,9 +1,9 @@
 const houseworkerModel = require('../model/HouseWorker');
+const queryString = require('querystring');
 
 const getHouseworkerByUsername = async(req,res)=>{
     //from LocalStorage or Cookie
     const HouseworkerUsername = req.params.username;
-
     try{
         const result = await houseworkerModel.findByUsername(HouseworkerUsername);
         const {password, ...houseworkerData} = result;
@@ -11,11 +11,28 @@ const getHouseworkerByUsername = async(req,res)=>{
     }
     catch(err){
         console.log("ERROR GetHouseworkerBYUsername: " + err);
-        req.send(err);
+        res.send(err);
     }
-
 }
 
+const getHouseworkerWithFilters = async(req,res)=>{
+    try{
+        //take filter parameters from url
+        const filters = req.query;
+        const result = await houseworkerModel.findAllWithFilters(filters)
+
+        const houseworkers = result.map(el =>{
+            const {password, ...houseworkerData} =el;
+            return houseworkerData;
+        })
+        res.json(houseworkers);
+
+        //const result = await houseworkerModel.findUserWithFilters();
+    }catch(err){
+        console.log("ERROR HouseworkerFilters: " + err);
+        res.send(err);
+    }
+}
 
 const getHouseworkers = async(req,res)=>{
     try{
@@ -47,7 +64,10 @@ const deleteHouseworker = async(req, res)=>{
 const getRatings = async(req,res)=>{
     // const houseworkerUsername = "Sara"
     try{
-        const result = await houseworkerModel.getRatings();
+        //from session
+        const username = req.session.user.username
+
+        const result = await houseworkerModel.getRatings(username);
         res.json(result);
     }
     catch(err){
@@ -113,6 +133,8 @@ const udpateHouseworker = async(req,res)=>{
 
 
 
+
+
 module.exports ={
     getHouseworkerByUsername,
     getHouseworkers,
@@ -121,9 +143,6 @@ module.exports ={
     getComments,
     getProfessions,
     addProfession,
-    udpateHouseworker
-
-
-
-
+    udpateHouseworker,
+    getHouseworkerWithFilters
 }
