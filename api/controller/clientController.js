@@ -76,9 +76,13 @@ const getComments = async(req,res)=>{
 const rateHouseworker = async (req,res)=>{
     try{
         // console.log("ASSS:" + req.body);
+        //ClientUsername from session
+        //client = req.session.user.username
+
         const houseWorker = req.body.houseworker;
         const rating = req.body.rating;
         const result = await clientModel.rateHouseworker(houseWorker,rating);
+        // const result = await clientModel.rateHouseworker(client, houseWorker,rating);
         res.json(result);
     }
     catch(err){

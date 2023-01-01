@@ -17,21 +17,18 @@ app.use(express.urlencoded({ extended: false }))
 
 
 //redis
-// const {createClient} = require("redis");
-// const redisClient = createClient({legacyMode:true});
-// //RedisStore has been created and put session-object in it
-// // const RedisStore = connectRedis(session);
-// let RedisStore = require("connect-redis")(session)
-// //contect to redis instance
-// redisClient.connect()
-// .catch(err=>{
-//     console.log("Couldn't connect to redis", err);
-// })
-
 redisClient.connect()
 .catch(err=>{
     console.log("Couldn't connect to redis", err);
 })
+
+var corsOptions={
+    //access is allowed to everyone
+    origin:"http://localhost:3000", //react app
+    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+    credentials: true,
+}
+app.use(cors(corsOptions));
 
 
 //with Redis
@@ -53,11 +50,9 @@ app.use(session({
 }))
 
 
-
-
 //routes
 app.use("/api/clients", clientRoute);
-app.use("/api/homeworker", houseworkerRoute);
+app.use("/api/houseworker", houseworkerRoute);
 app.use("/api/" , authRoute);
 app.use('/api/chat', chatRoute);
 
@@ -68,17 +63,8 @@ app.get("/api/", (req,res)=>{
         // return res.redirect(`/${req.session.user.type}`) // /client or /houseworker
        return res.send("Session works")
        
-    return res.send("Session doesen't works")
-        
+    return res.send("Session doesen't works")  
 })
-
-var corsOptions={
-    //access is allowed to everyone
-    origin:"*", //react app
-    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
-    credentials: true,
-}
-app.use(cors(corsOptions));
 
 
 //SocketIO 
@@ -102,6 +88,7 @@ server.listen(5000, ()=>{
 //Unique serverID -> Combination of IpAddress:Port
 //THis Could be in .env
 const ip = require('ip').address();
+// const port ='5000';
 const port ='5000';
 const serverID = `${ip}:${port}`
 console.log("IP:" + ip);
@@ -115,7 +102,10 @@ redisClient.on("message", (_,message)=>{
     io.emit(type, data);
 })
 //every client is subscriber
-redisClient.subscribe('MESSAGES');
+
+//!!!!!!FIX IT
+//Error: ERR Can't execute 'get': only (P)SUBSCRIBE / (P)UNSUBSCRIBE / PING / QUIT are allowed in this context
+//redisClient.subscribe('MESSAGES');
 
 //public data on "MESSAGE" channel
 const publish = (type, data) =>{
