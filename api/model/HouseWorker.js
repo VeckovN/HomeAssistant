@@ -18,7 +18,7 @@ const findByUsername = async (username)=>{
 const findAll = async ()=>{
     //more than one is expected
     const result = await session.run(
-        'Match(n:User)-[:IS_CLIENT]->() return n'
+        'Match(n:User)-[:IS_HOUSEWORKER]->() return n'
     )
     const clients = result.records.map(el=>{
         //return each clients propteries as object
@@ -27,10 +27,86 @@ const findAll = async ()=>{
     return clients;
 }
 
+
+//FILTER
+const findAllWithFilters = async(filters)=>{
+    //all possible filterData
+    const {
+        limit = 10, //default value 10 (if isn't seted)
+        sort = 'ASC',
+        city,
+        gender, 
+        ageFrom = 0, //set on 0(low limit)
+        ageTo = 100, //set on 100(high limit)
+        professions,  
+        name:searchName, 
+    } = filters;
+
+    console.log("PROPS: " + "limit: " + limit + "/" + "sort: " + sort + "/" + "city: " + city + "/" + "ageFrom: " + ageFrom + "/" + "ageTo: " + ageTo + '/' + "gender: " + gender + "/" + "name: " + searchName + "/" + 'professions: ' + professions)
+        
+    var queryNeo4j = 'Match(n:User)-[:IS_HOUSEWORKER]->(h:HouseWorker) \n';
+    var orderBy='';
+
+    //Add match for each filter options
+    if(city!=undefined)
+        queryNeo4j +=`MATCH(n)-[:LIVES_IN]->(c:City {name:'${city}'}) \n`
+    if(gender!=undefined)
+        queryNeo4j +=`MATCH(n)-[:GENDER]->(g:Gender {type:'${gender}'}) \n`
+    
+    //whatevery age is seted use filter, if they aren'y set we don't need filter 
+    // if(ageFrom!=undefined || ageFrom!=undefined)
+    //     queryNeo4j +=`WHERE n.ageFrom >= ${ageFrom} AND n.ageTo <=${ageTo} `
+    
+    if(searchName!=undefined)
+        queryNeo4j +=`WHERE n.username STARTS WITH '${searchName}' \n`
+
+
+    //Orderby
+    if(sort!='ASC' )
+        if(sort=="RatingUp" ){
+            queryNeo4j+=`
+                MATCH(h)<-[r:RATED]-() \n
+                WITH n, avg(r.rating) as avg_rating \n`
+            orderBy="ORDER BY avg_rating DESC \n"
+        }
+        else if(sort=="RatingDown"){
+            queryNeo4j+=`
+                MATCH(h)<-[r:RATED]-()
+                WITH n, avg(r.rating) as avg_rating \n`
+            orderBy="ORDER BY avg_rating ASC \n"
+        }
+        else if(sort =="AgeUp"){
+            orderBy='ORDER BY n.age DESC \n'
+        }
+        else if(sort="AgeDown")
+            orderBy='ORDER BY n.age ASC \n'
+    else
+        orderBy ='ORDER BY n.username ASC \n'
+
+    //RETURN part
+    queryNeo4j+= `RETURN n \n`
+
+    queryNeo4j+=orderBy;
+    queryNeo4j+=`LIMIT ${limit}`
+
+    console.log("QUERY: " + queryNeo4j);
+    console.log("PARAMS1: " + city + '/ ' + gender + '/' + searchName);
+
+    const result = await session.run(queryNeo4j);
+    const houseworkers = result.records.map(el =>{
+        return el.get(0).properties;
+    })
+    return houseworkers;
+
+}
+
+
+
+
 const findByUsernameAndDelete = async (username)=>{
     //User -[:IS_CLIENT]->Client
     //to delete a node it is necessery to DELTE THE RELATIONSHIP FIRST
-    const result = await session.run(
+    await session.run(
         "MATCH (n:User {username:$name})-[r:IS_HOUSEWORKER]->(m) DELETE r, n, m",
         {name:username}
     )
@@ -38,13 +114,14 @@ const findByUsernameAndDelete = async (username)=>{
     return await findAll();
 }
 
+
+
 //all rates
-const getRatings = async()=>{
-    const ourUsername ="Sara";
+const getRatings = async(username)=>{
     const result = await session.run(`
         MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(m)
         MATCH(m)<-[r:RATED]-() return r.rating`,
-        {houseworker:ourUsername}
+        {houseworker:username}
     )
     //return array of propertie rating(return r)
     // const ratings = result.records.map(rec =>{
@@ -56,9 +133,23 @@ const getRatings = async()=>{
     const ratings = result.records.map(rec =>{
         return rec.get(0);
     })
+    console.log("RATINGGG:" +  ratings);
+
+    var avgRating =0;
+    var avgSum;
+    if(ratings.length==0)
+        return 0
+    //average rating
+    if(ratings.length >=2){
+        avgSum = ratings.reduce((rat1, rat2) => parseInt(rat1) + parseInt(rat2));  //0 start acc
+        avgRating = avgSum / ratings.length;
+    }
+    else
+        return ratings
 
     console.log("RATINGS: " + ratings);
-    return ratings;
+    console.log("AVG", avgRating);
+    return avgRating;
 }
 
 const getComments = async()=>{
@@ -95,10 +186,8 @@ const getProfessions = async ()=>{
         //title ='Dadilja" npr (rec.get(0) is WHOLE NODE and has the properties, while rec.get(1) ->r.working_hour is returned property)
         return {profession:rec.get(0) , working_hour:rec.get(1)}
     })
-
     return professions;
 }
-
 
 const addProfession = async(profession, working_hour)=>{
     const ourUsername ="Sara";
@@ -117,7 +206,6 @@ const addProfession = async(profession, working_hour)=>{
     // return result.records[0].get(0).properties.title;
     //or RETURN p.title
     return {profession:records[0].get(0), working_hour:records[0].get(1)}
-
 }
 
 
@@ -229,6 +317,8 @@ const updateGender = async(gender)=>{
     return result.records[0].get(0);
 }
 
+
+
 /////////////////////////CHAT PART/////////////////
 
 
@@ -251,6 +341,7 @@ const updateGender = async(gender)=>{
 module.exports ={
     findByUsername,
     findAll,
+    findAllWithFilters,
     findByUsernameAndDelete,
     getRatings,
     getComments,
