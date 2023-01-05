@@ -58,6 +58,8 @@ const login = async(req,res)=>{
     const {username, password} = req.body;
     //find user by username and password no matter what type it is
     const user = await userModal.findByUsername(username);
+    if(!user)
+        return res.send({error:"UserNotFound"})
     const userType = user.type;
     const userInfo = user.props;
     console.log("TYPEEEE: " + userType + "PROPS : " + userInfo);
@@ -69,10 +71,12 @@ const login = async(req,res)=>{
         req.session.user = {username:username, type:userType}
         // return res.redirect(`/${user.type}`)
         console.log("SESSSSSLogion22222222: " + JSON.stringify(req.session))
-        return res.json({connect:"U are logged in"})
+        //return res.json({connect:"U are logged in"})
+        return res.send(req.session.user)
     }
     else
-        return res.json({error:"User not found"}).status(400);
+        // return res.json({error:"User not found"}).status(400);
+        return res.send({error:"Wrong username or password"})
 
 }
 

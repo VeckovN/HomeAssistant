@@ -45,7 +45,7 @@ const getHouseworkers = async(req,res)=>{
     }
     catch(err){
         console.log("ERROR GetHouseworkers: " + err);
-        req.send(err);
+        res.send(err);
     }
 }
 
@@ -57,7 +57,7 @@ const deleteHouseworker = async(req, res)=>{
     }
     catch(err){
         console.log("ERROR GetHouseworkers: " + err);
-        req.send(err);
+        res.send(err);
     }
 }
 
@@ -66,15 +66,40 @@ const getRatings = async(req,res)=>{
     try{
         //from session
         const username = req.session.user.username
-
         const result = await houseworkerModel.getRatings(username);
         res.json(result);
     }
     catch(err){
         console.log("ERROR GetHouseworkers: " + err);
-        req.send(err);
+        res.send(err);
     }
 }
+
+const getRatingUsername = async(req,res)=>{
+    try{
+        //from session
+        const username = req.params.username;
+        const result = await houseworkerModel.getRatings(username);
+        res.json(result);
+    }
+    catch(err){
+        console.log("ERROR GetHouseworkers: " + err);
+        res.send(err);
+    }
+}
+
+const getCities = async(req,res)=>{
+    try{
+        const result = await houseworkerModel.findCities();
+        res.send(result);
+    }
+    catch(err){
+        console.log("ERROR CITIES: " + err);
+        res.send(err);
+    }
+}
+
+
 
 const getComments = async(req,res)=>{
     // const houseworkerUsername = "Sara"
@@ -84,7 +109,7 @@ const getComments = async(req,res)=>{
     }
     catch(err){
         console.log("ERROR GetHouseworkers: " + err);
-        req.send(err);
+        res.send(err);
     }
 }
 
@@ -96,7 +121,7 @@ const getProfessions = async(req,res)=>{
     }
     catch(err){
         console.log("ERROR GetHouseworkers: " + err);
-        req.send(err);
+        res.send(err);
     }
 }
 
@@ -111,7 +136,7 @@ const addProfession = async(req,res)=>{
     }
     catch(err){
         console.log("ERROR GetHouseworkers: " + err);
-        req.send(err);
+        res.send(err);
     }
 }
 
@@ -144,5 +169,7 @@ module.exports ={
     getProfessions,
     addProfession,
     udpateHouseworker,
-    getHouseworkerWithFilters
+    getHouseworkerWithFilters,
+    getRatingUsername,
+    getCities
 }

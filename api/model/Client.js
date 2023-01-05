@@ -1,5 +1,5 @@
 const { response } = require('express');
-const session = require('../db/neo4j');
+const {session,driver} = require('../db/neo4j');
 const { use } = require('../routes/clients');
 
 //When is important to return all properties of Node
@@ -10,7 +10,7 @@ const { use } = require('../routes/clients');
 
 
 const findByUsername = async (username)=>{
-
+    const session = driver.session();
     const result = await session.run(
         `MATCH (n:User {username:$name})-[:IS_CLIENT]->() 
         RETURN n`,
@@ -32,12 +32,13 @@ const findByUsername = async (username)=>{
 
         //THIS IS A PROMISE, We return a promise Because we used await to take get result from session.run
         //return object without password
+        session.close();
         return client;
     }
 }
 
 const findAll = async ()=>{
-
+    const session = driver.session();
     //more than one is expected
     const result = await session.run(
         'Match(n:User)-[:IS_CLIENT]->() return n'
@@ -52,22 +53,26 @@ const findAll = async ()=>{
         return el.get(0).properties;
     })
 
+    session.close();
     return clients;
 }
 
 const findByUsernameAndDelete = async (username)=>{
+    const session = driver.session();
     //User -[:IS_CLIENT]->Client
     //to delete a node it is necessery to DELTE THE RELATIONSHIP FIRST
     const result = await session.run(
         "MATCH (n:User {username:$name})-[r:IS_CLIENT]->(m) DELETE r, n, m",
         {name:username}
     )
+    session.close();
     //all others client
     return await findAll();
 }
 
 
 const getAllComments = async (username)=>{
+    const session = driver.session();
     const result = await session.run(`
     MATCH(n:Client {username:$name})-[r:COMMENTED]->(m)MATCH(m)-[b:BELONGS_TO]->(c) 
     RETURN m.context,c.username`,
@@ -90,6 +95,7 @@ const getAllComments = async (username)=>{
         return {comment:rec.get(0), houseworker:rec.get(1)}
     });
 
+    session.close();
     return comments;
 
 }
@@ -110,7 +116,7 @@ const getAllComments = async (username)=>{
 //   ]
 
 const commentHouseworker = async(username, comment)=>{
-
+    const session = driver.session();
     //our (CLient) username from LocalStore or cookie
     const ourUsername = 'Novak'; //client
 
@@ -126,10 +132,12 @@ const commentHouseworker = async(username, comment)=>{
 
     const commentResult = result.records[0].get(0).properties;
 
+    session.close();
     return commentResult;
     
 }
 const deleteComment = async(username, commentID)=>{
+    const session = driver.session();
     const ourUsername = "Novak";
 
     const result = await session.run(`
@@ -143,11 +151,13 @@ const deleteComment = async(username, commentID)=>{
     , {client:ourUsername, houseworker:username, id:commentID}
     )
 
+    session.close();
     //client is returned
     return result.records[0].get(0).properties;
 }
 
 const rateHouseworker = async(username, rating)=>{
+    const session = driver.session();
     const ourUsername ="Novak";
 
     //MARGE - ON MATCH SET - when Relationship exist we wanna set new rating value not to create another relationsip
@@ -164,12 +174,14 @@ const rateHouseworker = async(username, rating)=>{
     //records[0] is record of n(Node Client)
     //records[2] is the r(relationship:RATED w)
     console.log("RATING : " + result.records[0].get(0))
+    session.close();
     return result.records[0].get(0);
     //or return n,m,r.rating
     //return result.records[2].get(0)
 }
 
 const rateHouseworker_client = async(client, username, rating)=>{
+    const session = driver.session();
     // const ourUsername ="Novak";
 
     //MARGE - ON MATCH SET - when Relationship exist we wanna set new rating value not to create another relationsip
@@ -192,6 +204,7 @@ const rateHouseworker_client = async(client, username, rating)=>{
 }
 
 const create = async(clientObject)=>{
+    const session = driver.session();
     //client obj
     // {
     //     username:"Sara", 
@@ -237,6 +250,7 @@ const create = async(clientObject)=>{
     const user = result.records[0].get(0).properties;
     const userGender = result.records[0].get(1);
     const userCity = result.records[0].get(2);
+    session.close();
     return {
         user, gender:userGender, city:userCity
     }
@@ -245,6 +259,7 @@ const create = async(clientObject)=>{
 
 //update only client NODE property
 const update = async(newValue)=>{
+    const session = driver.session();
     //newValue must have same property as Client NODE
     // email	"novak@gmail.com"
     // first_name	"Novak"
@@ -266,11 +281,13 @@ const update = async(newValue)=>{
     //     SET n += { password:"pwww" , picture:"//" }
     // `
     // )
+    session.close();
     return result.records[0].get(0).properties;
 }
 
 //update City node with [:LIVES_IN]
 const updateCity = async(city)=>{
+    const session = driver.session();
     const ourUsername = "Sara";
     const result = await session.run(`
         MATCH(n:User{username:$client})
@@ -281,10 +298,12 @@ const updateCity = async(city)=>{
     ,{client:ourUsername, cityName:city}
     )
 
+    session.close();
     return result.records[0].get(0);
 }
 
 const updateGender = async(gender)=>{
+    const session = driver.session();
     const ourUsername = "Sara";
     const result = await session.run(`
         MATCH(n:User{username:$client})
@@ -295,6 +314,7 @@ const updateGender = async(gender)=>{
     ,{client:ourUsername, gender:gender}
     )
 
+    session.close();
     return result.records[0].get(0);
 }
 
