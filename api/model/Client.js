@@ -115,10 +115,32 @@ const getAllComments = async (username)=>{
 //     }
 //   ]
 
-const commentHouseworker = async(username, comment)=>{
+//WITH REq.SESSION.user
+// const commentHouseworker = async(ourUsername, username, comment)=>{
+//     const session = driver.session();
+//     //our (CLient) username from LocalStore or cookie
+    
+
+//     const result = await session.run(`
+//     MATCH (n:Client {username:$client})
+//     MATCH (m:HouseWorker {username:$houseworker})
+//     CREATE (c:Comment {context:$comment})
+//     CREATE (n)-[:COMMENTED]->(c)
+//     CREATE (c)-[:BELONGS_TO]->(m)
+//     RETURN c`
+//     , {client:ourUsername, houseworker:username, comment:comment}
+//     )
+
+//     const commentResult = result.records[0].get(0).properties;
+
+//     session.close();
+//     return commentResult;
+// }
+
+const commentHouseworker = async(client, houseworker, comment)=>{
     const session = driver.session();
     //our (CLient) username from LocalStore or cookie
-    const ourUsername = 'Novak'; //client
+    
 
     const result = await session.run(`
     MATCH (n:Client {username:$client})
@@ -127,7 +149,7 @@ const commentHouseworker = async(username, comment)=>{
     CREATE (n)-[:COMMENTED]->(c)
     CREATE (c)-[:BELONGS_TO]->(m)
     RETURN c`
-    , {client:ourUsername, houseworker:username, comment:comment}
+    , {client:client, houseworker:houseworker, comment:comment}
     )
 
     const commentResult = result.records[0].get(0).properties;
@@ -136,6 +158,8 @@ const commentHouseworker = async(username, comment)=>{
     return commentResult;
     
 }
+
+
 const deleteComment = async(username, commentID)=>{
     const session = driver.session();
     const ourUsername = "Novak";
@@ -156,10 +180,32 @@ const deleteComment = async(username, commentID)=>{
     return result.records[0].get(0).properties;
 }
 
-const rateHouseworker = async(username, rating)=>{
-    const session = driver.session();
-    const ourUsername ="Novak";
+// const rateHouseworker_reqSession = async(username, rating)=>{
+//     const session = driver.session();
+//     const ourUsername ="Novak";
 
+//     //MARGE - ON MATCH SET - when Relationship exist we wanna set new rating value not to create another relationsip
+//     const result = await session.run(`
+//         MATCH(n:Client {username:$client})
+//         MATCH(m:HouseWorker {username:$houseworker})
+//         MERGE (n)-[r:RATED]->(m)
+//         ON CREATE SET r.rating = $rating
+//         ON MATCH  SET r.rating = $rating
+//         RETURN r.rating
+//     `,{client:ourUsername, houseworker:username, rating:rating}
+//     );
+
+//     //records[0] is record of n(Node Client)
+//     //records[2] is the r(relationship:RATED w)
+//     console.log("RATING : " + result.records[0].get(0))
+//     session.close();
+//     return result.records[0].get(0);
+//     //or return n,m,r.rating
+//     //return result.records[2].get(0)
+// }
+
+const rateHouseworker= async(client, houseworker, rating)=>{
+    const session = driver.session();
     //MARGE - ON MATCH SET - when Relationship exist we wanna set new rating value not to create another relationsip
     const result = await session.run(`
         MATCH(n:Client {username:$client})
@@ -168,7 +214,7 @@ const rateHouseworker = async(username, rating)=>{
         ON CREATE SET r.rating = $rating
         ON MATCH  SET r.rating = $rating
         RETURN r.rating
-    `,{client:ourUsername, houseworker:username, rating:rating}
+    `,{client:client, houseworker:houseworker, rating:rating}
     );
 
     //records[0] is record of n(Node Client)

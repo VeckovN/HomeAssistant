@@ -66,6 +66,7 @@ const getRatings = async(req,res)=>{
     try{
         //from session
         const username = req.session.user.username
+        console.log("saaaasasasas :" + username);
         const result = await houseworkerModel.getRatings(username);
         res.json(result);
     }
@@ -100,23 +101,41 @@ const getCities = async(req,res)=>{
 }
 
 
+//COmments without parrameters(session based)
+// const getComments = async(req,res)=>{
+//     // const houseworkerUsername = "Sara"
+//     try{
+//         const username = req.session.user
+//         console.log("COMMENTSESSON:" + JSON.stringify(req.session))
+//         const result = await houseworkerModel.getComments(username);
+//         res.json(result);
+//     }
+//     catch(err){
+//         console.log("ERROR Comments: " + err);
+//         res.send(err);
+//     }
+// }
 
 const getComments = async(req,res)=>{
     // const houseworkerUsername = "Sara"
     try{
-        const result = await houseworkerModel.getComments();
+        const username = req.params.username;
+        console.log("USEE: " + username)
+        const result = await houseworkerModel.getComments(username);
         res.json(result);
     }
     catch(err){
-        console.log("ERROR GetHouseworkers: " + err);
+        console.log("ERROR Comments: " + err);
         res.send(err);
     }
 }
 
+
 const getProfessions = async(req,res)=>{
     // const houseworkerUsername = "Sara"
     try{
-        const result = await houseworkerModel.getProfessions();
+        const username = req.params.username;
+        const result = await houseworkerModel.getProfessions(username);
         res.json(result);
     }
     catch(err){
@@ -144,7 +163,7 @@ const udpateHouseworker = async(req,res)=>{
     try{
         const newInfo = req.body;
 
-        const result = await clientModel.update(newInfo);
+        const result = await houseworkerModel.update(newInfo);
         res.json(result);
     }
     catch(err){
@@ -153,10 +172,17 @@ const udpateHouseworker = async(req,res)=>{
     }
 }
 
-
-
-
-
+const updatePassword = async(req,res)=>{
+    try{
+        const newPassword = req.body.password
+        const result = await houseworkerModel.updatePassword(newPassword)
+        res.json(result);
+    }
+    catch(err){
+        console.log("Error UpdatePassword(Yourself): " + err);
+        res.send(err).status(400);
+    }
+}
 
 
 
@@ -171,5 +197,6 @@ module.exports ={
     udpateHouseworker,
     getHouseworkerWithFilters,
     getRatingUsername,
-    getCities
+    getCities,
+    updatePassword 
 }

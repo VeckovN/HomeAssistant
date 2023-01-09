@@ -2,6 +2,7 @@ const { Socket } = require('socket.io');
 const {incr, set, hmset, sadd, hmget, exists, client, zrevrange, smembers, zadd, srem, del} = require('../db/redis');
 const { use } = require('../routes/clients');
 
+
 //persist ChatApp data to Redis database
 
 //With username(same username as in Neo4j) we got userID(same user but in redis)

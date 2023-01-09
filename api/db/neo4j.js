@@ -11,7 +11,7 @@ const driver = neo4j.driver(process.env.NEO4J_URI, neo4j.auth.basic('neo4j','Hom
 const session = driver.session();
 
 
-module.exports = session;
+module.exports = {session, driver};
 
 
 //PywSSJA3hJEFm8mnRB7PfndDl1bd9F9IV63gmwpsKto

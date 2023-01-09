@@ -78,10 +78,11 @@ const rateHouseworker = async (req,res)=>{
         // console.log("ASSS:" + req.body);
         //ClientUsername from session
         //client = req.session.user.username
-
+        const client = req.body.client;
         const houseWorker = req.body.houseworker;
         const rating = req.body.rating;
-        const result = await clientModel.rateHouseworker(houseWorker,rating);
+        // const result = await clientModel.rateHouseworker(houseWorker,rating);
+        const result = await clientModel.rateHouseworker(client, houseWorker,rating);
         // const result = await clientModel.rateHouseworker(client, houseWorker,rating);
         res.json(result);
     }
@@ -91,11 +92,29 @@ const rateHouseworker = async (req,res)=>{
     }
 }
 
+// const commentHouseworker = async(req, res)=>{
+//     try{
+//         const ourUsername = req.session.user.username
+//         const houseworker = req.body.username;
+//         const comment = req.body.comment;
+//         console.log("JSSSOSOSOSO: " + ourUsername + "/ " + houseworker + "/ " + comment)
+//         const result = await clientModel.commentHouseworker(ourUsername,houseworker, comment);
+//         console.log("RESSS: " +  JSON.stringify(result));
+//         res.json(result);
+//     }
+//     catch(err){
+//         console.log("Error Comment: " + err);
+//         res.send(err).status(400);
+//     }
+// }
 const commentHouseworker = async(req, res)=>{
     try{
-        const houseworker = req.body.username;
+        const client= req.body.client
+        const houseworker = req.body.houseworker;
         const comment = req.body.comment;
-        const result = await clientModel.commentHouseworker(houseworker, comment);
+        console.log("JSSSOSOSOSO: " + client + "/ " + houseworker + "/ " + comment)
+        const result = await clientModel.commentHouseworker(client,houseworker, comment);
+        console.log("RESSS: " +  JSON.stringify(result));
         res.json(result);
     }
     catch(err){
@@ -129,6 +148,7 @@ const udpateClient = async(req,res)=>{
 }
 
 
+
 //Coomment should have the ID
 const deleteCommentById = async(req,res)=>{
     try{
@@ -147,5 +167,5 @@ module.exports = {
     rateHouseworker,
     udpateClient,
     commentHouseworker,
-    createClient
+    createClient,
 }

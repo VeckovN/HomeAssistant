@@ -17,6 +17,7 @@ const register = async (req,res)=>{
     const userData = {username, password:hashedPassword, ...otherData};
 
     console.log("USERDATA: "+ JSON.stringify(userData));
+    console.log('TP: ' + type);
 
     if(type=='Client'){
         const data = await clientModal.findByUsername(username);
@@ -25,10 +26,14 @@ const register = async (req,res)=>{
             return res.json({error:"User exists"}).status(400);
         }   
         else{
+            //UPLODA picture to /client/public/assets/userPicture
+
             const user = {username:username, type:type}
             await clientModal.create(userData);
             //assign user to the session after creating the user /request from client(set the sesson to client)
             req.session.user = user
+            // req.session.username = username;
+            // req.session.type = type
             console.log("SESION123123:" + JSON.stringify(req.session));
             return res.json(user); //created user
         }
@@ -69,6 +74,9 @@ const login = async(req,res)=>{
     //if(user && match){ //both is unecessery because if match is true then 100% is user true
     if(match){
         req.session.user = {username:username, type:userType}
+        // const sess = req.session;
+        // sess.username = username;
+        // sess.type = userType
         // return res.redirect(`/${user.type}`)
         console.log("SESSSSSLogion22222222: " + JSON.stringify(req.session))
         //return res.json({connect:"U are logged in"})
@@ -83,6 +91,7 @@ const login = async(req,res)=>{
 const logout = async(req,res)=>{
     //req.session = null //Deletes the cookies
     //req.session.destroy() //Delets the session in the DB
+    console.log("LOOGOUTTT: " + JSON.stringify(req.session))
     if(req.session.user){
         req.session.destroy((err)=>{
             if(err)
@@ -92,7 +101,7 @@ const logout = async(req,res)=>{
     }
     else
         return res.json({errorr:"You're not logged"})
-
+   
 }
 
 

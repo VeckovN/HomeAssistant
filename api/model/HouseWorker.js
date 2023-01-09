@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const { Session } = require('neo4j-driver');
 const {session,driver} = require('../db/neo4j');
 
@@ -66,6 +67,10 @@ const findAllWithFilters = async(filters)=>{
         `
         ;
 
+    if(professions)
+        if(professions.length>0)
+                queryNeo4j +=`MATCH(h)-[o:OFFERS]->(p:Profession) \n`
+        
     var sortFlag = false
     if(sort==='RatingUp' || sort==='RatingDown')
         sortFlag=true;
@@ -132,9 +137,38 @@ const findAllWithFilters = async(filters)=>{
 
 
     //---------PROFESSIONS-------------
-    
-
-
+    if(professions){
+        let professionsArray = professions.split(',');
+        let professionsLength = professionsArray.length;
+        console.log("ARRATYYY: " + professions);
+        console.log("ARRATYYY2: " + professionsArray[0]);
+        if(professionsLength>0)
+        {
+            let professionString = '';
+            if(professionsLength==1)
+                professionString += `"${professions}"`;
+            else{
+                //example 4 profes(staratelj Kuvar Bastovan Dadilja)
+                            //0         1           2           3
+                //we got ("Staratelj ," "Kuvar ," "Bastovan ," "Dadilja")
+                // last comma after 2 index 
+                // console.log("PROSSSSSSSSSSS: " +  ); 
+                for(let i=0; i<professionsLength; i++){
+                    if(i<professionsLength-1) //0,1,2  --- <4-1
+                        professionString+= `"${professionsArray[i]}" ,`
+                    else    
+                        professionString+= `"${professionsArray[i]}" `;
+                }
+            }
+            
+            console.log("RPOFSSFSFFS: " + professionString)
+            if(where.trim().length > 5)
+                where += ` AND p.title IN [${professionString}]`
+            else
+                where += `p.title IN [${professionString}]`
+        }
+    }
+            
     if(sortFlag){
         if(where.trim().length > 5)
             where+=' AND r.rating>0 '
@@ -146,7 +180,7 @@ const findAllWithFilters = async(filters)=>{
     
     //ADDING WHERE PART TO QUERY
     // if(city!=undefined || gender!=undefined || ageFrom!=0 || ageTo!=100 || !searchName)
-    if(city!=undefined || gender!=undefined || ageFrom!=0 || ageTo!=100 || searchName!=undefined || sortFlag)
+    if(city!=undefined || gender!=undefined || ageFrom!=0 || ageTo!=100 || searchName!=undefined || sortFlag )
         queryNeo4j+=where
 
     //Orderby
@@ -301,15 +335,14 @@ const getRatings = async(username)=>{
     return avgRating;
 }
 
-const getComments = async()=>{
+const getComments = async(username)=>{
     const session = driver.session();
-    const ourUsername ="Sara";
     const result = await session.run(`
         MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(m)
         MATCH(c:Comment)-[:BELONGS_TO]->(m)
         MATCH(c)<-[:COMMENTED]-(t)
         RETURN c.context, t.username`,
-    {houseworker:ourUsername}
+    {houseworker:username}
     )
     //{Comment:context, From:'clientUsername'}
     const comments = result.records.map(rec=>{
@@ -324,7 +357,7 @@ const getComments = async()=>{
     //get(0)c, get(1)t NODE For each Records
 }
 
-const getProfessions = async ()=>{
+const getProfessions_reqSession = async ()=>{
     //Get Professions with working Hours
     const session = driver.session();
     const ourUsername ="Sara";
@@ -333,6 +366,23 @@ const getProfessions = async ()=>{
         MATCH(m)-[r:OFFERS]->(p)
         return p.title,r.working_hour`,
         {houseworker:ourUsername}
+    )
+    const professions = result.records.map(rec =>{
+        //title ='Dadilja" npr (rec.get(0) is WHOLE NODE and has the properties, while rec.get(1) ->r.working_hour is returned property)
+        return {profession:rec.get(0) , working_hour:rec.get(1)}
+    })
+    session.close();
+    return professions;
+}
+
+const getProfessions = async (username)=>{
+    //Get Professions with working Hours
+    const session = driver.session();
+    const result = await session.run(`
+        MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(m)
+        MATCH(m)-[r:OFFERS]->(p)
+        return p.title,r.working_hour`,
+        {houseworker:username}
     )
     const professions = result.records.map(rec =>{
         //title ='Dadilja" npr (rec.get(0) is WHOLE NODE and has the properties, while rec.get(1) ->r.working_hour is returned property)
@@ -448,6 +498,22 @@ const update = async(newValue)=>{
     return result.records[0].get(0).properties;
 }
 
+const updatePassword = async(password)=>{
+    const session = driver.session();
+    const ourUsername ="Sara";   
+    const hashedPassword = bcrypt.hashSync(password, 12);
+    const result = await session.run(`
+        Match(n:User {username:$username})
+        SET n.password = $password
+        RETURN n
+    `,{username:ourUsername, password:hashedPassword}
+    )
+
+    session.close();
+    
+    return result.records[0].get(0);
+}
+
 const updateCity = async(city)=>{
     const session = driver.session();
     const ourUsername = "Sara";
@@ -516,6 +582,7 @@ module.exports ={
     updateCity,
     updateGender,
     create,
-    findCities
+    findCities,
+    updatePassword
 
 }

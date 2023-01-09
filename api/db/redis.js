@@ -35,6 +35,11 @@ let RedisStore = require("connect-redis")(session)
 //     })
 // } 
 
+client.on('error', function(err) {
+    console.log('Redis error: ' + err);
+}); 
+
+
 const resolvePromise = (resolve,reject)=>{
     //redis.get-orWhaterver(key, (err, res) => {
     return (err,data)=>{

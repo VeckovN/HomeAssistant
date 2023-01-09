@@ -10,8 +10,12 @@ const {
     getProfessions,
     addProfession,
     udpateHouseworker,
-    getHouseworkerWithFilters
+    getHouseworkerWithFilters,
+    getRatingUsername,
+    getCities,
+    updatePassword
 } = require('../controller/houseworkerController');
+
 
 const router = express.Router();
 
@@ -37,12 +41,21 @@ router.get('/filter', getHouseworkerWithFilters);
 // router.get('/:username', checkHouseworker, getHouseworkerByUsername);
 router.delete('/:username', checkHouseworker, deleteHouseworker);
 router.get('/rating', checkHouseworker, getRatings);
-router.get('/comments', checkHouseworker, getComments);
-router.get('/professions', checkHouseworker, getProfessions);
+router.get('/rating/:username', getRatingUsername);
+// router.get('/comments', checkHouseworker, getComments);
+
+// router.get('/comments',  getComments);
+router.get('/comments/:username',  getComments);
+// router.get('/professions', checkHouseworker, getProfessions);
+router.get('/professions/:username', getProfessions);
+router.get('/cities',  getCities);
 //Here without conflict
 router.get('/:username', checkHouseworker, getHouseworkerByUsername);
 router.post('/professions/add', checkHouseworker, addProfession);
 router.put('/update', checkHouseworker, udpateHouseworker);
+
+router.post('/update/password', checkHouseworker, updatePassword)
+
 
 
 module.exports = router;

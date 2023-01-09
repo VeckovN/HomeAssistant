@@ -2,19 +2,43 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-// const cookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
 const clientRoute = require('./routes/clients')
 const houseworkerRoute = require('./routes/houseworkers');
 const authRoute = require('./routes/auth');
 const chatRoute = require('./routes/chat');
 const dotenv = require('dotenv');
+const path = require('path');
+const multer = require('multer');
 const {client:redisClient, RedisStore, set, sadd, smembers, hmget, srem } = require('./db/redis');
 dotenv.config();
+const {register} = require('./controller/auth')
 
 const app = express()
+app.use(cookieParser())
 app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: true }))
 
+//multer config
+app.use("/assets", express.static(path.join(__dirname, "public/assets")));
+
+
+// multer exprot and import in auth register
+const storage = multer.diskStorage({
+    destination: (req,file,cb) =>{
+        cb(null, "public/assets");
+    },
+    filename: (req, file, cb) =>{
+        cb(null, file.originalname)
+    }
+});
+const upload = multer({storage:storage});
+
+
+// //Route With files(Multer)
+// app.post("/api/auth/register", upload.single("picture"), register);
+// //upload image
+// app.post("/api/update/picture", upload,single("picture"), updatePicture);
 
 //redis
 redisClient.connect()
@@ -38,17 +62,23 @@ app.use(session({
     resave:false, 
     //if false =we only want to create session when the user is logged in (We saving something in session only when is user logged in)
     //if true = session will be created even user not logged in ()
-    saveUninitialized:false,
+    saveUninitialized:true,
     name:"sessionLog",
     secret: "aKiqn12$%5s@09~1s1",
     cookie:{
         //for deploy set the secure to TURE, TURE DONSN'T STORE COOKIE ON BROWSER in DEVELOPMENT(using postman and etc.)
-        secure:false, //if false - any HTTP call which is NOT HTTPS and it doesn't have SSL can access our cookies(can access this app in general)
+        secure:true, //if false - any HTTP call which is NOT HTTPS and it doesn't have SSL can access our cookies(can access this app in general)
         httpOnly: false, //if true - the  web page can't access the cookie in JS
         maxAge: 1000* 60 * 10, //session max age in ms 
     }
 }))
 
+//routes with files
+//app.post("/api/auth/register", upload.single("picture"), register);
+
+
+
+app.post('/api/register', upload.single("picture"), register);
 
 //routes
 app.use("/api/clients", clientRoute);
@@ -71,6 +101,7 @@ app.get("/api/", (req,res)=>{
 const http = require('http');
 // const socketio = require('socket.io');
 const {Server} = require('socket.io');
+const { getAllRooms } = require('./model/Chat');
 const server = http.createServer(app);
 // const io = socketio(server).listen(server);
 const io = new Server(server);

@@ -15,8 +15,10 @@ const router = express.Router();
 router.get('/', checkClient, getClients);
 router.get('/:username',checkHouseworker, getClientByUsername);
 router.get('/comments/:username',checkClient, getComments);
-router.post('/rate', checkClient, rateHouseworker);
-router.post('/comment', checkClient,commentHouseworker);
+// router.post('/rate', checkClient, rateHouseworker);
+router.post('/rate',  rateHouseworker);
+// router.post('/comment', checkClient,commentHouseworker);
+router.post('/comment', commentHouseworker);
 router.put('/update', checkClient, udpateClient);
 
 module.exports = router;
