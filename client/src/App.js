@@ -1,18 +1,53 @@
+import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Home from './components/Page/Home';
+import Header from './components/Layout/Header/Header.js'
+import Register from './components/Page/Register/Register.js'
+import ClientRegister from './components/Page/Register/ClientRegister';
+import HouseworkerRegister from './components/Page/Register/HouseworkerRegister';
+import Login from './components/Page/Login/Login.js'
+import Comments from './components/Page/Houseworker/CommentsList';
+import Profile from './components/Page/Client/Profile.js';
 
+import {ToastContainer} from 'react-toastify';
+//import Toastify Css
+import 'react-toastify/dist/ReactToastify.min.css';
 
 function App() {
   return (
-    <div className="App">    
 
-    {/* Header */}
+    <BrowserRouter>
+      <div className="App">    
+        <Header />
+        {/* Context(Home.js) */}
+        <Home />
+        <Routes>
+          {/* Public routes(all can see this route) */}
+          <Route path='/login' element={<Login/>}></Route>
+          <Route path='/register' element={<Register/>}></Route>
+          {/* // one solution to create 2 modals in /register (for Client and for Houseworker register)
+          // second soluction  that /register is modal and /clientRegister and houseowrkerRgister pages  */}
+          <Route path='/clientRegister' element={<ClientRegister/>}></Route>
+          <Route path='/HouseworkerRegister' element={<HouseworkerRegister/>}></Route>
+          
+          {/* Houseworker */}
+          {/* <Route path='/houseworker'>
+            <Route path='/comments' element={<Comments/>}></Route>
+            <Route path='/profile' element={<Profile/>}></Route>
+          </Route> */}
+          <Route path='/comments' element={<Comments/>}></Route>
+          <Route path='/profile' element={<Profile/>}></Route>
+          
 
-    {/* Context(Home.js) */}
-    <Home />
+        </Routes>
+        
+        {/* IN THIS HOME WE HAVE MORE ROUTES  */}
 
-    {/* Footer */}
-    
-    </div>
+        {/* Footer */}
+
+        <ToastContainer/>
+      </div>
+    </BrowserRouter>
+
   );
 }
 
