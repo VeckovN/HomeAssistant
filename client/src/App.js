@@ -6,7 +6,7 @@ import ClientRegister from './components/Page/Register/ClientRegister';
 import HouseworkerRegister from './components/Page/Register/HouseworkerRegister';
 import Login from './components/Page/Login/Login.js'
 import Comments from './components/Page/Houseworker/CommentsList';
-import Profile from './components/Page/Client/Profile.js';
+import Profile from './components/Page/Profile';
 
 import {ToastContainer} from 'react-toastify';
 //import Toastify Css
@@ -21,7 +21,6 @@ function App() {
         {/* Context(Home.js) */}
         <Home />
         <Routes>
-          {/* Public routes(all can see this route) */}
           <Route path='/login' element={<Login/>}></Route>
           <Route path='/register' element={<Register/>}></Route>
           {/* // one solution to create 2 modals in /register (for Client and for Houseworker register)

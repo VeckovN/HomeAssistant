@@ -430,7 +430,7 @@ const create = async(houseworkerObject)=>{
     //     gender:"Male"
     // }
 
-    const {username, email, password, first_name, last_name, picture, address, description, city, gender} = houseworkerObject;
+    const {username, email, password, first_name, last_name, picturePath, address, description, city, gender} = houseworkerObject;
     
     //WITH Clause is necessary between Create and Other part of query(Create Gender and City)
     const result = await session.run(`
@@ -441,7 +441,7 @@ const create = async(houseworkerObject)=>{
             password:$password, 
             first_name:$first_name,
             last_name:$last_name,
-            picture:$picture,
+            picturePath:$picturePath,
             address:$address,
             description:$description
         }
@@ -460,7 +460,7 @@ const create = async(houseworkerObject)=>{
     MERGE(user)-[h:LIVES_IN]->(c)
     RETURN user,g.type,c.name
     `
-    ,{username:username, email:email, password:password, first_name:first_name, last_name:last_name, picture:picture, address:address, description:description ,city:city, gender:gender}
+    ,{username:username, email:email, password:password, first_name:first_name, last_name:last_name, picturePath:picturePath, address:address, description:description ,city:city, gender:gender}
     )
 
     const user = result.records[0].get(0).properties;

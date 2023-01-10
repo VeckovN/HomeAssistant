@@ -29,11 +29,15 @@ const storage = multer.diskStorage({
         cb(null, "public/assets");
     },
     filename: (req, file, cb) =>{
-        cb(null, file.originalname)
+        cb(null, Date.now() + '_' + file.originalname)
+        //cb(null, file.originalname)
     }
 });
 const upload = multer({storage:storage});
 
+app.use((error, req, res, next) => {
+    console.log('This is the rejected field ->', error.field);
+});
 
 // //Route With files(Multer)
 // app.post("/api/auth/register", upload.single("picture"), register);
@@ -78,7 +82,7 @@ app.use(session({
 
 
 
-app.post('/api/register', upload.single("picture"), register);
+app.post('/api/registerUpload', upload.any("picture"), register);
 
 //routes
 app.use("/api/clients", clientRoute);

@@ -17,13 +17,40 @@ const initialState ={
 //every Trunk has 3 states(pending, fulfilled, and rejected)
 export const register = createAsyncThunk(
     'auth/register', //is action ,
-    async(user, thunkAPI) =>{ //user passed from register ( dispatch(register(userData) ))
+    async(userFormData, thunkAPI) =>{ //user passed from register ( dispatch(register(userData) ))
         try{
-            console.log("USER:" + user);
-            console.log("USER ST:" + JSON.stringify(user));
+            console.log("USER TYPE:" + typeof(userFormData));
+            console.log("USER ST:" + JSON.stringify(userFormData));
 
             //THIS FETCH FUNCTION COULD BE IN SERVICE FOLDER (as Api Calls)
-            const response = await axios.post('http://localhost:5000/api/register', user);
+            // const response = await axios.post('http://localhost:5000/api/register', user);
+            //with context-type multipart/form-data
+            // axios({
+            //     method: "post",
+            //     url: "http://localhost:5000/api/register",
+            //     data: bodyFormData,
+            //     headers: { "Content-Type": "multipart/form-data" },
+            //   })
+            //     .then(function (response) {
+            //       //handle success
+            //       console.log(response);
+            //     })
+            //     .catch(function (response) {
+            //       //handle error
+            //       console.log(response);
+            //     });
+
+            const response = await axios({
+                method: 'post',
+                url: 'http://localhost:5000/api/registerUpload',
+                data: userFormData,
+                headers: {
+                    'Content-Type': `multipart/form-data`,
+                },
+            });
+            console.log("REPOSNE FORM DATA: " + response);
+            
+            
             if(response.data)
                 //if post request is success we put response (user) to localStorage
                 localStorage.setItem('user', JSON.stringify(response.data));

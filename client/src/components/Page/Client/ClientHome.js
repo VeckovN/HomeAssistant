@@ -13,7 +13,6 @@ const ClientHome = () =>{
 
     //const userAuth = useSelector(user) //example
     //const client = user.type==='client' ? true : false
-   
 
     const [data, setData] = useState([]);
     const [filteredData, setFilterData] = useState({});

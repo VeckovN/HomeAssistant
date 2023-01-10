@@ -9,12 +9,31 @@ const clientModal = require('../model/Client');
 const houseworkerModal = require('../model/HouseWorker');
 const userModal = require('../model/User')
 
+// const register = async (req,res) =>{
+
+//     //take fileName -> unique generated when is uploaded (filename + "_" dateNow)
+//     // const picturePath = req.file
+
+//     //WHEN is upload.any('') used , use req.files[0] to access to file instead req.file
+//     console.log("PATH2: " + JSON.stringify(req.files[0]))
+//     const picturePath = req.files[0].filename; //generated name after image upload
+//     console.log("PICTUREPATH: " + picturePath);
+
+//     // console.log("PATH3: " + req.file("filename"))
+
+//     const regData = {...req.body, picturePath:picturePath }
+//     console.log("OBJ: \n" + JSON.stringify(object));
+
+//     res.json(req.body);
+// }
+
 const register = async (req,res)=>{
     //type='client' or 'houseworker'
     const {username,password, type, ...otherData} = req.body;
     const hashedPassword = bcrypt.hashSync(password, 12);
-    //without type data
-    const userData = {username, password:hashedPassword, ...otherData};
+    //without type data and with picturePath
+    const picturePath = req.files[0].filename;
+    const userData = {username, password:hashedPassword, picturePath:picturePath, ...otherData};
 
     console.log("USERDATA: "+ JSON.stringify(userData));
     console.log('TP: ' + type);

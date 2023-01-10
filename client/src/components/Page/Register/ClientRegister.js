@@ -66,6 +66,7 @@ const ClientRegister = () =>{
     }
 
     const onImageChange = (event)=>{
+        //on BACKEND we will take file from req and take fileName( unique generated when is uploaded to server)
 
         const file = event.target.files[0];
         // const fileName = file[0].file.name
@@ -94,17 +95,17 @@ const ClientRegister = () =>{
             for(const key in data){
                 console.log("DATA: " + JSON.stringify(data))
                 console.log(`${key}: ${data[key]}`)
-                formData.append(`'${key}'`, data[key]);
+                formData.append(key, data[key]);
                 
             }
             //formData.append("picturePath", data['picture'].name);
-            
             formData.append('type', 'Client');
             // const data = {...data, type:'client'}
+            
 
-            
-            
-            
+            // const form = new FormData();
+            // form.append('picture', data['picture'])
+            // dispatch(register(formData));
             dispatch(register(formData));
         }
     }
@@ -120,7 +121,7 @@ const ClientRegister = () =>{
             </div>
 
             <div className='form'>
-                <form onSubmit={onSubmit}>
+                <form onSubmit={onSubmit} enctype="multipart/form-data">
 
                     <div className='input_container'>
                         <input
