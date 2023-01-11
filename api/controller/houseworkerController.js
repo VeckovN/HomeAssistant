@@ -102,20 +102,21 @@ const getCities = async(req,res)=>{
 
 
 //COmments without parrameters(session based)
-// const getComments = async(req,res)=>{
-//     // const houseworkerUsername = "Sara"
-//     try{
-//         const username = req.session.user
-//         console.log("COMMENTSESSON:" + JSON.stringify(req.session))
-//         const result = await houseworkerModel.getComments(username);
-//         res.json(result);
-//     }
-//     catch(err){
-//         console.log("ERROR Comments: " + err);
-//         res.send(err);
-//     }
-// }
+const getOurComments = async(req,res)=>{
+    // const houseworkerUsername = "Sara"
+    try{
+        const username = req.session.user.username
+        console.log("COMMENTSESSON:" + JSON.stringify(req.session))
+        const result = await houseworkerModel.getComments(username);
+        res.json(result);
+    }
+    catch(err){
+        console.log("ERROR Comments: " + err);
+        res.send(err);
+    }
+}
 
+//Client click on Houseowrker comment button
 const getComments = async(req,res)=>{
     // const houseworkerUsername = "Sara"
     try{
@@ -132,9 +133,9 @@ const getComments = async(req,res)=>{
 
 
 const getProfessions = async(req,res)=>{
-    // const houseworkerUsername = "Sara"
     try{
         const username = req.params.username;
+        // const username = req.session.user.username;
         const result = await houseworkerModel.getProfessions(username);
         res.json(result);
     }
@@ -192,6 +193,7 @@ module.exports ={
     deleteHouseworker,
     getRatings,
     getComments,
+    getOurComments,
     getProfessions,
     addProfession,
     udpateHouseworker,

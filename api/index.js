@@ -66,12 +66,12 @@ app.use(session({
     resave:false, 
     //if false =we only want to create session when the user is logged in (We saving something in session only when is user logged in)
     //if true = session will be created even user not logged in ()
-    saveUninitialized:true,
+    saveUninitialized:false,
     name:"sessionLog",
     secret: "aKiqn12$%5s@09~1s1",
     cookie:{
         //for deploy set the secure to TURE, TURE DONSN'T STORE COOKIE ON BROWSER in DEVELOPMENT(using postman and etc.)
-        secure:true, //if false - any HTTP call which is NOT HTTPS and it doesn't have SSL can access our cookies(can access this app in general)
+        secure:false, //our cookies works wiht false -if false - any HTTP call which is NOT HTTPS and it doesn't have SSL can access our cookies(can access this app in general)
         httpOnly: false, //if true - the  web page can't access the cookie in JS
         maxAge: 1000* 60 * 10, //session max age in ms 
     }
@@ -82,7 +82,7 @@ app.use(session({
 
 
 
-app.post('/api/registerUpload', upload.any("picture"), register);
+app.post('/api/register', upload.any("picture"), register);
 
 //routes
 app.use("/api/clients", clientRoute);

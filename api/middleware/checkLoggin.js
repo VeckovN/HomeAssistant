@@ -11,11 +11,18 @@ const isLogged = (req,res,next)=>{
 
 
 const checkClient = (req,res,next)=>{
+    console.log("Start");
+    console.log("SESSION: " + JSON.stringify(req.session))
 
-    if(!req.session.user)
+    if(!req.session.user){
         //if is authoriazied just move to the other middleware()
+        console.log("User isn't authenticated");
         return res.json({error:"User isn't authenticated"})
         
+    }
+        
+        
+    console.log("checkClient");
     if(req.session.user.type === 'Client')
         next();
     else

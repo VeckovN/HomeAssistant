@@ -61,6 +61,24 @@ const getClients = async(req,res)=>{
     }
 }
 
+//Logged client
+// const getClient = async (req,res)=>{
+//     // const username = req.params.username;
+//     const username = req.session.user.username;
+//     //THIS IS A PROMISE
+
+//     try{
+//         const result = await clientModel.findByUsername(username)
+//         const {password, ...clientData} = data;
+//         // res.json(data)
+//         res.json(clientData)
+//     }
+//     catch(err){
+//         console.log("ERROR: " + err);
+//         res.send(err).status(400);
+//     }
+// }
+
 
 const getComments = async(req,res)=>{
     try{

@@ -60,10 +60,13 @@ const findAllWithFilters = async(filters)=>{
 
     console.log("PROPS: " + "limit: " + limit + "/" + "sort: " + sort + "/" + "city: " + city + "/" + "ageFrom: " + ageFrom + "/" + "ageTo: " + ageTo + '/' + "gender: " + gender + "/" + "name: " + searchName + "/" + 'professions: ' + professions)
         
+    //SET and WITH after MATCH(h)<-[r:RATED] if exists
     var queryNeo4j = `
         Match(n:User)-[:IS_HOUSEWORKER]->(h:HouseWorker) \n
         MATCH(n)-[:LIVES_IN]->(c:City)
         MATCH(n)-[:GENDER]->(g:Gender)
+        SET n.id=id(n)
+        WITH n,c ,g 
         `
         ;
 
@@ -76,7 +79,7 @@ const findAllWithFilters = async(filters)=>{
         sortFlag=true;
 
     var orderBy='';
-    var returnQ ='RETURN n, c.name, g.type \n';
+    var returnQ ='RETURN  n, c.name, g.type \n';
     var where ='WHERE ';
 
     console.log("SORT FLAG: " + sortFlag);
@@ -142,10 +145,11 @@ const findAllWithFilters = async(filters)=>{
         let professionsLength = professionsArray.length;
         console.log("ARRATYYY: " + professions);
         console.log("ARRATYYY2: " + professionsArray[0]);
+        console.log("LENGHT PROF ARR " + professionsLength)
         if(professionsLength>0)
         {
             let professionString = '';
-            if(professionsLength==1)
+            if(professionsLength ==1)
                 professionString += `"${professions}"`;
             else{
                 //example 4 profes(staratelj Kuvar Bastovan Dadilja)
@@ -162,11 +166,18 @@ const findAllWithFilters = async(filters)=>{
             }
             
             console.log("RPOFSSFSFFS: " + professionString)
-            if(where.trim().length > 5)
-                where += ` AND p.title IN [${professionString}]`
-            else
-                where += `p.title IN [${professionString}]`
+            if(where.trim().length > 5){
+                where+= ` AND p.title IN [${professionString}] `
+                console.log("TEST1");
+            }
+                // where+= ` AND p.title IN [${professionString}]`
+            else{
+                where+= `p.title IN [${professionString}] `
+                console.log("TEST2");
+            }
+                
         }
+        
     }
             
     if(sortFlag){
@@ -180,7 +191,7 @@ const findAllWithFilters = async(filters)=>{
     
     //ADDING WHERE PART TO QUERY
     // if(city!=undefined || gender!=undefined || ageFrom!=0 || ageTo!=100 || !searchName)
-    if(city!=undefined || gender!=undefined || ageFrom!=0 || ageTo!=100 || searchName!=undefined || sortFlag )
+    if(city!=undefined || gender!=undefined || ageFrom!=0 || ageTo!=100 || searchName!=undefined || sortFlag || professions)
         queryNeo4j+=where
 
     //Orderby
@@ -206,8 +217,9 @@ const findAllWithFilters = async(filters)=>{
 
     //RETURN part --- concatenate return to query
     // queryNeo4j+= `RETURN n `
-    queryNeo4j+=returnQ;
     queryNeo4j+=orderBy;
+    queryNeo4j+=returnQ;
+    // queryNeo4j+=orderBy;
     queryNeo4j+=`LIMIT ${limit}`
 
     console.log("QUERY: " + queryNeo4j);
@@ -216,6 +228,8 @@ const findAllWithFilters = async(filters)=>{
     const result = await session.run(queryNeo4j);
     const houseworkers = result.records.map(el =>{
         const hs = el.get(0).properties;
+        //gotted id{"low":0,"high":0} it MUST parse to INT
+        hs.id = parseInt(hs.id); 
         hs.city = el.get(1);
         hs.gender =el.get(2); 
         //if rating exists
@@ -392,24 +406,28 @@ const getProfessions = async (username)=>{
     return professions;
 }
 
-const addProfession = async(profession, working_hour)=>{
-    const ourUsername ="Sara";
+const addProfession = async(username,profession, working_hour)=>{
+    //const ourUsername ="Sara";
     //MERGE INSTEAD CREATE(m)-[r:OFFERS]->(p)
     //PREVENT TO CREATE MULTIPLE TIMES SAME 'OFFER' RELATIONSHIP
     //(If there is the Offers relationship it will be returned not created )
+    const session = driver.session();
+    console.log("USERNAME: " + username);
+    console.log("PROFESSION: " + profession);
+    console.log("WORKING_H " + working_hour);
     const result = await session.run(`
         MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(m)
         MATCH(p:Profession {title:$profession})
         MERGE(m)-[r:OFFERS {working_hour:$hour}]->(p)
         RETURN p.title, p.working_hour`,
-    {houseworker:ourUsername, profession:profession, hour:working_hour}
+    {houseworker:username, profession:profession, hour:working_hour}
     )
 
     //title of added profession
     // return result.records[0].get(0).properties.title;
     //or RETURN p.title
     session.close();
-    return {profession:records[0].get(0), working_hour:records[0].get(1)}
+    // return {profession:records[0].get(0), working_hour:records[0].get(1)}
 }
 
 
@@ -430,38 +448,56 @@ const create = async(houseworkerObject)=>{
     //     gender:"Male"
     // }
 
-    const {username, email, password, first_name, last_name, picturePath, address, description, city, gender} = houseworkerObject;
+    console.log("TSWWWWWW1")
+    const {username, email, password, first_name, last_name, picturePath, address, description, city, gender, age, phone_number,professions } = houseworkerObject;
     
+    console.log("TSWWWWWW2")
     //WITH Clause is necessary between Create and Other part of query(Create Gender and City)
     const result = await session.run(`
-    CREATE (n:User 
-        {
-            username:$username, 
-            email:$email, 
-            password:$password, 
-            first_name:$first_name,
-            last_name:$last_name,
-            picturePath:$picturePath,
-            address:$address,
-            description:$description
-        }
-        ) 
-        -[:IS_HOUSEWORKER]->
-        (
-         m:HouseWorker
-         {
-             username:$username     
-         })
-    WITH n as user , m as houseworker
-    Match(g:Gender {type:$gender})
-    MERGE(user)-[r:GENDER]->(g)
+        CREATE (n:User 
+            {
+                username:$username, 
+                email:$email, 
+                password:$password, 
+                first_name:$first_name,
+                last_name:$last_name,
+                picturePath:$picturePath
+            }
+            ) 
+            -[:IS_HOUSEWORKER]->
+            (
+            m:HouseWorker
+            {
+                username:$username,
+                address:$address,
+                description:$description,
+                phone_number:$phone_number,
+                age:$age
+            })
+        WITH n as user , m as houseworker
+        Match(g:Gender {type:$gender})
+        MERGE(user)-[r:GENDER]->(g)
 
-    MERGE(c:City {name:$city})
-    MERGE(user)-[h:LIVES_IN]->(c)
-    RETURN user,g.type,c.name
+        MERGE(c:City {name:$city})
+        MERGE(user)-[h:LIVES_IN]->(c)
+        RETURN user,g.type,c.name
     `
-    ,{username:username, email:email, password:password, first_name:first_name, last_name:last_name, picturePath:picturePath, address:address, description:description ,city:city, gender:gender}
+    ,{username:username, email:email, password:password, first_name:first_name, last_name:last_name, picturePath:picturePath, address:address, description:description ,city:city, gender:gender, age:age, phone_number:phone_number}
     )
+
+    console.log("TSWWWWWW3")
+    //add Professions to user
+    //convert string to array (professions)
+    const professionsArray = professions.split(',');
+    console.log("PROFESSIONS: " + professions);
+    console.log("PROFESSIONSArray: " + JSON.stringify(professionsArray));
+    console.log("PROF: TYPEOF: " + typeof(professions));
+    console.log("PROF: TYPEOF ARRRAY: " + typeof(professionsArray));
+    //add professions
+    professionsArray.forEach(profession => {
+        console.log("PT: " + profession); 
+        addProfession(username, profession, "300");
+    });
 
     const user = result.records[0].get(0).properties;
     const userGender = result.records[0].get(1);

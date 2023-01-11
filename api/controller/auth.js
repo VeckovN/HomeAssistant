@@ -59,11 +59,12 @@ const register = async (req,res)=>{
     }
     else if(type=='Houseworker'){ //houseworker
         const data = await houseworkerModal.findByUsername(username);
-        console.log(data);
+        console.log("EXIST:" + data);
         if(data)
             return res.json({error:"User with this username exists"})
         else{
             const user = {username:username, type:type}
+            console.log("EHHHHHHH");
             await houseworkerModal.create(userData);
             req.session.user = user;
             return res.json(user);

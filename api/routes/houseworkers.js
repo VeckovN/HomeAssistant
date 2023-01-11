@@ -7,6 +7,7 @@ const {
     deleteHouseworker,
     getRatings,
     getComments,
+    getOurComments,
     getProfessions,
     addProfession,
     udpateHouseworker,
@@ -44,8 +45,10 @@ router.get('/rating', checkHouseworker, getRatings);
 router.get('/rating/:username', getRatingUsername);
 // router.get('/comments', checkHouseworker, getComments);
 
-// router.get('/comments',  getComments);
+// router.get('/comments', checkHouseworker, getComments);
+//Client click on comment button
 router.get('/comments/:username',  getComments);
+router.get('/ourcomments/', getOurComments)
 // router.get('/professions', checkHouseworker, getProfessions);
 router.get('/professions/:username', getProfessions);
 router.get('/cities',  getCities);
