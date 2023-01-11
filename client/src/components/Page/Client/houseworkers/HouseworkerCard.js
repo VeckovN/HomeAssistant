@@ -1,5 +1,6 @@
 import {useEffect, useState, useRef} from 'react';
 import axios from 'axios';
+axios.defaults.withCredentials = true
 import {useSelector} from 'react-redux'
 import Modal from '../../../UI/Modal.js'
 import CommentItem from '../../../UI/CommentItem';

@@ -5,7 +5,7 @@ import {toast} from 'react-toastify'; //need be imported in App.js
 import {register, reset} from '../../../store/auth-slice'
 
 const ClientRegister = () =>{
-
+    //@TODO - Create custom hook for storing and manipulation with this data( repeated in onther components)
     const [data, setData] = useState({
         username:'',
         email:'',
@@ -56,7 +56,6 @@ const ClientRegister = () =>{
         const name = event.target.name;
         console.log("NA E: " + typeof(name));
         const value = event.target.value;
-
         setData(prev=> (
             {
                 ...prev,
@@ -65,12 +64,9 @@ const ClientRegister = () =>{
         ))
     }
 
-    const onImageChange = (event)=>{
-        //on BACKEND we will take file from req and take fileName( unique generated when is uploaded to server)
 
+    const onImageChange = (event)=>{
         const file = event.target.files[0];
-        // const fileName = file[0].file.name
-        //const imgName = files.name; //this put in picture prop
         setData(prev =>(
             {
                 ...prev,
@@ -100,12 +96,7 @@ const ClientRegister = () =>{
             }
             //formData.append("picturePath", data['picture'].name);
             formData.append('type', 'Client');
-            // const data = {...data, type:'client'}
             
-
-            // const form = new FormData();
-            // form.append('picture', data['picture'])
-            // dispatch(register(formData));
             dispatch(register(formData));
         }
     }

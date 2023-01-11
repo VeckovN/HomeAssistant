@@ -21,7 +21,9 @@ const CommentsList = () =>{
     },[])
 
     const fetchComments = async() =>{
-        const result = await axios.get(`http://localhost:5000/api/houseworker/comments/${user}`);
+        // const result = await axios.get(`http://localhost:5000/api/houseworker/comments/${user}`);
+        //with req.session
+        const result = await axios.get(`http://localhost:5000/api/houseworker/ourComments/`);
         const comms = result.data;
         console.log("COMS : " + JSON.stringify(comms))
         setComments(comms);

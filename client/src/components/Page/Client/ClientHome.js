@@ -133,8 +133,9 @@ const ClientHome = () =>{
             <br/>
             <br/>
             <br/>
+            {console.log("ID::: " + user.id)}
             <HouseworkerCard
-                key={user.username}
+                key={user.id}
                 username={user.username}
                 email={user.email}
                 first_name={user.first_name}

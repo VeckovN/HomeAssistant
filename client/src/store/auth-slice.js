@@ -1,5 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+// /https://stackoverflow.com/questions/43002444/make-axios-send-cookies-in-its-requests-automatically
+// TO SEND COOKIE force credentials to every Axios requests
+axios.defaults.withCredentials = true
 
 
 //with login we set user in localStorage
@@ -25,32 +28,15 @@ export const register = createAsyncThunk(
             //THIS FETCH FUNCTION COULD BE IN SERVICE FOLDER (as Api Calls)
             // const response = await axios.post('http://localhost:5000/api/register', user);
             //with context-type multipart/form-data
-            // axios({
-            //     method: "post",
-            //     url: "http://localhost:5000/api/register",
-            //     data: bodyFormData,
-            //     headers: { "Content-Type": "multipart/form-data" },
-            //   })
-            //     .then(function (response) {
-            //       //handle success
-            //       console.log(response);
-            //     })
-            //     .catch(function (response) {
-            //       //handle error
-            //       console.log(response);
-            //     });
-
             const response = await axios({
                 method: 'post',
-                url: 'http://localhost:5000/api/registerUpload',
+                url: 'http://localhost:5000/api/register',
                 data: userFormData,
                 headers: {
                     'Content-Type': `multipart/form-data`,
                 },
             });
             console.log("REPOSNE FORM DATA: " + response);
-            
-            
             if(response.data)
                 //if post request is success we put response (user) to localStorage
                 localStorage.setItem('user', JSON.stringify(response.data));
