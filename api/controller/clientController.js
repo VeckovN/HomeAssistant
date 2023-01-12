@@ -1,4 +1,5 @@
 const clientModel = require('../model/Client');
+const bcrypt = require('bcrypt');
 
 const getClientByUsername = (req,res)=>{
     //One way with chaining .then()
@@ -58,6 +59,19 @@ const getClients = async(req,res)=>{
     catch(err){
         console.log("Error getClients: " + err);
         res.send(err).status(400);
+    }
+}
+
+const getClientInfo = async(req,res)=>{
+    //logged user session
+    try{
+        const username = req.session.user.username;
+
+        const result = await clientModel.getInfo(username);
+        res.json(result);
+    }
+    catch(err){
+        console.log("ERROR GetClientInfo: " + err);
     }
 }
 
@@ -127,6 +141,8 @@ const rateHouseworker = async (req,res)=>{
 // }
 const commentHouseworker = async(req, res)=>{
     try{
+        //we comment
+        // const client = req.session.user.username;
         const client= req.body.client
         const houseworker = req.body.houseworker;
         const comment = req.body.comment;
@@ -156,12 +172,30 @@ const createClient = async(req,res)=>{
 const udpateClient = async(req,res)=>{
     try{
         const newInfo = req.body;
-        const result = await clientModel.update(newInfo);
+        const username = req.session.user.username;
+
+        //hash password if is password updated
+        if(newInfo.password)
+            newInfo.password = bcrypt.hashSync(newInfo.password, 12);
+        
+        const result = await clientModel.update(username,newInfo);
+        console.log("CLIENT UPDATED!!!");
+        console.log("NEWINFO " + JSON.stringify(newInfo));
+
+        //chech if city is necessery to update
+        if(newInfo.city)
+            await clientModel.updateCity(username,newInfo.city)
+            //console.log("CITY UPDATED")
         res.json(result);
+        
     }
     catch(err){
         console.log("Error UpdateClient(Yourself): " + err);
-        res.send(err).status(400);
+        //Catch in front wiht axios try catch  (THIS will shotdown server functionality)
+        //throw new Error("Error with client profile update")
+
+        // THIS wont stop the server
+        return res.status(406).send("Error with updating");
     }
 }
 
@@ -186,4 +220,5 @@ module.exports = {
     udpateClient,
     commentHouseworker,
     createClient,
+    getClientInfo
 }

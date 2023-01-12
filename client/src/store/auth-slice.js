@@ -7,6 +7,9 @@ axios.defaults.withCredentials = true
 
 //with login we set user in localStorage
 const user = JSON.parse(localStorage.getItem('user'));
+//console.log()
+//WITH LOGIN GET USER FROM COOKIE NOT FROM LOCALSTORAGE 
+//when is logged Express send cookie to client (cookieID -> 'sessionLog")
 
 const initialState ={
     user: user ? user : null,
@@ -38,6 +41,7 @@ export const register = createAsyncThunk(
             });
             console.log("REPOSNE FORM DATA: " + response);
             if(response.data)
+                //GET USER FROM COOKIE -EXPRESS SESSION (WE DON't NEED PUT THIS USER IN LOCAL STORATE)
                 //if post request is success we put response (user) to localStorage
                 localStorage.setItem('user', JSON.stringify(response.data));
             
@@ -122,6 +126,8 @@ const authSlice = createSlice({
                 //we wanna take this data (payload) and set to user state
                 state.loading = false;
                 state.success = true;
+
+                //add cookie info in action.payload
                 state.user = action.payload //payload returned from reg function (return response.data); which is await axios.post(reg) 
             })
             .addCase(register.rejected, (state,action) =>{

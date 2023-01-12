@@ -1,10 +1,13 @@
 import {useState, useEffect} from 'react';
+import axios from 'axios';
+import {toast} from 'react-toastify';
+
 
 //For user enterd value Validation use useState()
 //for only taking value on submit(without validation) better choice is useRef
 const ClientProfile = () =>{ 
 
-    const [updated, setUpdated] = useState({
+    const [updatedData, setUpdatedData] = useState({
         username:'',
         email:'',
         password:'',
@@ -13,18 +16,35 @@ const ClientProfile = () =>{
         last_name:'',
         picture:'',
         city:'',
-        gender:''
     });
 
-    const {username, email, password, passwordRepeat, first_name, last_name, picture, city, gender} = updated;
+    const [clientData, setClientData] = useState({})
 
+    //setted value on fetch
+    useEffect( ()=>{
+        fetchData()
+    }, [])
+
+    const fetchData = async() =>{
+        const result = await axios.get(`http://localhost:5000/api/clients/info`)
+        const ClientData = result.data;
+        //console.log("RATING: " + JSON.stringify(ratingValue));
+        console.log("DATA : "  + JSON.stringify(ClientData))
+        setClientData(ClientData);
+    }
+
+    // const [updatedData, setUpdatedData] = useState({});
+
+    console.log("FETCHED DATA: " + JSON.stringify(clientData));
+
+    const {username, email, password, passwordRepeat, first_name, last_name, picture, city, gender} = updatedData;
 
 
     const onChangeUpdate = (e)=>{
         
         const key = e.target.name;
         const value = e.target.value;
-        setUpdated(prev => (
+        setUpdatedData(prev => (
             {
                 ...prev,
                 [key] : value,
@@ -34,7 +54,7 @@ const ClientProfile = () =>{
 
     const onImageChange = (event)=>{
         const file = event.target.files[0];
-        setData(prev =>(
+        setUpdatedData(prev =>(
             {
                 ...prev,
                 ["picture"]:file
@@ -43,10 +63,59 @@ const ClientProfile = () =>{
         console.log(file.name);
     }
 
-    console.log("UpdatedData: \n" + JSON.stringify(updated));
+    console.log("UpdatedData: \n" + JSON.stringify(updatedData));
 
-    const onSubmitUpdate = (e)=>{
+    const onSubmitUpdate = async (e)=>{
         e.preventDefault();
+
+        if(updatedData.password != updatedData.passwordRepeat)
+            alert("Passwords have to be same")
+        else{
+            try{
+                //only props wiht updated data( !='') for HTTP request
+                let newData = {};
+                //without re-fetching just override ClientData with updatedData
+                Object.keys(updatedData).forEach((key,index) =>{
+                    console.log("UPD: " + typeof(key)+ " : " + updatedData[key]);
+                    
+                    //picture wont store in this object(for it use diferent request)
+                    if(updatedData[key] != '' && key!='picture'){
+                        console.log("K " + key);
+                        //data object wiht only updated props (for HTTP request)
+                        newData[key] = updatedData[key];
+                        
+                        setClientData(prev =>({
+                            ...prev,
+                            //BECAUSE 'key' is STRING and MUST use []  
+                            [key] : updatedData[key] 
+                        }))
+                        console.log("SDSDASD: " + JSON.stringify(clientData));
+                        console.log("DATAAAA: " + JSON.stringify(newData));
+                    }
+                })
+    
+                // if(updatedData.picture !=''){
+                //     await axios.put(`http://localhost:5000/api/clients/updateImage/`, updateImage);
+                // }
+    
+                const result = await axios.put(`http://localhost:5000/api/clients/update/`, newData);
+                const comms = result.data;
+                console.log("COMS : " + JSON.stringify(comms))
+    
+                toast.success("Successfuly updated")
+    
+    
+            }
+            catch(err){
+                console.log("Erorr: " + err);
+                //eventualy set error state
+                toast.error("Error updated")
+            }
+        }
+        
+
+        
+
     }
 
     // username:'',
@@ -68,7 +137,8 @@ const ClientProfile = () =>{
                     {/* left side */}
                     <div className='input-label-form'>
                         <div className='input-container'>
-                            <label>Username:</label>
+                            <label>Username: <b>{clientData.username}</b></label>
+                            <br/>
                             <input 
                             className='input_field'
                             type='text'
@@ -78,9 +148,10 @@ const ClientProfile = () =>{
                             onChange={onChangeUpdate}
                             />
                         </div>
-
+                        
                         <div className='input-container'>
-                            <label>Email</label>
+                            <label>Email: <b>{clientData.email}</b></label>
+                            <br/>
                             <input 
                             className='input_field'
                             type='email'
@@ -93,6 +164,7 @@ const ClientProfile = () =>{
 
                         <div className='input-container'>
                             <label>Password</label>
+                            <br/>
                             <input 
                             className='input_field'
                             type='password'
@@ -106,6 +178,7 @@ const ClientProfile = () =>{
                         {password &&  //only if is password entered
                         <div className='input-container'>
                             <label>Repeat Password</label>
+                            <br/>
                             <input 
                             className='input_field'
                             type='password'
@@ -118,7 +191,8 @@ const ClientProfile = () =>{
                         }
 
                         <div className='input-container'>
-                            <label>First Name</label>
+                            <label>First Name: <b>{clientData.first_name}</b></label>
+                            <br/>
                             <input 
                             className='input_field'
                             type='text'
@@ -130,7 +204,8 @@ const ClientProfile = () =>{
                         </div>
 
                         <div className='input-container'>
-                            <label>Last Name</label>
+                            <label>Last Name: <b>{clientData.last_name}</b></label>
+                            <br/>
                             <input 
                             className='input_field'
                             type='text'
@@ -142,7 +217,8 @@ const ClientProfile = () =>{
                         </div>
 
                         <div className='input-container'>
-                            <label>City</label>
+                            <label>City: <b>{clientData.city}</b></label>
+                            <br/>
                             <input 
                             className='input_field'
                             type='text'
@@ -153,9 +229,10 @@ const ClientProfile = () =>{
                             />
                         </div>
 
-                        <div class='form-group form-group-image'>
-                            <label>Profile Picture</label>
-                            <input type="file" onChange={onImageChange}  class='inputFile' name="picture" />
+                        <div classname='form-group form-group-image'>
+                            <label>Profile Picture </label>
+                            <br/>
+                            <input type="file" onChange={onImageChange}  className='inputFile' name="picture" />
                         </div>
 
                         {/* button for submit Above inputs  */}

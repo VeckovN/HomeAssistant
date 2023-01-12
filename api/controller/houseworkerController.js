@@ -104,9 +104,10 @@ const getCities = async(req,res)=>{
 //COmments without parrameters(session based)
 const getOurComments = async(req,res)=>{
     // const houseworkerUsername = "Sara"
+    console.log("HEREEE");
     try{
         const username = req.session.user.username
-        console.log("COMMENTSESSON:" + JSON.stringify(req.session))
+        console.log("\n COMMENTSESSON:" + JSON.stringify(req.session))
         const result = await houseworkerModel.getComments(username);
         res.json(result);
     }

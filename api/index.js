@@ -79,9 +79,6 @@ app.use(session({
 
 //routes with files
 //app.post("/api/auth/register", upload.single("picture"), register);
-
-
-
 app.post('/api/register', upload.any("picture"), register);
 
 //routes

@@ -5,9 +5,6 @@ import CommentItem  from '../../UI/CommentItem';
 
 
 const CommentsList = () =>{
-
-
-
     //{comment:commentProp, from:clientProp}
     const [comments, setComments] = useState(null);
 
@@ -23,13 +20,25 @@ const CommentsList = () =>{
     const fetchComments = async() =>{
         // const result = await axios.get(`http://localhost:5000/api/houseworker/comments/${user}`);
         //with req.session
-        const result = await axios.get(`http://localhost:5000/api/houseworker/ourComments/`);
+        // try{
+        //     const result = await axios.get(`http://localhost:5000/api/houseworker/ourComments/`);
+        //     const comms = result.data;
+        //     console.log("COMS : " + JSON.stringify(comms))
+        //     setComments(comms);
+        // }
+        // catch(err){
+        //     console.log("ERROR " + err);
+        // }
+
+        const result = await axios.get(`http://localhost:5000/api/houseworker/ourcomments/`);
         const comms = result.data;
         console.log("COMS : " + JSON.stringify(comms))
         setComments(comms);
+      
         // console.log("Data: +" + JSON.stringify(comm));
     }
 
+    console.log("COMMENTS: " + JSON.stringify(comments));
 
     let commentList;
     {comments ?
@@ -46,6 +55,7 @@ const CommentsList = () =>{
 
     return (
         <div>
+            {/* {comments ? commentList : <div>No comments</div>} */}
             {commentList}
         </div>
     )

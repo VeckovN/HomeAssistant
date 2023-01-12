@@ -37,6 +37,39 @@ const findByUsername = async (username)=>{
     }
 }
 
+const getInfo = async (username) =>{
+    const session = driver.session();
+    //more than one is expected
+    const result = await session.run(
+        `MATCH(n:User {username:$name})-[:IS_CLIENT]->(c)
+            MATCH(n)-[:GENDER]->(g)
+            MATCH(n)-[:LIVES_IN]->(l)
+            RETURN n,  g.type, l.name`
+        ,{name:username}
+    )
+
+    //if there isn't users
+    if(result.records.length == 0)
+        return new Error("Client not exists")
+
+    //one result -> [0]
+    const clientProp = result.records[0].get(0).properties;
+    const clientGender = result.records[0].get(1);
+    const clientCity = result.records[0].get(2);
+
+    //all properties excpets password
+    const { password, ...clientInfo} = clientProp 
+
+    //Add gender and city
+    clientInfo.gender = clientGender;
+    clientInfo.city = clientCity;
+
+    console.log("CLIENT INFO: " + JSON.stringify(clientInfo));
+
+    session.close();
+    return clientInfo;
+}
+
 const findAll = async ()=>{
     const session = driver.session();
     //more than one is expected
@@ -140,7 +173,6 @@ const getAllComments = async (username)=>{
 const commentHouseworker = async(client, houseworker, comment)=>{
     const session = driver.session();
     //our (CLient) username from LocalStore or cookie
-    
 
     const result = await session.run(`
     MATCH (n:Client {username:$client})
@@ -304,7 +336,7 @@ const create = async(clientObject)=>{
 }
 
 //update only client NODE property
-const update = async(newValue)=>{
+const update = async(username, newValue)=>{
     const session = driver.session();
     //newValue must have same property as Client NODE
     // email	"novak@gmail.com"
@@ -314,13 +346,11 @@ const update = async(newValue)=>{
     // picture	"/"
     // username "Novak"
 
-    const ourUsername ="Novak";    
-
     const result = await session.run(`
         MATCH (n:User { username: $client})
         SET n += $object
         RETURN n
-    `,{client:ourUsername, object:newValue}
+    `,{client:username, object:newValue}
     )
     // const result = await session.run(`
     //     MATCH (n:User { username: "Novak"})
@@ -332,16 +362,16 @@ const update = async(newValue)=>{
 }
 
 //update City node with [:LIVES_IN]
-const updateCity = async(city)=>{
+const updateCity = async(username, city)=>{
     const session = driver.session();
-    const ourUsername = "Sara";
+
     const result = await session.run(`
         MATCH(n:User{username:$client})
         MATCH(n)-[:LIVES_IN]->(c:City)
         Set c.name = $cityName
         return c.name
     `
-    ,{client:ourUsername, cityName:city}
+    ,{client:username, cityName:city}
     )
 
     session.close();
@@ -394,4 +424,5 @@ module.exports ={
     updateCity,
     updateGender,
     create,
+    getInfo,
 }
