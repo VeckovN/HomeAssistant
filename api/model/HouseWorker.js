@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const { address } = require('ip');
 const { Session } = require('neo4j-driver');
 const {session,driver} = require('../db/neo4j');
 
@@ -26,6 +27,43 @@ const findByUsername = async (username)=>{
         return client;
     }
     
+}
+
+const getInfo = async(username)=>{
+    const session = driver.session();
+    //more than one is expected
+    const result = await session.run(
+        `MATCH(n:User {username:$name})-[:IS_HOUSEWORKER]->(h)
+            MATCH(n)-[:GENDER]->(g)
+            MATCH(n)-[:LIVES_IN]->(l)
+            RETURN n, h, g.type, l.name`
+        ,{name:username}
+    )
+
+    if(result.records.length == 0)
+        return []; 
+
+    const userProp = result.records[0].get(0).properties;
+    const houseworkerProp = result.records[0].get(1).properties;
+    const houseworkerGender = result.records[0].get(2);
+    const houseworkerCity = result.records[0].get(3);
+
+    const {password, ...houseworkerInfo} = userProp;
+
+    //props from Houseworker Node
+    houseworkerInfo.address = houseworkerProp.address;
+    houseworkerInfo.phone_number = houseworkerProp.phone_number;
+    houseworkerInfo.description = houseworkerProp.description;
+    
+    //Gender and city
+    houseworkerInfo.gender = houseworkerGender;
+    houseworkerInfo.city = houseworkerCity;
+
+    console.log("HOUSEWORRK PROP " + JSON.stringify(houseworkerProp));
+    console.log("HOUSEWORKER INFO " + JSON.stringify(houseworkerInfo));
+
+    session.close();
+    return houseworkerInfo;
 }
 
 const findAll = async ()=>{
@@ -241,11 +279,7 @@ const findAllWithFilters = async(filters)=>{
     
     session.close();
     return houseworkers;
-
 }
-
-
-
 
 const findByUsernameAndDelete = async (username)=>{
     //User -[:IS_CLIENT]->Client
@@ -448,6 +482,26 @@ const create = async(houseworkerObject)=>{
     //     gender:"Male"
     // }
 
+    //IN User Node
+    //username:"Sara", 
+    //     email:"sara@gmail.com", 
+    //     password:"pw1", 
+    //     first_name:"Sara",
+    //     last_name:"Veckov",
+    //     picture:"/",
+    //     age:''
+
+    //RELATIONSHIPS WITH USER NODE
+    //     city 
+    //     gender
+
+    //IN HOUSEWORKER NODE
+    //     address:"Mokranjceva",
+    //     description:"Ambicious, Hardworker",
+    //     phone_number
+
+
+
     console.log("TSWWWWWW1")
     const {username, email, password, first_name, last_name, picturePath, address, description, city, gender, age, phone_number,professions } = houseworkerObject;
     
@@ -512,27 +566,33 @@ const create = async(houseworkerObject)=>{
 
 //UNFINISHED
 //!!!!!! we need also update relationships ->LIVES_IN and GENDER
-const update = async(newValue)=>{
-    const session = driver.session();
-    const ourUsername ="Sara";    
+const update = async(username, newUserValue, newHouseworkerValue,)=>{
+
+    //take only properties of User Node
+    
+
+    //other properties for HouseworkerNode and RelationSHips(like city and professions)
+
+    //Update UserNode 
+    const session = driver.session(); 
     const result = await session.run(`
         MATCH (n:User { username: $houseworker})
         SET n += $object
         RETURN n
-    `,{houseworker:ourUsername, object:newValue}
+    `,{houseworker:username, object:newUserValue}
     )
 
-    //check there is gender and city passed as wanted parametar to update
+    const houseworkerResult = await session.run(`
+        MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(h)
+        SET h += $object
+        RETURN h
+    `,{houseworker:username, object:newHouseworkerValue}
+    )
 
-    if('')
-    // const result = await session.run(`
-    //     MATCH (n:User { username: "Novak"})
-    //     SET n += { password:"pwww" , picture:"//" }
-    // `
-    // )
     session.close();
     return result.records[0].get(0).properties;
 }
+
 
 const updatePassword = async(password)=>{
     const session = driver.session();
@@ -550,16 +610,15 @@ const updatePassword = async(password)=>{
     return result.records[0].get(0);
 }
 
-const updateCity = async(city)=>{
+const updateCity = async(username,city)=>{
     const session = driver.session();
-    const ourUsername = "Sara";
     const result = await session.run(`
         MATCH(n:User{username:$houseworker})
         MATCH(n)-[:LIVES_IN]->(c:City)
         Set c.name = $cityName
         return c.name
     `
-    ,{houseworker:ourUsername, cityName:city}
+    ,{houseworker:username, cityName:city}
     )
     
     session.close();
@@ -606,6 +665,7 @@ const updateGender = async(gender)=>{
 module.exports ={
     findByUsername,
     findAll,
+    getInfo,
     findAllWithFilters,
     findByUsernameAndDelete,
     getGender,

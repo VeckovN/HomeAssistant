@@ -1,5 +1,5 @@
 const { Socket } = require('socket.io');
-const {incr, set, hmset, sadd, hmget, exists, client, zrevrange, smembers, zadd, srem, del} = require('../db/redis');
+const {incr, set, hmset, sadd, hmget, exists, client, zrevrange, smembers, zadd, srem, del, get} = require('../db/redis');
 const { use } = require('../routes/clients');
 
 
@@ -19,9 +19,12 @@ const createUser = async(username, hashedPassword) =>{
     return {id:freeID, username};
 }
 
-const UserIdByUsername = (username)=>{
-    const user = get(`username:${username}`); //user:{userID}
-    const userID = user.split(':')[1]; //[user, {userID}]
+const UserIdByUsername = async (username)=>{
+    //for test
+
+    const user = await get(`username:${username}`); //user:{userID}
+    console.log("USERRRRR : "  + user);
+    let userID = user.split(':')[1]; //[user, {userID}]
     return userID
 }
 
@@ -74,17 +77,45 @@ const getMessages = async(roomID, offset=0, size=50) =>{
     if(!roomExists)
         return null;
     else{
+
         //return all messages from room
-        const messages = await zrevrange(roomID, offset, size)
-        messages.map(msg => JSON.parse(msg));
+        console.log("TTTTTT" + roomID + " " + offset + " " + size);
+        const messages = await zrevrange(roomKey, offset, size)
+        console.log("MESSAGESSS : " + JSON.stringify(messages));
+
+        return messages;
+        // //return message by message
     }
 }
 
 const getAllRooms = async(username)=>{
-    const userID = getUserIdByUsername(username);
+    console.log("TESS");
+    
+    let userID = await UserIdByUsername(username);
+    console.log("TESSS2");
     const userRoomKey = `user:${userID}:rooms`;
-    const rooms =[];
+    let rooms =[];
     rooms = await smembers(userRoomKey);
+
+    //get usernames of sender in rooms
+
+    //rooms (take diferend id of userID - our id ant)
+    //1:7
+    //1:3
+    //1:2
+
+    // const userStructure = {}; //roomID, with el and user: found username by roomID
+    // rooms.map((el) =>{
+    //     const userIDS = el.split(':');
+    //     const userSender = userIDS[0] ? 
+    //     let userID1 = userIDS[0];
+    //     let userID2 = userIDS[1];
+
+
+        
+    // })
+
+    return rooms;
 }
 
 //this will be exected on socket event socket.on('message') event

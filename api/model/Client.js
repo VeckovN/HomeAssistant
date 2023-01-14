@@ -50,7 +50,9 @@ const getInfo = async (username) =>{
 
     //if there isn't users
     if(result.records.length == 0)
-        return new Error("Client not exists")
+        //not good practice to return Error
+        // return new Error("Client not exists")
+        return []; 
 
     //one result -> [0]
     const clientProp = result.records[0].get(0).properties;

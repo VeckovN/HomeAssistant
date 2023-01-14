@@ -14,7 +14,8 @@ const {
     getHouseworkerWithFilters,
     getRatingUsername,
     getCities,
-    updatePassword
+    updatePassword,
+    getHouseworkerInfo
 } = require('../controller/houseworkerController');
 
 
@@ -25,6 +26,7 @@ router.get('/',  getHouseworkers); //client will see all houseworkers
 //with filterData and Search
 // router.get('/:filter/:search', getHouseworkerFilterAndSearch);
 
+router.put('/update', checkHouseworker, udpateHouseworker);
 
 
 // router.get('/filterSearch', getHouseworkerFilterAndSearch);
@@ -35,7 +37,7 @@ router.get('/',  getHouseworkers); //client will see all houseworkers
 // //or One route for filter and in controller check for existing params end send it to backend
 //http://localhost:5000/api/houseworker/filter?gender=male&city=Beograd  --- "?" between filter and params
 router.get('/filter', getHouseworkerWithFilters);
-
+router.get('/info', checkHouseworker, getHouseworkerInfo )
 
 //IF IS THIS ROUTE (with :username - params) is ABOVE the /rating,comments,professions -get route with 
 //will make conflict, this MUST BE BELOVE ALL OF THESE
@@ -55,7 +57,7 @@ router.get('/cities',  getCities);
 //Here without conflict
 router.get('/:username', checkHouseworker, getHouseworkerByUsername);
 router.post('/professions/add', checkHouseworker, addProfession);
-router.put('/update', checkHouseworker, udpateHouseworker);
+
 
 router.post('/update/password', checkHouseworker, updatePassword)
 

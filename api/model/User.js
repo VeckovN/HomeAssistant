@@ -27,7 +27,7 @@ const findByUsername = async(username)=>{
 
     const userType = userTypeResult.records[0].get(0);
     const userInfo = userResult.records[0].get(0).properties;
-    console.log("ISCLIENT: " + JSON.stringify(userType) + "--- " + JSON.stringify(userInfo));
+    console.log("User: " + JSON.stringify(userType) + "--- " + JSON.stringify(userInfo));
 
     session.close();
     return {props:userInfo, type:userType};

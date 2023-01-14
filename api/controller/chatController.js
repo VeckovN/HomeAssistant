@@ -37,11 +37,25 @@ const sendMessage = async(req,res)=>{
     // console.log("CONTROL: " + obj);
 }
 
+const getAllRooms = async(req,res)=>{
+    // const username = req.session.user.username;
+    const username = "Novak"
+    console.log("ROOM USERNAME: " + username);
+    try{
+        const result = await chatModal.getAllRooms(username);
+        res.json(result);
+    }catch(err){
+        console.log(err);
+        res.status(400).send("error getAllRooms");
+    }
+}
+
 module.exports ={
     getRoomId,
     getUserIdByUsername,
     getMessages,
-    sendMessage
+    sendMessage,
+    getAllRooms
 
 
 }

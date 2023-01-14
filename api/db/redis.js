@@ -21,6 +21,8 @@ const client = redis.createClient({legacyMode:true});
 //RedisStore has been created and put session-object in it
 // const RedisStore = connectRedis(session);
 let RedisStore = require("connect-redis")(session)
+//create subscriber
+const sub = redis.createClient();
 
 // const incr = (key = "key") =>{//default ="key" if isn't assigned
 //     new Promise((resolve, reject) =>{
@@ -35,6 +37,8 @@ let RedisStore = require("connect-redis")(session)
 //     })
 // } 
 
+
+
 client.on('error', function(err) {
     console.log('Redis error: ' + err);
 }); 
@@ -42,6 +46,7 @@ client.on('error', function(err) {
 
 const resolvePromise = (resolve,reject)=>{
     //redis.get-orWhaterver(key, (err, res) => {
+        console.log("TESSS");
     return (err,data)=>{
         if(err)
             reject(err)
@@ -54,7 +59,6 @@ const incr = (key = "key") =>{//default ="key" if isn't assigned
         client.incr(key, resolvePromise(resolve, reject));
     })
 } 
-
 const decr = (key = "key") =>
     new Promise((resolve, reject) => client.decr(key, resolvePromise(resolve, reject)))
 
@@ -92,8 +96,12 @@ const srem = (key = "key", key2 = "") =>
     new Promise((resolve, reject) => client.srem(key, key2, resolvePromise(resolve, reject)))
 
     //key, offset, size
-const zrevrange = (key, value, value2) =>
-    new Promise((resolve, reject)=> client.zrevrange(key, value, value+value2, resolvePromise(resolve, reject)))
+const zrevrange = (key, value, value2) => {
+    const limit = parseInt(value+value2);
+    return new Promise((resolve, reject)=> client.zRange(key, value, limit, resolvePromise(resolve, reject)))
+}
+    // const limit = value+value2;
+    // new Promise((resolve, reject)=> client.zRange(key, value, value+value2, resolvePromise(resolve, reject)))
 
 const zrem = (key, value) =>
     new Promise((resolve, reject) =>client.zrem(key,value, resolvePromise(resolve, reject)))
@@ -103,6 +111,7 @@ const del = (key)=>
 
 module.exports ={
     client,
+    sub,
     RedisStore,
     incr,
     decr,
@@ -120,4 +129,5 @@ module.exports ={
     zrevrange,
     zrem,
     del
+     
 }

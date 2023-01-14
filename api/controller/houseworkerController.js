@@ -1,5 +1,5 @@
 const houseworkerModel = require('../model/HouseWorker');
-const queryString = require('querystring');
+const bcrypt = require('bcrypt');
 
 const getHouseworkerByUsername = async(req,res)=>{
     //from LocalStorage or Cookie
@@ -46,6 +46,19 @@ const getHouseworkers = async(req,res)=>{
     catch(err){
         console.log("ERROR GetHouseworkers: " + err);
         res.send(err);
+    }
+}
+
+
+const getHouseworkerInfo = async(req,res)=>{
+    //logged user session
+    try{
+        const username = req.session.user.username;
+        const result = await houseworkerModel.getInfo(username);
+        res.json(result);
+    }
+    catch(err){
+        console.log("ERROR GetClientInfo: " + err);
     }
 }
 
@@ -163,16 +176,43 @@ const addProfession = async(req,res)=>{
 
 const udpateHouseworker = async(req,res)=>{
     try{
-        const newInfo = req.body;
+        const newData = req.body;
+        const username = req.session.user.username;
 
-        const result = await houseworkerModel.update(newInfo);
-        res.json(result);
+        if(newData.password)
+            newData.password = bcrypt.hashSync(newData.password, 12);
+
+        //desstructuring - address, phone_number and description belogn to Houseworker Node
+        //but all the others belong to User Node
+        const {address, phone_number, description, city, professions, ...newUserInfo} = newData;
+
+        const newHouseworkerInfo = {address, phone_number, description};
+
+
+        console.log("USERNAME: " + username );
+        console.log("NewUserInfo: " + JSON.stringify(newUserInfo))
+        console.log("NewHouseworkerInfo " + JSON.stringify(newHouseworkerInfo));
+        console.log("CITY: " + city);
+
+        await houseworkerModel.update(username, newUserInfo, newHouseworkerInfo);
+        
+        //update City 
+        if(city)
+            await houseworkerModel.updateCity(username, city);
+        
+        // if(professions){
+        //     await houseworkerModel.updateProfessions(username,professions);
+        // }
+
+        // res.json(result);
+        res.send("Success updated!!!");
     }
     catch(err){
         console.log("Error UpdateHouseworker(Yourself): " + err);
         res.send(err).status(400);
     }
 }
+
 
 const updatePassword = async(req,res)=>{
     try{
@@ -201,5 +241,6 @@ module.exports ={
     getHouseworkerWithFilters,
     getRatingUsername,
     getCities,
-    updatePassword 
+    updatePassword,
+    getHouseworkerInfo
 }

@@ -10,9 +10,12 @@ const chatRoute = require('./routes/chat');
 const dotenv = require('dotenv');
 const path = require('path');
 const multer = require('multer');
-const {client:redisClient, RedisStore, set, sadd, smembers, hmget, srem } = require('./db/redis');
+const {client:redisClient, RedisStore, sub, set, sadd, smembers, hmget, srem } = require('./db/redis');
 dotenv.config();
 const {register} = require('./controller/auth')
+
+const redis = require('redis');
+
 
 const app = express()
 app.use(cookieParser())
@@ -120,34 +123,45 @@ server.listen(5000, ()=>{
 //Unique serverID -> Combination of IpAddress:Port
 //THis Could be in .env
 const ip = require('ip').address();
-// const port ='5000';
 const port ='5000';
-const serverID = `${ip}:${port}`
+const ourServerID = `${ip}:${port}`
 console.log("IP:" + ip);
 
 //public and subscribe initialization
-redisClient.on("message", (_,message)=>{
-    const {idServer, type, data} = JSON.parse(message);
-    //serverID is unique for every server (serverIPAddress+port)
-    if(serverID === idServer)
-        return;
-    io.emit(type, data);
-})
+
 //every client is subscriber
+//on event 'message' (when we send-publish message this event will be triggered-)->taken value of publish method to same Channel -> MESSAGES channel
+sub.on('message', (_, message) =>{
+    //message is object sent through publish method - belove one
+    const {serverid, type, data} = JSON.parse(message);
+    //emit to everyone
 
-//!!!!!!FIX IT
-//Error: ERR Can't execute 'get': only (P)SUBSCRIBE / (P)UNSUBSCRIBE / PING / QUIT are allowed in this context
-//redisClient.subscribe('MESSAGES');
+    // dont hanndle pub/sub messages if the server is the same (pub and sub must be different INSTACE)
+    // if(serverid === ourServerID) //ourServerID const serverID = `${ip}:${port}`
+    //     return 
 
-//public data on "MESSAGE" channel
+    io.emit(type,data);
+});
+//Different redis Client instance for sub
+//all is subscriber to MESSAGES Channel on initialization
+sub.subscribe("MESSAGES"); 
+
+// redisClient.publish("MESSAGES", JSON.stringify({type:"user.connected", data:"user:Novak"}));
+
+//public data on "MESSAGE" channel 
 const publish = (type, data) =>{
     const dataSent ={
-        serverID,
+        // serverid: ourServerID,
         type,
         data
     };
+
+    //publish on MESSAGES channel
 redisClient.publish("MESSAGES", JSON.stringify(dataSent));
 }
+
+//publish('TEST', "user:Novak");
+
 
 //we have this socket connection (front) -(back)
 // socket.off("user.connected");
@@ -171,10 +185,17 @@ io.on('connection', async(socket)=>{
     //add him in online users
     await sadd('online_users', userID);
 
+    //who is connected
+    const msg={
+        // ...socket.request.session.user,
+        
+
+    }
 
     //use redis publish to notify all subscribers that user is connected
     //publish function or client.publish
-    redisClient.publish('user.connected', 'msg');
+    //redisClient.publish('user.connected', 'msg');
+    publish('user.connected', 'connected: ' + username); //this will be send to MESSAGE CHANNEL(publish func)
     //use socket() to broadcast emit(real-time) TO NOTIFY FRONTEND
     socket.broadcast.emit('user.contected', 'msg');
 
