@@ -7,7 +7,9 @@ const { json } = require('body-parser');
 
 const clientModal = require('../model/Client');
 const houseworkerModal = require('../model/HouseWorker');
-const userModal = require('../model/User')
+const userModal = require('../model/User');
+
+const {get} = require('../db/redis');
 
 // const register = async (req,res) =>{
 
@@ -49,6 +51,7 @@ const register = async (req,res)=>{
 
             const user = {username:username, type:type}
             await clientModal.create(userData);
+
             //assign user to the session after creating the user /request from client(set the sesson to client)
             req.session.user = user
             // req.session.username = username;
@@ -93,7 +96,12 @@ const login = async(req,res)=>{
     //password from client and hashed password from DB
     //if(user && match){ //both is unecessery because if match is true then 100% is user true
     if(match){
-        req.session.user = {username:username, type:userType}
+        //Take UserID from redisDB for chat purpose
+        const userRedis = await get(`username:${username}`); //user:{userID}
+        console.log("USERRRRR : "  + user);
+        let userID = userRedis.split(':')[1]; //[user, {userID}]
+
+        req.session.user = {username:username, type:userType, userRedisID:userID}
         // const sess = req.session;
         // sess.username = username;
         // sess.type = userType
@@ -123,6 +131,8 @@ const logout = async(req,res)=>{
         return res.json({errorr:"You're not logged"})
    
 }
+
+
 
 
 module.exports ={

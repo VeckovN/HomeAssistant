@@ -38,11 +38,15 @@ const sendMessage = async(req,res)=>{
 }
 
 const getAllRooms = async(req,res)=>{
+    // console.log("SESSIO CHAT : " + JSON.stringify(req.session ));
     // const username = req.session.user.username;
-    const username = "Novak"
+    const username = req.params.username;
+    
+    // const username = "Novak"
     console.log("ROOM USERNAME: " + username);
     try{
         const result = await chatModal.getAllRooms(username);
+        console.log("LENGTH: " + JSON.stringify(result))
         res.json(result);
     }catch(err){
         console.log(err);

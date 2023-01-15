@@ -1,4 +1,5 @@
 const {session,driver} = require('../db/neo4j');
+const bcrypt = require('bcrypt');
 
 //return user Type and user Info
 const findByUsername = async(username)=>{
@@ -34,6 +35,27 @@ const findByUsername = async(username)=>{
 }
 
 
+const changePassword = async(username,password) =>{
+    const session = driver.session();
+
+    console.log("Passwrod: " + password);
+    const hashedPassword = bcrypt.hashSync(password, 12);
+
+    console.log("Hashed password: " + hashedPassword);
+
+    const result = await session.run(
+        `MATCH(n:User {username:$name}) 
+        Set n.password = $pass
+        return n`,
+        {name:username, pass:hashedPassword}
+    )
+
+    session.close();
+
+    return result.records[0].get(0).properties;
+}
+
+
 
 
 //----------------CHAT PART--------------------
@@ -43,4 +65,4 @@ const findByUsername = async(username)=>{
 
 
 
-module.exports = {findByUsername};
+module.exports = {findByUsername, changePassword};

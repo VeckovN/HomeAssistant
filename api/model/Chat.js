@@ -110,8 +110,6 @@ const getAllRooms = async(username)=>{
     //     const userSender = userIDS[0] ? 
     //     let userID1 = userIDS[0];
     //     let userID2 = userIDS[1];
-
-
         
     // })
 

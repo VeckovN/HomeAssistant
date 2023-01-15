@@ -18,6 +18,9 @@ const Header = () =>{
         houseworker = user.type === 'Houseworker' ? true : false;
 
     const logoutHandler = () =>{
+
+        //emit disconnected socket
+        
         dispatch(logout())
         dispatch(reset())
         navigate('/');
@@ -47,15 +50,16 @@ const Header = () =>{
                     <li>
                         <Link to='/profile'>Profile</Link>
                     </li>
+                    <li>
+                        <Link to='/messages'>Messages</Link>
+                    </li>
                     {/* if is houseworker then show Comment LInk*/}
                     {houseworker &&
                         <>
                             <li>
                                 <Link to='/comments'>Comments</Link>
                             </li>
-                            <li>
-                                <Link to='/messages'>Messages</Link>
-                            </li>
+                            
                         </>
                     }
                         

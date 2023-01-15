@@ -13,8 +13,9 @@ const multer = require('multer');
 const {client:redisClient, RedisStore, sub, set, sadd, smembers, hmget, srem } = require('./db/redis');
 dotenv.config();
 const {register} = require('./controller/auth')
-
 const redis = require('redis');
+const {get, zadd, exists} = require('./db/redis');
+
 
 
 const app = express()
@@ -61,9 +62,8 @@ var corsOptions={
 }
 app.use(cors(corsOptions));
 
-
-//with Redis
-app.use(session({
+// SAVE Sesssion middleware to varibale becaseu it needs to be used for socket io middleware
+const sessionMiddleware = session({
     store: new RedisStore({ client: redisClient }),
     //if false = we don't re-save the session, so we are not saving the same object every time
     resave:false, 
@@ -76,9 +76,31 @@ app.use(session({
         //for deploy set the secure to TURE, TURE DONSN'T STORE COOKIE ON BROWSER in DEVELOPMENT(using postman and etc.)
         secure:false, //our cookies works wiht false -if false - any HTTP call which is NOT HTTPS and it doesn't have SSL can access our cookies(can access this app in general)
         httpOnly: false, //if true - the  web page can't access the cookie in JS
-        maxAge: 1000* 60 * 10, //session max age in ms 
+        maxAge: 10000* 60 * 10, //session max age in ms 
     }
-}))
+})
+
+//with Redis
+// app.use(session({
+//     store: new RedisStore({ client: redisClient }),
+//     //if false = we don't re-save the session, so we are not saving the same object every time
+//     resave:false, 
+//     //if false =we only want to create session when the user is logged in (We saving something in session only when is user logged in)
+//     //if true = session will be created even user not logged in ()
+//     saveUninitialized:false,
+//     name:"sessionLog",
+//     secret: "aKiqn12$%5s@09~1s1",
+//     cookie:{
+//         //for deploy set the secure to TURE, TURE DONSN'T STORE COOKIE ON BROWSER in DEVELOPMENT(using postman and etc.)
+//         secure:false, //our cookies works wiht false -if false - any HTTP call which is NOT HTTPS and it doesn't have SSL can access our cookies(can access this app in general)
+//         httpOnly: false, //if true - the  web page can't access the cookie in JS
+//         maxAge: 10000* 60 * 10, //session max age in ms 
+//     }
+// }))
+// SAVE Sesssion middleware to varibale becaseu it needs to be used for socket io middleware
+app.use(sessionMiddleware);
+
+
 
 //routes with files
 //app.post("/api/auth/register", upload.single("picture"), register);
@@ -103,12 +125,34 @@ app.get("/api/", (req,res)=>{
 
 //SocketIO 
 const http = require('http');
-// const socketio = require('socket.io');
+//const {socketIo} = require("socket.io");
+
 const {Server} = require('socket.io');
 const { getAllRooms } = require('./model/Chat');
 const server = http.createServer(app);
 // const io = socketio(server).listen(server);
-const io = new Server(server);
+const io = new Server(server,{
+    cors: {
+        origin:"http://localhost:3000", //react app
+        methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+        credentials: true,
+    }
+})
+
+
+//!!!!!!! STORE SESSION IN REDIS --- SOCKET
+// io.use((socket, next) => {
+//     /** @ts-ignore */
+//     session(socket.request, socket.request.res || {}, next);
+//     // sessionMiddleware(socket.request, socket.request.res, next); will not work with websocket-only
+//     // connections, as 'socket.request.res' will be undefined in that case
+//   });
+
+//TO AACCESS req.session IN THE SAME APP (session and socketio) 
+//SETUP THIS MIDDLEWARE(CONNECT IT)
+io.use((socket,next) =>{
+    sessionMiddleware(socket.request, {}, next);
+}) 
 
 //when client connected (on client side) this will be  triggered
 
@@ -139,8 +183,9 @@ sub.on('message', (_, message) =>{
     // dont hanndle pub/sub messages if the server is the same (pub and sub must be different INSTACE)
     // if(serverid === ourServerID) //ourServerID const serverID = `${ip}:${port}`
     //     return 
-
+    console.log("INDEX CHECK ") ;
     io.emit(type,data);
+    
 });
 //Different redis Client instance for sub
 //all is subscriber to MESSAGES Channel on initialization
@@ -155,7 +200,6 @@ const publish = (type, data) =>{
         type,
         data
     };
-
     //publish on MESSAGES channel
 redisClient.publish("MESSAGES", JSON.stringify(dataSent));
 }
@@ -173,23 +217,21 @@ redisClient.publish("MESSAGES", JSON.stringify(dataSent));
 //FIRST WAIT ON CLIENT EVENT
 //when socket connected - when user (on client) connected to app
 io.on('connection', async(socket)=>{
-    console.log('user connected');
+    console.log('user connected!!!!!!!!!!!!!!!!!!!!!!!!');
 
     //socket session is connected as redis session
-    const userInfo = socket.request.session.user;
-    const username = userInfo.username;
+    console.log("SOCKET REQ: " + JSON.stringify(socket.request.session));
+    // const userInfo = socket.request.session.user;
+    // const username = userInfo.username;
+    const username ="Novak";
     //user:{id}
     const userIDKey = await get(`username:${username}`)
     const userID = userIDKey.split(':')[1]; //{id}
-
     //add him in online users
     await sadd('online_users', userID);
-
     //who is connected
     const msg={
         // ...socket.request.session.user,
-        
-
     }
 
     //use redis publish to notify all subscribers that user is connected
@@ -199,11 +241,16 @@ io.on('connection', async(socket)=>{
     //use socket() to broadcast emit(real-time) TO NOTIFY FRONTEND
     socket.broadcast.emit('user.contected', 'msg');
 
-    //if client trigger event room.join then
+    //when client enter the Room 
     socket.on("room.join", id =>{ //listen on 'room.join' event
+        console.log("CLIENT ENTERED THE ROOM " + id);
         socket.join(`room:${id}`); //join room -> room:1:2 example or group room:1:5:7
     })
 
+    socket.on("leave.room", id =>{
+        console.log("You left the room: " + id);
+        socket.leave(`room:${id}`)
+    })
 
     //WHERE CLIENT SEND MESSAGE(ON FRONT SIDE) TAKE THIS MESSAGE AND USE IT IN BACK HERE
     //listten on message event(if client send message)
@@ -212,18 +259,29 @@ io.on('connection', async(socket)=>{
     //in client --- (socekt.emit('message', {messageObj}))
     //that trigger this event
     socket.on("message", async(messageObj)=>{    
-        const { message, from, roomID} = messageObj;
+        const parsedObj = JSON.parse(messageObj);
+        const { message, from, roomID} = parsedObj;
         //ZADD {room:1:3} 1615480369 {user:1, date:1615480369, message:'Hello"}
         const date = Date.now();
         //add this propr to messageObj
-        message.date = date;
-        console.log("MESSAGE OBJ: " + JSON.stringify(message));
+        // message.date = date;
+        parsedObj.date = date;
+        
+        //!!!!! messageOBJ is String - parse it to JSON 
+        // const convertedMessage = JSON.parse(messageObj);
+
+        console.log("MESSAGE OBJ: " + parsedObj);
         //add user to online users //when is loggouted or session expired then remove it from this set
-        await sadd("online_users", message.from);
+        // await sadd("online_users", message.from);
+        // console.log("Converted OBJ: " + convertedMessage);
+        
+        await sadd("online_users", from);
 
         const roomKey = `room:${roomID}`;
-        //roomExist its same as hasMessage
+        console.log("ROOM: " + roomKey);
+        // //roomExist its same as hasMessage
         const roomExists = await exists(roomKey);
+        console.log("EE: " + roomExists);
 
         if(!roomExists){
         //or we have to create room and then send message
@@ -266,19 +324,29 @@ io.on('connection', async(socket)=>{
         //ZADD roomKey:1:2 1617197047 { "From": "2", "Date": 1617197047, "Message": "Hello", "RoomId": "1:2" }
         //ZADD Key=room:1:2 Score=1617197047 Value=obj
         const stringMessage = JSON.stringify(messageObj);
-        await zadd(roomKey, date, stringMessage);
+        await zadd(roomKey, date, messageObj);
         
         publish('message', messageObj);
         //notify all user in Room with roomKey emit with 'message' event
-        io.to(roomKey).emit("message", messageObj) //THIS WILL SEND SIGNAL TO CLIENT
+
+        //EMIT CLIENT TO JOINED CHANNEL (send message to users in Room to show when is chating )
+        io.to(roomKey).emit("messageRoom", messageObj) //THIS WILL SEND SIGNAL TO CLIENT THAT IS IN ROOM
+        //THIS WILL BE RECEIVED IN HOME PAGE AS NOTIFICATION FOR RECEIVED MESSAGE
+        io.emit("messageResponseNotify" , messageObj);
+        
         //just send users in actual room
     })
 
     //Listen on disconect event
-    socket.on('disconnect', async()=>{
+    socket.on('disconnect', async(id)=>{
         //TEST THIS
         //take userId from session (socket session in this situation)
-        const userID = socket.request.session.user.username;
+
+        //!!!!!!!
+        // const userID = socket.request.session.user.username;
+        //const userID = '1';
+        const userID = id;
+
         //remove user from online_users set
         await srem("online_users", userID);
         const status = {

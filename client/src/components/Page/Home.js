@@ -1,9 +1,11 @@
-import { ReactFragment } from "react";
+import { ReactFragment, useEffect } from "react";
 import { Router } from "react-router-dom";
 import ClientHome from "./Client/ClientHome.js";
 import HouseworkerHome from './Houseworker/HouseworkerHome';
 import {Routes, Route} from 'react-router-dom';
 import {useSelector} from 'react-redux';
+import {toast} from 'react-toastify';
+import useSocket from '../../hooks/useSocket';
 
 
 //CLIENT - Serach, Filter, HouseworkersCard(wiht paggination)
@@ -15,6 +17,9 @@ import {useSelector} from 'react-redux';
 //if there isn't type then is 100% Guest
 //type=['client','houseworker']
 const Home = () =>{
+
+    // //Message Receive Notification
+    // toast.info("TEST");
 
     const userAuth = useSelector((state) => state.auth) //null when not exists
     // const authUser = user.username ? true : false;
@@ -29,10 +34,43 @@ const Home = () =>{
     let client;
     if(userAuth.user)
         client = userAuth.user.type === 'Client' ? true : false;
-
-
     //console.log("CHECL  " + JSON.stringify(authUser))
 
+    const [socket, connected] = useSocket(userAuth.user);
+    //Message Receive Notification
+    
+
+    useEffect(()=>{
+        if(connected && userAuth.user){
+            console.log("NOTIIIIIIIFYU")
+            socket.on("messageResponseNotify", data =>{
+                const dataObj = JSON.parse(data);
+
+                //not show yourself
+                if(userAuth.user.userRedisID != dataObj.from )
+                {
+                    //WE ARE 
+                    console.log('WE ' + userAuth.user.userRedisID)
+                    const roomIDs = dataObj.roomID
+                    const rooms = roomIDs.split(':'); //indexes [0][1]
+                    console.log("ROMSSSSS: " + JSON.stringify(rooms));
+                    //show only members of message room(Are ourID is in RoomID)
+                    console.log(">?> : " + rooms.includes(userAuth.user.userRedisID));
+                    if(rooms.includes(userAuth.user.userRedisID))
+                    {
+                        //and we are 
+                        console.log("Received message");
+                        //find username by userID
+                        //const receivedFrom = await getUsernameByUserID(data.from)
+                        // toast.info("You received message from :" + receivedFrom);
+                        toast.info("You received message from :" + dataObj.from);
+                    }
+                }
+                
+            })
+        }
+    },[socket])
+    
    
     return (
         <div>

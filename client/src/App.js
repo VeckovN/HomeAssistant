@@ -7,9 +7,10 @@ import HouseworkerRegister from './components/Page/Register/HouseworkerRegister'
 import Login from './components/Page/Login/Login.js'
 import Comments from './components/Page/Houseworker/CommentsList';
 import Profile from './components/Page/Profile';
-import Messages from './components/Page/Client/Messages.js'
+import Messages from './components/Page/Messages/Messages'
 
-import {ToastContainer} from 'react-toastify';
+import {ToastContainer, toast} from 'react-toastify';
+
 //import Toastify Css
 import 'react-toastify/dist/ReactToastify.min.css';
 
@@ -36,8 +37,7 @@ function App() {
           </Route> */}
           <Route path='/comments' element={<Comments/>}></Route>
           <Route path='/profile' element={<Profile/>}></Route>
-          <Route path='/messages' element={<Messages/>}></Route>
-          
+          <Route path='/messages' element={<Messages/>}></Route>        
 
         </Routes>
         
