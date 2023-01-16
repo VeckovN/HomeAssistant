@@ -7,19 +7,17 @@ import { toast } from 'react-toastify';
 import useSocket from '../../../hooks/useSocket.js';
 
 
+const Chat = ({socket, connected}) =>{
 
-const Chat = () =>{
+    console.log("socket: " + socket);
 
     //null when not exists
     const {user} = useSelector((state) => state.auth)
     const userRedisID = user.userRedisID;
 
-
     const [rooms, setRooms] = useState([]);
     const [roomMessages, setRoomMessages] = useState([]);
-
     const [enteredRoomID, setEnteredRoomID] = useState('');
-
     const [newMessage, setNewMessage] = useState('');
 
     //ref for showned(click) Room 
@@ -27,7 +25,9 @@ const Chat = () =>{
     const messageRef = useRef();
 
     //user Redux state
-    const [socket, connected] = useSocket(user);
+    //const [socket, connected] = useSocket(user);
+    // const socket = socket;
+    // const connected = connected;
 
     // const socketRef = useRef(null);
     // const socket = socketRef.current;
@@ -91,16 +91,16 @@ const Chat = () =>{
                 console.log("MESSAGEOBJFROM : " + JSON.stringify(messageObj));
                 console.log("OUR ID: " + userRedisID);
             })
+
+            socket.on('show.room', (resp) =>{
+                
+            })
         }
     },[socket]) //on socket change (SOCKET WILL CHANGE WHEN IS MESSAGE SEND --- socket.emit)
 
 
 
-
-
 //------------------------SOCKETS------------------------------
-
-
 
     const fetchAllRooms = async () =>{
         // const result = await axios.get(`http://localhost:5000/api/chat/rooms`)
@@ -121,7 +121,6 @@ const Chat = () =>{
 
         console.log("T: "  + enteredRoomID!='')
         console.log("PERVIOUS ROOMID: " + enteredRoomID);
-
 
         //check if we were in another roomID
         if(enteredRoomID!='')
@@ -168,7 +167,6 @@ const Chat = () =>{
         console.log("PARRSED: " + JSON.stringify(parsedMessages));
 
         setRoomMessages(parsedMessages);
-
     }
 
     const onSendMessageHandler = () =>{
@@ -180,7 +178,6 @@ const Chat = () =>{
 
         //In REDUX set redisID userID(for each username)
         // const from = 
-
         console.log("MESSAGE : " + message)
         messageRef.current.value = ''
         console.log("MEESAGES SEND FROM ROOMID: " + fromRoomID);
@@ -204,22 +201,21 @@ const Chat = () =>{
         console.log("MESSS: " + messageObjNew);
         console.log("MESS JSON : " +  JSON.stringify(messageObjNew));
 
-
         //emit message(server listen this for sending message to user(persist in db) )
         //and also client listen this event to notify another user for receiving message
         socket.emit('message', JSON.stringify(messageObj));
 
         //io.emit or somethingn ('message', messageObj)
-
     }
 
     //console.log("ROOM: " + JSON.stringify(rooms));
     useEffect(() =>{
         fetchAllRooms()
-    },[])
+    },[]) //change on socket on. show.room
+
+    //on socket.show.room(add room)
 
     //console.log("ROMM MESSAGESS : " + JSON.stringify(roomMessages));
-
     return(
         <div className="Chat">   
             <h1>Rooms</h1>
@@ -266,7 +262,6 @@ const Chat = () =>{
             </ul>
         </div>
     )
-
 }
 
 export default Chat;

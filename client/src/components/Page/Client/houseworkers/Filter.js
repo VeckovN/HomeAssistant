@@ -36,8 +36,6 @@ const Filter = (prop) =>{
     }
 
 
-
-
     const filterClickHanlder = (e) =>{
         alert("filter");
         //return this data to Parent Component

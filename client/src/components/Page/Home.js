@@ -16,10 +16,7 @@ import useSocket from '../../hooks/useSocket';
 
 //if there isn't type then is 100% Guest
 //type=['client','houseworker']
-const Home = () =>{
-
-    // //Message Receive Notification
-    // toast.info("TEST");
+const Home = ({socket, connected}) =>{
 
     const userAuth = useSelector((state) => state.auth) //null when not exists
     // const authUser = user.username ? true : false;
@@ -36,9 +33,10 @@ const Home = () =>{
         client = userAuth.user.type === 'Client' ? true : false;
     //console.log("CHECL  " + JSON.stringify(authUser))
 
-    const [socket, connected] = useSocket(userAuth.user);
+    //const [socket, connected] = useSocket(userAuth.user);
     //Message Receive Notification
     
+    console.log("CONNECTED:: " + connected);
 
     useEffect(()=>{
         if(connected && userAuth.user){
@@ -47,9 +45,10 @@ const Home = () =>{
                 const dataObj = JSON.parse(data);
 
                 //not show yourself
-                if(userAuth.user.userRedisID != dataObj.from )
+                if(userAuth.user.userRedisID != dataObj.from)
                 {
                     //WE ARE 
+                    console.log("WEE E " + JSON.stringify(userAuth.user))
                     console.log('WE ' + userAuth.user.userRedisID)
                     const roomIDs = dataObj.roomID
                     const rooms = roomIDs.split(':'); //indexes [0][1]
@@ -67,6 +66,25 @@ const Home = () =>{
                     }
                 }
                 
+            })
+
+            socket.on("commentResponseNotify", data =>{
+                //const idOfuser = data.id
+                // console.log("IDDDD: " + houseworkerID);
+                // console.log("REDIS ID: " + userAuth.user.userRedisID);
+                const commentObj = JSON.parse(data);
+                // const [houseworkerID, client] = commentObj;
+                const houseworkerID  =commentObj.houseworkerID;
+                const clientCommented = commentObj.client;
+
+                // const houseworkerID = commentObj.houseworkerID;
+                // const clientCommented = commentObj.client;
+
+                console.log("IDDDD: " + houseworkerID);
+                console.log("REDIS ID: " + userAuth.user.userRedisID);
+                if(userAuth.user.userRedisID == houseworkerID){
+                    toast.info("You got comment from " + clientCommented)
+                }
             })
         }
     },[socket])
@@ -87,7 +105,7 @@ const Home = () =>{
                         //client or guest(if is user null)
                         client || userAuth.user===null
                         // in ClientHome limit what Guest can do and see
-                        ? <ClientHome /> 
+                        ? <ClientHome socket={socket} /> 
                         // If is authenticated as Houseworker 
                         : <HouseworkerHome/>
                     }

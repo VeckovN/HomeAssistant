@@ -18,6 +18,7 @@ const {get, zadd, exists} = require('./db/redis');
 
 
 
+
 const app = express()
 app.use(cookieParser())
 app.use(express.json())
@@ -136,7 +137,8 @@ const io = new Server(server,{
         origin:"http://localhost:3000", //react app
         methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
         credentials: true,
-    }
+    },
+    
 })
 
 
@@ -156,9 +158,7 @@ io.use((socket,next) =>{
 
 //when client connected (on client side) this will be  triggered
 
-server.listen(5000, ()=>{
-    console.log("SERVER at 5000 port")
-})
+
 //this is replaced
 // app.listen(5000, ()=>{
 //     console.log("NodeJS server has been started");
@@ -173,6 +173,11 @@ console.log("IP:" + ip);
 
 //public and subscribe initialization
 
+//Different redis Client instance for sub
+//all is subscriber to MESSAGES Channel on initialization
+sub.subscribe("MESSAGES"); 
+
+
 //every client is subscriber
 //on event 'message' (when we send-publish message this event will be triggered-)->taken value of publish method to same Channel -> MESSAGES channel
 sub.on('message', (_, message) =>{
@@ -184,12 +189,14 @@ sub.on('message', (_, message) =>{
     // if(serverid === ourServerID) //ourServerID const serverID = `${ip}:${port}`
     //     return 
     console.log("INDEX CHECK ") ;
+    console.log("SUBSCRIBER RECEIVBED MESSAGE : " + "TYPE: " + type + "  Message: " + data);
     io.emit(type,data);
     
 });
-//Different redis Client instance for sub
-//all is subscriber to MESSAGES Channel on initialization
-sub.subscribe("MESSAGES"); 
+
+sub.on('MESSAGES', message =>{
+    console.log("MESSAGEEEEEEE: " + message);
+})
 
 // redisClient.publish("MESSAGES", JSON.stringify({type:"user.connected", data:"user:Novak"}));
 
@@ -212,6 +219,7 @@ redisClient.publish("MESSAGES", JSON.stringify(dataSent));
 // socket.off("user.disconnected");
 // socket.off("user.room");
 // socket.off("message");
+
 
 
 //FIRST WAIT ON CLIENT EVENT
@@ -252,6 +260,14 @@ io.on('connection', async(socket)=>{
         socket.leave(`room:${id}`)
     })
 
+    //On send comment
+    //we can use socket.on because socket is instance of CLient who's send comment
+    //we have to use io.on (to send to everyone)
+    socket.on("comment", data=>{
+        console.log("Comment received " + data);
+        io.emit('commentResponseNotify', data);
+    })
+
     //WHERE CLIENT SEND MESSAGE(ON FRONT SIDE) TAKE THIS MESSAGE AND USE IT IN BACK HERE
     //listten on message event(if client send message)
     //we take message from client(message) and persist it to REDIS 
@@ -274,7 +290,6 @@ io.on('connection', async(socket)=>{
         //add user to online users //when is loggouted or session expired then remove it from this set
         // await sadd("online_users", message.from);
         // console.log("Converted OBJ: " + convertedMessage);
-        
         await sadd("online_users", from);
 
         const roomKey = `room:${roomID}`;
@@ -290,7 +305,7 @@ io.on('connection', async(socket)=>{
             const usersID = roomID.split(":");//[1,2]
             // const usersMemeber = usersID.join(":"); //1:2
             //its same as roomID
-            console.log("USERS IDDD: " + usersID + " MEMEBER: " + usersMemeber);
+            console.log("USERS IDDD: " + JSON.stringify(usersID) )
             const user1ID = usersID[0]; //1
             const user2ID = usersID[1]; //2
             console.log("USERS: " + user1ID + "/ " + user2ID);
@@ -314,6 +329,7 @@ io.on('connection', async(socket)=>{
                     })
                 ]
             }
+
             //send data to subscriber of room
             //msg contains roomID and usernames in this room, in client(from) we will read roomID and show msg only in this room
             publish('show.room', roomNotification);
@@ -342,6 +358,7 @@ io.on('connection', async(socket)=>{
         //TEST THIS
         //take userId from session (socket session in this situation)
 
+        console.log("DISCONNECT");
         //!!!!!!!
         // const userID = socket.request.session.user.username;
         //const userID = '1';
@@ -362,9 +379,9 @@ io.on('connection', async(socket)=>{
 })
 
 
-
-
-
+server.listen(5000, ()=>{
+    console.log("SERVER at 5000 port")
+})
 
 
 

@@ -8,6 +8,8 @@ const useSocket = (user) =>{
     const socket = socketRef.current;
     const [connected, setConnected] = useState(false);
 
+    //on every useSocket will be this reRun
+
     useEffect(()=>{
         console.log("US: " + JSON.stringify(user));
         console.log("SS: " + user);
@@ -29,14 +31,33 @@ const useSocket = (user) =>{
         }   
         //userNotExxists (Not authorized)
         else{
+            console.log("HHHEEEEEE ELSEEEEEEEEEE");
             if(socket !== null){
                 console.log("socket.disconnect();")
                 socket.disconnect();
-
             }
             console.log("setConnected(false);")
         }
-    },[user, socket])
+    },[socket,user])
+
+
+    //socket event listeners
+
+    useEffect(()=>{
+
+        if(connected && user){
+
+        }
+        else{
+            if(socket){
+                socket.off("user.connected");
+                socket.off("message");
+                socket.off("user.room");
+            }
+        }
+
+
+    },[])
 
 
     //return socketOBj, and connected State

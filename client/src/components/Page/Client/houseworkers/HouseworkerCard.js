@@ -3,7 +3,8 @@ import axios from 'axios';
 axios.defaults.withCredentials = true
 import {useSelector} from 'react-redux'
 import Modal from '../../../UI/Modal.js'
-import CommentItem from '../../../UI/CommentItem';
+import CommentItem from '../../../UI/CommentItem'; 
+import useSocket from '../../../../hooks/useSocket.js';
 
 //CLIENT - Serach, Filter, HouseworkersCard(wiht paggination)
 //GUEST sees everything just like THE CLIENT but 
@@ -29,11 +30,22 @@ const HouseworkersCard = (props) =>{
     // const showRateInput = useRef(false);
     const [showRateInput, setShowRateInput] = useState();
      //const [postComment, setPostComment] = useState()
+    const contactMessageRef = useRef(null);
+
+
 
     const userAuth = useSelector((state) => state.auth)
     let client;
     if(userAuth.user)
         client = userAuth.user.type === 'Client' ? true : false;
+
+    //USE SOCKET Custom State 
+
+    //THIS WILL CREATE CONNECTION ON EVERY  HOOUSEWORKERCARD COMPONENT RENDER
+    //const [socket, connected] = useSocket(userAuth.user)
+    const socket = props.socket;
+
+    console.log("SOCKETTT2 :" + socket);
 
 //#region Rating
     const [rating, setRating] = useState('');
@@ -104,7 +116,10 @@ const HouseworkersCard = (props) =>{
         e.preventDefault();
         //const newComment = e.target.postComment.value; //postComment is name of input field
         const newCommentContext = postCommentRef.current.value;
-        alert("Post Comment: " + newCommentContext) 
+        
+        const houseworkerID = '4';
+        
+        
         //fetch out of useEffect(in this example won't be a problem)
         //this fetch will be only trigger on Comment submit this is a reason why we can fetch over the useEffect
         try{
@@ -115,7 +130,12 @@ const HouseworkersCard = (props) =>{
                 comment: newCommentContext
             }
             const result = await axios.post(`http://localhost:5000/api/clients/comment`, postComment);
-            
+              
+            //SOCKET EMIT TO Server (IN Home.js is received)
+            socket.emit('comment', JSON.stringify({...postComment, houseworkerID:houseworkerID}))
+            //after the server receive 'comment' signal another emit will be send to clients(Notify) 
+            // socket.emit('commentResponseNotify', JSON.stringify({...postComment, id:houseworkerID}))
+
             console.log("RESSSS: " + JSON.stringify(result));
             const newComment = {
                 //we send (looged user) comment to (showenedModal ->oldComment)
@@ -213,9 +233,33 @@ const HouseworkersCard = (props) =>{
         setRate(e.target.value);
     }
 
-    const onContactHandler = ()=>{
+    const onContactHandler = (e)=>{
         if(!client)
             alert("Login to establish commucation");
+        else{   
+        //    alert("Value: " + contactMessageRef.current.value);
+
+           //Our ID 
+           const ourID = userAuth.user.userRedisID
+           //Houseworker ID
+
+           //value prop of this button -> props.id 
+        //    const houseworkerID = e.target.value;
+            //Jovana is id 4 in REDIS
+           const houseworkerID = '4';
+           console.log("HOUSEWORKERID " + houseworkerID);
+           //Room based on users ID
+
+           const RoomID = `${ourID}:${houseworkerID}`;
+           const messageObj = {
+                message: contactMessageRef.current.value,
+                from:ourID,
+                roomID:RoomID
+           }
+           alert(JSON.stringify(messageObj));
+
+           socket.emit('message', JSON.stringify(messageObj))
+        }   
     }
 
     return (
@@ -273,7 +317,7 @@ const HouseworkersCard = (props) =>{
                 </div>
 
                 <div className='comment-box'>
-                    <button onClick={onCommentHandler} value={props.username}>Comment</button>
+                    <button onClick={onCommentHandler} id={props.id} value={props.username}>Comment</button>
                 </div>
 
                 <div className='comment-box'>
@@ -288,7 +332,9 @@ const HouseworkersCard = (props) =>{
                 </div>
 
                 <div className='communicate-box'>
-                    <button onClick={onContactHandler} value={props.username}>Contact</button>
+                    <input ref={contactMessageRef}  type="text"/> 
+                    <button onClick={onContactHandler} value={props.id}>Contact</button>
+                    
                 </div>
 
             </div>

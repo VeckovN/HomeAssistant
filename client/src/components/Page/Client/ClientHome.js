@@ -6,10 +6,11 @@ import Filter from './houseworkers/Filter';
 import SearchAndSort from './houseworkers/SearchAndSort';
 
 
-
-const ClientHome = () =>{
+const ClientHome = ({socket}) =>{
 
     //LIMIT IF IS GUEST 
+
+    console.log("SOCKET " + socket);
 
     //const userAuth = useSelector(user) //example
     //const client = user.type==='client' ? true : false
@@ -135,7 +136,9 @@ const ClientHome = () =>{
             <br/>
             {console.log("ID::: " + user.id)}
             <HouseworkerCard
+                socket={socket}
                 key={user.id}
+                id={user.id}
                 username={user.username}
                 email={user.email}
                 first_name={user.first_name}

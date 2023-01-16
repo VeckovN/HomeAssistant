@@ -1,11 +1,11 @@
 import {useState, useEffect} from 'react'; 
 import Chat from './Chat.js';
 
-const Messages = () =>{
+const Messages = ({socket,connected}) =>{
 
     return (
         <div>
-            <Chat/>
+            <Chat socket={socket} connected={connected}/>
         </div>
     )
 }

@@ -10,18 +10,35 @@ import Profile from './components/Page/Profile';
 import Messages from './components/Page/Messages/Messages'
 
 import {ToastContainer, toast} from 'react-toastify';
+import {io} from "socket.io-client";
 
+
+import useSocket from './hooks/useSocket';
+import { useSelector } from 'react-redux';
 //import Toastify Css
 import 'react-toastify/dist/ReactToastify.min.css';
 
-function App() {
-  return (
 
+// const socketIO = io("http://127.0.0.1:5000", {
+//   withCredentials: true,
+// });
+
+function App() {
+
+  const {user} = useSelector((state) => state.auth)
+  // if(!user)
+    
+  const [socket, connected] = useSocket(user);
+  // const socket = io("http://127.0.0.1:5000", {
+  //   withCredentials: true,
+  // });
+
+  return (
     <BrowserRouter>
       <div className="App">    
         <Header />
         {/* Context(Home.js) */}
-        <Home />
+        <Home socket={socket} connected={connected} />
         <Routes>
           <Route path='/login' element={<Login/>}></Route>
           <Route path='/register' element={<Register/>}></Route>
@@ -37,7 +54,7 @@ function App() {
           </Route> */}
           <Route path='/comments' element={<Comments/>}></Route>
           <Route path='/profile' element={<Profile/>}></Route>
-          <Route path='/messages' element={<Messages/>}></Route>        
+          <Route path='/messages' element={<Messages socket={socket} connected={connected}/>}></Route>        
 
         </Routes>
         
