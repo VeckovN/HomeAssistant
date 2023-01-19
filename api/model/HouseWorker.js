@@ -30,6 +30,24 @@ const findByUsername = async (username)=>{
     
 }
 
+// const getHouseworkerUsername = async ()=>{
+//     const session = driver.session();
+//     const result = await session.run(
+//         'MATCH (n:User {username:$name})-[:IS_HOUSEWORKER]->() RETURN h.username',
+//         {name:username})
+//     if(result.records.length == 0){
+//         session.close();
+//         return null
+//     }
+//     else{
+//         const singleRecord = result.records[0];
+//         const node = singleRecord.get(0);
+//         const client = node.properties;
+//         session.close();
+//         return client;
+//     }
+// }
+
 const getInfo = async(username)=>{
     const session = driver.session();
     //more than one is expected

@@ -88,7 +88,7 @@ var server = Server(app);
 var io = require("socket.io")(server, {
     cors: {
         origin:"http://localhost:3000", //react app
-        methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+        methods: ["POST", "PUT", "GET", "DELETE", "OPTIONS", "HEAD"],
         credentials: true,
     },
     reconnection: false

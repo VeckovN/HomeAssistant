@@ -112,6 +112,9 @@ const zrem = (key, value) =>
 const del = (key)=>
     new Promise((resolve, reject)=> client.del(key, resolvePromise(resolve, reject) ))
 
+const rename = (key, newKey)=>
+    new Promise((resolve, reject)=> client.rename(key, newKey, resolvePromise(resolve, reject) ))
+
 module.exports ={
     client,
     sub,
@@ -132,6 +135,7 @@ module.exports ={
     zrevrange,
     zrem,
     del,
-    expire
+    expire,
+    rename
      
 }

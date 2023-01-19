@@ -54,12 +54,44 @@ const getAllRooms = async(req,res)=>{
     }
 }
 
+const deleteRoom = async(req, res)=>{
+    const roomID = req.body.roomID
+    console.log("DELETE ROOMID:" + JSON.stringify(roomID));
+    try{
+        await chatModal.deleteRoomByRoomID(roomID);
+        res.status(200).send("Room sucessfully deleted");
+    }
+    catch(err){
+        console.log(err);
+        res.status(400).send("You can't delete Room");
+    }
+}
+
+const addUserToRoom = async(req,res) =>{
+
+    const roomID = req.body.roomID;
+    const newUsername = req.body.newUsername;
+    // const user = req.body;
+    console.log("ROOMID: " + roomID + " newUsername " + newUsername);
+    
+    try{
+        const result = await chatModal.addUserToRoom(newUsername, roomID);
+        res.status(200).json(result);
+    }
+    catch(err){
+        res.status(400).send('You cant add user to ROom')
+    }
+        
+}
+
 module.exports ={
     getRoomId,
     getUserIdByUsername,
     getMessages,
     sendMessage,
-    getAllRooms
+    getAllRooms,
+    deleteRoom,
+    addUserToRoom
 
 
 }

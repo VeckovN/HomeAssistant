@@ -1,5 +1,5 @@
 const { Socket } = require('socket.io');
-const {incr, set, hmset, sadd, hmget, exists, client, zrevrange, smembers, zadd, srem, del, get} = require('../db/redis');
+const {incr, set, hmset, sadd, hmget, exists, client, zrevrange, smembers, zadd, srem, del, get, rename} = require('../db/redis');
 const { use } = require('../routes/clients');
 
 
@@ -113,20 +113,36 @@ const getAllRooms = async(username)=>{
     //through every room read another userID -> 1:7 , 1:3 in this situatin 7 and 3
 
     var roomsArr = []
-
+    let usernames =[];
     for(const room of rooms){
         const roomID = room;
         const userIDS = roomID.split(":");
-        console.log("ROOM ID" + roomID);
+        console.log("ROOM ID" + roomID + '\n');
         //ourID = userID;
-        //return diferent userID 
-        const otherUser = userIDS[0] == userID ? userIDS[1] : userIDS[0];
-        console.log("\n OHTER: " + otherUser); 
-        // //get username by userID in Redis
-        const user = await usernameByUserID(otherUser);
-        console.log("USERRNAMEEE : " + user);
+        //return diferent userID then our
 
-        roomsArr.push({roomID, user});
+        const otherUsers = userIDS.filter(el => el!= userID)
+
+        console.log("OTHER USERS: " + otherUsers);
+
+        //const otherUser = userIDS[0] == userID ? userIDS[1] : userIDS[0];
+
+
+        //DONT USE FOREACH FOR ASYNC/AWAIT 
+        //USE for() because this will wait for async execution
+
+        //Create promise to be ensure tha user is found and then this user push in array
+        //without that this async function could be finished after pushing NOTFOUND user in array
+        for(const id of otherUsers){
+            console.log("EL :" + id);
+            //for each user return their username
+            const user = await usernameByUserID(id);
+            console.log("USERTTTTTTTTT: "+ user);
+            usernames.push(user);
+        }
+
+        roomsArr.push({roomID, users:usernames});
+        usernames=[]; //reset -for other rooms
     }
 
     // const roomsArr = rooms.map( async el =>{
@@ -157,25 +173,59 @@ const getAllRooms = async(username)=>{
 // }
 
 //add user to create group chat
-const addUserToRoom = async(newUserID, currentRoomID)=>{
+const addUserToRoom = async(newUsername, currentRoomID)=>{
+
+    const newUser = await get(`username:${newUsername}`);
+    const newUserID = newUser.split(":")[1] ; //user:ID 
+
     //this will change(extend) existing user room 
     //and create that updated room to new user
     const currentRoomKey = `room:${currentRoomID}` //room:1:2
-    //values of userID should be sorted 
-    const newRoomKey = `${currentRoomKey}:${newUserID}`; //room:1:2:3
-    const newUserIds = `${currentRoomID}:${newUserID}`;
+    
+    console.log("CURRENT ROOM: " + currentRoomID)
 
-    //rename currentRoomKey room:1:2 to room:1:2:newUser  (sorted set which store messages)
+    const currentUserIDS = currentRoomID.split(':');
+    //add newUserID
+    currentUserIDS.push(newUserID)
+
+    const sortedUserIDS = currentUserIDS.sort();
+
+    console.log("currentUserIDS : " + currentUserIDS); 
+    console.log("newUSERID: " + newUserID);
+
+    // console.log("Curee: " + currentUserIDS.length);
+
+    let newRoomKey = "room";
+    sortedUserIDS.forEach(id =>{
+        console.log("el: " + id);
+        newRoomKey+=`:${id}`
+    })
+
+    //this is memeber of users Rooms -> user:{ID}:rooms
+    const newRoomID = sortedUserIDS.join(":"); //sorted ids with : between them =-- 1:2:5
+    console.log("NEW USERS ID VALUE: " + newRoomID);
+
+    //Put newUserID in order way   //allway order as room:1:5:9 not room:1:9:5
+    console.log("SADD: " + `user:${newUserID}:rooms` + "," +  newRoomID)    
+
+    // //rename currentRoomKey room:1:2 to room:1:2:newUser  (sorted set which store messages)
     await rename(currentRoomKey, newRoomKey);
-    //create user:{newUserID}:rooms
-    await sadd(`user:${newUserID}:rooms`, newUserIds);
 
-    //in user:1:rooms and user:2:rooms add new memeber 1:2:newUserID
-    const usersID = currentRoomID.split(':'); //array with userID
-    //for each user add new memeber 
-    usersID.forEach(async(id) =>{ 
+    //for new added user add memeber in user:{newID}:rooms
+    await sadd(`user:${newUserID}:rooms`, newRoomID);
+
+    console.log("SADD: " + `user:${newUserID}:rooms` + "," +  newRoomID)
+
+    console.log("RENAME: " + currentRoomKey + "," + newRoomKey)
+
+    const oldUsersIDS = currentRoomID.split(':');
+    const oldRoomID = currentRoomID;
+    oldUsersIDS.forEach(async(id) =>{ 
+        await srem(`user:${id}:rooms`, currentRoomID);
+        console.log("SREM : " + `user:${id}:rooms` + "," + oldRoomID )
         //add IDS of users seperated with : ----> 1:2:5
-        await sadd(`user:${id}:rooms`, newUserIds);
+        await sadd(`user:${id}:rooms`, newRoomID);
+        console.log("AWAIT SADD: " + `user:${id}:rooms` + "," +  newRoomID)
     })
 
 }
@@ -196,11 +246,16 @@ const deleteRoomByRoomID = async(roomID) =>{
     //find users with this ids and delete room from theri rooms set
     const usersID = roomID.split(':');
     usersID.forEach(async id =>{
-        await srem(`user:${id}:rooms`, roomID); //delte example memeber 1:2 in user:1:rooms 
+        console.log("USER KEY : " + `user:${id}:rooms` + "ROOMID: " + roomID);
+        //delete memeber(RoomID) from user set user:{USERID}:rooms
+       await srem(`user:${id}:rooms`, roomID); //delte example memeber 1:2 in user:1:rooms 
     })
-    //Del will remove the key entirely
+    //Delete sorted Set which contains all messages in ROOM
     await del(`room:${roomID}`);
+
 }
+
+
 
 
 module.exports ={
@@ -209,6 +264,8 @@ module.exports ={
     createUser,
     createRoom,
     getMessages,
-    getAllRooms   
+    getAllRooms,
+    deleteRoomByRoomID,
+    addUserToRoom
 }
 

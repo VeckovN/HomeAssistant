@@ -21,11 +21,14 @@ const Chat = ({socket, connected}) =>{
     const [enteredRoomID, setEnteredRoomID] = useState('');
     const [newMessage, setNewMessage] = useState('');
 
+    const [selectedUsername, setSelectedUsername] = useState('');
+    const [houseworkers, setHouseworkers] = useState('');
+
     //ref for showned(click) Room 
     const roomRef = useRef();
     const messageRef = useRef();
 
-    useEffect( () => {
+    useEffect(() => {
     //ENSURE THAT socket.on IS RUN BEFORE socker INITIALIZATION
         if(connected && user){
             console.log("HEEEEEEEEE");
@@ -121,28 +124,64 @@ const Chat = ({socket, connected}) =>{
         setRoomMessages(parsedMessages);
     }
 
-    const onDeleteRoomHandler = (e)=>{
+    const onDeleteRoomHandler = async(e)=>{
         //take roomID 
         const roomID = e.target.value;
-        alert("ROOMID: " + e.target.value);
+        alert("ROOMID: " + e.target.value + "TYPE: " + typeof(roomID));
 
         //Delete SortedLIst Room 
         //room:1:2
-        const roomKey = `room:${roomID}`;
 
-        //delete memebers of users rooms
-        const usersIDs = roomID.split(':'); 
-        
-        usersIDs.forEach(el =>{
-            //for each users in room delete memeber of user:ID:rooms set
-            //in user:ID:rooms delete memeber roomID
+        //PASS ONLY ROOMID
+        const result = await axios.post('http://localhost:5000/api/chat/room/delete', {roomID:roomID});
 
-            
-
-        })
-
-
+        console.log("DELETE ROOM RESULT: " + JSON.stringify(result));
     }
+
+
+    //Fetch all houseworekr and show them as  select option
+    useEffect(()=>{
+        const getAllHouseworkers = async() =>{
+            const result = await axios.get('http://localhost:5000/api/houseworker/') ;
+            const houseworkerResult = result.data;
+            setHouseworkers(houseworkerResult);
+
+        }
+        getAllHouseworkers();
+    },[]) 
+
+    const onAddUserToGroupHanlder = async(e)=>{
+        const roomID = e.target.value;
+
+        if(selectedUsername == ""){
+            alert("SELECT ONE");
+            return
+        }
+        alert("ROOMID: " + roomID);
+
+        //add useto
+        const roomInfo = {
+            roomID:roomID,
+            newUsername: selectedUsername
+        }
+
+        const newRoomID = await axios.post('http://localhost:5000/api/chat/room/addUser',roomInfo);
+
+        toast.info("User added to RoomID: "+ roomID );
+
+        // setRooms(prev=>({
+        //     ...prev,
+        //     [roomID]:newRoomID
+        // }))
+        
+    }
+
+    const onChangeSelectHandler = (e)=>{
+        const username = e.target.value ;
+        setSelectedUsername(e.target.value)
+    }
+
+    console.log('"SEEEE: ' + selectedUsername);
 
     const onSendMessageHandler = () =>{
         //who send -> from prop
@@ -188,11 +227,29 @@ const Chat = ({socket, connected}) =>{
             <ul>
                 {rooms ?
                     rooms.map((el, index)=>(
-                        <li>User : {el.user}
+                        <li>User : {el.users.map(user=> (<div className='roomUsers'>{user}</div>))}
                             <button value={el.roomID} ref={roomRef} onClick={onRoomClickHanlder}>RoomID:{el.roomID} </button>
                             {/* client can delete The chat room */}
                             {user.type=="Client" &&
-                                <button onClick={onDeleteRoomHandler} value={el.roomID}>Delete Room</button>
+                                <>
+                                    <button onClick={onDeleteRoomHandler} value={el.roomID}>Delete Room</button>
+
+                                    <button onClick={onAddUserToGroupHanlder} value={el.roomID}>Add User to Room</button>
+                                    <select onChange={onChangeSelectHandler}>
+                                        {houseworkers && 
+                                            <>
+                                                <option value="">Select One</option>
+                                            {
+                                                houseworkers.map(el =>(
+                                                    <option value={el.username}>{el.first_name}</option>
+                                                ))
+                                            }
+                                            </>
+                                        }
+                                        
+                                        
+                                    </select>
+                                </>
                             }
                         </li>
                     ))
