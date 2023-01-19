@@ -8,8 +8,9 @@ const { json } = require('body-parser');
 const clientModal = require('../model/Client');
 const houseworkerModal = require('../model/HouseWorker');
 const userModal = require('../model/User');
+const chatModel = require('../model/Chat');
 
-const {get} = require('../db/redis');
+const {get, set, sadd } = require('../db/redis');
 
 // const register = async (req,res) =>{
 
@@ -40,39 +41,74 @@ const register = async (req,res)=>{
     console.log("USERDATA: "+ JSON.stringify(userData));
     console.log('TP: ' + type);
 
-    if(type=='Client'){
-        const data = await clientModal.findByUsername(username);
-        //this return a null value if there ins't the client
-        if(data){
-            return res.json({error:"User exists"}).status(400);
-        }   
-        else{
-            //UPLODA picture to /client/public/assets/userPicture
+    const userExists = await userModal.checkUser(username);
+    console.log("DAAAAA: " + JSON.stringify(userExists));
+
+    if(userExists)
+        return res.status(400).json({error:"User with this username exists"}) 
+    else{
+        //Create user in redis DB
+        //get last userID = 
+        const redisUser = await chatModel.createUser(username, hashedPassword);
+        
+        console.log("IDDDDDDD : " + redisUser.id);
+        userData.id = Number(redisUser.id);
+
+        console.log("REDIS USER: " + JSON.stringify(redisUser));
+
+        if(type=='Client'){
 
             const user = {username:username, type:type}
             await clientModal.create(userData);
-
             //assign user to the session after creating the user /request from client(set the sesson to client)
             req.session.user = user
             // req.session.username = username;
             // req.session.type = type
             console.log("SESION123123:" + JSON.stringify(req.session));
             return res.json(user); //created user
+
+            // const data = await clientModal.findByUsername(username);
+            // //this return a null value if there ins't the client
+            // if(data){
+            //     return res.json({error:"User exists"}).status(400);
+            // }   
+            // else{
+            //     //UPLODA picture to /client/public/assets/userPicture
+
+            //     const user = {username:username, type:type}
+            //     await clientModal.create(userData);
+
+            //     //assign user to the session after creating the user /request from client(set the sesson to client)
+            //     req.session.user = user
+            //     // req.session.username = username;
+            //     // req.session.type = type
+            //     console.log("SESION123123:" + JSON.stringify(req.session));
+            //     return res.json(user); //created user
+            // }
         }
-    }
-    else if(type=='Houseworker'){ //houseworker
-        const data = await houseworkerModal.findByUsername(username);
-        console.log("EXIST:" + data);
-        if(data)
-            return res.json({error:"User with this username exists"})
-        else{
+        else if(type=='Houseworker'){ //houseworker
+
             const user = {username:username, type:type}
             console.log("EHHHHHHH");
             await houseworkerModal.create(userData);
             req.session.user = user;
             return res.json(user);
+
+            // const data = await houseworkerModal.findByUsername(username);
+            // console.log("EXIST:" + data);
+            // if(data)
+            //     return res.json({error:"User with this username exists"})
+            // else{
+            //     const user = {username:username, type:type}
+            //     console.log("EHHHHHHH");
+            //     await houseworkerModal.create(userData);
+            //     req.session.user = user;
+            //     return res.json(user);
+            // }
         }
-    }
+    } 
+
+    
 }
 
 const login = async(req,res)=>{
@@ -99,6 +135,7 @@ const login = async(req,res)=>{
         //Take UserID from redisDB for chat purpose
         const userRedis = await get(`username:${username}`); //user:{userID}
         console.log("USERRRRR : "  + user);
+        console.log("USEEEEEERRRRRR");
         let userID = userRedis.split(':')[1]; //[user, {userID}]
 
         req.session.user = {username:username, type:userType, userRedisID:userID}

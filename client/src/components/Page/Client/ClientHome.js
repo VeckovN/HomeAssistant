@@ -67,7 +67,6 @@ const ClientHome = ({socket}) =>{
 
         //reFetch houseworker with filters is simple, use this state searchData in
         //use effect as dependecies
-
     }
 
     const filterDataHandler = (filterData) =>{
@@ -85,7 +84,6 @@ const ClientHome = ({socket}) =>{
     },[searchedData, filteredData]) //on every serachedData and filterData change reFeatch houseworkers
 
 
-    
     const fetchData = async()=>{
         //Merge a filer and sort option to the queryParams OBJ
         let queryParams = {};
@@ -119,7 +117,10 @@ const ClientHome = ({socket}) =>{
 
             console.log("HS: " + JSON.stringify(houseworkers));
             console.log("TYPE: " + typeof(houseworkers));
-            setData(houseworkers);
+            if(houseworkers.length >0)
+                setData(houseworkers);
+            else
+                setData(null)  
             
         }catch(err){
             console.log("ERR: " + err);
@@ -148,7 +149,8 @@ const ClientHome = ({socket}) =>{
                 gender={user.gender}
                 city={user.city}
                 address={user.address}
-                // phone_number={user.phone_number}
+                age={user.age}
+                phone_number={user.phone_number}
                 professions={user.professions}
             />
             </div>

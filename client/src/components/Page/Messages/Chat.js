@@ -13,6 +13,7 @@ const Chat = ({socket, connected}) =>{
 
     //null when not exists
     const {user} = useSelector((state) => state.auth)
+
     const userRedisID = user.userRedisID;
 
     const [rooms, setRooms] = useState([]);
@@ -23,48 +24,6 @@ const Chat = ({socket, connected}) =>{
     //ref for showned(click) Room 
     const roomRef = useRef();
     const messageRef = useRef();
-
-    //user Redux state
-    //const [socket, connected] = useSocket(user);
-    // const socket = socket;
-    // const connected = connected;
-
-    // const socketRef = useRef(null);
-    // const socket = socketRef.current;
-    // const [connected, setConnected] = useState(false);
-    // //useSocket hook for this 
-    // useEffect(()=>{
-    //     console.log("US: " + JSON.stringify(user));
-    //     console.log("SS: " + user);
-    //     console.log("S@: " + !user );
-    //     if(user){
-    //         //if is socket initializated
-    //         if(socket !== null){
-    //             console.log("socket.connect();")
-    //             socket.connect();
-    //         }
-    //         else{
-    //             const socketIn = io("http://127.0.0.1:5000", {
-    //                 withCredentials: true,
-    //             });
-    //             socketRef.current = socketIn
-    //             console.log("socketRef.current = socketIn")
-    //         }
-    //     setConnected(true);
-    //     }   
-    //     //userNotExxists (Not authorized)
-    //     else{
-    //         if(socket !== null){
-    //             console.log("socket.disconnect();")
-    //             socket.disconnect();
-
-    //         }
-    //         console.log("setConnected(false);")
-    //     }
-    // },[user, socket])
-
-//---------------------------SOCKETS-----------------------------
-
 
     useEffect( () => {
     //ENSURE THAT socket.on IS RUN BEFORE socker INITIALIZATION
@@ -106,15 +65,9 @@ const Chat = ({socket, connected}) =>{
         // const result = await axios.get(`http://localhost:5000/api/chat/rooms`)
         const result = await axios.get(`http://localhost:5000/api/chat/rooms/${user.username}`)
         const data = result.data;
-        console.log("DATA: " + JSON.stringify(data));
+        console.log("DATAaaaa: " + JSON.stringify(data));
         setRooms(data);
     }
-
-    //for each room take messages from it
-
-
-    //get senderUsername
-
 
     //onClick username read messages from him(from roomID where is it )
     const onRoomClickHanlder = async e =>{
@@ -125,8 +78,7 @@ const Chat = ({socket, connected}) =>{
         //check if we were in another roomID
         if(enteredRoomID!='')
             //console.log("SOCKET: " + socket);
-            socket.emit('leave.room', enteredRoomID);
-            
+            socket.emit('leave.room', enteredRoomID);  
 
         console.log(e.target.value);
         // const username = e.target.value.user; //id of our sender
@@ -156,8 +108,8 @@ const Chat = ({socket, connected}) =>{
         //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
         //const messages = JSON.parse(result.data);
         const messages = result.data;
-        let parsedMessages
 
+        let parsedMessages
         //parse each message to JSON
         parsedMessages = messages.map(el => JSON.parse(el))
 
@@ -167,6 +119,29 @@ const Chat = ({socket, connected}) =>{
         console.log("PARRSED: " + JSON.stringify(parsedMessages));
 
         setRoomMessages(parsedMessages);
+    }
+
+    const onDeleteRoomHandler = (e)=>{
+        //take roomID 
+        const roomID = e.target.value;
+        alert("ROOMID: " + e.target.value);
+
+        //Delete SortedLIst Room 
+        //room:1:2
+        const roomKey = `room:${roomID}`;
+
+        //delete memebers of users rooms
+        const usersIDs = roomID.split(':'); 
+        
+        usersIDs.forEach(el =>{
+            //for each users in room delete memeber of user:ID:rooms set
+            //in user:ID:rooms delete memeber roomID
+
+            
+
+        })
+
+
     }
 
     const onSendMessageHandler = () =>{
@@ -191,16 +166,6 @@ const Chat = ({socket, connected}) =>{
             from:userRedisID,
             roomID:fromRoomID
         }
-
-        //only string (JSON) can be sent through socket
-        const messageObjNew = {
-            message:"Test MEssage ",
-            from:"1",
-            roomID:"1:3"
-        }
-        console.log("MESSS: " + messageObjNew);
-        console.log("MESS JSON : " +  JSON.stringify(messageObjNew));
-
         //emit message(server listen this for sending message to user(persist in db) )
         //and also client listen this event to notify another user for receiving message
         socket.emit('message', JSON.stringify(messageObj));
@@ -223,8 +188,12 @@ const Chat = ({socket, connected}) =>{
             <ul>
                 {rooms ?
                     rooms.map((el, index)=>(
-                        <li>Room{index}___
-                            <button value={el} ref={roomRef} onClick={onRoomClickHanlder}> ID:{el.roomID} Username: {el.user} </button>
+                        <li>User : {el.user}
+                            <button value={el.roomID} ref={roomRef} onClick={onRoomClickHanlder}>RoomID:{el.roomID} </button>
+                            {/* client can delete The chat room */}
+                            {user.type=="Client" &&
+                                <button onClick={onDeleteRoomHandler} value={el.roomID}>Delete Room</button>
+                            }
                         </li>
                     ))
                     :

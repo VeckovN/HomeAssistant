@@ -30,14 +30,14 @@ const useSocket = (user) =>{
         setConnected(true);
         }   
         //userNotExxists (Not authorized)
-        else{
-            console.log("HHHEEEEEE ELSEEEEEEEEEE");
-            if(socket !== null){
-                console.log("socket.disconnect();")
-                socket.disconnect();
-            }
-            console.log("setConnected(false);")
-        }
+        // else{
+        //     console.log("HHHEEEEEE ELSEEEEEEEEEE");
+        //     if(socket !== null){
+        //         console.log("socket.disconnect();")
+        //         socket.disconnect();
+        //     }
+        //     console.log("setConnected(false);")
+        // }
     },[socket,user])
 
 

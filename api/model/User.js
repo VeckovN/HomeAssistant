@@ -13,10 +13,8 @@ const findByUsername = async(username)=>{
     )
 
     if(userResult.records.length == 0){
-        session.close();
         return null
     }
-
     //Return userType
     //OPTINAL MATCH Return Null if cant find node(in this situatian that is relation-IS_HOUSEWORKER)
     const userTypeResult = await session.run(`
@@ -32,6 +30,25 @@ const findByUsername = async(username)=>{
 
     session.close();
     return {props:userInfo, type:userType};
+}
+
+const checkUser = async(username)=>{
+    //finduser and return userType and userInfo
+    const session = driver.session();
+
+    const userResult = await session.run(
+        `MATCH (n:User {username:$name}) 
+        RETURN n`,
+        {name:username}
+    )
+
+    if(userResult.records.length == 0){
+        return null
+    }
+    //Return userType
+
+    session.close();
+    return true;
 }
 
 
@@ -65,4 +82,4 @@ const changePassword = async(username,password) =>{
 
 
 
-module.exports = {findByUsername, changePassword};
+module.exports = {findByUsername, changePassword, checkUser};

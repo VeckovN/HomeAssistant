@@ -49,7 +49,11 @@ const HouseworkerRegister = () =>{
 
     const onChange = (event) =>{
         const name = event.target.name;
-        const value = event.target.value;
+        let value;
+        if(name=="age")
+            value = parseInt(event.target.value);
+        
+        value = event.target.value;
 
         setData(prev=> (
             {
@@ -113,7 +117,7 @@ const HouseworkerRegister = () =>{
             }
             formData.append('type', 'Houseworker');
             
-            dispatch(register(formData));
+            //dispatch(register(formData));
 
         }
     }

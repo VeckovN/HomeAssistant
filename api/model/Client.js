@@ -296,12 +296,13 @@ const create = async(clientObject)=>{
     //     city:"Nis",
     //     gender:"Male"
     // }
-    const {username, email, password, first_name, last_name, picturePath, city, gender} = clientObject;
+    const {id, username, email, password, first_name, last_name, picturePath, city, gender} = clientObject;
 
     //WITH Clause is necessary between Create and Other part of query(Create Gender and City)
     const result = await session.run(`
     CREATE (n:User 
         {
+            id:$id,
             username:$username, 
             email:$email, 
             password:$password, 
@@ -317,14 +318,14 @@ const create = async(clientObject)=>{
              username:$username     
          })
     WITH n as user , m as client
-    Match(g:Gender {type:$gender})
+    MATCH(g:Gender {type:$gender})
     CREATE(user)-[r:GENDER]->(g)
 
     MERGE(c:City {name:$city})
     MERGE(user)-[h:LIVES_IN]->(c)
     RETURN user,g.type,c.name
     `
-    ,{username:username, email:email, password:password, first_name:first_name, last_name:last_name, picturePath:picturePath, city:city, gender:gender}
+    ,{id:id, username:username, email:email, password:password, first_name:first_name, last_name:last_name, picturePath:picturePath, city:city, gender:gender}
     )
 
     const user = result.records[0].get(0).properties;

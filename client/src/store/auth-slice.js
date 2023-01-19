@@ -4,9 +4,22 @@ import axios from 'axios';
 // TO SEND COOKIE force credentials to every Axios requests
 axios.defaults.withCredentials = true
 
+import Cookie from 'js-cookie';
+
 
 //with login we set user in localStorage
-const user = JSON.parse(localStorage.getItem('user'));
+// const user = JSON.parse(localStorage.getItem('user'));
+const cookie = Cookie.get('user');
+const expressCookie = Cookie.get("sessionLog"); //track sessoin expire
+let user;
+if(expressCookie!=undefined)
+    user = JSON.parse(Cookie.get('user'));
+else {
+    user = false;
+    Cookie.remove('user'); //also remove user
+}
+   
+
 //console.log()
 //WITH LOGIN GET USER FROM COOKIE NOT FROM LOCALSTORAGE 
 //when is logged Express send cookie to client (cookieID -> 'sessionLog")
@@ -40,10 +53,13 @@ export const register = createAsyncThunk(
                 },
             });
             console.log("REPOSNE FORM DATA: " + response);
-            if(response.data)
-                //GET USER FROM COOKIE -EXPRESS SESSION (WE DON't NEED PUT THIS USER IN LOCAL STORATE)
+            if(response.data){
+                 //GET USER FROM COOKIE -EXPRESS SESSION (WE DON't NEED PUT THIS USER IN LOCAL STORATE)
                 //if post request is success we put response (user) to localStorage
                 localStorage.setItem('user', JSON.stringify(response.data));
+                Cookie.set('user', JSON.stringify(response.data))
+            }
+               
             
             return response.data; 
 
@@ -68,6 +84,7 @@ export const login = createAsyncThunk(
             if(response.data){
                 if(!response.data.error){
                     localStorage.setItem('user', JSON.stringify(response.data))
+                    Cookie.set('user', JSON.stringify(response.data))
                     return response.data;
                 }
                 else
@@ -93,6 +110,7 @@ export const logout = createAsyncThunk(
             const response = await axios.get('http://localhost:5000/api/logout');
         //we want to set state.message and this will be seted in extraReducer case:fulfilled
             localStorage.removeItem('user');
+            Cookie.remove('user');
          }
          catch(error){
             const message =  error.message || error || (error.response.data.error && error.response.data && error.response)

@@ -12,11 +12,12 @@
 
 // module.exports = {redisClient, RedisStore, connectRedis}
 
-
-
 //Redis functions with PROMISE for ChatPart 
 const redis = require('redis');
 const session = require('express-session');
+
+const host ='127.0.0.1';
+const port = "6379"
 const client = redis.createClient({legacyMode:true});
 //RedisStore has been created and put session-object in it
 // const RedisStore = connectRedis(session);
@@ -54,11 +55,9 @@ const resolvePromise = (resolve,reject)=>{
     }
 }
 
-const incr = (key = "key") =>{//default ="key" if isn't assigned
-    new Promise((resolve, reject) =>{
-        client.incr(key, resolvePromise(resolve, reject));
-    })
-} 
+const incr = (key = "key") =>//default ="key" if isn't assigned
+    new Promise((resolve, reject) => client.incr(key, resolvePromise(resolve, reject)));
+                                 
 const decr = (key = "key") =>
     new Promise((resolve, reject) => client.decr(key, resolvePromise(resolve, reject)))
 
@@ -81,7 +80,7 @@ const sadd = (key = "key", value) =>
     new Promise((resolve, reject) => client.sadd(key, value, resolvePromise(resolve, reject)))
   
 const hmset = (key = "key", values = []) =>
-    new Promise((resolve, reject) => client.hmset(key, values, resolvePromise(resolve, reject)))
+    new Promise((resolve, reject) => client.HSET(key, values, resolvePromise(resolve, reject)))
 
 const hmget = (key = "key", key2 = "") =>
     new Promise((resolve, reject) => client.hmget(key, key2, resolvePromise(resolve, reject)))
@@ -94,6 +93,10 @@ const smembers = (key = "key") =>
 
 const srem = (key = "key", key2 = "") =>
     new Promise((resolve, reject) => client.srem(key, key2, resolvePromise(resolve, reject)))
+
+const expire = (key = "key", value = "0") =>
+    new Promise((resolve, reject) => client.expire(key, value, resolvePromise(resolve, reject)))
+
 
     //key, offset, size
 const zrevrange = (key, value, value2) => {
@@ -128,6 +131,7 @@ module.exports ={
     srem,
     zrevrange,
     zrem,
-    del
+    del,
+    expire
      
 }

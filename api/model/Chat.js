@@ -10,12 +10,18 @@ const { use } = require('../routes/clients');
 const createUser = async(username, hashedPassword) =>{
     const usernameKey = `username:${username}`;
     const freeID = await incr("total_users"); //total_users is data in Redis(number of users)
+   
+    console.log("FERTEEE IUD: " + freeID);
     const userKey = `user:${freeID}`;
 
     await set(usernameKey, userKey) //username:Novak user:1
     await hmset(userKey, ["username", username, "password", hashedPassword]);
-    //With username we got userID
-    //with userKey(user:{userID}) we can access to userINFO in Redis DB ()
+    //intialise his rooms on empty
+    // await sadd(`user:${freeID}:rooms`, ``)
+
+
+    // //With username we got userID
+    // //with userKey(user:{userID}) we can access to userINFO in Redis DB ()
     return {id:freeID, username};
 }
 
@@ -26,6 +32,13 @@ const UserIdByUsername = async (username)=>{
     console.log("USERRRRR : "  + user);
     let userID = user.split(':')[1]; //[user, {userID}]
     return userID
+}
+
+const usernameByUserID = async (userID)=>{
+    const username = await hmget(`user:${userID}`, "username")
+    console.log("USERNAME " + username);
+    return username;
+    
 }
 
 //get roomIDbyUsername
@@ -97,23 +110,42 @@ const getAllRooms = async(username)=>{
     let rooms =[];
     rooms = await smembers(userRoomKey);
 
-    //get usernames of sender in rooms
+    //through every room read another userID -> 1:7 , 1:3 in this situatin 7 and 3
 
-    //rooms (take diferend id of userID - our id ant)
-    //1:7
-    //1:3
-    //1:2
+    var roomsArr = []
 
-    // const userStructure = {}; //roomID, with el and user: found username by roomID
-    // rooms.map((el) =>{
-    //     const userIDS = el.split(':');
-    //     const userSender = userIDS[0] ? 
-    //     let userID1 = userIDS[0];
-    //     let userID2 = userIDS[1];
-        
+    for(const room of rooms){
+        const roomID = room;
+        const userIDS = roomID.split(":");
+        console.log("ROOM ID" + roomID);
+        //ourID = userID;
+        //return diferent userID 
+        const otherUser = userIDS[0] == userID ? userIDS[1] : userIDS[0];
+        console.log("\n OHTER: " + otherUser); 
+        // //get username by userID in Redis
+        const user = await usernameByUserID(otherUser);
+        console.log("USERRNAMEEE : " + user);
+
+        roomsArr.push({roomID, user});
+    }
+
+    // const roomsArr = rooms.map( async el =>{
+    //     const roomID = el;
+    //     const userIDS = roomID.split(":");
+    //     console.log("ROOM ID" + roomID);
+    //     //ourID = userID;
+    //     //return diferent userID 
+    //     const otherUser = userIDS[0] == userID ? userIDS[1] : userIDS[0];
+    //     console.log("\n OHTER: " + otherUser); 
+    //     // //get username by userID in Redis
+    //     const user = await usernameByUserID(otherUser);
+    //     console.log("USERRNAMEEE : " + user);
+    //     return {roomID, user}
     // })
 
-    return rooms;
+
+    console.log("OTH" + JSON.stringify(roomsArr));
+    return roomsArr;
 }
 
 //this will be exected on socket event socket.on('message') event

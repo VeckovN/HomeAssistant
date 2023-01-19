@@ -7,6 +7,8 @@ import {useSelector} from 'react-redux';
 import {toast} from 'react-toastify';
 import useSocket from '../../hooks/useSocket';
 
+import Cookie from 'js-cookie';
+
 
 //CLIENT - Serach, Filter, HouseworkersCard(wiht paggination)
 //GUEST sees everything just like THE CLIENT but 
@@ -17,6 +19,9 @@ import useSocket from '../../hooks/useSocket';
 //if there isn't type then is 100% Guest
 //type=['client','houseworker']
 const Home = ({socket, connected}) =>{
+
+    const coo = Cookie.get("sessionLog");
+    console.log("SEEEEEEEEESSSSSSSSSSSSPPPPPPPPPPPPP: " +  JSON.stringify(coo));
 
     const userAuth = useSelector((state) => state.auth) //null when not exists
     // const authUser = user.username ? true : false;
@@ -43,7 +48,7 @@ const Home = ({socket, connected}) =>{
             console.log("NOTIIIIIIIFYU")
             socket.on("messageResponseNotify", data =>{
                 const dataObj = JSON.parse(data);
-
+                console.log("message");
                 //not show yourself
                 if(userAuth.user.userRedisID != dataObj.from)
                 {
@@ -67,7 +72,6 @@ const Home = ({socket, connected}) =>{
                 }
                 
             })
-
             socket.on("commentResponseNotify", data =>{
                 //const idOfuser = data.id
                 // console.log("IDDDD: " + houseworkerID);
@@ -83,11 +87,12 @@ const Home = ({socket, connected}) =>{
                 console.log("IDDDD: " + houseworkerID);
                 console.log("REDIS ID: " + userAuth.user.userRedisID);
                 if(userAuth.user.userRedisID == houseworkerID){
+                    console.log("HEEEEEE");
                     toast.info("You got comment from " + clientCommented)
                 }
             })
         }
-    },[socket])
+    },[socket, userAuth.user])
     
    
     return (

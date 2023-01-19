@@ -12,7 +12,6 @@ import Messages from './components/Page/Messages/Messages'
 import {ToastContainer, toast} from 'react-toastify';
 import {io} from "socket.io-client";
 
-
 import useSocket from './hooks/useSocket';
 import { useSelector } from 'react-redux';
 //import Toastify Css
@@ -35,6 +34,7 @@ function App() {
 
   return (
     <BrowserRouter>
+
       <div className="App">    
         <Header />
         {/* Context(Home.js) */}
@@ -64,6 +64,7 @@ function App() {
 
         <ToastContainer/>
       </div>
+
     </BrowserRouter>
 
   );
