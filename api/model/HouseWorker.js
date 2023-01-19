@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const { address } = require('ip');
 const { Session } = require('neo4j-driver');
 const {session,driver} = require('../db/neo4j');
+const { set ,get, expire} = require('../db/redis');
 
 //MOST IMPORTANT THING WIHT REACT(AWAIT/ASYNC)-ASYNC CALL
 //Neo4j can only handle single session at the same time, but async makes usually multiple  at same time 
@@ -81,6 +82,34 @@ const findAll = async ()=>{
 }
 
 
+const checkFilterHouseworkerInCache = async (filters)=>{
+
+    //filter query =?
+
+    const filter = JSON.stringify(filters);
+    
+    console.log("FILTERS: " + filter);
+    //fillter will be key in REDIS DB
+
+    const data = await get(filter); //this is clasic string -> that is ok structure for this
+    //becasue we store houseworkers as JSON()
+    console.log("DATA: " + data);
+
+    if(data){
+        //cache hit
+        const dataObj = JSON.parse(data);
+        return dataObj
+    }
+    else{
+        //no houseworker with filters in DB
+        return null;
+    }
+        
+
+    //houseworker list will be Value in RedisDb
+
+}
+
 //FILTER
 const findAllWithFilters = async(filters)=>{
     //all possible filterData
@@ -90,195 +119,228 @@ const findAllWithFilters = async(filters)=>{
         sort = 'ASC',
         city,
         gender, 
-        ageFrom = 0, //set on 0(low limit)
-        ageTo = 100, //set on 100(high limit)
+        // ageFrom = 0, //set on 0(low limit)
+        // ageTo = 100, //set on 100(high limit)
+        ageFrom,
+        ageTo,
         professions,  
         name:searchName, 
     } = filters;
 
     console.log("PROPS: " + "limit: " + limit + "/" + "sort: " + sort + "/" + "city: " + city + "/" + "ageFrom: " + ageFrom + "/" + "ageTo: " + ageTo + '/' + "gender: " + gender + "/" + "name: " + searchName + "/" + 'professions: ' + professions)
         
-    //SET and WITH after MATCH(h)<-[r:RATED] if exists
-    var queryNeo4j = `
-        Match(n:User)-[:IS_HOUSEWORKER]->(h:HouseWorker) \n
-        MATCH(n)-[:LIVES_IN]->(c:City)
-        MATCH(n)-[:GENDER]->(g:Gender)
-        SET n.id=id(n)
-        WITH n,c ,g 
-        `
-        ;
+    //CHECK FOR CACHE
 
-    if(professions)
-        if(professions.length>0)
-                queryNeo4j +=`MATCH(h)-[o:OFFERS]->(p:Profession) \n`
+    console.log("FIL:L:LLL : " + JSON.stringify(filters));
+
+    const catchData = await checkFilterHouseworkerInCache(filters);
+
+    console.log("SSSSSSSS: " + catchData);
+    
+
+    // if(catchData==null){
+        console.log("\n CATCH NOTTTT EXISSSSSSSSSTTTTTTTSSSS \n");
+        //SET and WITH after MATCH(h)<-[r:RATED] if exists
+        var queryNeo4j = `
+            Match(n:User)-[:IS_HOUSEWORKER]->(h:HouseWorker) \n
+            MATCH(n)-[:LIVES_IN]->(c:City)
+            MATCH(n)-[:GENDER]->(g:Gender)
+            
+            `
+            ;
+
+        if(professions)
+            if(professions.length>0)
+                    queryNeo4j +=`MATCH(h)-[o:OFFERS]->(p:Profession) \n`
+            
+        var sortFlag = false
+        if(sort==='RatingUp' || sort==='RatingDown')
+            sortFlag=true;
+
+        var orderBy='';
+        var returnQ ='RETURN  n, h, c.name, g.type \n';
+        var where ='WHERE ';
+
+        console.log("SORT FLAG: " + sortFlag);
+        console.log("SORT:" + sort );
+
+        // if(sortFlag){
+        //     where='WHERE r.rating>0 AND '
+        //     queryNeo4j+=`MATCH(h)<-[r:RATED]-() \n`
+        // }
+        // else{
+        //     where='WHERE ';   
+        // }
+
+        var With='WITH n,h,c,g ';
+        var age = false;
+
+        // if(ageFrom!=0 || ageFrom!=100) 
+        //     age=true;
         
-    var sortFlag = false
-    if(sort==='RatingUp' || sort==='RatingDown')
-        sortFlag=true;
+        console.log("AGEEEEEEEEEEEEEEEEEEEE " + age);
 
-    var orderBy='';
-    var returnQ ='RETURN  n, c.name, g.type \n';
-    var where ='WHERE ';
+        //WHERE PART
+        if((city!=undefined && city!='') && (gender!=undefined && city!='')){
+            where+=`c.name='${city}' AND g.type='${gender}'`
+            // if(searchName!=undefined)
+            //     where +=` AND n.username STARTS WITH '${searchName}' \n`
+        }
+        else{
+            //Add match for each filter options
+            if(city!=undefined && city!='')
+                where+=`c.name='${city}' `
+    
+            if(gender!=undefined && gender!=''){
+                if(where.trim().length > 5)
+                    where+=` AND g.type='${gender}'`;
+                else
+                    where+=`g.type='${gender}'`;
+            }
+        }
+        //if where not contain only WHERE THEN we need ADD operator
+        //or if is only 'WHERE ' we dont need ADD operator 
+        //WHERE_ with trim = 5characters
+        console.log("WHERE: " + where);
+        console.log("WHERE-LENGHT: " + where.trim().length)
 
-    console.log("SORT FLAG: " + sortFlag);
-    console.log("SORT:" + sort );
+        // if(age){
+        //     if(where.trim().length > 5)
+        //         where+=` AND h.age >= ${ageFrom} AND h.age <=${ageTo} `
+        //     else
+        //         where+=`h.age > ${ageFrom} AND h.age < ${ageTo} `
+        // }
 
-    // if(sortFlag){
-    //     where='WHERE r.rating>0 AND '
-    //     queryNeo4j+=`MATCH(h)<-[r:RATED]-() \n`
+        if((ageTo!=undefined && ageTo!= '')||( ageFrom!=undefined && ageFrom!= '')){
+            if(where.trim().length > 5)
+                where+=` AND h.age >= '${ageFrom}' AND h.age <='${ageTo}' `
+            else
+                where+=`h.age > '${ageFrom}' AND h.age < '${ageTo}' `
+        }
+
+        if(searchName!=undefined && searchName!= ''){
+            if(where.trim().length > 5)
+                where +=` AND n.username STARTS WITH '${searchName}' \n`
+            else
+                where+=`n.username STARTS WITH '${searchName}' \n`
+        }
+
+        //---------PROFESSIONS-------------
+        if(professions){
+            let professionsArray = professions.split(',');
+            let professionsLength = professionsArray.length;
+            console.log("ARRATYYY: " + professions);
+            console.log("ARRATYYY2: " + professionsArray[0]);
+            console.log("LENGHT PROF ARR " + professionsLength)
+            if(professionsLength>0)
+            {
+                let professionString = '';
+                if(professionsLength ==1)
+                    professionString += `"${professions}"`;
+                else{
+                    //example 4 profes(staratelj Kuvar Bastovan Dadilja)
+                                //0         1           2           3
+                    //we got ("Staratelj ," "Kuvar ," "Bastovan ," "Dadilja")
+                    // last comma after 2 index 
+                    // console.log("PROSSSSSSSSSSS: " +  ); 
+                    for(let i=0; i<professionsLength; i++){
+                        if(i<professionsLength-1) //0,1,2  --- <4-1
+                            professionString+= `"${professionsArray[i]}" ,`
+                        else    
+                            professionString+= `"${professionsArray[i]}" `;
+                    }
+                }
+                
+                console.log("RPOFSSFSFFS: " + professionString)
+                if(where.trim().length > 5){
+                    where+= ` AND p.title IN [${professionString}] `
+                    console.log("TEST1");
+                }
+                    // where+= ` AND p.title IN [${professionString}]`
+                else{
+                    where+= `p.title IN [${professionString}] `
+                    console.log("TEST2");
+                }
+                    
+            }
+            
+        }
+                
+        if(sortFlag){
+            if(where.trim().length > 5)
+                where+=' AND r.rating>0 '
+            else
+                where+='r.rating>0'
+
+            queryNeo4j+=`MATCH(h)<-[r:RATED]-() \n`
+        }
+        
+        //ADDING WHERE PART TO QUERY
+        // if(city!=undefined || gender!=undefined || ageFrom!=0 || ageTo!=100 || !searchName)
+        if((city!=undefined && city!='' )||( gender!=undefined && gender!='' )|| (ageTo!=undefined && ageTo!= '') || (ageFrom!=undefined && ageFrom!= '')||( searchName!=undefined && searchName!='') || sortFlag || professions)
+            queryNeo4j+=where
+
+        //Orderby
+        if(sort!='ASC' )
+            if(sort=="RatingUp" ){
+                queryNeo4j+=`
+                ${With} , avg(r.rating) as avg_rating \n`
+                orderBy+="ORDER BY avg_rating DESC \n"  
+            }
+            else if(sort=="RatingDown"){
+                queryNeo4j+=`
+                    MATCH(h)<-[r:RATED]-()
+                    ${With} , avg(r.rating) as avg_rating \n`
+                orderBy+="ORDER BY avg_rating ASC \n"
+            }
+            else if(sort =="AgeUp"){
+                orderBy+=`${With} ORDER BY h.age DESC \n`
+            }
+            else if(sort=="AgeDown")
+                orderBy+=`${With} ORDER BY h.age ASC \n`
+        else
+            orderBy+='ORDER BY n.username ASC \n'
+
+        //RETURN part --- concatenate return to query
+        // queryNeo4j+= `RETURN n `
+        queryNeo4j+=orderBy;
+        queryNeo4j+=returnQ;
+        // queryNeo4j+=orderBy;
+        queryNeo4j+=`LIMIT ${limit}`
+
+        console.log("QUERY: \n" +  queryNeo4j + "\n");
+        console.log("PARAMS1: " + city + '/ ' + gender + '/' + searchName);
+
+        const result = await session.run(queryNeo4j);
+        const houseworkers = result.records.map(el =>{
+            let userInfo = {};
+            const userNode = el.get(0).properties;
+            const housworkerNode = el.get(1).properties;
+            userInfo ={...userNode, ...housworkerNode}
+            //gotted id{"low":0,"high":0} it MUST parse to INT
+            userInfo.city = el.get(2);
+            userInfo.gender =el.get(3); 
+
+            //console.log("USER INFOOOO : " + JSON.stringify(userInfo));
+
+            return userInfo;
+        })
+
+        //STORE(CATCH) FILTERED HOYUSEWORKER IN REDIS 
+        // await set(JSON.stringify(filters), JSON.stringify(houseworkers))
+        // await expire(JSON.stringify(filters), 10*60);
+        //with TTL 10 min
+        
+        session.close();
+        return houseworkers;
     // }
     // else{
-    //     where='WHERE ';   
+    //     console.log("\n CATCH EXISSSSSSST \n");
+    //     //Filtered Houseworker exist in Catch
+    //     return catchData;
     // }
 
-    var With='WITH n,h,c,g, ';
-    var age = false;
 
-    if(ageFrom!=0 || ageFrom!=100)
-        age=true;
-
-    //WHERE PART
-    if(city!=undefined && gender!=undefined){
-        where+=`c.name='${city}' AND g.type='${gender}'`
-        // if(searchName!=undefined)
-        //     where +=` AND n.username STARTS WITH '${searchName}' \n`
-    }
-    else{
-        //Add match for each filter options
-        if(city!=undefined)
-            where+=`c.name='${city}' `
-  
-        if(gender!=undefined){
-            if(where.trim().length > 5)
-                where+=` AND g.type='${gender}'`;
-            else
-                where+=`g.type='${gender}'`;
-        }
-    }
-
-    //if where not contain only WHERE THEN we need ADD operator
-    //or if is only 'WHERE ' we dont need ADD operator 
-    //WHERE_ with trim = 5characters
-    console.log("WHERE: " + where);
-    console.log("WHERE-LENGHT: " + where.trim().length)
-
-    // if(age){
-    //     if(where.trim().length > 5)
-    //         where+=` AND n.ageFrom >= ${ageFrom} AND n.ageTo <=${ageTo} `
-    //     else
-    //         where+=`n.ageFrom >= ${ageFrom} AND n.ageTo <=${ageTo} `
-    // }
-
-    if(searchName!=undefined){
-        if(where.trim().length > 5)
-            where +=` AND n.username STARTS WITH '${searchName}' \n`
-        else
-            where+=`n.username STARTS WITH '${searchName}' \n`
-    }
-
-
-    //---------PROFESSIONS-------------
-    if(professions){
-        let professionsArray = professions.split(',');
-        let professionsLength = professionsArray.length;
-        console.log("ARRATYYY: " + professions);
-        console.log("ARRATYYY2: " + professionsArray[0]);
-        console.log("LENGHT PROF ARR " + professionsLength)
-        if(professionsLength>0)
-        {
-            let professionString = '';
-            if(professionsLength ==1)
-                professionString += `"${professions}"`;
-            else{
-                //example 4 profes(staratelj Kuvar Bastovan Dadilja)
-                            //0         1           2           3
-                //we got ("Staratelj ," "Kuvar ," "Bastovan ," "Dadilja")
-                // last comma after 2 index 
-                // console.log("PROSSSSSSSSSSS: " +  ); 
-                for(let i=0; i<professionsLength; i++){
-                    if(i<professionsLength-1) //0,1,2  --- <4-1
-                        professionString+= `"${professionsArray[i]}" ,`
-                    else    
-                        professionString+= `"${professionsArray[i]}" `;
-                }
-            }
-            
-            console.log("RPOFSSFSFFS: " + professionString)
-            if(where.trim().length > 5){
-                where+= ` AND p.title IN [${professionString}] `
-                console.log("TEST1");
-            }
-                // where+= ` AND p.title IN [${professionString}]`
-            else{
-                where+= `p.title IN [${professionString}] `
-                console.log("TEST2");
-            }
-                
-        }
-        
-    }
-            
-    if(sortFlag){
-        if(where.trim().length > 5)
-            where+=' AND r.rating>0 '
-        else
-            where+='r.rating>0'
-
-        queryNeo4j+=`MATCH(h)<-[r:RATED]-() \n`
-    }
-    
-    //ADDING WHERE PART TO QUERY
-    // if(city!=undefined || gender!=undefined || ageFrom!=0 || ageTo!=100 || !searchName)
-    if(city!=undefined || gender!=undefined || ageFrom!=0 || ageTo!=100 || searchName!=undefined || sortFlag || professions)
-        queryNeo4j+=where
-
-    //Orderby
-    if(sort!='ASC' )
-        if(sort=="RatingUp" ){
-            queryNeo4j+=`
-            ${With} avg(r.rating) as avg_rating \n`
-            orderBy+="ORDER BY avg_rating DESC \n"  
-        }
-        else if(sort=="RatingDown"){
-            queryNeo4j+=`
-                MATCH(h)<-[r:RATED]-()
-                ${With} avg(r.rating) as avg_rating \n`
-            orderBy+="ORDER BY avg_rating ASC \n"
-        }
-        else if(sort =="AgeUp"){
-            orderBy+='ORDER BY n.age DESC \n'
-        }
-        else if(sort=="AgeDown")
-            orderBy+='ORDER BY n.age ASC \n'
-    else
-        orderBy+='ORDER BY n.username ASC \n'
-
-    //RETURN part --- concatenate return to query
-    // queryNeo4j+= `RETURN n `
-    queryNeo4j+=orderBy;
-    queryNeo4j+=returnQ;
-    // queryNeo4j+=orderBy;
-    queryNeo4j+=`LIMIT ${limit}`
-
-    console.log("QUERY: " + queryNeo4j);
-    console.log("PARAMS1: " + city + '/ ' + gender + '/' + searchName);
-
-    const result = await session.run(queryNeo4j);
-    const houseworkers = result.records.map(el =>{
-        const hs = el.get(0).properties;
-        //gotted id{"low":0,"high":0} it MUST parse to INT
-        hs.id = parseInt(hs.id); 
-        hs.city = el.get(1);
-        hs.gender =el.get(2); 
-        //if rating exists
-        // if(el.length == 4)
-        //     hs.rating = el.get(3);
-            // console.log("EXIST");
-        return hs;
-    })
-    
-    session.close();
-    return houseworkers;
 }
 
 const findByUsernameAndDelete = async (username)=>{
@@ -503,13 +565,14 @@ const create = async(houseworkerObject)=>{
 
 
     console.log("TSWWWWWW1")
-    const {username, email, password, first_name, last_name, picturePath, address, description, city, gender, age, phone_number,professions } = houseworkerObject;
+    const {id, username, email, password, first_name, last_name, picturePath, address, description, city, gender, age, phone_number,professions } = houseworkerObject;
     
     console.log("TSWWWWWW2")
     //WITH Clause is necessary between Create and Other part of query(Create Gender and City)
     const result = await session.run(`
         CREATE (n:User 
             {
+                id:$id,
                 username:$username, 
                 email:$email, 
                 password:$password, 
@@ -536,7 +599,7 @@ const create = async(houseworkerObject)=>{
         MERGE(user)-[h:LIVES_IN]->(c)
         RETURN user,g.type,c.name
     `
-    ,{username:username, email:email, password:password, first_name:first_name, last_name:last_name, picturePath:picturePath, address:address, description:description ,city:city, gender:gender, age:age, phone_number:phone_number}
+    ,{id:id ,username:username, email:email, password:password, first_name:first_name, last_name:last_name, picturePath:picturePath, address:address, description:description ,city:city, gender:gender, age:age, phone_number:phone_number}
     )
 
     console.log("TSWWWWWW3")
