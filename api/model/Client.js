@@ -283,6 +283,19 @@ const rateHouseworker_client = async(client, username, rating)=>{
     //return result.records[2].get(0)
 }
 
+const addInterest = async(username, interest) =>{
+    const session = driver.session();
+
+    await session.run(` 
+        MATCH(n:User {username:$client})-[:IS_CLIENT]->(m)
+        MATCH(p:Profession {title:$profession})
+        MERGE(m)-[r:INTEREST]->(p)
+        RETURN p.title`,
+    {client:username, profession:interest})
+
+    session.close()
+}
+
 const create = async(clientObject)=>{
     const session = driver.session();
     //client obj
@@ -296,7 +309,7 @@ const create = async(clientObject)=>{
     //     city:"Nis",
     //     gender:"Male"
     // }
-    const {id, username, email, password, first_name, last_name, picturePath, city, gender} = clientObject;
+    const {id, username, email, password, first_name, last_name, picturePath, city, gender, interests} = clientObject;
 
     //WITH Clause is necessary between Create and Other part of query(Create Gender and City)
     const result = await session.run(`
@@ -315,7 +328,7 @@ const create = async(clientObject)=>{
         (
          m:Client
          {
-             username:$username     
+             username:$username  
          })
     WITH n as user , m as client
     MATCH(g:Gender {type:$gender})
@@ -325,8 +338,22 @@ const create = async(clientObject)=>{
     MERGE(user)-[h:LIVES_IN]->(c)
     RETURN user,g.type,c.name
     `
-    ,{id:id, username:username, email:email, password:password, first_name:first_name, last_name:last_name, picturePath:picturePath, city:city, gender:gender}
+    ,{id:id, username:username, email:email, password:password, first_name:first_name, last_name:last_name, picturePath:picturePath, city:city, gender:gender, interests:interests}
     )
+
+
+    //Interests relation between profession and Client
+    const interestsArray = interests.split(',');
+    console.log("PROFESSIONS: " + interests);
+    console.log("PROFESSIONSArray: " + JSON.stringify(interestsArray));
+    console.log("PROF: TYPEOF: " + typeof(interests));
+    console.log("PROF: TYPEOF ARRRAY: " + typeof(interestsArray));
+    //add professions
+    interestsArray.forEach(interest => {
+        console.log("PT: " + interest); 
+        addInterest(username, interest);
+    });
+
 
     const user = result.records[0].get(0).properties;
     const userGender = result.records[0].get(1);
@@ -408,12 +435,39 @@ const interestedProfessions = async(professions)=>{
     // LIMIT 5
 }
 
+const recomendedByCityAndInterest = async(username,city) =>{
+    const session = driver.session();
 
+    const result = await session.run(`
+        MATCH(h:HouseWorker)-[:OFFERS]->(o:Profession)
+        MATCH(uu:User)-[:IS_CLIENT]->(c:Client)-[:INTEREST]->(o)
+        MATCH(h)<-[:IS_HOUSEWORKER]-(u:User)-[:LIVES_IN]->(l:City)
+        MATCH(u)-[:GENDER]->(g:Gender)
+        WHERE uu.username = $username and l.name = $city
+        RETURN u, h, l.name, g.type, rand() as rand
+        ORDER BY rand ASC
+        LIMIT 3
+    `,{username, city}
+    )
 
-//------------CHAT PART-----------
+    const houseworkers = result.records.map(el =>{
+        let userInfo = {};
+        const userNode = el.get(0).properties;
+        const housworkerNode = el.get(1).properties;
+        userInfo ={...userNode, ...housworkerNode}
+        //gotted id{"low":0,"high":0} it MUST parse to INT
+        userInfo.city = el.get(2);
+        userInfo.gender =el.get(3); 
 
-//
+        //console.log("USER INFOOOO : " + JSON.stringify(userInfo));
 
+        return userInfo;
+    })
+
+    session.close();
+    return houseworkers;
+
+}
 
 module.exports ={
     findByUsername:findByUsername,
