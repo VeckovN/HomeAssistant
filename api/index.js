@@ -74,7 +74,7 @@ const sessionMiddleware = session({
         //for deploy set the secure to TURE, TURE DONSN'T STORE COOKIE ON BROWSER in DEVELOPMENT(using postman and etc.)
         secure:false, //our cookies works wiht false -if false - any HTTP call which is NOT HTTPS and it doesn't have SSL can access our cookies(can access this app in general)
         httpOnly: false, //if true - the  web page can't access the cookie in JS
-        maxAge: 1000* 60 * 10, //session max age in ms 
+        maxAge: 1500* 60 * 10, //session max age in ms 
     }
 })
 
