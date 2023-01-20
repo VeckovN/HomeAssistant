@@ -144,28 +144,21 @@ const findAllWithFilters = async(filters)=>{
         professions,  
         name:searchName, 
     } = filters;
-
-    console.log("PROPS: " + "limit: " + limit + "/" + "sort: " + sort + "/" + "city: " + city + "/" + "ageFrom: " + ageFrom + "/" + "ageTo: " + ageTo + '/' + "gender: " + gender + "/" + "name: " + searchName + "/" + 'professions: ' + professions)
         
     //CHECK FOR CACHE
-
     console.log("FIL:L:LLL : " + JSON.stringify(filters));
-
     const catchData = await checkFilterHouseworkerInCache(filters);
 
     console.log("SSSSSSSS: " + catchData);
     
-
-    // if(catchData==null){
+    if(catchData==null){
         console.log("\n CATCH NOTTTT EXISSSSSSSSSTTTTTTTSSSS \n");
         //SET and WITH after MATCH(h)<-[r:RATED] if exists
         var queryNeo4j = `
             Match(n:User)-[:IS_HOUSEWORKER]->(h:HouseWorker) \n
             MATCH(n)-[:LIVES_IN]->(c:City)
-            MATCH(n)-[:GENDER]->(g:Gender)
-            
-            `
-            ;
+            MATCH(n)-[:GENDER]->(g:Gender) 
+            `;
 
         if(professions)
             if(professions.length>0)
@@ -178,23 +171,8 @@ const findAllWithFilters = async(filters)=>{
         var orderBy='';
         var returnQ ='RETURN  n, h, c.name, g.type \n';
         var where ='WHERE ';
-
-        console.log("SORT FLAG: " + sortFlag);
-        console.log("SORT:" + sort );
-
-        // if(sortFlag){
-        //     where='WHERE r.rating>0 AND '
-        //     queryNeo4j+=`MATCH(h)<-[r:RATED]-() \n`
-        // }
-        // else{
-        //     where='WHERE ';   
-        // }
-
         var With='WITH n,h,c,g ';
         var age = false;
-
-        // if(ageFrom!=0 || ageFrom!=100) 
-        //     age=true;
         
         console.log("AGEEEEEEEEEEEEEEEEEEEE " + age);
 
@@ -222,13 +200,6 @@ const findAllWithFilters = async(filters)=>{
         console.log("WHERE: " + where);
         console.log("WHERE-LENGHT: " + where.trim().length)
 
-        // if(age){
-        //     if(where.trim().length > 5)
-        //         where+=` AND h.age >= ${ageFrom} AND h.age <=${ageTo} `
-        //     else
-        //         where+=`h.age > ${ageFrom} AND h.age < ${ageTo} `
-        // }
-
         if((ageTo!=undefined && ageTo!= '')||( ageFrom!=undefined && ageFrom!= '')){
             if(where.trim().length > 5)
                 where+=` AND h.age >= '${ageFrom}' AND h.age <='${ageTo}' `
@@ -238,15 +209,16 @@ const findAllWithFilters = async(filters)=>{
 
         if(searchName!=undefined && searchName!= ''){
             if(where.trim().length > 5)
-                where +=` AND n.username STARTS WITH '${searchName}' \n`
+                where +=` AND n.first_name STARTS WITH '${searchName}' \n`
             else
-                where+=`n.username STARTS WITH '${searchName}' \n`
+                where+=`n.first_name STARTS WITH '${searchName}' \n`
         }
 
+        var professionsLength = 0;
         //---------PROFESSIONS-------------
-        if(professions){
+        if(professions){            
             let professionsArray = professions.split(',');
-            let professionsLength = professionsArray.length;
+            professionsLength = professionsArray.length;
             console.log("ARRATYYY: " + professions);
             console.log("ARRATYYY2: " + professionsArray[0]);
             console.log("LENGHT PROF ARR " + professionsLength)
@@ -295,7 +267,7 @@ const findAllWithFilters = async(filters)=>{
         
         //ADDING WHERE PART TO QUERY
         // if(city!=undefined || gender!=undefined || ageFrom!=0 || ageTo!=100 || !searchName)
-        if((city!=undefined && city!='' )||( gender!=undefined && gender!='' )|| (ageTo!=undefined && ageTo!= '') || (ageFrom!=undefined && ageFrom!= '')||( searchName!=undefined && searchName!='') || sortFlag || professions)
+        if((city!=undefined && city!='' )||( gender!=undefined && gender!='' )|| (ageTo!=undefined && ageTo!= '') || (ageFrom!=undefined && ageFrom!= '')||( searchName!=undefined && searchName!='') || sortFlag || professionsLength>0)
             queryNeo4j+=where
 
         //Orderby
@@ -345,18 +317,18 @@ const findAllWithFilters = async(filters)=>{
         })
 
         //STORE(CATCH) FILTERED HOYUSEWORKER IN REDIS 
-        // await set(JSON.stringify(filters), JSON.stringify(houseworkers))
-        // await expire(JSON.stringify(filters), 10*60);
+        await set(JSON.stringify(filters), JSON.stringify(houseworkers))
+        await expire(JSON.stringify(filters), 10*60);
         //with TTL 10 min
         
         session.close();
         return houseworkers;
-    // }
-    // else{
-    //     console.log("\n CATCH EXISSSSSSST \n");
-    //     //Filtered Houseworker exist in Catch
-    //     return catchData;
-    // }
+    }
+    else{
+        console.log("\n CATCH EXISSSSSSST \n");
+        //Filtered Houseworker exist in Catch
+        return catchData;
+    }
 
 
 }
@@ -721,27 +693,6 @@ const updateGender = async(gender)=>{
     session.close();
     return result.records[0].get(0);
 }
-
-
-
-/////////////////////////CHAT PART/////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
-//////////////////////////////////////////////////////
-
-
-
 
 module.exports ={
     findByUsername,
