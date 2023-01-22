@@ -27,8 +27,6 @@ app.use(express.urlencoded({ extended: true }))
 //multer config
 app.use("/assetss", express.static(path.join(__dirname, "public/assets")));
 
-
-
 // multer exprot and import in auth register
 const storage = multer.diskStorage({
     destination: (req,file,cb) =>{
@@ -48,13 +46,6 @@ app.use((error, req, res, next) => {
 // app.post("/api/auth/register", upload.single("picture"), register);
 // //upload image
 // app.post("/api/update/picture", upload,single("picture"), updatePicture);
-
-//redis
-// redisClient.connect()
-// .catch(err=>{
-//     console.log("Couldn't connect to redis", err);
-// })
-
 
 var corsOptions={
     //access is allowed to everyone
@@ -82,10 +73,8 @@ const sessionMiddleware = session({
     }
 })
 
-
 //SESSION 
 app.use(sessionMiddleware);
-
 
 var Server = require("http").Server;
 var server = Server(app);
@@ -103,27 +92,6 @@ io.use(function(socket, next) {
     sessionMiddleware(socket.request, socket.request.res || {}, next);
 });
 
-
-//with Redis
-// app.use(session({
-//     store: new RedisStore({ client: redisClient }),
-//     //if false = we don't re-save the session, so we are not saving the same object every time
-//     resave:false, 
-//     //if false =we only want to create session when the user is logged in (We saving something in session only when is user logged in)
-//     //if true = session will be created even user not logged in ()
-//     saveUninitialized:false,
-//     name:"sessionLog",
-//     secret: "aKiqn12$%5s@09~1s1",
-//     cookie:{
-//         //for deploy set the secure to TURE, TURE DONSN'T STORE COOKIE ON BROWSER in DEVELOPMENT(using postman and etc.)
-//         secure:false, //our cookies works wiht false -if false - any HTTP call which is NOT HTTPS and it doesn't have SSL can access our cookies(can access this app in general)
-//         httpOnly: false, //if true - the  web page can't access the cookie in JS
-//         maxAge: 10000* 60 * 10, //session max age in ms 
-//     }
-// }))
-// SAVE Sesssion middleware to varibale becaseu it needs to be used for socket io middleware
-
-
 //public data on "MESSAGE" channel 
 const publish = (type, data) =>{
     const dataSent ={
@@ -135,12 +103,9 @@ const publish = (type, data) =>{
 redisClient.publish("MESSAGES", JSON.stringify(dataSent));
 }
 
-// const subscriber = redis.createClient();
 
-//MUST BE IN asycn CALL BECAUSE SUBSCRIBER MESSAGES
+
 (async () =>{
-
-// await sub.connect();
 
 //taking Messages from subscriber channel
 await sub.subscribe("MESSAGES", (message, channelName)=>{
@@ -170,61 +135,13 @@ await sub.subscribe("MESSAGES", (message, channelName)=>{
 })
 
 
-//SocketIO 
-// const http = require('http');
-// //const {socketIo} = require("socket.io");
-// const {Server} = require('socket.io');
-// const { getAllRooms } = require('./model/Chat');
-// const server = http.createServer(app);
-// // const io = socketio(server).listen(server);
-// const io = new Server(server,{
-//     cors: {
-//         origin:"http://localhost:3000", //react app
-//         methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
-//         credentials: true,
-//     },
-// })
-
-// const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
-
-// io.use(wrap(sessionMiddleware));
-
-// io.use((socket, next) => {
-//     const session = socket.request.session;
-//     console.log("SESSSSSSIIIONN: " + session.user.username);
-//     // if (session && session.authenticated) {
-//     //   next();
-//     // } else {
-//     //   next(new Error("unauthorized"));
-//     // }
-//   });
-
-// //TO AACCESS req.session IN THE SAME APP (session and socketio) 
-// //SETUP THIS MIDDLEWARE(CONNECT IT)
-// io.use((socket,next) =>{
-//     sessionMiddleware(socket.request, {}, next);
-// }) 
-
-//Unique serverID -> Combination of IpAddress:Port
-//THis Could be in .env
 const ip = require('ip').address();
 const port ='5000';
 const ourServerID = `${ip}:${port}`
-// console.log("IP:" + ip);
-
-
-
-//every client is subscriber
-//on event 'message' (when we send-publish message this event will be triggered-)->taken value of publish method to same Channel -> MESSAGES channel
-
-//we have this socket connection (front) -(back)
-// socket.off("user.connected");
-// socket.off("user.disconnected");
-// socket.off("user.room");
-// socket.off("message");
 
 
 //#region Routes
+
 //routes with files
 //app.post("/api/auth/register", upload.single("picture"), register);
 app.post('/api/register', upload.any("picture"), register);
@@ -251,31 +168,6 @@ app.get("/api/", (req,res)=>{
 server.listen(5000, ()=>{
 
     io.on('connection', async(socket)=>{
-
-        console.log("USER:::::::::::::::: " + socket.request.session.user)
-    
-        //socket session is connected as redis session
-        console.log(" \n SOCKET OBJ: "  + JSON.stringify(socket.request.session) + "\n")
-        
-        // // const userInfo = socket.request.session.user;
-        // // const username = userInfo.username;
-        // const username ="Novak";
-        // //user:{id}
-        // const userIDKey = await get(`username:${username}`)
-        // const userID = userIDKey.split(':')[1]; //{id}
-        // //add him in online users
-        // await sadd('online_users', userID);
-        // //who is connected
-        // const msg={
-        //     // ...socket.request.session.user,
-        // }
-    
-        //use redis publish to notify all subscribers that user is connected
-        //publish function or client.publish
-        //redisClient.publish('user.connected', 'msg');
-        // publish('user.connected', 'connected: ' + username); //this will be send to MESSAGE CHANNEL(publish func)
-        // //use socket() to broadcast emit(real-time) TO NOTIFY FRONTEND
-        // socket.broadcast.emit('user.contected', 'msg');
     
         //when client enter the Room 
         socket.on("room.join", id =>{ //listen on 'room.join' event
@@ -297,12 +189,6 @@ server.listen(5000, ()=>{
             //io.emit('commentResponseNotify', data);
         })
     
-        //WHERE CLIENT SEND MESSAGE(ON FRONT SIDE) TAKE THIS MESSAGE AND USE IT IN BACK HERE
-        //listten on message event(if client send message)
-        //we take message from client(message) and persist it to REDIS 
-        //then notify other subscirber of THAT CHANNEL(room) to see sent message
-        //in client --- (socekt.emit('message', {messageObj}))
-        //that trigger this event
         socket.on("message", async(messageObj)=>{    
             const parsedObj = JSON.parse(messageObj);
             const { message, from, roomID} = parsedObj;
@@ -316,9 +202,6 @@ server.listen(5000, ()=>{
             // const convertedMessage = JSON.parse(messageObj);
     
             console.log("MESSAGE OBJ: " + parsedObj);
-            //add user to online users //when is loggouted or session expired then remove it from this set
-            // await sadd("online_users", message.from);
-            // console.log("Converted OBJ: " + convertedMessage);
             await sadd("online_users", from);
     
             const roomKey = `room:${roomID}`;
@@ -348,7 +231,6 @@ server.listen(5000, ()=>{
                     console.log(`user:${id}:rooms`, roomID);
                 })
     
-                //structrure to send for showroom notification
                 const roomNotification={
                     id: message.roomID,
                     names:[
@@ -359,8 +241,6 @@ server.listen(5000, ()=>{
                     ]
                 }
     
-                //send data to subscriber of room
-                //msg contains roomID and usernames in this room, in client(from) we will read roomID and show msg only in this room
                 publish('show.room', roomNotification);
                 //broadcast to every show.room,
                 //To all connected clients except the sender 
@@ -393,19 +273,3 @@ server.listen(5000, ()=>{
 })
 
 })(); //self invoked
-
-// io.use() allows you to specify a function that is called for every new, incoming socket.io connection. 
-// It can be used for a wide variety of things such as: 
-// Logging,Authentication,Managing sessions,Rate limiting,Connection validation
-// io.use((socket, next)=>{
-
-// })
-
-
-//express-session
-//To store confidential session data, we can use the express-session package.
-// It stores the session data on the server and gives the client
-//a session ID to access the session data. 
-
-//cookie-parser
-//cookie-parser is a middleware which parses cookies attached to the client request object.
