@@ -1,18 +1,20 @@
 import {useEffect, useState, useRef} from 'react';
-import axios from 'axios';
-axios.defaults.withCredentials = true
 import {useSelector} from 'react-redux'
+import axios from 'axios';
 import Modal from '../../../UI/Modal.js'
 import CommentItem from '../../../UI/CommentItem'; 
-import useSocket from '../../../../hooks/useSocket.js';
+import './HouseworkerCard.css'
+import { toast } from 'react-toastify';
+
+
+axios.defaults.withCredentials = true
 
 
 //CLIENT - Serach, Filter, HouseworkersCard(wiht paggination)
 //GUEST sees everything just like THE CLIENT but 
 // -can't see all information(Working hours, Rating) and cant send message and post comment
 
-import './HouseworkerCard.css'
-import { toast } from 'react-toastify';
+
 
 //@Todo //Custom Hook for useFetch
 const HouseworkersCard = (props) =>{
@@ -30,7 +32,6 @@ const HouseworkersCard = (props) =>{
     const [showRateInput, setShowRateInput] = useState();
      //const [postComment, setPostComment] = useState()
     const contactMessageRef = useRef(null);
-
 
 
     const userAuth = useSelector((state) => state.auth)
@@ -290,8 +291,6 @@ const HouseworkersCard = (props) =>{
     else
         showRateInputCssClass ='accept-rate-button'
 
-    var recommendedCssClass = 'houseworker-content '
-    props.recommended ? recommendedCssClass += ' recommended' : ''
 
 
     
@@ -306,7 +305,7 @@ const HouseworkersCard = (props) =>{
                 onCloseModal={onCloseComment}
             />}
             <div className="houseworker-card">
-                <div className={recommendedCssClass}>
+                <div className={props.recommended ? 'houseworker-content recommended' : 'houseworker-content'}>
                     
                     <div className="imgBox">
                         {/* <img clasName="image">IMG FROM DB</img> */}

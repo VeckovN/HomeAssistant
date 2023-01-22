@@ -28,7 +28,7 @@ const Filter = (prop) =>{
         const citiesResult = result.data;
 
         setCities(citiesResult);
-        console.log("CITISES: " + JSON.stringify(city_option))
+        // console.log("CITISES: " + JSON.stringify(city_option))
     }
     
     const fetchProfessions = async() =>{
@@ -93,7 +93,7 @@ const Filter = (prop) =>{
         ))
     }
 
-    let city_options =[]
+    var city_options =[]
     // city_option =  cities.map(city=> (return {value:city, label:city}))
     if(cities){
         cities.forEach(city =>(

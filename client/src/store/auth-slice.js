@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import Cookie from 'js-cookie';
+import { Navigate } from 'react-router-dom';
 // /https://stackoverflow.com/questions/43002444/make-axios-send-cookies-in-its-requests-automatically
 // TO SEND COOKIE force credentials to every Axios requests
 axios.defaults.withCredentials = true
 
-import Cookie from 'js-cookie';
-import { Navigate } from 'react-router-dom';
 
 
 //with login we set user in localStorage
@@ -130,11 +130,11 @@ const authSlice = createSlice({
         //reset sync function(after we logged or register, we want to reset this values on initial )
         //for other ASYNC function we will use TRUNK func
         reset:(state)=>{
-            state.message='',
-            state.success=false,
-            state.error=false,
-            state.loading=false
-        },
+            state.message=' '
+            // state.success=false,
+            // state.error=false,
+            // state.loading=false 
+        }
     },
     extraReducers: (builder) =>{
         builder
@@ -153,7 +153,7 @@ const authSlice = createSlice({
             })
             .addCase(register.rejected, (state,action) =>{
                 state.loading = false;
-                state.succes = false;
+                state.success = false;
                 state.error = true;
                 //we set payload to message state because in catch block in register functon
                 //we return thunkAPI.rejectWithValue(message); that return error in message const as payload
