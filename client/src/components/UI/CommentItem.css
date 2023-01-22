@@ -1,0 +1,27 @@
+.comment_container{
+    background-color: aliceblue;
+
+    width: 70%;
+    height: 4rem;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding:.5rem 0rem;
+    margin:.5rem 0rem;
+
+    border-radius: .7rem;
+    position: relative;
+
+}
+.comment_container .info{
+    margin:.5rem 0rem;
+    position: absolute;
+    top:-.4rem;
+    left:.5rem;
+}
+
+.context{
+    padding:.5rem 0rem;
+}

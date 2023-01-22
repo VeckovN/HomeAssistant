@@ -1,0 +1,147 @@
+.registre_container{
+    
+    background-color: rgba(219, 226, 226,0.8);
+    width: 100%;
+    height: 100%;
+
+    justify-content: center;
+    align-items: center;
+}
+.register_options{
+    padding:10rem 0;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50% , -50%);
+}
+
+.register_item{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin:40px;
+}
+
+.register_link{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 16rem;
+    height: 4.5rem;
+    border-radius: 8px;
+    font-family: trebuchet ms;
+    font-size: 1.6rem;
+    text-decoration: none;
+
+    
+    /* border-color: rgb(97, 195, 235); */
+    background-color: rgb(97, 195, 235);
+    color:white;
+}
+
+.register_link:hover{
+    background-color: rgb(20, 118, 156);
+}
+
+
+
+/*-------- REGISTER HOUSEWORKER AND CLIENT  ---------*/
+
+
+.register_container{
+    width: 100%;
+    height: 100%;
+    background-color: rgba(219, 226, 226, 0.7);
+    padding:10rem 0rem;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.register_container form{
+
+    margin:3rem 0rem 0rem 0rem;
+    padding:1.4rem 1rem;
+    
+    width: 40%;
+    max-width: 450px;
+    min-width:300px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1rem;
+
+    background-color: rgb(87, 148, 204);
+
+    display: flex;
+    flex-direction: column;
+}
+
+.register_input_container{
+        
+    padding:.3rem 1rem;
+}
+
+.register_input_container input{
+    /* width: 100%; */
+    
+    margin:.1rem 0;
+
+    border:none;
+    background-color: transparent;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.466);
+    outline: none;
+    color:black;
+}
+
+.register_input_container input::placeholder{
+    color:black;
+}
+
+.label_input{
+    margin:.5rem 0rem .4rem 0rem;
+    font-weight: 600;
+}
+
+.gender_option{
+    width: 40%;
+    height: 1.6rem;
+    margin-bottom: .6rem;
+}
+
+.descriptionBox{
+    width: 70%;
+}
+
+.form_title{
+    font-size:1.1rem;
+    font-weight: 700;
+    padding-bottom: 1rem;
+}
+
+
+.register_button_container{
+    padding: 1rem 1.2rem;
+}
+
+.register_button_container button{
+    border-radius: 1rem;
+    height: 2.2rem;
+    width: 7rem;
+
+    border: none;
+    background-color: rgb(14, 13, 13);
+    color:white;
+
+    cursor: pointer;
+}
+
+.register_button_container button:hover{
+    background-color: rgb(53, 75, 104);
+}
+

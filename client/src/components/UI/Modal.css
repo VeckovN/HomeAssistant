@@ -1,0 +1,117 @@
+.backView{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%; /* 100vw same  */
+    height: 100vh;
+    background-color: #E6F4FA;
+    filter:opacity(0.7);
+    z-index: 10;
+}
+
+.modal{
+    position:fixed;
+    background-color: rgb(58, 109, 129);
+    border-radius: 1rem;
+
+    width:50vw;
+    max-width: 1000px;
+    max-height: 90%;
+    overflow: auto;
+
+    /* center modal */
+    top:55%;
+    float:left;
+    left: 50%;
+    transform: translate(-50%, -52%);
+
+    z-index: 20;
+    margin-bottom: 1rem;
+}
+
+.modal-conatiner{
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    /* display: flex;
+    flex-direction:column;
+    justify-content: space-evenly; */  
+}
+
+.modal-header{
+
+    display: flex;
+    justify-content: space-between;
+    /* background-color:bisque; */
+    padding: 0.7rem 0;
+    /* border-radius: 1rem 1rem 0rem 0rem; */
+}
+.modal-header , .modal-footer{
+    /* background-color:#381800; */
+    background-color:#14191a;
+}
+
+.modal-header:first-child{
+    font-family: 'Skranji', cursive;
+    letter-spacing: 0.05rem;
+    font-weight: 700;
+    font-size: 1.2rem;
+    padding-left: 1rem;
+    color:white;
+}
+
+
+.modal-header button{ /* second div of modal-header */
+    color:rgb(201, 5, 5);
+    font-size:1rem;
+    font-weight: bold;
+    margin-right:.7rem;
+
+    cursor: pointer;
+
+    background-color: transparent;
+    border:transparent;
+}
+
+.modal-header button:hover{
+    color:white;
+    font-size:1.2rem;
+}
+
+.modal-body{
+    background-color: #6fcad6;
+    /* background-image: url('../../../public/BackgroundCenter.jpg'); */
+    padding:0.2rem 0;
+}
+.modal-body form{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-footer{
+    /* border-radius:0rem 0rem 1rem 1rem; */
+    width: 100%;
+    /* background-color: aliceblue; */
+    position:static;
+    bottom:0;
+    padding: 0.6rem 0;
+}
+
+.total_amount{
+    font-size:1.2rem;
+    font-weight: 700;
+    color: wheat;
+}
+
+.total_amount span{
+    font-weight: 700;
+    font-size:1.5rem;
+    border-bottom: 3px solid rgb(255, 255, 255);
+    color:white;
+
+}
+
+
