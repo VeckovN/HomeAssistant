@@ -57,11 +57,14 @@ const HouseworkerProfile = () =>{
         ))
     }
 
+
     const onSubmitUpdate = async (e)=>{
         e.preventDefault();
 
         if(updatedData.password != updatedData.passwordRepeat)
-            alert("Passwords have to be same")
+            toast.error("Sifre trebaju biti iste")
+        else if(updatedData.first_name == "" && updatedData.last_name =="" && updatedData.email =="" && updatedData.city =="" && updatedData.address =="" && updatedData.phone_number =="" && updatedData.password =="" && updatedData.passwordRepeat =="") 
+            toast.error("Unesite podatke");
         else{
             try{
                 //only props wiht updated data( !='') for HTTP request

@@ -20,9 +20,6 @@ const getMessages = async(req,res)=>{
     const size = req.query.size;
     try{
         const messages = await chatModal.getMessages(roomID, offset, size);
-        //return res.status(200).send(messages);
-        // res.json({room:roomID, offset:offset, size:size});
-        // console.log("CHATTTTTT MS: " + JSON.stringify(messages));
         res.json(messages);
     }
     catch(err){
@@ -35,14 +32,11 @@ const sendMessage = async(req,res)=>{
     const message = req.body;
     const obj =  await chatModal.sendMessage(message);
     res.json(obj)
-    // console.log("CONTROL: " + obj);
+
 }
 
 const getAllRooms = async(req,res)=>{
-    // console.log("SESSIO CHAT : " + JSON.stringify(req.session ));
-    // const username = req.session.user.username;
     const username = req.params.username;
-    
     // const username = "Novak"
     console.log("ROOM USERNAME: " + username);
     try{
@@ -72,7 +66,6 @@ const addUserToRoom = async(req,res) =>{
 
     const roomID = req.body.roomID;
     const newUsername = req.body.newUsername;
-    // const user = req.body;
     console.log("ROOMID: " + roomID + " newUsername " + newUsername);
     
     try{

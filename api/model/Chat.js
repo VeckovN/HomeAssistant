@@ -190,7 +190,7 @@ const getAllRooms = async(username)=>{
 //this will be exected on socket event socket.on('message') event
 //-Who send Message --- message.from (user:1)
 //-Where is message sent ---message.roomID, (room:1:3)
-//-What is send --- message.message, (hello)
+//-What is sent --- message.message, (hello)
 //message = {from, message, roomID, }
 // const sendMessage = async(messageObj) =>{
 // }
@@ -204,19 +204,13 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
     //this will change(extend) existing user room 
     //and create that updated room to new user
     const currentRoomKey = `room:${currentRoomID}` //room:1:2
-    
-    console.log("CURRENT ROOM: " + currentRoomID)
-
+    // console.log("CURRENT ROOM: " + currentRoomID)
     const currentUserIDS = currentRoomID.split(':');
     //add newUserID
     currentUserIDS.push(newUserID)
-
     const sortedUserIDS = currentUserIDS.sort();
-
-    console.log("currentUserIDS : " + currentUserIDS); 
-    console.log("newUSERID: " + newUserID);
-
-    // console.log("Curee: " + currentUserIDS.length);
+    // console.log("currentUserIDS : " + currentUserIDS); 
+    // console.log("newUSERID: " + newUserID);
 
     let newRoomKey = "room";
     sortedUserIDS.forEach(id =>{
@@ -227,19 +221,16 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
     //this is memeber of users Rooms -> user:{ID}:rooms
     const newRoomID = sortedUserIDS.join(":"); //sorted ids with : between them =-- 1:2:5
     console.log("NEW USERS ID VALUE: " + newRoomID);
-
     //Put newUserID in order way   //allway order as room:1:5:9 not room:1:9:5
     console.log("SADD: " + `user:${newUserID}:rooms` + "," +  newRoomID)    
 
     // //rename currentRoomKey room:1:2 to room:1:2:newUser  (sorted set which store messages)
     await rename(currentRoomKey, newRoomKey);
-
     //for new added user add memeber in user:{newID}:rooms
     await sadd(`user:${newUserID}:rooms`, newRoomID);
 
-    console.log("SADD: " + `user:${newUserID}:rooms` + "," +  newRoomID)
-
-    console.log("RENAME: " + currentRoomKey + "," + newRoomKey)
+    // console.log("SADD: " + `user:${newUserID}:rooms` + "," +  newRoomID)
+    // console.log("RENAME: " + currentRoomKey + "," + newRoomKey)
 
     const oldUsersIDS = currentRoomID.split(':');
     const oldRoomID = currentRoomID;

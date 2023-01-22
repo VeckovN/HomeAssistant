@@ -12,23 +12,6 @@ const chatModel = require('../model/Chat');
 
 const {get, set, sadd } = require('../db/redis');
 
-// const register = async (req,res) =>{
-
-//     //take fileName -> unique generated when is uploaded (filename + "_" dateNow)
-//     // const picturePath = req.file
-
-//     //WHEN is upload.any('') used , use req.files[0] to access to file instead req.file
-//     console.log("PATH2: " + JSON.stringify(req.files[0]))
-//     const picturePath = req.files[0].filename; //generated name after image upload
-//     console.log("PICTUREPATH: " + picturePath);
-
-//     // console.log("PATH3: " + req.file("filename"))
-
-//     const regData = {...req.body, picturePath:picturePath }
-//     console.log("OBJ: \n" + JSON.stringify(object));
-
-//     res.json(req.body);
-// }
 
 const register = async (req,res)=>{
     //type='client' or 'houseworker'
@@ -47,10 +30,8 @@ const register = async (req,res)=>{
     if(userExists)
         return res.status(400).json({error:"User with this username exists"}) 
     else{
-        //Create user in redis DB
-        //get last userID = 
+
         const redisUser = await chatModel.createUser(username, hashedPassword);
-        
         console.log("IDDDDDDD : " + redisUser.id);
         userData.id = Number(redisUser.id);
 
@@ -62,29 +43,10 @@ const register = async (req,res)=>{
             await clientModal.create(userData);
             //assign user to the session after creating the user /request from client(set the sesson to client)
             req.session.user = user
-            // req.session.username = username;
-            // req.session.type = type
             console.log("SESION123123:" + JSON.stringify(req.session));
             return res.json(user); //created user
 
-            // const data = await clientModal.findByUsername(username);
-            // //this return a null value if there ins't the client
-            // if(data){
-            //     return res.json({error:"User exists"}).status(400);
-            // }   
-            // else{
-            //     //UPLODA picture to /client/public/assets/userPicture
 
-            //     const user = {username:username, type:type}
-            //     await clientModal.create(userData);
-
-            //     //assign user to the session after creating the user /request from client(set the sesson to client)
-            //     req.session.user = user
-            //     // req.session.username = username;
-            //     // req.session.type = type
-            //     console.log("SESION123123:" + JSON.stringify(req.session));
-            //     return res.json(user); //created user
-            // }
         }
         else if(type=='Houseworker'){ //houseworker
 
@@ -108,7 +70,6 @@ const register = async (req,res)=>{
         }
     } 
 
-    
 }
 
 const login = async(req,res)=>{
@@ -139,23 +100,16 @@ const login = async(req,res)=>{
         let userID = userRedis.split(':')[1]; //[user, {userID}]
 
         req.session.user = {username:username, type:userType, userRedisID:userID}
-        // const sess = req.session;
-        // sess.username = username;
-        // sess.type = userType
-        // return res.redirect(`/${user.type}`)
         console.log("SESSSSSLogion22222222: " + JSON.stringify(req.session))
-        //return res.json({connect:"U are logged in"})
         return res.send(req.session.user)
     }
     else
-        // return res.json({error:"User not found"}).status(400);
         return res.send({error:"Pogresna lozinka ili korisnicko ime"})
 
 }
 
 const logout = async(req,res)=>{
-    //req.session = null //Deletes the cookies
-    //req.session.destroy() //Delets the session in the DB
+
     console.log("LOOGOUTTT: " + JSON.stringify(req.session))
     if(req.session.user){
         req.session.destroy((err)=>{

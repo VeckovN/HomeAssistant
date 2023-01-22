@@ -14,7 +14,5 @@ const session = driver.session();
 module.exports = {session, driver};
 
 
-//PywSSJA3hJEFm8mnRB7PfndDl1bd9F9IV63gmwpsKto
-
 //Difference betweeen the Session.run() and transaction.run() 
 //https://stackoverflow.com/questions/39525713/session-run-vs-transaction-run-in-neo4j-bolt

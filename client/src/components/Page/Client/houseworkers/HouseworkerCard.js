@@ -27,11 +27,13 @@ const HouseworkersCard = (props) =>{
 
     const postCommentRef = useRef();
     const commentClick = useRef(false);
+    const [newComment, setNewComments] = useState(false);
     const [rate, setRate] = useState('');
     // const showRateInput = useRef(false);
     const [showRateInput, setShowRateInput] = useState();
      //const [postComment, setPostComment] = useState()
     const contactMessageRef = useRef(null);
+    
 
 
     const userAuth = useSelector((state) => state.auth)
@@ -71,7 +73,7 @@ const HouseworkersCard = (props) =>{
    //we wanna fetch data only on click Comment Modal
    //To prevent this , use commentClick useRef 
     useEffect(()=>{
-        if(commentClick.current == true) //if is clicked --- true
+        if(commentClick.current == true || newComment == true) //if is clicked --- true
             getHouseworkerComments(houseworkerUsername)
     },[houseworkerUsername])
 
@@ -80,8 +82,10 @@ const HouseworkersCard = (props) =>{
         const comms = result.data;
         //only if comms exist (MUST because //getHouseworkerComments will run on intialization(comms will be empty))
         //and houseowrkerUsername is initalized on start wiht ('')
-        if(comms.length > 0)
-            setComments(comms)
+        if(comms){
+            if(comms.length > 0)
+                setComments(comms)
+        }
 
         // console.log("COMMMMESSSTT: " + JSON.stringify(comms))
         console.log("LENGTH: " + comms.length )
@@ -132,10 +136,12 @@ const HouseworkersCard = (props) =>{
                 }
                 const result = await axios.post(`http://localhost:5000/api/clients/comment`, postComment);
                 
+                toast.success("Komentar je postavljen",{
+                    className:'toast-contact-message'
+                })
                 // //SOCKET EMIT TO Server (IN Home.js is received)
                 socket.emit('comment', JSON.stringify({...postComment, houseworkerID:houseworkerID}))
 
-                //console.log("RESSSS: " + JSON.stringify(result));
                 const newComment = {
                     //we send (looged user) comment to (showenedModal ->oldComment)
                     from: userAuth.user.username,
@@ -153,10 +159,13 @@ const HouseworkersCard = (props) =>{
                         newComment,
                         ...oldComments
                     ]);
-                else
+                else{
+                    setNewComments(true)
                     setComments([
-                        newComment
+                        newComment,
                     ])
+                }
+                    
             }catch(err){
                 //setError()
                 console.log(err);
@@ -227,12 +236,16 @@ const HouseworkersCard = (props) =>{
                 }
                 const result = await axios.post('http://localhost:5000/api/clients/rate', rateObj);
                 console.log("RESULTT : " + JSON.stringify(result));
+
+                toast.success(`Ocenili ste korisnika ${username} ocenom ${rate} `,{
+                    className:'toast-contact-message'
+                })
             }
             catch(err){
                 console.log('RateError: ' + err);
             }
             
-            alert("YOU rated: " + username + " / With rate: " + rate + "YYPE :" + typeof(rate));
+            // alert("YOU rated: " + username + " / With rate: " + rate + "YYPE :" + typeof(rate));
         }
     }
 
@@ -268,7 +281,7 @@ const HouseworkersCard = (props) =>{
                         from:ourID,
                         roomID:RoomID
                 }
-                alert(JSON.stringify(messageObj));
+                // alert(JSON.stringify(messageObj));
                 socket.emit('message', JSON.stringify(messageObj))
                 toast.success("Poruka je poslata",{
                     className:'toast-contact-message'

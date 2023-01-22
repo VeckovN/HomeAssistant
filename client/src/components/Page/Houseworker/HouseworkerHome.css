@@ -28,7 +28,7 @@
 
 .houseworker_item {
 
-    background-color: rgb(39, 199, 199);
+    background-color: rgb(97, 148, 172);
     height: 11rem;
     width: 11rem;
     padding:0 1rem;
@@ -48,6 +48,11 @@
     justify-content: center;
     align-items: center;
     
+}
+.item_title label{
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
 }
 .item_info{
     font-size: 1.3rem;

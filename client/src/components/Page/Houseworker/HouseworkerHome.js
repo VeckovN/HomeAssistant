@@ -52,8 +52,8 @@ const HouseworkerHome = () =>{
             <div className ='houseworker_item_container'>
                 <div className ='houseworker_item'>
                     <div className='item_title'>
-                        <div>Konverzacija</div>
-                        <div>IKONICA </div>
+                        <label>Konverzacija</label>
+                        <div>IKONICA</div>
                     </div>
                     
                     <div className='item_info'>{conversationCount}</div>
@@ -61,7 +61,7 @@ const HouseworkerHome = () =>{
 
                 <div className ='houseworker_item'>
                     <div className='item_title'>
-                        <div>Ocena</div>
+                        <label>Ocena</label>
                         <div>IKONICA</div>
                     </div>
 
@@ -70,7 +70,7 @@ const HouseworkerHome = () =>{
 
                 <div className ='houseworker_item'>
                     <div className='item_title'>
-                        <div>Komentari</div>
+                        <label>Komentari</label>
                         <div>IKONICA</div>
                     </div>
                     

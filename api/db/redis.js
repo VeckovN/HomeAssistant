@@ -1,47 +1,8 @@
-// const {createClient} = require('redis');
-// const connectRedis = require('connect-redis');
-// const redisClient = createClient({legacyMode:true});
-
-// //RedisStore has been created and put expressSession-object in it
-// const RedisStore = connectRedis(expressSession);
-// //contect to redis instance
-// redisClient.connect()
-// .catch(err=>{
-//     console.log("Couldn't connect to redis", err);
-// })
-
-// module.exports = {redisClient, RedisStore, connectRedis}
-
-//Redis functions with PROMISE for ChatPart 
-//const redis = require('redis');
 const session = require('express-session');
 const Redis = require('ioredis');
 
 const dotenv = require('dotenv');
 dotenv.config();
-// const fs = require('fs');
-
-// const redis = new Redis({
-//     host: 'redis-17664.c300.eu-central-1-1.ec2.cloud.redislabs.com',
-//     port: 17664,
-//     password: 'Ic4AULQZTPHR9QALfyqKW2jDJWDVi6Ro'
-// });
-
-
-// const client = redis.createClient({
-//     host:'redis-17664.c300.eu-central-1-1.ec2.cloud.redislabs.com',
-//     port: 17664,
-//     legacyMode:true
-
-// });
-// client.auth('Ic4AULQZTPHR9QALfyqKW2jDJWDVi6Ro');
-
-// const client = new Redis({
-//     host: 'redis-17664.c300.eu-central-1-1.ec2.cloud.redislabs.com',
-//     port: 17664,
-//     password: 'Ic4AULQZTPHR9QALfyqKW2jDJWDVi6Ro',
-    
-// });
 
 // const client = new Redis('redis://default:Ic4AULQZTPHR9QALfyqKW2jDJWDVi6Ro@redis-17664.c300.eu-central-1-1.ec2.cloud.redislabs.com:17664')
 const client = new Redis(process.env.REDIS_URL)
@@ -49,15 +10,8 @@ console.log("STATUS: ");
 console.log(client.status)
 
 
-//const client = redis.createClient({legacyMode:true});
-
-
-
-//RedisStore has been created and put session-object in it
-// const RedisStore = connectRedis(session);
 let RedisStore = require("connect-redis")(session)
 //create subscriber
-// const sub = new Redis('redis://default:Ic4AULQZTPHR9QALfyqKW2jDJWDVi6Ro@redis-17664.c300.eu-central-1-1.ec2.cloud.redislabs.com:17664')
 const sub = new Redis(process.env.REDIS_URL)
 
 // const incr = (key = "key") =>{

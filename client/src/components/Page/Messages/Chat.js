@@ -23,6 +23,8 @@ const Chat = ({socket, connected}) =>{
     const [enteredRoomID, setEnteredRoomID] = useState('');
     const [newMessage, setNewMessage] = useState('');
 
+    const [newRoom, setNewRoom] = useState(false);
+
     const [selectedUsername, setSelectedUsername] = useState('');
     const [houseworkers, setHouseworkers] = useState('');
 
@@ -116,10 +118,6 @@ const Chat = ({socket, connected}) =>{
 
         console.log("NESS: " + JSON.stringify(messages));
 
-        // let parsedMessages
-        // //parse each message to JSON
-        // parsedMessages = messages.map(el => JSON.parse(el))
-
         //console.log(`http://localhost:5000/api/chat/room/${roomID}/messages?offset=0&size=50`)
         //const data = messages.data; //uneseserry because we return object wiht map(itns not promise)
         console.log("MESSAGES: " + JSON.stringify(messages));
@@ -170,8 +168,10 @@ const Chat = ({socket, connected}) =>{
     const onAddUserToGroupHanlder = async(e)=>{
         const roomID = e.target.value;
 
+        console.log("ROOMS: " + JSON.stringify(rooms));
+
         if(selectedUsername == ""){
-            toast.info("Izaberi korisnika koga zelis da dodas u sobu",{
+            toast.info("Izaberi korisnika koga zelite dodati u sobu",{
                 className:"toast-contact-message"
             })
             return
@@ -186,11 +186,17 @@ const Chat = ({socket, connected}) =>{
 
         const newRoomID = await axios.post('http://localhost:5000/api/chat/room/addUser',roomInfo);
 
-        toast.info("User added to RoomID: "+ roomID );
+        toast.info("Korisnik je dodat u Sobu: "+ roomID );
 
         // setRooms(prev=>({
         //     ...prev,
         //     [roomID]:newRoomID
+        // }))
+
+        setNewRoom(!newRoom);
+
+        // setRooms(prev=>({
+        //     ...prev
         // }))
         
     }
@@ -243,7 +249,7 @@ const Chat = ({socket, connected}) =>{
     //console.log("ROOM: " + JSON.stringify(rooms));
     useEffect(() =>{
         fetchAllRooms()
-    },[]) //change on socket on. show.room
+    },[newRoom]) //change on socket on. show.room
 
     //on socket.show.room(add room)
 
@@ -255,7 +261,7 @@ const Chat = ({socket, connected}) =>{
                 {rooms &&
                     rooms.map((el, index)=>(
                     <div className='rooms'><span className='roomLabel'>Soba {index +1}</span>
-                        <div className='users'>{el.users.map((user,index)=> (<div className='roomUsers'>{user}<span/></div>))}</div>
+                        <div className='users'>{el.users.map((user,index)=> (<div className='roomUsers'> -{user}- <span/></div>))}</div>
                         <div className='room_buttons'>
                             <button value={el.roomID} ref={roomRef} onClick={onRoomClickHanlder}>Prikazi poruke </button>
                             {/* client can delete The chat room */}
@@ -300,7 +306,6 @@ const Chat = ({socket, connected}) =>{
                             }
 
                             return <>
-                                
                                     <div className='message'>
                                         <div className={`context ${messageContext}`}><span> <span className='user_name'>{userRedisID==el.from ? 'Ja' : el.fromUsername}</span> : {el.message}</span> </div>
                                     </div>

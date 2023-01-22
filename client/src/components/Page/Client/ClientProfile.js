@@ -74,7 +74,7 @@ const ClientProfile = () =>{
 
         if(updatedData.password != updatedData.passwordRepeat)
             toast.error("Sifre nisu iste");
-        else if(updatedData.first_name =="" && updatedData.last_name =="" && updatedData.email =="" && updatedData.city ==""){
+        else if(updatedData.first_name =="" && updatedData.last_name =="" && updatedData.email =="" && updatedData.city =="" && updatedData.password =="" && updatedData.passwordRepeat ==""){
             toast.error("Unesite podatke");
         }
         else{

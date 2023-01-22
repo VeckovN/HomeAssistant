@@ -2,10 +2,7 @@ const clientModel = require('../model/Client');
 const bcrypt = require('bcrypt');
 
 const getClientByUsername = (req,res)=>{
-    //One way with chaining .then()
     const username = req.params.username;
-    //THIS IS A PROMISE
-    // const client = clientModel.findByUsername(username)
     clientModel.findByUsername(username)
     .then((data)=>{
         //console.log("THEN DATA " + JSON.stringify(data));
@@ -21,29 +18,9 @@ const getClientByUsername = (req,res)=>{
         res.send(err).status(400);
     });
 
-    //or using async.await
-    //const client = await clientModel.findByUsername(username);
-    // try{
-    //     //from body
-    //     // const username = req.body.username;
-    //     //from url
-    //     const username = req.params.username;
-
-    //     //THIS IS A PROMISE
-
-    //     //const client = await clientModel.findByUsername(username);
-
-    //     console.log("CLIENTTT: " + client);
-    //     res.send(client).status(201);
-    // }catch(err){
-    //     console.log("ERRPR WITH CONTROLLER");
-    //     res.send('ERRORRRRR').status(400);
-    // }
-
 }
 
 const getClients = async(req,res)=>{
-    //with await/async is simplier 
     try{
         const result = await clientModel.findAll();
         
@@ -76,24 +53,6 @@ const getClientInfo = async(req,res)=>{
 }
 
 
-//Logged client
-// const getClient = async (req,res)=>{
-//     // const username = req.params.username;
-//     const username = req.session.user.username;
-//     //THIS IS A PROMISE
-
-//     try{
-//         const result = await clientModel.findByUsername(username)
-//         const {password, ...clientData} = data;
-//         // res.json(data)
-//         res.json(clientData)
-//     }
-//     catch(err){
-//         console.log("ERROR: " + err);
-//         res.send(err).status(400);
-//     }
-// }
-
 
 const getComments = async(req,res)=>{
     try{
@@ -125,21 +84,6 @@ const rateHouseworker = async (req,res)=>{
     }
 }
 
-// const commentHouseworker = async(req, res)=>{
-//     try{
-//         const ourUsername = req.session.user.username
-//         const houseworker = req.body.username;
-//         const comment = req.body.comment;
-//         console.log("JSSSOSOSOSO: " + ourUsername + "/ " + houseworker + "/ " + comment)
-//         const result = await clientModel.commentHouseworker(ourUsername,houseworker, comment);
-//         console.log("RESSS: " +  JSON.stringify(result));
-//         res.json(result);
-//     }
-//     catch(err){
-//         console.log("Error Comment: " + err);
-//         res.send(err).status(400);
-//     }
-// }
 const commentHouseworker = async(req, res)=>{
     try{
         //we comment
@@ -192,10 +136,6 @@ const udpateClient = async(req,res)=>{
     }
     catch(err){
         console.log("Error UpdateClient(Yourself): " + err);
-        //Catch in front wiht axios try catch  (THIS will shotdown server functionality)
-        //throw new Error("Error with client profile update")
-
-        // THIS wont stop the server
         return res.status(406).send("Error with updating");
     }
 }
