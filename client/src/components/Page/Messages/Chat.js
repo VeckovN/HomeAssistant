@@ -6,6 +6,8 @@ import {io} from "socket.io-client";
 import { toast } from 'react-toastify';
 import useSocket from '../../../hooks/useSocket.js';
 
+import './Chat.css'
+
 
 const Chat = ({socket, connected}) =>{
 
@@ -112,32 +114,47 @@ const Chat = ({socket, connected}) =>{
         //const messages = JSON.parse(result.data);
         const messages = result.data;
 
-        let parsedMessages
-        //parse each message to JSON
-        parsedMessages = messages.map(el => JSON.parse(el))
+        console.log("NESS: " + JSON.stringify(messages));
+
+        // let parsedMessages
+        // //parse each message to JSON
+        // parsedMessages = messages.map(el => JSON.parse(el))
 
         //console.log(`http://localhost:5000/api/chat/room/${roomID}/messages?offset=0&size=50`)
         //const data = messages.data; //uneseserry because we return object wiht map(itns not promise)
         console.log("MESSAGES: " + JSON.stringify(messages));
-        console.log("PARRSED: " + JSON.stringify(parsedMessages));
+        // console.log("PARRSED: " + JSON.stringify(parsedMessages));
 
-        setRoomMessages(parsedMessages);
+        // setRoomMessages(parsedMessages);
+        setRoomMessages(messages);
     }
 
     const onDeleteRoomHandler = async(e)=>{
         //take roomID 
         const roomID = e.target.value;
-        alert("ROOMID: " + e.target.value + "TYPE: " + typeof(roomID));
+        // alert("ROOMID: " + e.target.value + "TYPE: " + typeof(roomID));
 
         //Delete SortedLIst Room 
         //room:1:2
-
         //PASS ONLY ROOMID
         const result = await axios.post('http://localhost:5000/api/chat/room/delete', {roomID:roomID});
 
-        console.log("DELETE ROOM RESULT: " + JSON.stringify(result));
-    }
+        console.log("BEFORE ROOMS + "  + rooms);
 
+        const otherRooms = rooms.filter(el => el.roomID!=roomID)
+
+        //this will re-render rooms and message view
+        setRooms(otherRooms);
+        setRoomMessages([]);
+
+        console.log("AFTER ROOMS " + otherRooms);
+
+        console.log("DELETE ROOM RESULT: " + JSON.stringify(result));
+
+        toast.success("Uspesno si obrisao sobu",{
+            className:"toast-contact-message"
+        });
+    }
 
     //Fetch all houseworekr and show them as  select option
     useEffect(()=>{
@@ -154,10 +171,12 @@ const Chat = ({socket, connected}) =>{
         const roomID = e.target.value;
 
         if(selectedUsername == ""){
-            alert("SELECT ONE");
+            toast.info("Izaberi korisnika koga zelis da dodas u sobu",{
+                className:"toast-contact-message"
+            })
             return
         }
-        alert("ROOMID: " + roomID);
+        // alert("ROOMID: " + roomID);
 
         //add useto
         const roomInfo = {
@@ -190,26 +209,35 @@ const Chat = ({socket, connected}) =>{
         const fromRoomID = roomRef.current.value;
         //
 
-        //In REDUX set redisID userID(for each username)
-        // const from = 
-        console.log("MESSAGE : " + message)
-        messageRef.current.value = ''
-        console.log("MEESAGES SEND FROM ROOMID: " + fromRoomID);
+        if(message != ''){
+            //In REDUX set redisID userID(for each username)
+            // const from = 
+            console.log("MESSAGE : " + message)
+            messageRef.current.value = ''
+            console.log("MEESAGES SEND FROM ROOMID: " + fromRoomID);
+            //emit io.socket event for sending mesasge
+            //this will trigger evento on server (in index.js) and send message to room
+            const messageObj = {
+                message:message,
+                //who send message()
+                from:userRedisID,
+                roomID:fromRoomID,
+                fromUsername:user.username
 
-        //emit io.socket event for sending mesasge
-        //this will trigger evento on server (in index.js) and send message to room
-
-        const messageObj = {
-            message:message,
-            //who send message()
-            from:userRedisID,
-            roomID:fromRoomID
+            }
+            //emit message(server listen this for sending message to user(persist in db) )
+            //and also client listen this event to notify another user for receiving message
+            socket.emit('message', JSON.stringify(messageObj));
+            //io.emit or somethingn ('message', messageObj)
+            toast.success("Poruka je poslata",{
+                className:'toast-contact-message'
+            })
         }
-        //emit message(server listen this for sending message to user(persist in db) )
-        //and also client listen this event to notify another user for receiving message
-        socket.emit('message', JSON.stringify(messageObj));
-
-        //io.emit or somethingn ('message', messageObj)
+        else
+            toast.error("Ne mozes poslati praznu poruku",{
+                className:'toast-contact-message'
+            })
+        
     }
 
     //console.log("ROOM: " + JSON.stringify(rooms));
@@ -219,26 +247,24 @@ const Chat = ({socket, connected}) =>{
 
     //on socket.show.room(add room)
 
+    var messageContext;
     //console.log("ROMM MESSAGESS : " + JSON.stringify(roomMessages));
     return(
-        <div className="Chat">   
-            <h1>Rooms</h1>
-            <br></br>
-            <ul>
-                {rooms ?
+        <div className="chat_container">   
+            <div className='room_conainter'>
+                {rooms &&
                     rooms.map((el, index)=>(
-                        <li>User : {el.users.map(user=> (<div className='roomUsers'>{user}</div>))}
-                            <button value={el.roomID} ref={roomRef} onClick={onRoomClickHanlder}>RoomID:{el.roomID} </button>
+                    <div className='rooms'><span className='roomLabel'>Soba {index +1}</span>
+                        <div className='users'>{el.users.map((user,index)=> (<div className='roomUsers'>{user}<span/></div>))}</div>
+                        <div className='room_buttons'>
+                            <button value={el.roomID} ref={roomRef} onClick={onRoomClickHanlder}>Prikazi poruke </button>
                             {/* client can delete The chat room */}
                             {user.type=="Client" &&
                                 <>
-                                    <button onClick={onDeleteRoomHandler} value={el.roomID}>Delete Room</button>
-
-                                    <button onClick={onAddUserToGroupHanlder} value={el.roomID}>Add User to Room</button>
                                     <select onChange={onChangeSelectHandler}>
                                         {houseworkers && 
                                             <>
-                                                <option value="">Select One</option>
+                                                <option value="">Izaberi korisnika</option>
                                             {
                                                 houseworkers.map(el =>(
                                                     <option value={el.username}>{el.first_name}</option>
@@ -246,46 +272,58 @@ const Chat = ({socket, connected}) =>{
                                             }
                                             </>
                                         }
-                                        
-                                        
                                     </select>
+                                    <button onClick={onAddUserToGroupHanlder} value={el.roomID}>Dodaj korisnika</button>
+                                    <button onClick={onDeleteRoomHandler} value={el.roomID}>Izbrisi sobu</button>
                                 </>
                             }
-                        </li>
+                        </div>
+                    </div>
                     ))
-                    :
-                    <div>No rooms</div>
                 }
+                    
+                {rooms.length==0 && <div className='no_rooms'>Nemate poruke</div>}
+                
+            </div>
 
+            
+            <div className='messages_container'>
                 {roomMessages.length >0 &&
                     <>
-                        <h3>Messages</h3>
-                        <ul>
-                        {roomMessages.map(el =>(
-                            <>
-                                <li>
-                                    <div>Message: {el.message}</div>
-                                    <div>From: {el.from}</div>
-                                    <br/>
-                                </li>
-                            </>
-                        ))}
-                        </ul>
+                        <div className='messages_box'>
+                        {roomMessages.map(el =>{
+                            if(userRedisID==el.from){
+                                messageContext=' my_message'
+                            }
+                            else{
+                                messageContext=' notMy_message'
+                            }
+
+                            return <>
+                                
+                                    <div className='message'>
+                                        <div className={`context ${messageContext}`}><span> <span className='user_name'>{userRedisID==el.from ? 'Ja' : el.fromUsername}</span> : {el.message}</span> </div>
+                                    </div>
+                                </>
+                        })}
                         <div className='sendMessageBox'>
-                                    <input
-                                        type='text'
-                                        name='message-text'
-                                        ref={messageRef}
-                                    />
-                                    <br/>
-                                    <button onClick={onSendMessageHandler}>Send</button>
-                                </div>
+                            <input
+                                type='text'
+                                name='message-text'
+                                placeholder="Unesite poruku"
+                                ref={messageRef}
+                            />
+                            
+                            <button onClick={onSendMessageHandler}>Posalji</button>
+                        </div>
+                </div>
+                        
                         {/* <MessageItem></MessageItem> */}
                     </>
                     
                 }
                 {newMessage && <div>NEW MESSAGE: {newMessage}</div>}
-            </ul>
+            </div>
         </div>
     )
 }

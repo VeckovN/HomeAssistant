@@ -1,5 +1,5 @@
 const { Socket } = require('socket.io');
-const {incr, set, hmset, sadd, hmget, exists, client, zrevrange, smembers, zadd, srem, del, get, rename} = require('../db/redis');
+const {incr, set, hmset, sadd, hmget, exists, client, zrevrange, smembers, zadd, srem, del, get, rename, scard} = require('../db/redis');
 const { use } = require('../routes/clients');
 
 
@@ -93,10 +93,33 @@ const getMessages = async(roomID, offset=0, size=50) =>{
 
         //return all messages from room
         console.log("TTTTTT" + roomID + " " + offset + " " + size);
-        const messages = await zrevrange(roomKey, offset, size)
-        console.log("MESSAGESSS : " + JSON.stringify(messages));
+        const ReMessages = await zrevrange(roomKey, offset, size);
+        const messages = ReMessages.reverse();
 
-        return messages;
+        // console.log("MESSAGES: " + messages + "TP: " + typeof(messages));
+        //username of sender
+        // const mess = messages)
+
+        let messagesObj = [];
+        for(const mes of messages){
+            // console.log("EL :" + mes);
+            const mesObj = JSON.parse(mes);
+            //for each user return their username
+            const username = await usernameByUserID(mesObj.from);
+            //console.log("username: " + username + "TP: " + JSON.stringify(username))
+            mesObj.fromUsername = username[0];
+            // console.log('MESOBJ ' + JSON.stringify(mesObj));
+            messagesObj.push(mesObj);
+        }
+        // const from = mess.from;
+        // console.log("FROM: " + from);
+        // const fromUsername = await usernameByUserID(from);
+
+        // console.log("USERNAME: " + fromUsername);
+        // messages.fromUsername = fromUsername;
+        console.log("MESSAGESSS : " + JSON.stringify(messagesObj) + "TP: " + typeof(messagesObj));
+
+        return messagesObj;
         // //return message by message
     }
 }
@@ -230,6 +253,12 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
 
 }
 
+const getRoomCount = async(userID)=>{
+    const userKey = `user:${userID}:rooms`;
+    const count = await scard(userKey);
+    return count;
+}
+
 //or we could create Group Room on start conversation
 const createGroupRoom = async(userIDS)=>{ //array of usersID [1,2,6]
     const userIDMemeber = userIDS.join(":"); // 1:2:6 ids seperated with :
@@ -266,6 +295,7 @@ module.exports ={
     getMessages,
     getAllRooms,
     deleteRoomByRoomID,
-    addUserToRoom
+    addUserToRoom,
+    getRoomCount
 }
 

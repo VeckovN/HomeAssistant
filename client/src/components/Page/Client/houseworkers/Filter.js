@@ -13,7 +13,7 @@ const Filter = (prop) =>{
     const [filters, setFilters] = useState({});
 
     //getCities 
-    const [cities, setCities] = useState([]);
+    const [cities, setCities] = useState();
     const [professions, setProfessions]= useState([]);
 
 
@@ -26,7 +26,9 @@ const Filter = (prop) =>{
     const fetchCities = async() =>{
         const result = await axios.get(`http://localhost:5000/api/houseworker/cities`);
         const citiesResult = result.data;
+
         setCities(citiesResult);
+        console.log("CITISES: " + JSON.stringify(city_option))
     }
     
     const fetchProfessions = async() =>{
@@ -43,6 +45,7 @@ const Filter = (prop) =>{
         prop.filterOptions(filters);
         console.log("FILTER APPLIED: " + JSON.stringify(filters));
     }
+    
 
     const onChangeHandler = (e) =>{
         const name = e.target.name;
@@ -90,10 +93,33 @@ const Filter = (prop) =>{
         ))
     }
 
+    let city_options =[]
+    // city_option =  cities.map(city=> (return {value:city, label:city}))
+    if(cities){
+        cities.forEach(city =>(
+            city_options.push({value:city, label:city})
+        ))
+    }
+    console.log("CITY: " + JSON.stringify(city_options));
+
+    const onCitySelect = (e) =>{
+        let city = e.value;
+        console.log("CITTYYYY: " + city);
+
+        setFilters(prev=>(
+            {
+                ...prev,
+                ["city"]:city
+            }
+        ))
+    }
+
+    console.log("FIIIIIIIII: " + JSON.stringify(filters));
 
     return (
+
+        
         <div className='filterBox'>
-            
             {/* <div className='select_filter_box'>
                 <label className='filter_lb'>Profesije:</label>
                 <div className='multiselect'>
@@ -104,16 +130,18 @@ const Filter = (prop) =>{
                     </div>
                 </div>
             </div> */}
-            <Select 
-                className='dropdown'
-                placeholder="Select Profession"
-                //Value for each option (in options object take key:Value )
-                // value={options.filter(obj => )}
-                options={options}
-                onChange={onProfessionSelect}
-                isMulti
-                isClearable
-            />
+            <div className='select-filter-box'>
+                <Select 
+                    className='dropdown'
+                    placeholder="Izaberite profesiju"
+                    //Value for each option (in options object take key:Value )
+                    // value={options.filter(obj => )}
+                    options={options}
+                    onChange={onProfessionSelect}
+                    isMulti
+                    isClearable
+                />
+            </div>
             
 
             {/* Component for multiple option select */}
@@ -121,55 +149,31 @@ const Filter = (prop) =>{
             {/* GRAD */}
             <label className='filter-lb'>Grad:</label>
             <div className='filter-card'>   
-                <input className='city-filter' onChange={onChangeHandler} type="text" name='city' list='cityname' placeholder="Izaberite Grad"/>
-                <datalist id='cityname'>
-                    {/* List here all Cities */}
-                    {cities && cities.map(city=>
-                        //return <option value={`${city}`}></option>
-                        <option value={city}></option>
-                    )}
-                    {/* <option value='Beograd'/>
-                    <option value='Novi Sad'/>
-                    <option value='Nis'/>
-                    <option value='Kragujevac'/>
-                    <option value='Subotica'/>
-                    <option value='Leskovac'/>
-                    <option value='Pancevo'/>
-                    <option value='Cacak'/>
-                    <option value='Krusevac'/>
-                    <option value='Kraljevo'/>
-                    <option value='Novi Pazar'/>
-                    <option value='Smederevo'/>
-                    <option value='Uzice'/>
-                    <option value='Valjevo'/>
-                    <option value='Vranje'/>
-                    <option value='Sabac'/>
-                    <option value='Sombor'/>
-                    <option value='Pozarevac'/>
-                    <option value='Pirot'/>
-                    <option value='Zajecar'/>
-                    <option value='Bor'/>
-                    <option value='Kikinda'/>
-                    <option value='Sremska Mitrovica'/>
-                    <option value='Jagodina'/>
-                    <option value='Vrsac'/> */}
-                </datalist>
+                <Select 
+                    className='dropdown'
+                    placeholder="Izaberite Grad"
+                    //Value for each option (in options object take key:Value )
+                    // value={options.filter(obj => )}
+                    options={city_options}
+                    onChange={onCitySelect}
+                    isClearable
+                />
             </div>
 
 
             {/* GENDER */}
-            <label class='filter-lb'>Gender:</label>
+            <label class='filter-lb'>Pol:</label>
             <div class='filter-card'>
                 <div class='filter-item'>
                     <input type="radio"  onChange={onChangeHandler} name="gender" value="Male"/>
-                    <label >Male</label><br/>
+                    <label >Musko</label><br/>
                     <input type="radio" onChange={onChangeHandler} name="gender" value="Female"/>
-                    <label >Female</label><br/>
+                    <label >Zensko</label><br/>
                 </div>
             </div>
 
             {/* AGE */}
-            <label class='filter-lb'>Age:</label>
+            <label class='filter-lb'>Godine:</label>
             <div class='filter-card'>
 
                 <div class='filter-item'>

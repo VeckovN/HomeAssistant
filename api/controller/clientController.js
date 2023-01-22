@@ -75,6 +75,7 @@ const getClientInfo = async(req,res)=>{
     }
 }
 
+
 //Logged client
 // const getClient = async (req,res)=>{
 //     // const username = req.params.username;
@@ -199,17 +200,36 @@ const udpateClient = async(req,res)=>{
     }
 }
 
-
-
-//Coomment should have the ID
-const deleteCommentById = async(req,res)=>{
+const getRecommendedHouseworkers = async(req,res)=>{
+    const username = req.params.username;
     try{
 
-    }
-    catch(err){
+        console.log("USERNAMEEE: " + username);
 
+        const city = await clientModel.getCity(username);
+
+        console.log("CITTTTYYYYY : " + city);
+
+        //take filter parameters from url
+        const result = await clientModel.recomendedByCityAndInterest(username,city);
+
+        const houseworkers = result.map(el =>{
+            const {password, ...houseworkerData} =el;
+            return houseworkerData;
+        })
+
+        console.log("\n HOUSEWORKERS: \n " + JSON.stringify(houseworkers));
+
+        res.json(houseworkers);
+
+        //const result = await houseworkerModel.findUserWithFilters();
+    }catch(err){
+        console.log("ERROR HouseworkerFilters: " + err);
+        res.send(err);
     }
 }
+
+
 
 
 module.exports = {
@@ -220,5 +240,6 @@ module.exports = {
     udpateClient,
     commentHouseworker,
     createClient,
-    getClientInfo
+    getClientInfo,
+    getRecommendedHouseworkers
 }

@@ -4,7 +4,9 @@ import { ReactFragment, useEffect, useState } from "react"
 import HouseworkerCard from './houseworkers/HouseworkerCard'
 import Filter from './houseworkers/Filter';
 import SearchAndSort from './houseworkers/SearchAndSort';
+import { useSelector } from 'react-redux';
 
+import './ClientHome.css'
 
 const ClientHome = ({socket}) =>{
 
@@ -14,17 +16,14 @@ const ClientHome = ({socket}) =>{
 
     //const userAuth = useSelector(user) //example
     //const client = user.type==='client' ? true : false
+    const {user} = useSelector((state) => state.auth)
 
     const [data, setData] = useState([]);
+    const [recomended, setRecomended] = useState([]);
+    const [showRecommended, setShowRecommended] = useState(false);
     const [filteredData, setFilterData] = useState({});
     const [searchedData, setSearchData] = useState({});
 
-    //pagination also
-
-    //Take date form Filter, SearchAndSort component (filterData, searchData)
-    //use it to Fetch filtered data
-
-    //FetcH data and create HouseWorkerCard LIST with filtered and sorted data
     
     const searchDataHanlder = (searchData) =>{
         //data from SearchAndSort component
@@ -65,8 +64,6 @@ const ClientHome = ({socket}) =>{
             return obj;
         })
 
-        //reFetch houseworker with filters is simple, use this state searchData in
-        //use effect as dependecies
     }
 
     const filterDataHandler = (filterData) =>{
@@ -75,14 +72,17 @@ const ClientHome = ({socket}) =>{
         setFilterData(filterData);
     }
 
-    // const startFilterHandler = () =>{
-    //     alert("hello");
-    // }
+    
 
     useEffect(()=>{
         fetchData();
     },[searchedData, filteredData]) //on every serachedData and filterData change reFeatch houseworkers
 
+    useEffect(()=>{
+        //only when is recommended button clicked and not fetched yet
+        if(showRecommended==true && recomended.length == 0)
+            fetchRecommendedData();
+    },[showRecommended])
 
     const fetchData = async()=>{
         //Merge a filer and sort option to the queryParams OBJ
@@ -128,15 +128,36 @@ const ClientHome = ({socket}) =>{
     }
 
 
-    let houseworkerList;
-    {data ? 
-        houseworkerList = data.map(user =>
-            <div>
-            <br/>
-            <br/>
-            <br/>
+    const fetchRecommendedData = async() =>{
+        try{
+            
+            const result = await axios.get(`http://localhost:5000/api/clients/recommended/${user.username}`);
+            const recommendedData = result.data;
+
+            // console.log("FETTCHED RECOMMENDED : " + recommendedData);
+
+            if(recommendedData.length >0)
+                setRecomended(recommendedData)
+            else
+                setRecomended(null);
+        }
+        catch(err){
+            console.log("ERR" + err);
+        }
+    }
+
+    const onShowRecommended = ()=>{
+        setShowRecommended(!showRecommended);
+    }
+
+    //RECOMMENDED USERS
+    let recommendedList;
+    {recomended ? 
+        recommendedList = recomended.map(user =>
+            <>
             {console.log("ID::: " + user.id)}
             <HouseworkerCard
+                recommended={true}
                 socket={socket}
                 key={user.id}
                 id={user.id}
@@ -145,7 +166,7 @@ const ClientHome = ({socket}) =>{
                 first_name={user.first_name}
                 last_name={user.last_name}
                 description={user.description}
-                picture={user.picture}
+                picturePath={user.picturePath}
                 gender={user.gender}
                 city={user.city}
                 address={user.address}
@@ -153,22 +174,57 @@ const ClientHome = ({socket}) =>{
                 phone_number={user.phone_number}
                 professions={user.professions}
             />
-            </div>
+            </>
+            )
+            : recommendedList =[]
+    }
+
+    //HOUSEWORKER USERS
+
+    let houseworkerList;
+    {data ? 
+        houseworkerList = data.map(user =>
+            <>
+            {console.log("ID::: " + user.id)}
+            <HouseworkerCard
+                recommended={false}
+                socket={socket}
+                key={user.id}
+                id={user.id}
+                username={user.username}
+                email={user.email}
+                first_name={user.first_name}
+                last_name={user.last_name}
+                description={user.description}
+                picturePath={user.picturePath}
+                gender={user.gender}
+                city={user.city}
+                address={user.address}
+                age={user.age}
+                phone_number={user.phone_number}
+                professions={user.professions}
+            />
+            </>
             )
             : houseworkerList =[]
     }
 
     return (
-        <div>
-            
-                {searchedData && <h3>Search:{JSON.stringify(searchedData)}</h3>}
+        <div className='home_container'>
+                {/* {searchedData && <h3>Search:{JSON.stringify(searchedData)}</h3>} */}
+                <button className="recommendedBtn" onClick={onShowRecommended}>{!showRecommended ? 'Prikazi Preporucene Korisnike' : 'Skloni Preporucene Korisnike'}</button>
                 <SearchAndSort search={searchDataHanlder}/>
-                <Filter 
-                    filterOptions={filterDataHandler}
-                />
-                <div className="houseworkers">
-                    {houseworkerList.length > 0 ? houseworkerList : <h3>No Matches</h3> }
+                <div className='filter_houseworkers_container'>
+                    <Filter 
+                        filterOptions={filterDataHandler}
+                    />
+                    <div className="houseworker-list">
+                        {showRecommended && recommendedList}
+                        {houseworkerList.length > 0 ? houseworkerList : <h3>No Matches</h3> }
+                    </div>
+
                 </div>
+                
         </div>
     )
     

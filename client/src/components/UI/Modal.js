@@ -1,6 +1,8 @@
 import { Fragment } from 'react';
 import ReactDom from 'react-dom';
 
+import './Modal.css'
+
 //onCloseBV(click in background to close Modal)
 const ModalViewOverlay = props =>{
     return <div className='modal'>

@@ -5,6 +5,9 @@ import {useSelector, useDispatch} from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {login, reset} from '../../../store/auth-slice';
 import {toast} from 'react-toastify';
+
+import './Login.css';
+
 const Login = () =>{
 
     const [formData, setFormData] = useState(
@@ -25,11 +28,15 @@ const Login = () =>{
     console.log("USERS: " + JSON.stringify({username, password}))
     useEffect(()=>{
         if(error)
-            toast.error(message)
+            toast.error(message,{
+                className:'toast-contact-message'
+            })
 
         if(success || user){
             navigate('/')
-            toast.success("You are logged")
+            toast.success("Uspesno si se ulogovao",{
+                className:'toast-contact-message'
+            })
         }
         dispatch(reset())
             
@@ -63,40 +70,41 @@ const Login = () =>{
 
     return (
         <>
-            <div>
-                <h1>Login</h1>
-            </div>
-
             <div className ='login_container'>
-                <form>
-                    <div className='input_container'>
-                        <input
-                            className='input_field'
-                            type='text'
-                            name='username'
-                            value={username}
-                            placeholder='Enter username'
-                            onChange={onChange}
-                        />
+                <div className="login_context">
+                    <div className='login_welcome'>
+                        <h3>Dobro dosli</h3>
+                        <div className='logo-h'>Home Assistant</div>
                     </div>
+                    <form className='login_form'>
+                        <div className='input_container'>
+                            <input
+                                className='input_field'
+                                type='text'
+                                name='username'
+                                value={username}
+                                placeholder='Unesi korisnicko ime'
+                                onChange={onChange}
+                            />
+                        </div>
 
-                    <div className='input_container'>
-                        <input
-                            className='input_field'
-                            type='password'
-                            name='password'
-                            value={password}
-                            placeholder='Enter password'
-                            onChange={onChange}
-                        />
-                    </div>
+                        <div className='input_container'>
+                            <input
+                                className='input_field'
+                                type='password'
+                                name='password'
+                                value={password}
+                                placeholder='Unesi sifru'
+                                onChange={onChange}
+                            />
+                        </div>
 
-                    <div className ='button_container'>
-                        <button type='submit' onClick={onSubmit} className='btn'>Submit</button>
-                    </div>
+                        <div className ='button_container'>
+                            <button type='submit' onClick={onSubmit} className='btn'>Uloguj se</button>
+                        </div>
 
-                </form>
-
+                    </form>
+                </div>
             </div>
 
         </>

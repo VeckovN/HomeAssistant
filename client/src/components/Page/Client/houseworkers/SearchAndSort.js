@@ -3,6 +3,8 @@
 
 import {useEffect, useState, useRef} from 'react'
 
+import './SearchAndSort.css'
+
 const SearchAndSort = (prop) => {
 
     // const [option, setOption] = useState({});
@@ -10,6 +12,7 @@ const SearchAndSort = (prop) => {
     //won't to reRender this component on input Change, only to send data to Parent(ClientHome) compoennt
     //this is reason why is useRef in use instead useState
     const valueRef = useRef();
+    const [searchName, setSearchName] = useState();
     
 
     const selectSortHandler = (opt) =>{
@@ -20,49 +23,87 @@ const SearchAndSort = (prop) => {
         
     }
 
-    const selectSearchHandler = ()=>{
-        //return pervious value and add new search value
-        // setOption(opt=> {
-        //     ...opt, 
-        // })
-        //{name:search}
-        const inputValue = valueRef.current.value;
-        prop.search({name:inputValue});
+    const selectSearchHandler = (e)=>{
+        setSearchName(e.target.value);
+    }
+
+    const onSearchSubmitHandler = () =>{
+        prop.search({name:searchName});
     }
 
     return (
-        <div className = 'container_search_sort'>
-            <div class='sort_container'>
-                <div class="sort-box">
-                    {/* <button class='sort-1' value="AgeUp" onClick={e => setOption(e.target.value)} />Godine 🠑 */}                    
-                    <button class='sort-2' value="AgeUp" onClick={e => selectSortHandler(e.target.value)}>Godine 🠑
-                    </button>
-                    <button class='sort-2' value="AgeDown" onClick={e => selectSortHandler(e.target.value)}>Godine 🠓
-                    </button>
-                    <button class='sort-3' value="RatingUp" onClick={e => selectSortHandler(e.target.value)}>Ocena 🠑
-                    </button>
-                    <button class='sort-4' value="RatingDown" onClick={e => selectSortHandler(e.target.value)}>Ocena 🠓
-                    </button>
-                </div>
-            </div>
 
-            <div className='search_container'>
-                <div class='box'>
+        <>
+            <div class='search-box'>
+                <div class='input-search'>
+                    <div class='box_s'>
                     <input 
                         class='search' 
                         type='text' 
-                        ref={valueRef}
-                        placeholder='Pretrazi kucnog pomocnika'
+                        value={searchName}
+                        placeholder='Pretrazi kucnog pomocnika (Unesite korisnicko ime)'
                         onChange={selectSearchHandler}
                     />
-                    <button class='search-button'>
-                        {/* <i class='fa fa-search'></i> */}
-                        <div>icon</div>
-                    </button>
+                    <button onClick={onSearchSubmitHandler}>Pretrazi</button>
+                    </div>
                 </div>
 
+                <div class='sort'>
+                    <div class="sort-box">
+                        <button class='sort-1' value="AgeUp" onClick={e => selectSortHandler(e.target.value)}>Godine 🠑
+                        </button>
+
+                        <button class='sort-2' value="AgeDown" onClick={e => selectSortHandler(e.target.value)}>Godine 🠓
+                        </button>
+
+                        <button class='sort-3' value="RatingUp" onClick={e => selectSortHandler(e.target.value)}>Ocena 🠑
+                        </button>
+
+                        <button class='sort-4' value="RatingDown" onClick={e => selectSortHandler(e.target.value)}>Ocena 🠓
+                        </button>
+                    </div>
+                </div>
+
+
             </div>
-        </div>
+            
+            
+        
+        </>
+
+
+
+        // <div className = 'container_search_sort'>
+        //     <div class='sort_container'>
+        //         <div class="sort-box">
+        //             {/* <button class='sort-1' value="AgeUp" onClick={e => setOption(e.target.value)} />Godine 🠑 */}                    
+        //             <button class='sort-2' value="AgeUp" onClick={e => selectSortHandler(e.target.value)}>Godine 🠑
+        //             </button>
+        //             <button class='sort-2' value="AgeDown" onClick={e => selectSortHandler(e.target.value)}>Godine 🠓
+        //             </button>
+        //             <button class='sort-3' value="RatingUp" onClick={e => selectSortHandler(e.target.value)}>Ocena 🠑
+        //             </button>
+        //             <button class='sort-4' value="RatingDown" onClick={e => selectSortHandler(e.target.value)}>Ocena 🠓
+        //             </button>
+        //         </div>
+        //     </div>
+
+        //     <div className='search_container'>
+        //         <div class='box'>
+        //             <input 
+        //                 class='search' 
+        //                 type='text' 
+        //                 ref={valueRef}
+        //                 placeholder='Pretrazi kucnog pomocnika'
+        //                 onChange={selectSearchHandler}
+        //             />
+        //         </div>
+        //     </div>
+        // </div>
+
+
+
+
     )
 } 
 

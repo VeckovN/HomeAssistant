@@ -37,6 +37,31 @@ const findByUsername = async (username)=>{
     }
 }
 
+const getCity = async(username)=>{
+    const session = driver.session();
+
+    // const result = await session.run(
+    //     `MATCH(n:User)-[:LIVES_IN]-(c)
+    //     WHERE n.username = ${username}
+    //     RETURN c.name `
+    // )
+    const result = await session.run(
+        `MATCH(n:User)-[:LIVES_IN]-(c)
+        WHERE n.username = $username
+        RETURN c.name `,
+        {username:username}
+    )
+
+    const city = result.records[0].get(0);
+
+    console.log("CIRTTTTTTT" + city);
+
+    session.close();
+    //all others client
+    return city;
+    
+}
+
 const getInfo = async (username) =>{
     const session = driver.session();
     //more than one is expected
@@ -438,6 +463,19 @@ const interestedProfessions = async(professions)=>{
 const recomendedByCityAndInterest = async(username,city) =>{
     const session = driver.session();
 
+
+    // const result = await session.run(`
+    // MATCH(h:HouseWorker)-[:OFFERS]->(o:Profession)
+    // MATCH(uu:User)-[:IS_CLIENT]->(c:Client)-[:INTEREST]->(o)
+    // MATCH(h)<-[:IS_HOUSEWORKER]-(u:User)-[:LIVES_IN]->(l:City)
+    // MATCH(u)-[:GENDER]->(g:Gender)
+    // WHERE uu.username = ${username} and l.name = "${city}"
+    // RETURN u, h, l.name, g.type, rand() as rand
+    // ORDER BY rand ASC
+    // LIMIT 3
+    // `
+    // )
+
     const result = await session.run(`
         MATCH(h:HouseWorker)-[:OFFERS]->(o:Profession)
         MATCH(uu:User)-[:IS_CLIENT]->(c:Client)-[:INTEREST]->(o)
@@ -447,8 +485,9 @@ const recomendedByCityAndInterest = async(username,city) =>{
         RETURN u, h, l.name, g.type, rand() as rand
         ORDER BY rand ASC
         LIMIT 3
-    `,{username, city}
+    `,{username:username, city:city}
     )
+    
 
     const houseworkers = result.records.map(el =>{
         let userInfo = {};
@@ -463,6 +502,7 @@ const recomendedByCityAndInterest = async(username,city) =>{
 
         return userInfo;
     })
+
 
     session.close();
     return houseworkers;
@@ -482,4 +522,6 @@ module.exports ={
     updateGender,
     create,
     getInfo,
+    getCity,
+    recomendedByCityAndInterest
 }

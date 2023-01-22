@@ -209,9 +209,9 @@ const findAllWithFilters = async(filters)=>{
 
         if(searchName!=undefined && searchName!= ''){
             if(where.trim().length > 5)
-                where +=` AND n.first_name STARTS WITH '${searchName}' \n`
+                where +=` AND n.username STARTS WITH '${searchName}' \n`
             else
-                where+=`n.first_name STARTS WITH '${searchName}' \n`
+                where+=`n.username STARTS WITH '${searchName}' \n`
         }
 
         var professionsLength = 0;
@@ -330,17 +330,30 @@ const findAllWithFilters = async(filters)=>{
         return catchData;
     }
 
-
 }
+
+// const getRecommended = async(username) =>{
+    
+
+// }
 
 const findByUsernameAndDelete = async (username)=>{
     //User -[:IS_CLIENT]->Client
     //to delete a node it is necessery to DELTE THE RELATIONSHIP FIRST
     const session = driver.session();
     await session.run(
-        "MATCH (n:User {username:$name})-[r:IS_HOUSEWORKER]->(m) DELETE r, n, m",
+        `   MATCH (n:User {username:$name})-[r:IS_HOUSEWORKER]->(h)
+            MATCH (n)-[g:GENDER]->()
+            MATCH (n)-[l:LIVES_IN]->() 
+            MATCH (h)-[o:OFFERS]->()
+            MATCH (h)<-[b:BELONGS_TO]-(c:Comment)<-[cm:COMMENTED]-()
+            MATCH (h)<-[ra:RATED]-()
+            DELETE ra,b,o,l,g,cm,c,r,h,n`,
         {name:username}
     )
+
+
+
     //all others client
     session.close();
     return await findAll();
@@ -455,6 +468,22 @@ const getComments = async(username)=>{
     //Example - 2 comments
     //records[0] records[1]
     //get(0)c, get(1)t NODE For each Records
+}
+
+const getCommentsCount = async(username) =>{
+    const session = driver.session();
+    const result = await session.run(`
+        MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(h)
+        MATCH(h)<-[b:BELONGS_TO]-(c:Comment)
+        RETURN COUNT(c)
+        `,
+    {houseworker:username}
+    )
+    //{Comment:context, From:'clientUsername'}
+    const commentsCount = result.records[0].get(0);
+
+    session.close();
+    return parseInt(commentsCount);
 }
 
 const getProfessions_reqSession = async ()=>{
@@ -711,6 +740,7 @@ module.exports ={
     updateGender,
     create,
     findCities,
-    updatePassword
+    updatePassword,
+    getCommentsCount
 
 }

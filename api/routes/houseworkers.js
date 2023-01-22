@@ -15,7 +15,8 @@ const {
     getRatingUsername,
     getCities,
     updatePassword,
-    getHouseworkerInfo
+    getHouseworkerInfo,
+    getHouseworkerCommentsCount,
 } = require('../controller/houseworkerController');
 
 
@@ -45,11 +46,14 @@ router.get('/info', checkHouseworker, getHouseworkerInfo )
 router.delete('/:username', checkHouseworker, deleteHouseworker);
 router.get('/rating', checkHouseworker, getRatings);
 router.get('/rating/:username', getRatingUsername);
+
+
 // router.get('/comments', checkHouseworker, getComments);
 
 // router.get('/comments', checkHouseworker, getComments);
 //Client click on comment button
 router.get('/comments/:username',  getComments);
+router.get('/comments/count/:username', getHouseworkerCommentsCount)
 router.get('/ourcomments/', getOurComments)
 // router.get('/professions', checkHouseworker, getProfessions);
 router.get('/professions/:username', getProfessions);

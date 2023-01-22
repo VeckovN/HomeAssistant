@@ -5,7 +5,8 @@ const {
     sendMessage,
     getAllRooms,
     deleteRoom,
-    addUserToRoom
+    addUserToRoom,
+    getConversationCount
 } = require('../controller/chatController'); 
 
 
@@ -24,6 +25,9 @@ router.get('/room/:id/messages', getMessages);
 router.post('/room/delete', deleteRoom);
 router.post('/sendMessage', sendMessage);
 router.post('/room/addUser', addUserToRoom);
+
+
+router.get('/conversationCount/:userID', getConversationCount);
 
 
 

@@ -34,6 +34,8 @@ const getHouseworkerWithFilters = async(req,res)=>{
     }
 }
 
+
+
 const getHouseworkers = async(req,res)=>{
     try{
         const result = await houseworkerModel.findAll();   
@@ -61,6 +63,9 @@ const getHouseworkerInfo = async(req,res)=>{
         console.log("ERROR GetClientInfo: " + err);
     }
 }
+
+
+
 
 const deleteHouseworker = async(req, res)=>{
     const houseworkerUsername = req.params.username;
@@ -145,6 +150,18 @@ const getComments = async(req,res)=>{
     }
 }
 
+const getHouseworkerCommentsCount = async(req,res)=>{
+    try{
+        const username = req.params.username;
+        const result = await houseworkerModel.getCommentsCount(username);
+        console.log("RESSS " + result); 
+        res.json(result);
+    }
+    catch(err){
+        console.log("ERROR Comments: " + err);
+        res.send(err);
+    }
+}
 
 const getProfessions = async(req,res)=>{
     try{
@@ -228,6 +245,8 @@ const updatePassword = async(req,res)=>{
 
 
 
+
+
 module.exports ={
     getHouseworkerByUsername,
     getHouseworkers,
@@ -242,5 +261,6 @@ module.exports ={
     getRatingUsername,
     getCities,
     updatePassword,
-    getHouseworkerInfo
+    getHouseworkerInfo,
+    getHouseworkerCommentsCount
 }

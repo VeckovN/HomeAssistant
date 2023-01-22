@@ -1,13 +1,15 @@
-
+import './CommentItem.css'
 
 const CommentItem = (props) =>{
 
     return(
         <div className='comment_container'>
-            <div className='commented'>Commented:{props.from}</div>
+            <div className='info'>
+                <div className='commented'>Komentarisao: {props.from}</div>
+                
+                {/* <div className=''>Date: {props.date}</div> */}
+            </div>
             <div className='context'>{props.comment}</div>
-            {/* <div className=''>Date: {props.date}</div> */}
-            <br/>
         </div>
     )
 }

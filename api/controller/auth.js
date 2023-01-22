@@ -123,7 +123,7 @@ const login = async(req,res)=>{
     //find user by username and password no matter what type it is
     const user = await userModal.findByUsername(username);
     if(!user)
-        return res.send({error:"UserNotFound"})
+        return res.send({error:"Korisnik nije pronadjen"})
     const userType = user.type;
     const userInfo = user.props;
     console.log("TYPEEEE: " + userType + "PROPS : " + userInfo);
@@ -149,7 +149,7 @@ const login = async(req,res)=>{
     }
     else
         // return res.json({error:"User not found"}).status(400);
-        return res.send({error:"Wrong username or password"})
+        return res.send({error:"Pogresna lozinka ili korisnicko ime"})
 
 }
 

@@ -10,12 +10,13 @@ const chatRoute = require('./routes/chat');
 const dotenv = require('dotenv');
 const path = require('path');
 const multer = require('multer');
-const {client:redisClient, sub, RedisStore, set, get, sadd, smembers, hmget, srem, zadd, exists } = require('./db/redis');
+const {client:redisClient,  sub, RedisStore, set, get, sadd, smembers, hmget, srem, zadd, exists } = require('./db/redis');
 dotenv.config();
 const {register} = require('./controller/auth')
-const redis = require('redis');
+// const redis = require('redis');
 
-
+console.log("STATUS 2: ");
+console.log(redisClient.status)
 
 
 const app = express()
@@ -24,7 +25,9 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 //multer config
-app.use("/assets", express.static(path.join(__dirname, "public/assets")));
+app.use("/assetss", express.static(path.join(__dirname, "public/assets")));
+
+
 
 // multer exprot and import in auth register
 const storage = multer.diskStorage({
@@ -47,10 +50,11 @@ app.use((error, req, res, next) => {
 // app.post("/api/update/picture", upload,single("picture"), updatePicture);
 
 //redis
-redisClient.connect()
-.catch(err=>{
-    console.log("Couldn't connect to redis", err);
-})
+// redisClient.connect()
+// .catch(err=>{
+//     console.log("Couldn't connect to redis", err);
+// })
+
 
 var corsOptions={
     //access is allowed to everyone
@@ -74,7 +78,7 @@ const sessionMiddleware = session({
         //for deploy set the secure to TURE, TURE DONSN'T STORE COOKIE ON BROWSER in DEVELOPMENT(using postman and etc.)
         secure:false, //our cookies works wiht false -if false - any HTTP call which is NOT HTTPS and it doesn't have SSL can access our cookies(can access this app in general)
         httpOnly: false, //if true - the  web page can't access the cookie in JS
-        maxAge: 1500* 60 * 10, //session max age in ms 
+        maxAge: 150000* 60 * 10, //session max age in ms 
     }
 })
 
@@ -136,7 +140,7 @@ redisClient.publish("MESSAGES", JSON.stringify(dataSent));
 //MUST BE IN asycn CALL BECAUSE SUBSCRIBER MESSAGES
 (async () =>{
 
-await sub.connect();
+// await sub.connect();
 
 //taking Messages from subscriber channel
 await sub.subscribe("MESSAGES", (message, channelName)=>{
@@ -380,24 +384,8 @@ server.listen(5000, ()=>{
     
         //Listen on disconect event
         socket.on('disconnect', async(id)=>{
-            //TEST THIS
             //take userId from session (socket session in this situation)
-    
             console.log("DISCONNECT");
-            //!!!!!!!
-            // const userID = socket.request.session.user.username;
-            //const userID = '1';
-            const userID = id;
-    
-            //remove user from online_users set
-            await srem("online_users", userID);
-            const status = {
-                ...socket.request.session.user,
-                online:false
-            }
-            //notify users that disconnection is done
-            publish("user.disconected", status);
-            socket.broadcast.emit("user.disconnected", status);
     
         })
     })

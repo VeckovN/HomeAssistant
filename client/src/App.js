@@ -10,6 +10,9 @@ import Profile from './components/Page/Profile';
 import Messages from './components/Page/Messages/Messages'
 
 import {ToastContainer, toast} from 'react-toastify';
+//css class for custom style
+import './toastify.css'
+
 import {io} from "socket.io-client";
 
 import useSocket from './hooks/useSocket';
@@ -34,8 +37,7 @@ function App() {
 
   return (
     <BrowserRouter>
-
-      <div className="App">    
+      {/* <div className="App_container">     */}
         <Header />
         {/* Context(Home.js) */}
         <Home socket={socket} connected={connected} />
@@ -57,13 +59,10 @@ function App() {
           <Route path='/messages' element={<Messages socket={socket} connected={connected}/>}></Route>        
 
         </Routes>
-        
         {/* IN THIS HOME WE HAVE MORE ROUTES  */}
-
         {/* Footer */}
-
         <ToastContainer/>
-      </div>
+      {/* </div> */}
 
     </BrowserRouter>
 

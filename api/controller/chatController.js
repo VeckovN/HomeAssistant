@@ -22,6 +22,7 @@ const getMessages = async(req,res)=>{
         const messages = await chatModal.getMessages(roomID, offset, size);
         //return res.status(200).send(messages);
         // res.json({room:roomID, offset:offset, size:size});
+        // console.log("CHATTTTTT MS: " + JSON.stringify(messages));
         res.json(messages);
     }
     catch(err){
@@ -84,6 +85,17 @@ const addUserToRoom = async(req,res) =>{
         
 }
 
+const getConversationCount = async(req,res)=>{
+    try{
+        const userID = req.params.userID;
+        const result = await chatModal.getRoomCount(userID);
+        res.status(200).json(result);
+    }
+    catch(err){
+        res.status(400).send('You cant add user to ROom')
+    }
+}
+
 module.exports ={
     getRoomId,
     getUserIdByUsername,
@@ -91,7 +103,8 @@ module.exports ={
     sendMessage,
     getAllRooms,
     deleteRoom,
-    addUserToRoom
+    addUserToRoom,
+    getConversationCount
 
 
 }

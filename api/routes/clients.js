@@ -8,7 +8,8 @@ const {
     rateHouseworker,
     udpateClient,
     commentHouseworker,
-    getClientInfo
+    getClientInfo,
+    getRecommendedHouseworkers
 } = require('../controller/clientController');
 
 const router = express.Router();
@@ -19,6 +20,7 @@ router.get('/info', checkClient, getClientInfo)
 
 router.get('/:username',checkHouseworker, getClientByUsername);
 router.get('/comments/:username',checkClient, getComments);
+router.get('/recommended/:username' , getRecommendedHouseworkers);
 //HERE WONT WORK, because exists get route with one '/string' above 
 //just put it before router.get('/:username',
 // router.get('/info', checkClient, getClientInfo)

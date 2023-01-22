@@ -3,6 +3,8 @@ import {useSelector} from 'react-redux';
 import axios from 'axios';
 import CommentItem  from '../../UI/CommentItem';
 
+import './CommentsList.css'
+
 
 const CommentsList = () =>{
     //{comment:commentProp, from:clientProp}
@@ -18,18 +20,6 @@ const CommentsList = () =>{
     },[])
 
     const fetchComments = async() =>{
-        // const result = await axios.get(`http://localhost:5000/api/houseworker/comments/${user}`);
-        //with req.session
-        // try{
-        //     const result = await axios.get(`http://localhost:5000/api/houseworker/ourComments/`);
-        //     const comms = result.data;
-        //     console.log("COMS : " + JSON.stringify(comms))
-        //     setComments(comms);
-        // }
-        // catch(err){
-        //     console.log("ERROR " + err);
-        // }
-
         const result = await axios.get(`http://localhost:5000/api/houseworker/ourcomments/`);
         const comms = result.data;
         console.log("COMS : " + JSON.stringify(comms))
@@ -54,9 +44,20 @@ const CommentsList = () =>{
 
 
     return (
-        <div>
+        <div className='comments_container'>
+            {commentList.length >0 
+                ?
+                <>
+                    <h1>Komentari</h1>
+                    {commentList}
+                </>
+                :
+                <div className='no_commentsHouseworker'>Nemate komentara</div>
+                
+        }
+            {/* <h1>Komentari</h1> */}
             {/* {comments ? commentList : <div>No comments</div>} */}
-            {commentList}
+            {/* {commentList.length >0 ? commentList : <div className='no_comments'>Nemate komentara</div>} */}
         </div>
     )
 

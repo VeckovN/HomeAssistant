@@ -12,8 +12,10 @@ import { Navigate } from 'react-router-dom';
 // const user = JSON.parse(localStorage.getItem('user'));
 const cookie = Cookie.get('user');
 const expressCookie = Cookie.get("sessionLog"); //track sessoin expire
+console.log("EXP:  " + expressCookie);
+console.log("COOK" + cookie);
 let user;
-if(expressCookie!=undefined)
+if(expressCookie && cookie!=undefined)
     user = JSON.parse(Cookie.get('user'));
 else {
     user = false;
@@ -57,7 +59,7 @@ export const register = createAsyncThunk(
             if(response.data){
                  //GET USER FROM COOKIE -EXPRESS SESSION (WE DON't NEED PUT THIS USER IN LOCAL STORATE)
                 //if post request is success we put response (user) to localStorage
-                localStorage.setItem('user', JSON.stringify(response.data));
+                //localStorage.setItem('user', JSON.stringify(response.data));
                 Cookie.set('user', JSON.stringify(response.data))
             }
                
@@ -84,7 +86,7 @@ export const login = createAsyncThunk(
             // return response.data;
             if(response.data){
                 if(!response.data.error){
-                    localStorage.setItem('user', JSON.stringify(response.data))
+                    //localStorage.setItem('user', JSON.stringify(response.data))
                     Cookie.set('user', JSON.stringify(response.data))
                     return response.data;
                 }

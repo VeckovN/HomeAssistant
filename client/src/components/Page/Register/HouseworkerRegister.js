@@ -5,6 +5,8 @@ import {register, reset} from '../../../store/auth-slice';
 import {toast} from 'react-toastify';
 import Select from 'react-select';
 
+import './Register.css';
+
 const HouseworkerRegister = () =>{
 
     const [data, setData] = useState({
@@ -63,7 +65,6 @@ const HouseworkerRegister = () =>{
         ))
     }
 
-
     const options = [
         { value:'Cistac', label:"Cistac" },
         { value:'Dadilja', label:"Dadilja" },
@@ -117,134 +118,134 @@ const HouseworkerRegister = () =>{
             }
             formData.append('type', 'Houseworker');
             
-            //dispatch(register(formData));
+            dispatch(register(formData));
 
         }
     }
 
     return (
         <>
-            <div className='form'>
-                <form onSubmit={onSubmit}>
-
-                    <div className='input_container'>
+            <div className='register_container'>
+                <form onSubmit={onSubmit} >
+                <div className='form_title'>Registracija kucnog pomocnika</div>
+                    <div className='register_input_container'>
                         <input
                             className='input_field'
                             type='text'
                             name='username'
                             value={username}
-                            placeholder='Enter username'
+                            placeholder='Unesite korisnicko ime'
                             onChange={onChange}
                         />
                     </div>
 
-                    <div className='input_container'>
+                    <div className='register_input_container'>
                         <input
                             className='input_field'
                             type='text'
                             name='email'
                             value={email}
-                            placeholder='Enter email'
+                            placeholder='Unesite email'
                             onChange={onChange}
                         />
                     </div>
 
-                    <div className='input_container'>
+                    <div className='register_input_container'>
                         <input
                             className='input_field'
                             type='password'
                             name='password'
                             value={password}
-                            placeholder='Enter password'
+                            placeholder='Unesite sifru'
                             onChange={onChange}
                         />
                     </div>
 
-                    <div className='input_container'>
+                    <div className='register_input_container'>
                         <input
                             className='input_field'
                             type='passwordRepeat'
                             name='passwordRepeat'
                             value={passwordRepeat}
-                            placeholder='Repeat password'
+                            placeholder='Ponovite sifru'
                             onChange={onChange}
                         />
                     </div>
 
-                    <div className='input_container'>
+                    <div className='register_input_container'>
                         <input
                             className='input_field'
                             type='text'
                             name='first_name'
                             value={first_name}
-                            placeholder='Enter first_name'
+                            placeholder='Unesite Ime'
                             onChange={onChange}
                         />
                     </div>
 
-                    <div className='input_container'>
+                    <div className='register_input_container'>
                         <input
                             className='input_field'
                             type='text'
                             name='last_name'
                             value={last_name}
-                            placeholder='Enter last_name'
+                            placeholder='Unesite Prezime'
                             onChange={onChange}
                         />
                     </div>
 
-                    <div className='input_container'>
+                    <div className='register_input_container'>
                         <input
                             className='input_field'
                             type='number'
                             name='age'
                             value={age}
-                            placeholder='Enter age'
+                            placeholder='Unesite godine'
                             onChange={onChange}
                         />
                     </div>
 
-                    <div className='input_container'>
+                    <div className='register_input_container'>
                         <input
                             className='input_field'
                             type='city'
                             name='city'
                             value={city}
-                            placeholder='Enter city'
+                            placeholder='Odaberite grad'
                             onChange={onChange}
                         />
                     </div>
 
-                    <div className='input_container'>
+                    <div className='register_input_container'>
                         <input
                             className='input_field'
                             type='address'
                             name='address'
                             value={address}
-                            placeholder='Enter address'
+                            placeholder='Unesite adresu'
                             onChange={onChange}
                         />
                     </div>
-                    <div className='input_container'>
+                    <div className='register_input_container'>
                         <input
                             className='input_field'
                             type='number'
                             name='phone_number'
                             value={phone_number}
-                            placeholder='Enter phone_number'
+                            placeholder='Unesite broj telefona'
                             onChange={onChange}
                         />
                     </div>
 
-                    <label>Pol</label>
-                    <select class="gender" onChange={onChange} name="gender" id='gender'>
-                        <option value=""></option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
+                    <label className='label_input'>Pol</label>
+                    <select className="gender_option" onChange={onChange} name="gender" id='gender'>
+                        <option value="">Odaberite Pol</option>
+                        <option value="Male">Musko</option>
+                        <option value="Female">Zensko</option>
                     </select>
 
-                    <div class='form-group form-group-image'>
-                        <label>Profile Picture</label>
+                    <label className='label_input'>Profilna slika</label>
+                    <div className='form-group form-group-image'>
                         <input type="file" onChange={onImageChange}  class='inputFile' name="picture" />
                     </div>
 
@@ -261,10 +262,10 @@ const HouseworkerRegister = () =>{
                     />
                     <br/>
 
-                    <label>Opis</label>
-                    <textarea onClick={onChange} rows="5" cols="20" class="descBox"  name="description"></textarea>
+                    <label className='label_input'>Opis</label>
+                    <textarea onChange={onChange} rows="5" cols="20" className="descriptionBox"  name="description"></textarea>
 
-                    <div className ='button_container'>
+                    <div className ='register_button_container'>
                         <button type='submit' onClick={onSubmit} className='btn'>Submit</button>
                     </div>
 

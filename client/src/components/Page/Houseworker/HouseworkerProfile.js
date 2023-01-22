@@ -1,6 +1,9 @@
 import {useState, useEffect} from 'react';
 import axios from 'axios';
 import {toast} from 'react-toastify';
+import Select from 'react-select';
+
+import '../../Page/Profile.css';
 
 const HouseworkerProfile = () =>{
 
@@ -11,7 +14,6 @@ const HouseworkerProfile = () =>{
         passwordRepeat:'',
         first_name:'',
         last_name:'',
-        picture:'',
         city:'',
         address:'',
         phone_number:''
@@ -19,7 +21,7 @@ const HouseworkerProfile = () =>{
 
     const [houseworkerData, setHouseworkerData] = useState({})
 
-    const {username, email, password, passwordRepeat, first_name, last_name, picture, city, gender, address, phone_number} = updatedData;
+    const {username, email, password, passwordRepeat, first_name, last_name, city, address, phone_number} = updatedData;
 
     useEffect(()=>{
         fetchData();
@@ -43,15 +45,16 @@ const HouseworkerProfile = () =>{
         ))
     }
 
-    const onImageChange = (event)=>{
-        const file = event.target.files[0];
-        setUpdatedData(prev =>(
+    const onChangeCity = (e) =>{
+        let city = e.value;
+        console.log("CITTYYYY: " + city);
+
+        setUpdatedData(prev=>(
             {
                 ...prev,
-                ["picture"]:file
+                ["city"]:city
             }
         ))
-        console.log(file.name);
     }
 
     const onSubmitUpdate = async (e)=>{
@@ -91,7 +94,7 @@ const HouseworkerProfile = () =>{
                 const comms = result.data;
                 console.log("COMS : " + JSON.stringify(comms))
     
-                toast.success("Successfuly updated")
+                toast.success("Uspesno azurirano")
             }
             catch(err){
                 console.log("Erorr: " + err);
@@ -101,27 +104,71 @@ const HouseworkerProfile = () =>{
         }
     }
 
+    const city_options =[
+        {value:'Beograd', label:"Beograd"},
+        {value:'Novi Sad' , label:"Novi Sad"},
+        {value:'Nis' , label:"Nis"},
+        {value:'Kragujevac' , label:"Kragujevac"},
+        {value:'Subotica' , label:"Subotica"},
+        {value:'Leskovac' , label:"Leskovac"},
+        {value:'Pancevo' , label:"Pancevo"},
+        {value:'Cacak' , label:"Cacak"},
+        {value:'Krusevac' , label:"Krusevac"},
+        {value:'Kraljevo' , label:"Kraljevo"},
+        {value:'Novi Pazar' , label:"Novi Pazar"},
+        {value:'Smederevo' , label:"Smederevo"},
+        {value:'Uzice' , label:"Uzice"},
+        {value:'Valjevo' , label:"Valjevo"},
+        {value:'Vranje' , label:"Vranje"},
+        {value:'Sabac' , label:"Sabac"},
+        {value:'Sombor' , label:"Sombor"},
+        {value:'Pozarevac' , label:"Pozarevac"},
+        {value:'Pirot' , label:"Pirot"},
+        {value:'Zajecar' , label:"Zajecar"},
+        {value:'Bor' , label:"Bor"},
+        {value:'Kikinda' , label:"Kikinda"},
+        {value:'Sremska Mitrovica' , label:"Sremska Mitrovica"},
+        {value:'Jagodina' , label:"Jagodina"},
+        {value:'Vrsac' , label:"Vrsac"}
+    ]
+
+
+    console.log("HOPUISE : " + JSON.stringify(updatedData));
+
     return(
         <>
-            <h1>Houseworker Profile</h1>
-            <div className='container'>
-                <form className='form-container' onSubmit={onSubmitUpdate}>
+            <div className='profile_container'>
+                <h1>Profil Kucnog Pomocnika</h1>
+                <form className='profile_form' onSubmit={onSubmitUpdate}>
                     {/* left side */}
                     <div className='input-label-form'>
-                        <div className='input-container'>
-                            <label>Username: <b>{houseworkerData.username}</b></label>
+                        <div className='profile_input-container'>
+                            <label>Ime: <b>{houseworkerData.first_name}</b></label>
                             <br/>
                             <input 
                             className='input_field'
                             type='text'
-                            name='username'
-                            value={username}
-                            placeholder='Enter username'
+                            name='first_name'
+                            value={first_name}
+                            placeholder='Unesite Ime'
+                            onChange={onChangeUpdate}
+                            />
+                        </div>
+
+                        <div className='profile_input-container'>
+                            <label>Prezime: <b>{houseworkerData.last_name}</b></label>
+                            <br/>
+                            <input 
+                            className='input_field'
+                            type='text'
+                            name='last_name'
+                            value={last_name}
+                            placeholder='Unesite Prezime'
                             onChange={onChangeUpdate}
                             />
                         </div>
                         
-                        <div className='input-container'>
+                        <div className='profile_input-container'>
                             <label>Email: <b>{houseworkerData.email}</b></label>
                             <br/>
                             <input 
@@ -129,118 +176,82 @@ const HouseworkerProfile = () =>{
                             type='email'
                             name='email'
                             value={email}
-                            placeholder='Enter Email'
+                            placeholder='Unesite Email adresu'
                             onChange={onChangeUpdate}
                             />
                         </div>
 
-                        <div className='input-container'>
-                            <label>Password</label>
+                        <div className='profile_input-container'>
+                            <label>Sifra</label>
                             <br/>
                             <input 
                             className='input_field'
                             type='password'
                             name='password'
                             value={password}
-                            placeholder='Enter password'
+                            placeholder='Upisite sifru'
                             onChange={onChangeUpdate}
                             />
                         </div>
 
                         {password &&  //only if is password entered
-                        <div className='input-container'>
-                            <label>Repeat Password</label>
+                        <div className='profile_input-container'>
+                            <label>Ponovi Sifru</label>
                             <br/>
                             <input 
                             className='input_field'
                             type='password'
                             name='passwordRepeat'
                             value={passwordRepeat}
-                            placeholder='Repeat password'
+                            placeholder='Ponovite sifru'
                             onChange={onChangeUpdate}
                             />
                         </div>
                         }
 
-                        <div className='input-container'>
-                            <label>First Name: <b>{houseworkerData.first_name}</b></label>
-                            <br/>
-                            <input 
-                            className='input_field'
-                            type='text'
-                            name='first_name'
-                            value={first_name}
-                            placeholder='Enter First Name'
-                            onChange={onChangeUpdate}
-                            />
-                        </div>
 
-                        <div className='input-container'>
-                            <label>Last Name: <b>{houseworkerData.last_name}</b></label>
-                            <br/>
-                            <input 
-                            className='input_field'
-                            type='text'
-                            name='last_name'
-                            value={last_name}
-                            placeholder='Enter Last Name'
-                            onChange={onChangeUpdate}
-                            />
-                        </div>
-
-                        <div className='input-container'>
-                            <label>City: <b>{houseworkerData.city}</b></label>
-                            <br/>
-                            <input 
-                            className='input_field'
-                            type='text'
-                            name='city'
-                            value={city}
-                            placeholder='Enter City'
-                            onChange={onChangeUpdate}
-                            />
-                        </div>
-
-                        <div className='input-container'>
-                            <label>Address: <b>{houseworkerData.address}</b></label>
+                        <div className='profile_input-container'>
+                            <label>Adresa: <b>{houseworkerData.address}</b></label>
                             <br/>
                             <input 
                             className='input_field'
                             type='text'
                             name='address'
                             value={address}
-                            placeholder='Enter address'
+                            placeholder='Unesite adresu'
                             onChange={onChangeUpdate}
                             />
                         </div>
 
-                        <div className='input-container'>
-                            <label>Address: <b>{houseworkerData.phone_number}</b></label>
+                        <div className='profile_input-container'>
+                            <label>Broj telefona: <b>{houseworkerData.phone_number}</b></label>
                             <br/>
                             <input 
                             className='input_field'
                             type='number'
                             name='phone_number'
                             value={phone_number}
-                            placeholder='Enter the phone_number'
+                            placeholder='Unesite broj telefona'
                             onChange={onChangeUpdate}
                             />
                         </div>
-
-                        <div classname='form-group form-group-image'>
-                            <label>Profile Picture </label>
-                            <br/>
-                            <input type="file" onChange={onImageChange}  className='inputFile' name="picture" />
+                        
+                        <div className='profile_input-container'>
+                            <label>City: <b>{houseworkerData.city}</b></label>
+                            <Select 
+                                className='dropdown'
+                                placeholder="Izaberite Grad"
+                                //Value for each option (in options object take key:Value )
+                                // value={options.filter(obj => )}
+                                options={city_options}
+                                onChange={onChangeCity}
+                                isClearable
+                            />
                         </div>
-
+                        <br></br>
                         {/* button for submit Above inputs  */}
-                        <button type='submit'>Update</button>
+                        <button type='submit' className='profile_submit'>Azuriraj</button>
                     </div>
-                    {/* right side */}
-                    <div className='imageContainer'>
-                        {/* <img></img> */}
-                    </div>
-
 
                 </form>
             </div>

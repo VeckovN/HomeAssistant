@@ -6,21 +6,18 @@ import Modal from '../../../UI/Modal.js'
 import CommentItem from '../../../UI/CommentItem'; 
 import useSocket from '../../../../hooks/useSocket.js';
 
+
 //CLIENT - Serach, Filter, HouseworkersCard(wiht paggination)
 //GUEST sees everything just like THE CLIENT but 
 // -can't see all information(Working hours, Rating) and cant send message and post comment
 
+import './HouseworkerCard.css'
+import { toast } from 'react-toastify';
 
 //@Todo //Custom Hook for useFetch
 const HouseworkersCard = (props) =>{
 
-    //we should take client form localStorage isntead taking from redux
-    // const user = localStorage.getItem("user");
-    // const client = user.type =='client' ? true : false;
 
-    // console.log('IS:: ' + JSON.stringify(user))
-    // console.log("BOOL: " + client);
-    
     //comments of houseworker's open Modal
     const [comments, setComments] = useState(null);
     const [houseworkerUsername, setHouseworkerUsername] = useState('');
@@ -42,8 +39,6 @@ const HouseworkersCard = (props) =>{
         client = userAuth.user.type === 'Client' ? true : false;
     //USE SOCKET Custom State 
 
-    //THIS WILL CREATE CONNECTION ON EVERY  HOOUSEWORKERCARD COMPONENT RENDER
-    //const [socket, connected] = useSocket(userAuth.user)
     const socket = props.socket;
 
 
@@ -93,14 +88,15 @@ const HouseworkersCard = (props) =>{
 
     const onCommentHandler = (e) =>{
         if(!client){
-            alert("Login to post the comment");
+            toast.error("Uloguj se da bi komentarisao",{
+                className:"toast-contact-message"
+            })
             return 
         }
         const username = e.target.value;
         const id = e.target.id;
 
         console.log("US:" + username);
-        alert(username + " Comments");
         setHouseworkerUsername(username);
         setHouseworkerID(id);
 
@@ -117,51 +113,56 @@ const HouseworkersCard = (props) =>{
         e.preventDefault();
         //const newComment = e.target.postComment.value; //postComment is name of input field
         const newCommentContext = postCommentRef.current.value;
-        
-        //comment is intended for this houseworker (For comment Notify)
 
-        // const houseworkerID = '4';
-        
-        //fetch out of useEffect(in this example won't be a problem)
-        //this fetch will be only trigger on Comment submit this is a reason why we can fetch over the useEffect
-        try{
-            //obj for POST Method
-            const postComment = {
-                client:userAuth.user.username,
-                houseworker:houseworkerUsername,
-                comment: newCommentContext
-            }
-            const result = await axios.post(`http://localhost:5000/api/clients/comment`, postComment);
-              
-            // //SOCKET EMIT TO Server (IN Home.js is received)
-            socket.emit('comment', JSON.stringify({...postComment, houseworkerID:houseworkerID}))
-
-            //console.log("RESSSS: " + JSON.stringify(result));
-            const newComment = {
-                //we send (looged user) comment to (showenedModal ->oldComment)
-                from: userAuth.user.username,
-                //comment:newCommentContext
-                comment:postComment.comment
-            }
-            console.log(comments.length);
-
-            //this will trigger Comp re-render
-            if(comments.length > 0) //if exist comments(push new comment)
-                setComments(oldComments =>[
-                    // ...oldComments,
-                    // newComment
-                    //FIRST show NewComment
-                    newComment,
-                    ...oldComments
-                ]);
-            else
-                setComments([
-                    newComment
-                ])
-        }catch(err){
-            //setError()
-            console.log(err);
+        if(newCommentContext == ''){
+            toast.error("Unesite komentar");
         }
+        else{
+            //comment is intended for this houseworker (For comment Notify)
+            // const houseworkerID = '4';
+            //fetch out of useEffect(in this example won't be a problem)
+            //this fetch will be only trigger on Comment submit this is a reason why we can fetch over the useEffect
+            try{
+                //obj for POST Method
+                const postComment = {
+                    client:userAuth.user.username,
+                    houseworker:houseworkerUsername,
+                    comment: newCommentContext
+                }
+                const result = await axios.post(`http://localhost:5000/api/clients/comment`, postComment);
+                
+                // //SOCKET EMIT TO Server (IN Home.js is received)
+                socket.emit('comment', JSON.stringify({...postComment, houseworkerID:houseworkerID}))
+
+                //console.log("RESSSS: " + JSON.stringify(result));
+                const newComment = {
+                    //we send (looged user) comment to (showenedModal ->oldComment)
+                    from: userAuth.user.username,
+                    //comment:newCommentContext
+                    comment:postComment.comment
+                }
+                console.log(comments.length);
+
+                //this will trigger Comp re-render
+                if(comments.length > 0) //if exist comments(push new comment)
+                    setComments(oldComments =>[
+                        // ...oldComments,
+                        // newComment
+                        //FIRST show NewComment
+                        newComment,
+                        ...oldComments
+                    ]);
+                else
+                    setComments([
+                        newComment
+                    ])
+            }catch(err){
+                //setError()
+                console.log(err);
+            }
+        }
+        
+        
     }
 
 //#region CommentModalContext
@@ -181,10 +182,12 @@ const HouseworkersCard = (props) =>{
                         comment={comm.comment}
                     />
                 ))
-                : <div className='no_comments'>NoComments</div>
+                : <div className='no_commentsModal'>Korisnik nema komentara</div>
             }
-            <input type='text' name="postComment" ref={postCommentRef} placeholder='Enter the comment'/>
-            <button>Submit</button>
+            <div className='comment_input'>
+                <input type='text' name="postComment" ref={postCommentRef} placeholder='Unesite komentar'/>
+                <button type="submit">Posalji</button>
+            </div>
         </form>
 
     //Comments
@@ -203,6 +206,13 @@ const HouseworkersCard = (props) =>{
 
     const onRateHandler = async(e)=>{
         const username = e.target.value
+
+        if(!client){
+            toast.error("Uloguj se da bi ostavio ocenu",{
+                className:"toast-contact-message"
+            })
+            return 
+        }
         //when rate value not exist , again click on Rate button 
         //will close input
         if(rate == '')
@@ -236,34 +246,55 @@ const HouseworkersCard = (props) =>{
 
     const onContactHandler = (e)=>{
         if(!client)
-            alert("Login to establish commucation");
+            toast.error("Uloguj se da bi poslao poruku",{
+                className:"toast-contact-message"
+            })
         else{   
         //    alert("Value: " + contactMessageRef.current.value);
+            const messageFromContact = contactMessageRef.current.value
 
-           //Our ID 
-           const ourID = userAuth.user.userRedisID
-           //Houseworker ID
+            if(messageFromContact!='')
+            {
+                const ourID = userAuth.user.userRedisID
+                //value prop of this button -> props.id 
+                const houseworkerID = e.target.value;
 
-           //value prop of this button -> props.id 
-           const houseworkerID = e.target.value;
-           //Jovana is id 4 in REDIS
-        //    const houseworkerID = '4';
+                console.log("HOUSEWORKERID " + houseworkerID);
+                //Room based on users ID
+                const RoomID = `${ourID}:${houseworkerID}`;
+                const messageObj = {
+                        message: messageFromContact,
+                        from:ourID,
+                        roomID:RoomID
+                }
+                alert(JSON.stringify(messageObj));
+                socket.emit('message', JSON.stringify(messageObj))
+                toast.success("Poruka je poslata",{
+                    className:'toast-contact-message'
+                })
+                contactMessageRef.current.value='';
 
-           console.log("HOUSEWORKERID " + houseworkerID);
-           //Room based on users ID
-
-           const RoomID = `${ourID}:${houseworkerID}`;
-           const messageObj = {
-                message: contactMessageRef.current.value,
-                from:ourID,
-                roomID:RoomID
-           }
-           alert(JSON.stringify(messageObj));
-
-            socket.emit('message', JSON.stringify(messageObj))
+            }
+            else
+                toast.error("Ne mozes poslati praznu poruku",{
+                    className:"toast-contact-message"
+                })
+        
         }   
     }
 
+    //showRateInputCssClass
+    var showRateInputCssClass =''
+    if(!showRateInput)
+        showRateInputCssClass ='open-rate-button'
+    else
+        showRateInputCssClass ='accept-rate-button'
+
+    var recommendedCssClass = 'houseworker-content '
+    props.recommended ? recommendedCssClass += ' recommended' : ''
+
+
+    
     return (
         <>
             {/* {commentClick &&  */}
@@ -274,6 +305,118 @@ const HouseworkersCard = (props) =>{
                 FooterContext = {commentFooterContext}
                 onCloseModal={onCloseComment}
             />}
+            <div className="houseworker-card">
+                <div className={recommendedCssClass}>
+                    
+                    <div className="imgBox">
+                        {/* <img clasName="image">IMG FROM DB</img> */}
+                        {/* <img src={profilePicture}></img> */}
+                        <img className='' src={`assets/userImages/${props.picturePath}`}/>
+                        {/* <p1>{props.picturePath}</p1> */}
+                        {/* <img src={`data:image/jpeg;base64, ${props.picturePath}`}></img> */}
+                    </div>
+
+                    {props.recommended && 
+                        <div className='recommendedText'>Preporucen</div> 
+                    }
+
+                    <div className="textBox">
+
+                        <div className="personal-info">
+                            <div className='div-text'><label className='label-category'>Licni Podaci</label>
+                                <div className='line'> </div>  
+                            </div>
+
+                            <div className='div-text'>Korisnicko ime: <label className='label-text'>{props.username} </label>
+                            </div>
+
+                            <div className='div-text'>Ime: <label className='label-text'>{props.first_name} </label>
+                            </div>
+
+                            <div className='div-text'>Prezime: <label className='label-text'>{props.last_name}</label>
+                            </div>
+
+                            <div className='div-text'>Grad: <label className='label-text'>{props.city}</label>
+                            </div>
+
+                            <div className='div-text'>Pol: <label className='label-text'>{props.gender}</label>
+                            </div>
+
+                            <div className='div-text'>Adresa: <label className='label-text'> {client ? props.address : <b>Uloguj se</b>}</label>
+                            </div>
+
+                            <div className='div-text'>Broj Telefona: <label className='label-text'> {client ? props.phone_number : <b>Uloguj se</b>}</label>
+                            </div>
+
+                            <div className='div-text'>Godine: <label className='label-text'>{client ? props.age : <b>Login</b>}</label>
+                            </div>
+                        </div>
+
+                        <div className='profession-info'>
+                            <div className='div-text'><label className='label-category'>Profesije</label> 
+                                <div className='line'> </div>   
+                            </div>
+                            {
+                            professions ? 
+                                professions.map(pr => 
+                                        <div className='div-text-profession'>- <label className='label-text'>{pr.profession} </label>
+                                            <div className='profession-money'> {pr.working_hour}din </div>
+                                        </div>
+                                    )
+                            :
+                            <div> No Proffessions</div>
+                            }
+                        </div>
+
+                        <div className='description-info'>
+                            <div className='div-text'><label className='label-text'>Opis</label>
+                                <div className='line'> </div>   
+                            </div>
+                                        
+                            <div className='description-box'>
+                                <div className='div-text-desc'><p1>{client ? props.description :<b>Login</b>}</p1>
+                                </div>
+                            </div>
+
+                            <div className='div-text'><label className='label-text'>Ocena</label>
+                                <div className='line'> </div>   
+                            </div>
+
+                            <div className='rating-box'>
+                                <div className='div-text-rating'><p1>{client ? parseFloat(rating).toFixed(1) : <b>Login</b>}</p1>
+                                </div>
+                                <div className='rating-field'>
+                                    {showRateInput && 
+                                    <>
+                                        <input type='number' min='1' max='5' value={rate} onChange={onChangeRate} name="rateValue" placeholder='Ocena'></input>
+                                        <button onClick={onCloseRateHandler} className='close-rate-button'>Zatvori</button>
+                                    </>
+                                    
+                                    }
+                                    <button onClick={onRateHandler} className={showRateInputCssClass} value={props.username}>{showRateInput ? "Potvrdi" : "Oceni"}</button>
+                                </div>
+                            </div>
+
+                            <div className='comment-box'>
+                                <button className='comment-btn' onClick={onCommentHandler} id={props.id} value={props.username}>Comment</button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div className='communicate-box'>
+                        <input ref={contactMessageRef}  type="text" placeholder='Unesite poruku'/> 
+                        <button onClick={onContactHandler} value={props.id}>Contact</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+{/* 
             <div className='Container-Card'>
                 <h3>Licni podaci</h3>
                 <div className='personal_info'>
@@ -303,12 +446,7 @@ const HouseworkersCard = (props) =>{
                 <br/>
                 <h3>Description</h3>
                 <div className='desc_info'>
-                    <div>{props.description}</div>
-                </div>
-
-                <h3>Working time</h3>
-                <div className='working Time'>
-                    <div>{client ? 'It will be added' : <b>Login</b>}</div>
+                    <div>{client ? props.description :<b>Login</b> }</div>
                 </div>
 
                 <br/>
@@ -337,7 +475,7 @@ const HouseworkersCard = (props) =>{
                     <button onClick={onContactHandler} value={props.id}>Contact</button>
                 </div>
 
-            </div>
+            </div> */}
         </>
     )
 

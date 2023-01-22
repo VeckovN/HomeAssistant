@@ -67,7 +67,7 @@ const Home = ({socket, connected}) =>{
                         //find username by userID
                         //const receivedFrom = await getUsernameByUserID(data.from)
                         // toast.info("You received message from :" + receivedFrom);
-                        toast.info("You received message from :" + dataObj.from);
+                        toast.info("Stigla je poruka od :" + dataObj.fromUsername);
                     }
                 }
                 
@@ -88,7 +88,7 @@ const Home = ({socket, connected}) =>{
                 console.log("REDIS ID: " + userAuth.user.userRedisID);
                 if(userAuth.user.userRedisID == houseworkerID){
                     console.log("HEEEEEE");
-                    toast.info("You got comment from " + clientCommented)
+                    toast.info("Dobio si komentar od " + clientCommented)
                 }
             })
         }
@@ -97,11 +97,6 @@ const Home = ({socket, connected}) =>{
    
     return (
         <div>
-            {/* Guest sees same as Client but with limitation(can't see all infos and send messages,comments) */}
-            {/* {type=='client' || type=='undefined' && <ClientHome />}
-            {type=='houseworker' && <HouseworkerHome/>} */}
-            {/* <ClientHome/> */}
-
             {/* SHOW ClientHome if is guest or client */}
             <Routes>
                 <Route

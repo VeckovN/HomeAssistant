@@ -2,6 +2,8 @@ import {Link, useNavigate} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
 import {logout, reset} from '../../../store/auth-slice';
 
+import './Header.css';
+
 const Header = () =>{
 
     // const user = false;
@@ -28,51 +30,36 @@ const Header = () =>{
     
 
   return (
-    <header className='header'>
-        <div className='logo'>
+    <nav class = "navbar">
+        <div class = "logo" >
+            <a href="/" class="logo-a">
+                Home <span class="logo-span">Assistant</span>
+            </a>
         </div>
-        <ul>
+        <div class="nav-list">
             {/* unAuthenticated users */}
             {!user ? (
-                <>
-                    <li>
-                        <Link to='/login'>Login</Link>
-                    </li>
-                    <li>
-                        <Link to='/register'>Register</Link>
-                    </li>
-                </>
-            ):
-                <>
-                    <li>
-                        <button onClick={logoutHandler}>Logout</button>
-                    </li>
-                    <li>
-                        <Link to='/profile'>Profile</Link>
-                    </li>
-                    <li>
-                        <Link to='/messages'>Messages</Link>
-                    </li>
-                    {/* if is houseworker then show Comment LInk*/}
-                    {houseworker &&
                         <>
-                            <li>
-                                <Link to='/comments'>Comments</Link>
-                            </li>
-                            
+                            <Link to='/login' className='nav-link'>Login</Link>
+                            <Link to='/register' className='nav-link'>Register</Link>
                         </>
-                    }
+                    ):
+                        <>
+                            <Link to='/profile' className='nav-link'>Profile</Link>
+                            <Link to='/messages' className='nav-link'>Messages</Link>
                         
-                </>
-                
-        
+
+                            {/* if is houseworker then show Comment LInk*/}
+                            {houseworker &&
+                                <Link to='/comments' className='nav-link'>Comments</Link>
+                            }
+
+                            <button onClick={logoutHandler} className='nav-link-button '>Logout</button>
+                                
+                        </>
             }
-            
-            
-        </ul>
-
-    </header>
-  )
+        </div>
+    </nav>
+    )
 }
-
-export default Header
+export default Header;
