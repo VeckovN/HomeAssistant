@@ -45,7 +45,7 @@ const usernameByUserID = async (userID)=>{
 const RoomId = (firstUserID, secondUserID) =>{
     //id room has to be minID:maxID --- room:1:2 room:4:9 not room:8:2
     const minUserID = firstUserID > secondUserID ? secondUserID : firstUserID;
-    const maxUserID = firstUser > secondUserID ? firstUserID : secondUserID;
+    const maxUserID = firstUserID > secondUserID ? firstUserID : secondUserID;
     //get roomID Between 2 users --- user1 and user4 room:1:4
     return `${minUserID}:${maxUserID}`
 }
