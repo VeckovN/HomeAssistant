@@ -6,8 +6,8 @@ dotenv.config();
 
 //WON"T WORK WIHT PASSWORD AND USERNAME FROM .ENV
 // const driver = neo4j.driver(process.env.NEO4J_URI, neo4j.auth.basic(process.env.NEO4J_USER,process.env.NEO4J_PASSWORD));
-const driver = neo4j.driver(process.env.NEO4J_URI, neo4j.auth.basic('neo4j','HomeAssistantNeo4j'));
-
+// const driver = neo4j.driver(process.env.NEO4J_URI, neo4j.auth.basic('neo4j','HomeAssistantNeo4j'));
+const driver = neo4j.driver(process.env.NEO4J_URI, neo4j.auth.basic('neo4j','QxTdTEqTe7n04dQelsDDIreQL0IrYPBbk9w1OIYbYrw'));
 const session = driver.session();
 
 
