@@ -127,14 +127,14 @@ const HouseworkerRegister = () =>{
         <>
             <div className='register_container'>
                 <form onSubmit={onSubmit} >
-                <div className='form_title'>Registracija kucnog pomocnika</div>
+                <div className='form_title'>Houseworker registration</div>
                     <div className='register_input_container'>
                         <input
                             className='input_field'
                             type='text'
                             name='username'
                             value={username}
-                            placeholder='Unesite korisnicko ime'
+                            placeholder='Enter username'
                             onChange={onChange}
                         />
                     </div>
@@ -145,7 +145,7 @@ const HouseworkerRegister = () =>{
                             type='text'
                             name='email'
                             value={email}
-                            placeholder='Unesite email'
+                            placeholder='Enter email address'
                             onChange={onChange}
                         />
                     </div>
@@ -156,7 +156,7 @@ const HouseworkerRegister = () =>{
                             type='password'
                             name='password'
                             value={password}
-                            placeholder='Unesite sifru'
+                            placeholder='Enter password'
                             onChange={onChange}
                         />
                     </div>
@@ -167,7 +167,7 @@ const HouseworkerRegister = () =>{
                             type='passwordRepeat'
                             name='passwordRepeat'
                             value={passwordRepeat}
-                            placeholder='Ponovite sifru'
+                            placeholder='Repeat password'
                             onChange={onChange}
                         />
                     </div>
@@ -178,7 +178,7 @@ const HouseworkerRegister = () =>{
                             type='text'
                             name='first_name'
                             value={first_name}
-                            placeholder='Unesite Ime'
+                            placeholder='Enter first name'
                             onChange={onChange}
                         />
                     </div>
@@ -189,7 +189,7 @@ const HouseworkerRegister = () =>{
                             type='text'
                             name='last_name'
                             value={last_name}
-                            placeholder='Unesite Prezime'
+                            placeholder='Enter last name'
                             onChange={onChange}
                         />
                     </div>
@@ -200,7 +200,7 @@ const HouseworkerRegister = () =>{
                             type='number'
                             name='age'
                             value={age}
-                            placeholder='Unesite godine'
+                            placeholder='Enter age'
                             onChange={onChange}
                         />
                     </div>
@@ -211,7 +211,7 @@ const HouseworkerRegister = () =>{
                             type='city'
                             name='city'
                             value={city}
-                            placeholder='Odaberite grad'
+                            placeholder='Select a city'
                             onChange={onChange}
                         />
                     </div>
@@ -222,7 +222,7 @@ const HouseworkerRegister = () =>{
                             type='address'
                             name='address'
                             value={address}
-                            placeholder='Unesite adresu'
+                            placeholder='Enter address'
                             onChange={onChange}
                         />
                     </div>
@@ -232,19 +232,19 @@ const HouseworkerRegister = () =>{
                             type='number'
                             name='phone_number'
                             value={phone_number}
-                            placeholder='Unesite broj telefona'
+                            placeholder='Enter phone number'
                             onChange={onChange}
                         />
                     </div>
 
-                    <label className='label_input'>Pol</label>
+                    <label className='label_input'>Gender</label>
                     <select className="gender_option" onChange={onChange} name="gender" id='gender'>
-                        <option value="">Odaberite Pol</option>
-                        <option value="Male">Musko</option>
-                        <option value="Female">Zensko</option>
+                        <option value="">Choose gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
                     </select>
 
-                    <label className='label_input'>Profilna slika</label>
+                    <label className='label_input'>Profile picture</label>
                     <div className='form-group form-group-image'>
                         <input type="file" onChange={onImageChange}  class='inputFile' name="picture" />
                     </div>
@@ -262,11 +262,11 @@ const HouseworkerRegister = () =>{
                     />
                     <br/>
 
-                    <label className='label_input'>Opis</label>
+                    <label className='label_input'>Description</label>
                     <textarea onChange={onChange} rows="5" cols="20" className="descriptionBox"  name="description"></textarea>
 
                     <div className ='register_button_container'>
-                        <button type='submit' onClick={onSubmit} className='btn'>Submit</button>
+                        <button type='submit' onClick={onSubmit} className='btn'>Register</button>
                     </div>
 
                 </form>

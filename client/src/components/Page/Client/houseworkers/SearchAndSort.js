@@ -41,25 +41,25 @@ const SearchAndSort = (prop) => {
                         class='search' 
                         type='text' 
                         value={searchName}
-                        placeholder='Pretrazi kucnog pomocnika (Unesite korisnicko ime)'
+                        placeholder='Search houseworker (Enter username)'
                         onChange={selectSearchHandler}
                     />
-                    <button onClick={onSearchSubmitHandler}>Pretrazi</button>
+                    <button onClick={onSearchSubmitHandler}>Search</button>
                     </div>
                 </div>
 
                 <div class='sort'>
                     <div class="sort-box">
-                        <button class='sort-1' value="AgeUp" onClick={e => selectSortHandler(e.target.value)}>Godine 🠑
+                        <button class='sort-1' value="AgeUp" onClick={e => selectSortHandler(e.target.value)}>Age 🠑
                         </button>
 
-                        <button class='sort-2' value="AgeDown" onClick={e => selectSortHandler(e.target.value)}>Godine 🠓
+                        <button class='sort-2' value="AgeDown" onClick={e => selectSortHandler(e.target.value)}>Age 🠓
                         </button>
 
-                        <button class='sort-3' value="RatingUp" onClick={e => selectSortHandler(e.target.value)}>Ocena 🠑
+                        <button class='sort-3' value="RatingUp" onClick={e => selectSortHandler(e.target.value)}>Rating 🠑
                         </button>
 
-                        <button class='sort-4' value="RatingDown" onClick={e => selectSortHandler(e.target.value)}>Ocena 🠓
+                        <button class='sort-4' value="RatingDown" onClick={e => selectSortHandler(e.target.value)}>Rating 🠓
                         </button>
                     </div>
                 </div>

@@ -34,7 +34,7 @@ const Login = () =>{
 
         if(success || user){
             navigate('/')
-            toast.success("Uspesno si se ulogovao",{
+            toast.success("You have succeessfully logged in",{
                 className:'toast-contact-message'
             })
         }
@@ -73,7 +73,7 @@ const Login = () =>{
             <div className ='login_container'>
                 <div className="login_context">
                     <div className='login_welcome'>
-                        <h3>Dobro dosli</h3>
+                        <h3>Welcome</h3>
                         <div className='logo-h'>Home Assistant</div>
                     </div>
                     <form className='login_form'>
@@ -83,7 +83,7 @@ const Login = () =>{
                                 type='text'
                                 name='username'
                                 value={username}
-                                placeholder='Unesi korisnicko ime'
+                                placeholder='Enter username'
                                 onChange={onChange}
                             />
                         </div>
@@ -94,13 +94,13 @@ const Login = () =>{
                                 type='password'
                                 name='password'
                                 value={password}
-                                placeholder='Unesi sifru'
+                                placeholder='Enter password'
                                 onChange={onChange}
                             />
                         </div>
 
                         <div className ='button_container'>
-                            <button type='submit' onClick={onSubmit} className='btn'>Uloguj se</button>
+                            <button type='submit' onClick={onSubmit} className='btn'>Log in</button>
                         </div>
 
                     </form>

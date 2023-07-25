@@ -48,11 +48,11 @@ const CommentsList = () =>{
             {commentList.length >0 
                 ?
                 <>
-                    <h1>Komentari</h1>
+                    <h1>Comments</h1>
                     {commentList}
                 </>
                 :
-                <div className='no_commentsHouseworker'>Nemate komentara</div>
+                <div className='no_commentsHouseworker'>No comments</div>
                 
         }
             {/* <h1>Komentari</h1> */}

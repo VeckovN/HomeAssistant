@@ -62,9 +62,9 @@ const HouseworkerProfile = () =>{
         e.preventDefault();
 
         if(updatedData.password != updatedData.passwordRepeat)
-            toast.error("Sifre trebaju biti iste")
+            toast.error("Password should be same")
         else if(updatedData.first_name == "" && updatedData.last_name =="" && updatedData.email =="" && updatedData.city =="" && updatedData.address =="" && updatedData.phone_number =="" && updatedData.password =="" && updatedData.passwordRepeat =="") 
-            toast.error("Unesite podatke");
+            toast.error("Enter values");
         else{
             try{
                 //only props wiht updated data( !='') for HTTP request
@@ -97,7 +97,7 @@ const HouseworkerProfile = () =>{
                 const comms = result.data;
                 console.log("COMS : " + JSON.stringify(comms))
     
-                toast.success("Uspesno azurirano")
+                toast.success("Successfully updated")
             }
             catch(err){
                 console.log("Erorr: " + err);
@@ -141,32 +141,32 @@ const HouseworkerProfile = () =>{
     return(
         <>
             <div className='profile_container'>
-                <h1>Profil Kucnog Pomocnika</h1>
+                <h1>Houseworker Profile</h1>
                 <form className='profile_form' onSubmit={onSubmitUpdate}>
                     {/* left side */}
                     <div className='input-label-form'>
                         <div className='profile_input-container'>
-                            <label>Ime: <b>{houseworkerData.first_name}</b></label>
+                            <label>First name: <b>{houseworkerData.first_name}</b></label>
                             <br/>
                             <input 
                             className='input_field'
                             type='text'
                             name='first_name'
                             value={first_name}
-                            placeholder='Unesite Ime'
+                            placeholder='Enter first name'
                             onChange={onChangeUpdate}
                             />
                         </div>
 
                         <div className='profile_input-container'>
-                            <label>Prezime: <b>{houseworkerData.last_name}</b></label>
+                            <label>Last name: <b>{houseworkerData.last_name}</b></label>
                             <br/>
                             <input 
                             className='input_field'
                             type='text'
                             name='last_name'
                             value={last_name}
-                            placeholder='Unesite Prezime'
+                            placeholder='Enter last name'
                             onChange={onChangeUpdate}
                             />
                         </div>
@@ -179,34 +179,34 @@ const HouseworkerProfile = () =>{
                             type='email'
                             name='email'
                             value={email}
-                            placeholder='Unesite Email adresu'
+                            placeholder='Enter email address'
                             onChange={onChangeUpdate}
                             />
                         </div>
 
                         <div className='profile_input-container'>
-                            <label>Sifra</label>
+                            <label>Password</label>
                             <br/>
                             <input 
                             className='input_field'
                             type='password'
                             name='password'
                             value={password}
-                            placeholder='Upisite sifru'
+                            placeholder='Enter password'
                             onChange={onChangeUpdate}
                             />
                         </div>
 
                         {password &&  //only if is password entered
                         <div className='profile_input-container'>
-                            <label>Ponovi Sifru</label>
+                            <label>Repeat password</label>
                             <br/>
                             <input 
                             className='input_field'
                             type='password'
                             name='passwordRepeat'
                             value={passwordRepeat}
-                            placeholder='Ponovite sifru'
+                            placeholder='Repeat password'
                             onChange={onChangeUpdate}
                             />
                         </div>
@@ -214,27 +214,27 @@ const HouseworkerProfile = () =>{
 
 
                         <div className='profile_input-container'>
-                            <label>Adresa: <b>{houseworkerData.address}</b></label>
+                            <label>Address: <b>{houseworkerData.address}</b></label>
                             <br/>
                             <input 
                             className='input_field'
                             type='text'
                             name='address'
                             value={address}
-                            placeholder='Unesite adresu'
+                            placeholder='Enter address'
                             onChange={onChangeUpdate}
                             />
                         </div>
 
                         <div className='profile_input-container'>
-                            <label>Broj telefona: <b>{houseworkerData.phone_number}</b></label>
+                            <label>Phone number: <b>{houseworkerData.phone_number}</b></label>
                             <br/>
                             <input 
                             className='input_field'
                             type='number'
                             name='phone_number'
                             value={phone_number}
-                            placeholder='Unesite broj telefona'
+                            placeholder='Enter phone number'
                             onChange={onChangeUpdate}
                             />
                         </div>
@@ -243,7 +243,7 @@ const HouseworkerProfile = () =>{
                             <label>City: <b>{houseworkerData.city}</b></label>
                             <Select 
                                 className='dropdown'
-                                placeholder="Izaberite Grad"
+                                placeholder="Select a city"
                                 //Value for each option (in options object take key:Value )
                                 // value={options.filter(obj => )}
                                 options={city_options}
@@ -253,7 +253,7 @@ const HouseworkerProfile = () =>{
                         </div>
                         <br></br>
                         {/* button for submit Above inputs  */}
-                        <button type='submit' className='profile_submit'>Azuriraj</button>
+                        <button type='submit' className='profile_submit'>Update</button>
                     </div>
 
                 </form>

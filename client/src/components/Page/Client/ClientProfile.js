@@ -156,32 +156,32 @@ const ClientProfile = () =>{
     //Update only keys(Property) which have passed value
     return(
         <div className='profile_container'>
-          <h1>Profil Klijenta</h1>
+          <h1>Client Profile</h1>
                 <form className='profile_form' onSubmit={onSubmitUpdate}>
                     {/* left side */}
                     <div className='input-label-form'>
                         <div className='profile_input-container'>
-                            <label>Ime: <b>{clientData.first_name}</b></label>
+                            <label>First Name: <b>{clientData.first_name}</b></label>
                             <br/>
                             <input 
                             className='input_field'
                             type='text'
                             name='first_name'
                             value={first_name}
-                            placeholder='Upisite Ime'
+                            placeholder='Enter first name'
                             onChange={onChangeUpdate}
                             />
                         </div>
 
                         <div className='profile_input-container'>
-                            <label>Prezime: <b>{clientData.last_name}</b></label>
+                            <label>Last Name: <b>{clientData.last_name}</b></label>
                             <br/>
                             <input 
                             className='input_field'
                             type='text'
                             name='last_name'
                             value={last_name}
-                            placeholder='Upisite Prezime'
+                            placeholder='Enter last name'
                             onChange={onChangeUpdate}
                             />
                         </div>
@@ -194,34 +194,34 @@ const ClientProfile = () =>{
                             type='email'
                             name='email'
                             value={email}
-                            placeholder='Upisite Email adresu '
+                            placeholder='Enter email address '
                             onChange={onChangeUpdate}
                             />
                         </div>
 
                         <div className='profile_input-container'>
-                            <label>Sifra</label>
+                            <label>Password</label>
                             <br/>
                             <input 
                             className='input_field'
                             type='password'
                             name='password'
                             value={password}
-                            placeholder='Upisite sifru'
+                            placeholder='Enter password'
                             onChange={onChangeUpdate}
                             />
                         </div>
 
                         {password &&  //only if is password entered
                         <div className='profile_input-container'>
-                            <label>Ponovi Sifru</label>
+                            <label>Repeat password</label>
                             <br/>
                             <input 
                             className='input_field'
                             type='password'
                             name='passwordRepeat'
                             value={passwordRepeat}
-                            placeholder='Ponovite sifru'
+                            placeholder='Repeat password'
                             onChange={onChangeUpdate}
                             />
                         </div>
@@ -230,10 +230,10 @@ const ClientProfile = () =>{
                         
 
                         <div className='profile_input-container'>
-                            <label>Grad: <b>{clientData.city}</b></label><br/>
+                            <label>City: <b>{clientData.city}</b></label><br/>
                             <Select 
                                 className='dropdown'
-                                placeholder="Izaberite Grad"
+                                placeholder="Select a city"
                                 //Value for each option (in options object take key:Value )
                                 // value={options.filter(obj => )}
                                 options={city_options}
@@ -248,7 +248,7 @@ const ClientProfile = () =>{
                       
 
                         {/* button for submit Above inputs  */}
-                        <button type='submit' className='profile_submit'>Azuriraj</button>
+                        <button type='submit' className='profile_submit'>Update</button>
                     </div>
 
 

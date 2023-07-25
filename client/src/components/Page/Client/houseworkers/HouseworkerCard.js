@@ -192,11 +192,11 @@ const HouseworkersCard = (props) =>{
                         comment={comm.comment}
                     />
                 ))
-                : <div className='no_commentsModal'>Korisnik nema komentara</div>
+                : <div className='no_commentsModal'>Client doesn't have comments</div>
             }
             <div className='comment_input'>
-                <input type='text' name="postComment" ref={postCommentRef} placeholder='Unesite komentar'/>
-                <button type="submit">Posalji</button>
+                <input type='text' name="postComment" ref={postCommentRef} placeholder='Post comment'/>
+                <button type="submit">Send</button>
             </div>
         </form>
 
@@ -335,37 +335,37 @@ const HouseworkersCard = (props) =>{
                     <div className="textBox">
 
                         <div className="personal-info">
-                            <div className='div-text'><label className='label-category'>Licni Podaci</label>
+                            <div className='div-text'><label className='label-category'>Personal Info</label>
                                 <div className='line'> </div>  
                             </div>
 
-                            <div className='div-text'>Korisnicko ime: <label className='label-text'>{props.username} </label>
+                            <div className='div-text'>Username: <label className='label-text'>{props.username} </label>
                             </div>
 
-                            <div className='div-text'>Ime: <label className='label-text'>{props.first_name} </label>
+                            <div className='div-text'>First name: <label className='label-text'>{props.first_name} </label>
                             </div>
 
-                            <div className='div-text'>Prezime: <label className='label-text'>{props.last_name}</label>
+                            <div className='div-text'>Last name: <label className='label-text'>{props.last_name}</label>
                             </div>
 
-                            <div className='div-text'>Grad: <label className='label-text'>{props.city}</label>
+                            <div className='div-text'>City: <label className='label-text'>{props.city}</label>
                             </div>
 
-                            <div className='div-text'>Pol: <label className='label-text'>{props.gender}</label>
+                            <div className='div-text'>Gender: <label className='label-text'>{props.gender}</label>
                             </div>
 
-                            <div className='div-text'>Adresa: <label className='label-text'> {client ? props.address : <b>Uloguj se</b>}</label>
+                            <div className='div-text'>Address: <label className='label-text'> {client ? props.address : <b><a href='/login'>Log in</a></b>}</label>
                             </div>
 
-                            <div className='div-text'>Broj Telefona: <label className='label-text'> {client ? props.phone_number : <b>Uloguj se</b>}</label>
+                            <div className='div-text'>Phone number: <label className='label-text'> {client ? props.phone_number : <b><a href='/login'>Log in</a></b>}</label>
                             </div>
 
-                            <div className='div-text'>Godine: <label className='label-text'>{client ? props.age : <b>Login</b>}</label>
+                            <div className='div-text'>Age: <label className='label-text'>{client ? props.age : <b><a href='/login'>Log in</a></b>}</label>
                             </div>
                         </div>
 
                         <div className='profession-info'>
-                            <div className='div-text'><label className='label-category'>Profesije</label> 
+                            <div className='div-text'><label className='label-category'>Professions</label> 
                                 <div className='line'> </div>   
                             </div>
                             {
@@ -381,16 +381,16 @@ const HouseworkersCard = (props) =>{
                         </div>
 
                         <div className='description-info'>
-                            <div className='div-text'><label className='label-text'>Opis</label>
+                            <div className='div-text'><label className='label-text'>Description</label>
                                 <div className='line'> </div>   
                             </div>
                                         
                             <div className='description-box'>
-                                <div className='div-text-desc'><p1>{client ? props.description :<b>Login</b>}</p1>
+                                <div className='div-text-desc'><p1>{client ? props.description : <b>Log in</b>}</p1>
                                 </div>
                             </div>
 
-                            <div className='div-text'><label className='label-text'>Ocena</label>
+                            <div className='div-text'><label className='label-text'>Rating</label>
                                 <div className='line'> </div>   
                             </div>
 
@@ -401,7 +401,7 @@ const HouseworkersCard = (props) =>{
                                     {showRateInput && 
                                     <>
                                         <input type='number' min='1' max='5' value={rate} onChange={onChangeRate} name="rateValue" placeholder='Ocena'></input>
-                                        <button onClick={onCloseRateHandler} className='close-rate-button'>Zatvori</button>
+                                        <button onClick={onCloseRateHandler} className='close-rate-button'>Close</button>
                                     </>
                                     
                                     }
@@ -418,7 +418,7 @@ const HouseworkersCard = (props) =>{
                     </div>
 
                     <div className='communicate-box'>
-                        <input ref={contactMessageRef}  type="text" placeholder='Unesite poruku'/> 
+                        <input ref={contactMessageRef}  type="text" placeholder='Send a message'/> 
                         <button onClick={onContactHandler} value={props.id}>Contact</button>
                     </div>
 

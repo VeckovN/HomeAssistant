@@ -8,10 +8,10 @@ const Register = () =>{
         <div className='registre_container'>
             <div className='register_options'>
                 <div className='register_item'>
-                    <Link to='/clientRegister' className='register_link'>Klijent</Link>
+                    <Link to='/clientRegister' className='register_link'>Client</Link>
                 </div>
                 <div className='register_item'>
-                    <Link to='/houseworkerRegister' className='register_link'>Kucni Pomocnik</Link>
+                    <Link to='/houseworkerRegister' className='register_link'>Houseworker</Link>
                 </div>
             </div>
         </div>

@@ -133,7 +133,7 @@ const Filter = (prop) =>{
             <div className='select-filter-box'>
                 <Select 
                     className='dropdown'
-                    placeholder="Izaberite profesiju"
+                    placeholder="Select profession"
                     //Value for each option (in options object take key:Value )
                     // value={options.filter(obj => )}
                     options={options}
@@ -147,11 +147,11 @@ const Filter = (prop) =>{
             {/* Component for multiple option select */}
 
             {/* GRAD */}
-            <label className='filter-lb'>Grad:</label>
+            <label className='filter-lb'>City:</label>
             <div className='filter-card'>   
                 <Select 
                     className='dropdown'
-                    placeholder="Izaberite Grad"
+                    placeholder="Select a city"
                     //Value for each option (in options object take key:Value )
                     // value={options.filter(obj => )}
                     options={city_options}
@@ -162,27 +162,27 @@ const Filter = (prop) =>{
 
 
             {/* GENDER */}
-            <label class='filter-lb'>Pol:</label>
+            <label class='filter-lb'>Gender:</label>
             <div class='filter-card'>
                 <div class='filter-item'>
                     <input type="radio"  onChange={onChangeHandler} name="gender" value="Male"/>
-                    <label >Musko</label><br/>
+                    <label >Male</label><br/>
                     <input type="radio" onChange={onChangeHandler} name="gender" value="Female"/>
-                    <label >Zensko</label><br/>
+                    <label >Female</label><br/>
                 </div>
             </div>
 
             {/* AGE */}
-            <label class='filter-lb'>Godine:</label>
+            <label class='filter-lb'>Age:</label>
             <div class='filter-card'>
 
                 <div class='filter-item'>
-                    <label>Od</label>
+                    <label>From</label>
                     <input class='sl' type='number' onChange={onChangeHandler} name='ageFrom'/>
                 </div>
 
                 <div class='filter-item'>
-                    <label>Do</label>
+                    <label>To</label>
                     <input class='sl' type='number' onChange={onChangeHandler} name='ageTo'/>
                 </div>
                 

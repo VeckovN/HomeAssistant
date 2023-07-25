@@ -5,6 +5,7 @@ import HouseworkerCard from './houseworkers/HouseworkerCard'
 import Filter from './houseworkers/Filter';
 import SearchAndSort from './houseworkers/SearchAndSort';
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 import './ClientHome.css'
 
@@ -147,7 +148,13 @@ const ClientHome = ({socket}) =>{
     }
 
     const onShowRecommended = ()=>{
-        setShowRecommended(!showRecommended);
+        console.log("USER: " + JSON.stringify(user));
+        if(user?.type === "Client") // ?. -if 'user' exist then user.type can be readed
+            setShowRecommended(!showRecommended);
+        else
+            toast.error("Log in to see recommendetion",{
+                className:"toast-contact-message"
+            })
     }
 
     //RECOMMENDED USERS
@@ -212,7 +219,7 @@ const ClientHome = ({socket}) =>{
     return (
         <div className='home_container'>
                 {/* {searchedData && <h3>Search:{JSON.stringify(searchedData)}</h3>} */}
-                <button className="recommendedBtn" onClick={onShowRecommended}>{!showRecommended ? 'Prikazi Preporucene Korisnike' : 'Skloni Preporucene Korisnike'}</button>
+                <button className="recommendedBtn" onClick={onShowRecommended}>{!showRecommended ? 'Show recommended' : 'Close Recommended'}</button>
                 <SearchAndSort search={searchDataHanlder}/>
                 <div className='filter_houseworkers_container'>
                     <Filter 
