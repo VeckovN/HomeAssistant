@@ -2,8 +2,8 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Home from './components/Page/Home';
 import Header from './components/Layout/Header/Header.js'
 import Register from './components/Page/Register/Register.js'
-import ClientRegister from './components/Page/Register/ClientRegister';
-import HouseworkerRegister from './components/Page/Register/HouseworkerRegister';
+import ClientRegister from './components/Page/Register/Client/ClientRegister';
+import HouseworkerRegister from './components/Page/Register/Houseworker/HouseworkerRegister';
 import Login from './components/Page/Login/Login.js'
 import Comments from './components/Page/Houseworker/CommentsList';
 import Profile from './components/Page/Profile';

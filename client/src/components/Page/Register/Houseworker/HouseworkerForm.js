@@ -1,131 +1,9 @@
-import {useState, useEffect} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import {register, reset} from '../../../store/auth-slice';
-import {toast} from 'react-toastify';
 import Select from 'react-select';
 
-import './Register.css';
-
-const HouseworkerRegister = () =>{
-
-    const [data, setData] = useState({
-        username:'',
-        email:'',
-        password:'',
-        passwordRepeat:'',
-        first_name:'',
-        last_name:'',
-        age:'',
-        picture:'',
-        gender:'',
-        city:'',
-        address:'',
-        description:'',
-        phone_number:'',
-        professions:[],
-    })
-
-    const {username, email, password, passwordRepeat, first_name, last_name, age, picture, city, gender, address, description, phone_number} = data;
-    
-    const dispatch = useDispatch();
-    const {user, loading, success, error, message} = useSelector( (state) => state.auth)
-    const navigate = useNavigate();
-
-    useEffect( ()=>{
-        //on every user,success,error,message state change chech status of states
-        //and show the appropriate notification
-        if(error)
-            toast.error(message);
-        
-        //register.fulfilled trigger success=true (when is register success )
-        //or if user is logged (after register) 
-        if(success || user){
-            navigate('/');
-            toast.success(message);
-        }
-        //after all of this actions, we want to reset states
-        dispatch(reset());
-
-    },[user, success,error, message, navigate, dispatch])
-
-    const onChange = (event) =>{
-        const name = event.target.name;
-        let value;
-        if(name=="age")
-            value = parseInt(event.target.value);
-        
-        value = event.target.value;
-
-        setData(prev=> (
-            {
-                ...prev,
-                [name]:value // example first_name:"Novak"
-            }
-        ))
-    }
-
-    const options = [
-        { value:'Cistac', label:"Cistac" },
-        { value:'Dadilja', label:"Dadilja" },
-        { value:'Kuvar', label:"Kuvar" },
-        { value:'Staratelj', label:"Staratelj" },
-        { value:'Sobarica', label:"Sobarica" },
-        { value:'Domacica', label:"Domacica" }
-    ]
-
-    const onChangeProffesions = (e) =>{
-        let professionsArray;
-        professionsArray = Array.isArray(e) ? e.map(p => p.value): [];
-        console.log("TEAKEE: "+ typeof(professionsArray));
-        
-        console.log("TAKEN PROFESSIONS: " + JSON.stringify(professionsArray))
-        
-        setData(prev =>(
-            {
-                ...prev,
-                ["professions"]:professionsArray
-            }
-        ))
-    }
-
-    const onImageChange = (event) =>{
-        const file = event.target.files[0];
-        setData(prev =>(
-            {
-                ...prev,
-                ["picture"]:file
-            }
-        ))
-    } 
-
-    console.log("DATA: " + JSON.stringify(data));
-    
-    const onSubmit = (e) =>{
-        e.preventDefault();
-
-        if(password != passwordRepeat){
-            alert("Passwords ins't same");
-        }
-        else{
-            const {password, passwordRepeat, ...otherData} = data;
-            
-            const formData = new FormData();
-            for(const key in data){
-                console.log("DATA: " + JSON.stringify(data))
-                console.log(`${key}: ${data[key]}`)
-                formData.append(key, data[key]);         
-            }
-            formData.append('type', 'Houseworker');
-            
-            dispatch(register(formData));
-
-        }
-    }
+const HouseworkerForm = ({data, profession_options, city_options, onSubmit, onChange, onChangeCity, onImageChange, onChangeProffesions}) =>{
 
     return (
-        <>
-            <div className='register_container'>
+        <div className='register_container'>
                 <form onSubmit={onSubmit} >
                 <div className='form_title'>Houseworker registration</div>
                     <div className='register_input_container'>
@@ -133,7 +11,7 @@ const HouseworkerRegister = () =>{
                             className='input_field'
                             type='text'
                             name='username'
-                            value={username}
+                            value={data.username}
                             placeholder='Enter username'
                             onChange={onChange}
                         />
@@ -144,7 +22,7 @@ const HouseworkerRegister = () =>{
                             className='input_field'
                             type='text'
                             name='email'
-                            value={email}
+                            value={data.email}
                             placeholder='Enter email address'
                             onChange={onChange}
                         />
@@ -155,7 +33,7 @@ const HouseworkerRegister = () =>{
                             className='input_field'
                             type='password'
                             name='password'
-                            value={password}
+                            value={data.password}
                             placeholder='Enter password'
                             onChange={onChange}
                         />
@@ -166,7 +44,7 @@ const HouseworkerRegister = () =>{
                             className='input_field'
                             type='passwordRepeat'
                             name='passwordRepeat'
-                            value={passwordRepeat}
+                            value={data.passwordRepeat}
                             placeholder='Repeat password'
                             onChange={onChange}
                         />
@@ -177,7 +55,7 @@ const HouseworkerRegister = () =>{
                             className='input_field'
                             type='text'
                             name='first_name'
-                            value={first_name}
+                            value={data.first_name}
                             placeholder='Enter first name'
                             onChange={onChange}
                         />
@@ -188,7 +66,7 @@ const HouseworkerRegister = () =>{
                             className='input_field'
                             type='text'
                             name='last_name'
-                            value={last_name}
+                            value={data.last_name}
                             placeholder='Enter last name'
                             onChange={onChange}
                         />
@@ -199,19 +77,8 @@ const HouseworkerRegister = () =>{
                             className='input_field'
                             type='number'
                             name='age'
-                            value={age}
+                            value={data.age}
                             placeholder='Enter age'
-                            onChange={onChange}
-                        />
-                    </div>
-
-                    <div className='register_input_container'>
-                        <input
-                            className='input_field'
-                            type='city'
-                            name='city'
-                            value={city}
-                            placeholder='Select a city'
                             onChange={onChange}
                         />
                     </div>
@@ -221,7 +88,7 @@ const HouseworkerRegister = () =>{
                             className='input_field'
                             type='address'
                             name='address'
-                            value={address}
+                            value={data.address}
                             placeholder='Enter address'
                             onChange={onChange}
                         />
@@ -231,11 +98,20 @@ const HouseworkerRegister = () =>{
                             className='input_field'
                             type='number'
                             name='phone_number'
-                            value={phone_number}
+                            value={data.phone_number}
                             placeholder='Enter phone number'
                             onChange={onChange}
                         />
                     </div>
+
+                    <br></br>
+                    <Select 
+                        className='dropdown'
+                        placeholder="Select a city"
+                        options={city_options}
+                        onChange={onChangeCity}
+                        isClearable
+                    />
 
                     <label className='label_input'>Gender</label>
                     <select className="gender_option" onChange={onChange} name="gender" id='gender'>
@@ -253,9 +129,7 @@ const HouseworkerRegister = () =>{
                     <Select 
                         className='dropdown'
                         placeholder="Select Profession"
-                        //Value for each option (in options object take key:Value )
-                        // value={options.filter(obj => )}
-                        options={options}
+                        options={profession_options}
                         onChange={onChangeProffesions}
                         isMulti
                         isClearable
@@ -271,11 +145,8 @@ const HouseworkerRegister = () =>{
 
                 </form>
             </div>
-        
-        
-        </>
     )
 
 }
 
-export default HouseworkerRegister
+export default HouseworkerForm
