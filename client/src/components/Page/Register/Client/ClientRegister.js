@@ -3,13 +3,15 @@ import {useSelector, useDispatch} from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {toast} from 'react-toastify'; //need be imported in App.js
 import {register, reset} from '../../../../store/auth-slice'
+import useUser from '../../../../hooks/useUser.js'
 import ClientForm from './ClientForm';
+import { city_options, profession_options } from '../../../../utils/options';
 
 import '../Register.css'
 
 const ClientRegister = () =>{
     //@TODO - Create custom hook for storing and manipulation with this data( repeated in onther components)
-    const [data, setData] = useState({
+    const initialState ={
         username:'',
         email:'',
         password:'',
@@ -20,12 +22,15 @@ const ClientRegister = () =>{
         city:'',
         gender:'',
         interests:[]
-    })
+    }
 
+
+    const {data, onChange, onChangeCity, onImageChange, onChangeInterest} = useUser(initialState);
     const {password, passwordRepeat} = data;
+
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const {user, loading, success, error, message} = useSelector( (state) => state.auth)
-    const navigate = useNavigate();
 
     //set spinner when is loading true
     // if(loading){
@@ -49,29 +54,6 @@ const ClientRegister = () =>{
 
     },[user, success,error, message, navigate, dispatch])
 
-    const onChange = (event) =>{
-        const name = event.target.name;
-        console.log("NA E: " + typeof(name));
-        const value = event.target.value;
-        setData(prev=> (
-            {
-                ...prev,
-                [name]:value
-            }
-        ))
-    }
-
-    const onImageChange = (event)=>{
-        const file = event.target.files[0];
-        setData(prev =>(
-            {
-                ...prev,
-                ["picture"]:file
-            }
-        ))
-        console.log(file.name);
-    }
-    
     const onSubmit = (e) =>{
         e.preventDefault();
 
@@ -92,69 +74,11 @@ const ClientRegister = () =>{
         }
     }
 
-    const interests_options = [
-        { value:'Cistac', label:"Cistac" },
-        { value:'Dadilja', label:"Dadilja" },
-        { value:'Kuvar', label:"Kuvar" },
-        { value:'Staratelj', label:"Staratelj" },
-        { value:'Sobarica', label:"Sobarica" },
-        { value:'Domacica', label:"Domacica" }
-    ]
-
-    const onChangeInterest = (e) =>{
-        let professionsArray;
-        professionsArray = Array.isArray(e) ? e.map(p => p.value): [];        
-        setData(prev =>(
-            {
-                ...prev,
-                ["interests"]:professionsArray
-            }
-        ))
-    }
-
-    const city_options =[
-        {value:'Beograd', label:"Beograd"},
-        {value:'Novi Sad' , label:"Novi Sad"},
-        {value:'Nis' , label:"Nis"},
-        {value:'Kragujevac' , label:"Kragujevac"},
-        {value:'Subotica' , label:"Subotica"},
-        {value:'Leskovac' , label:"Leskovac"},
-        {value:'Pancevo' , label:"Pancevo"},
-        {value:'Cacak' , label:"Cacak"},
-        {value:'Krusevac' , label:"Krusevac"},
-        {value:'Kraljevo' , label:"Kraljevo"},
-        {value:'Novi Pazar' , label:"Novi Pazar"},
-        {value:'Smederevo' , label:"Smederevo"},
-        {value:'Uzice' , label:"Uzice"},
-        {value:'Valjevo' , label:"Valjevo"},
-        {value:'Vranje' , label:"Vranje"},
-        {value:'Sabac' , label:"Sabac"},
-        {value:'Sombor' , label:"Sombor"},
-        {value:'Pozarevac' , label:"Pozarevac"},
-        {value:'Pirot' , label:"Pirot"},
-        {value:'Zajecar' , label:"Zajecar"},
-        {value:'Bor' , label:"Bor"},
-        {value:'Kikinda' , label:"Kikinda"},
-        {value:'Sremska Mitrovica' , label:"Sremska Mitrovica"},
-        {value:'Jagodina' , label:"Jagodina"},
-        {value:'Vrsac' , label:"Vrsac"}
-    ]
-
-    const onChangeCity = (e) =>{
-        let city = e.value;
-        setData(prev=>(
-            {
-                ...prev,
-                ["city"]:city
-            }
-        ))
-    }
-
     return (
         <ClientForm 
             data={data}
             city_options={city_options}
-            options={interests_options}
+            options={profession_options} //interests
             onSubmit={onSubmit}
             onChange={onChange}
             onChangeCity={onChangeCity}

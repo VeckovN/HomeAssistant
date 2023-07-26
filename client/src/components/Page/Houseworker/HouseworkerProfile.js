@@ -2,12 +2,13 @@ import {useState, useEffect} from 'react';
 import axios from 'axios';
 import {toast} from 'react-toastify';
 import Select from 'react-select';
+import useUser from '../../../hooks/useUser';
+import { city_options } from '../../../utils/options';
 
 import '../../Page/Profile.css';
 
 const HouseworkerProfile = () =>{
-
-    const [updatedData, setUpdatedData] = useState({
+    const initialState = {
         username:'',
         email:'',
         password:'',
@@ -17,10 +18,10 @@ const HouseworkerProfile = () =>{
         city:'',
         address:'',
         phone_number:''
-    });
+    }
 
+    const {data:updatedData, onChange, onChangeCity} = useUser(initialState)
     const [houseworkerData, setHouseworkerData] = useState({})
-
     const {username, email, password, passwordRepeat, first_name, last_name, city, address, phone_number} = updatedData;
 
     useEffect(()=>{
@@ -32,29 +33,6 @@ const HouseworkerProfile = () =>{
         const houseworkerResult = result.data;
         console.log("DATA : "  + JSON.stringify(houseworkerResult))
         setHouseworkerData(houseworkerResult);
-    }
-
-    const onChangeUpdate = (e)=>{
-        const key = e.target.name;
-        const value = e.target.value;
-        setUpdatedData(prev => (
-            {
-                ...prev,
-                [key] : value,
-            }
-        ))
-    }
-
-    const onChangeCity = (e) =>{
-        let city = e.value;
-        console.log("CITTYYYY: " + city);
-
-        setUpdatedData(prev=>(
-            {
-                ...prev,
-                ["city"]:city
-            }
-        ))
     }
 
 
@@ -107,35 +85,6 @@ const HouseworkerProfile = () =>{
         }
     }
 
-    const city_options =[
-        {value:'Beograd', label:"Beograd"},
-        {value:'Novi Sad' , label:"Novi Sad"},
-        {value:'Nis' , label:"Nis"},
-        {value:'Kragujevac' , label:"Kragujevac"},
-        {value:'Subotica' , label:"Subotica"},
-        {value:'Leskovac' , label:"Leskovac"},
-        {value:'Pancevo' , label:"Pancevo"},
-        {value:'Cacak' , label:"Cacak"},
-        {value:'Krusevac' , label:"Krusevac"},
-        {value:'Kraljevo' , label:"Kraljevo"},
-        {value:'Novi Pazar' , label:"Novi Pazar"},
-        {value:'Smederevo' , label:"Smederevo"},
-        {value:'Uzice' , label:"Uzice"},
-        {value:'Valjevo' , label:"Valjevo"},
-        {value:'Vranje' , label:"Vranje"},
-        {value:'Sabac' , label:"Sabac"},
-        {value:'Sombor' , label:"Sombor"},
-        {value:'Pozarevac' , label:"Pozarevac"},
-        {value:'Pirot' , label:"Pirot"},
-        {value:'Zajecar' , label:"Zajecar"},
-        {value:'Bor' , label:"Bor"},
-        {value:'Kikinda' , label:"Kikinda"},
-        {value:'Sremska Mitrovica' , label:"Sremska Mitrovica"},
-        {value:'Jagodina' , label:"Jagodina"},
-        {value:'Vrsac' , label:"Vrsac"}
-    ]
-
-
     console.log("HOPUISE : " + JSON.stringify(updatedData));
 
     return(
@@ -154,7 +103,7 @@ const HouseworkerProfile = () =>{
                             name='first_name'
                             value={first_name}
                             placeholder='Enter first name'
-                            onChange={onChangeUpdate}
+                            onChange={onChange}
                             />
                         </div>
 
@@ -167,7 +116,7 @@ const HouseworkerProfile = () =>{
                             name='last_name'
                             value={last_name}
                             placeholder='Enter last name'
-                            onChange={onChangeUpdate}
+                            onChange={onChange}
                             />
                         </div>
                         
@@ -180,7 +129,7 @@ const HouseworkerProfile = () =>{
                             name='email'
                             value={email}
                             placeholder='Enter email address'
-                            onChange={onChangeUpdate}
+                            onChange={onChange}
                             />
                         </div>
 
@@ -193,7 +142,7 @@ const HouseworkerProfile = () =>{
                             name='password'
                             value={password}
                             placeholder='Enter password'
-                            onChange={onChangeUpdate}
+                            onChange={onChange}
                             />
                         </div>
 
@@ -207,7 +156,7 @@ const HouseworkerProfile = () =>{
                             name='passwordRepeat'
                             value={passwordRepeat}
                             placeholder='Repeat password'
-                            onChange={onChangeUpdate}
+                            onChange={onChange}
                             />
                         </div>
                         }
@@ -222,7 +171,7 @@ const HouseworkerProfile = () =>{
                             name='address'
                             value={address}
                             placeholder='Enter address'
-                            onChange={onChangeUpdate}
+                            onChange={onChange}
                             />
                         </div>
 
@@ -235,7 +184,7 @@ const HouseworkerProfile = () =>{
                             name='phone_number'
                             value={phone_number}
                             placeholder='Enter phone number'
-                            onChange={onChangeUpdate}
+                            onChange={onChange}
                             />
                         </div>
                         
