@@ -29,4 +29,5 @@ export const getHouseworkerByFilter = async(params) =>{
 export const getRecommended= async(username) =>{
     const result = await axios.get(BASE_URL + `/clients/recommended/${username}`);
     const recommendedData = result.data;
+    return recommendedData;
 }
