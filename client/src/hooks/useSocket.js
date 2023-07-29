@@ -9,7 +9,6 @@ const useSocket = (user) =>{
     const [connected, setConnected] = useState(false);
 
     //on every useSocket will be this reRun
-
     useEffect(()=>{
         console.log("US: " + JSON.stringify(user));
         console.log("SS: " + user);

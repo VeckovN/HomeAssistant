@@ -111,9 +111,6 @@ const Home = ({socket, connected}) =>{
                     }
                 />
             </Routes>
-
-            
-
         </div>
     )
 }

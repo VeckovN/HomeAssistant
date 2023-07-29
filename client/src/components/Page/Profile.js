@@ -1,7 +1,7 @@
 import {useSelector} from 'react-redux'
 
-import ClientProfile from './Client/ClientProfile';
-import HouseworkerProfile from './Houseworker/HouseworkerProfile';
+import ClientProfile from './Client/ClientProfile/ClientProfile.js';
+import HouseworkerProfile from './Houseworker/Profile/HouseworkerProfile.js';
 
 
 const Profile = () =>{

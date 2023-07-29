@@ -1,95 +1,10 @@
-import {useState, useEffect} from 'react';
 import axios from 'axios';
-import {toast} from 'react-toastify';
 import Select from 'react-select';
-import useUser from '../../../hooks/useUser';
-import { city_options } from '../../../utils/options';
+import { city_options } from '../../../../utils/options';
 
-import '../../Page/Profile.css';
-
-const HouseworkerProfile = () =>{
-    const initialState = {
-        username:'',
-        email:'',
-        password:'',
-        passwordRepeat:'',
-        first_name:'',
-        last_name:'',
-        city:'',
-        address:'',
-        phone_number:''
-    }
-
-    const {data:updatedData, onChange, onChangeCity} = useUser(initialState)
-    const [houseworkerData, setHouseworkerData] = useState({})
-    const {username, email, password, passwordRepeat, first_name, last_name, city, address, phone_number} = updatedData;
-
-    useEffect(()=>{
-        fetchData();
-    }, [])
-
-    const fetchData = async() =>{
-        const result = await axios.get(`http://localhost:5000/api/houseworker/info`);
-        const houseworkerResult = result.data;
-        console.log("DATA : "  + JSON.stringify(houseworkerResult))
-        setHouseworkerData(houseworkerResult);
-    }
-
-
-    const onSubmitUpdate = async (e)=>{
-        e.preventDefault();
-
-        if(updatedData.password != updatedData.passwordRepeat)
-            toast.error("Password should be same")
-        else if(updatedData.first_name == "" && updatedData.last_name =="" && updatedData.email =="" && updatedData.city =="" && updatedData.address =="" && updatedData.phone_number =="" && updatedData.password =="" && updatedData.passwordRepeat =="") 
-            toast.error("Enter values");
-        else{
-            try{
-                //only props wiht updated data( !='') for HTTP request
-                let newData = {};
-                //without re-fetching just override ClientData with updatedData
-                Object.keys(updatedData).forEach((key,index) =>{
-                    console.log("UPD: " + typeof(key)+ " : " + updatedData[key]);
-                    
-                    //picture wont store in this object(for it use diferent request)
-                    if(updatedData[key] != '' && key!='picture'){
-                        console.log("K " + key);
-                        //data object wiht only updated props (for HTTP request)
-                        newData[key] = updatedData[key];
-                        
-                        setHouseworkerData(prev =>({
-                            ...prev,
-                            //BECAUSE 'key' is STRING and MUST use []  
-                            [key] : updatedData[key] 
-                        }))
-                        console.log("SDSDASD: " + JSON.stringify(houseworkerData));
-                        console.log("DATAAAA: " + JSON.stringify(newData));
-                    }
-                })
-    
-                // if(updatedData.picture !=''){
-                //     await axios.put(`http://localhost:5000/api/clients/updateImage/`, updateImage);
-                // }
-    
-                const result = await axios.put(`http://localhost:5000/api/houseworker/update/`, newData);
-                const comms = result.data;
-                console.log("COMS : " + JSON.stringify(comms))
-    
-                toast.success("Successfully updated")
-            }
-            catch(err){
-                console.log("Erorr: " + err);
-                //eventualy set error state
-                toast.error("Error updated")
-            }
-        }
-    }
-
-    console.log("HOPUISE : " + JSON.stringify(updatedData));
-
+const HouseworkerProfileForm = ({updatedData, houseworkerData, onSubmitUpdate, onChange, onChangeCity  }) =>{
     return(
-        <>
-            <div className='profile_container'>
+        <div className='profile_container'>
                 <h1>Houseworker Profile</h1>
                 <form className='profile_form' onSubmit={onSubmitUpdate}>
                     {/* left side */}
@@ -101,7 +16,7 @@ const HouseworkerProfile = () =>{
                             className='input_field'
                             type='text'
                             name='first_name'
-                            value={first_name}
+                            value={updatedData.first_name}
                             placeholder='Enter first name'
                             onChange={onChange}
                             />
@@ -114,7 +29,7 @@ const HouseworkerProfile = () =>{
                             className='input_field'
                             type='text'
                             name='last_name'
-                            value={last_name}
+                            value={updatedData.last_name}
                             placeholder='Enter last name'
                             onChange={onChange}
                             />
@@ -127,7 +42,7 @@ const HouseworkerProfile = () =>{
                             className='input_field'
                             type='email'
                             name='email'
-                            value={email}
+                            value={updatedData.email}
                             placeholder='Enter email address'
                             onChange={onChange}
                             />
@@ -140,13 +55,13 @@ const HouseworkerProfile = () =>{
                             className='input_field'
                             type='password'
                             name='password'
-                            value={password}
+                            value={updatedData.password}
                             placeholder='Enter password'
                             onChange={onChange}
                             />
                         </div>
 
-                        {password &&  //only if is password entered
+                        {updatedData.password &&  //only if is password entered
                         <div className='profile_input-container'>
                             <label>Repeat password</label>
                             <br/>
@@ -154,7 +69,7 @@ const HouseworkerProfile = () =>{
                             className='input_field'
                             type='password'
                             name='passwordRepeat'
-                            value={passwordRepeat}
+                            value={updatedData.passwordRepeat}
                             placeholder='Repeat password'
                             onChange={onChange}
                             />
@@ -169,7 +84,7 @@ const HouseworkerProfile = () =>{
                             className='input_field'
                             type='text'
                             name='address'
-                            value={address}
+                            value={updatedData.address}
                             placeholder='Enter address'
                             onChange={onChange}
                             />
@@ -182,7 +97,7 @@ const HouseworkerProfile = () =>{
                             className='input_field'
                             type='number'
                             name='phone_number'
-                            value={phone_number}
+                            value={updatedData.phone_number}
                             placeholder='Enter phone number'
                             onChange={onChange}
                             />
@@ -207,8 +122,8 @@ const HouseworkerProfile = () =>{
 
                 </form>
             </div>
-        </>
     )
+
 }
 
-export default HouseworkerProfile;
+export default HouseworkerProfileForm;
