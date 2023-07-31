@@ -5,6 +5,7 @@ import Select from 'react-select';
 import useUser from '../../../../hooks/useUser';
 import {city_options} from '../../../../utils/options.js';
 import ClientProfileForm from './ClientProfileForm';
+import {getUserData, updateClient} from '../../../../services/client.js';
 
 import './ClientProfile.css'
 
@@ -33,8 +34,9 @@ const ClientProfile = () =>{
     }, [])
 
     const fetchData = async() =>{
-        const result = await axios.get(`http://localhost:5000/api/clients/info`)
-        const clientData = result.data;
+        // const result = await axios.get(`http://localhost:5000/api/clients/info`)
+        // const clientData = result.data;
+        const clientData = await getUserData();
         console.log("DATA : "  + JSON.stringify(clientData))
         setClientData(clientData);
     }
@@ -72,11 +74,8 @@ const ClientProfile = () =>{
                 //     await axios.put(`http://localhost:5000/api/clients/updateImage/`, updateImage);
                 // }
     
-                const result = await axios.put(`http://localhost:5000/api/clients/update/`, newData);
-                const comms = result.data;
-                console.log("COMS : " + JSON.stringify(comms))
-
-                toast.success("Uspesno azurirano")
+                await updateClient(newData);
+                toast.success("Successfuly updated!")
             }
             catch(err){
                 console.log("Erorr: " + err);

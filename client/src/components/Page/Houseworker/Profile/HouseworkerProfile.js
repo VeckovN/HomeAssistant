@@ -2,8 +2,8 @@ import {useState, useEffect} from 'react';
 import axios from 'axios';
 import {toast} from 'react-toastify';
 import useUser from '../../../../hooks/useUser';
-
 import HouseworkerProfileForm from './HouseworkerProfileForm';
+import {getUserData, updateHouseworker} from '../../../../services/houseworker.js';
 
 import '../../../Page/Profile.css';
 
@@ -28,8 +28,9 @@ const HouseworkerProfile = () =>{
     }, [])
 
     const fetchData = async() =>{
-        const result = await axios.get(`http://localhost:5000/api/houseworker/info`);
-        const houseworkerResult = result.data;
+        // const result = await axios.get(`http://localhost:5000/api/houseworker/info`);
+        // const houseworkerResult = result.data;
+        const houseworkerResult = await getUserData();
         console.log("DATA : "  + JSON.stringify(houseworkerResult))
         setHouseworkerData(houseworkerResult);
     }
@@ -56,6 +57,7 @@ const HouseworkerProfile = () =>{
                         //data object wiht only updated props (for HTTP request)
                         newData[key] = updatedData[key];
                         
+                        //not update here, update only when is post request sucessfully executed
                         setHouseworkerData(prev =>({
                             ...prev,
                             //BECAUSE 'key' is STRING and MUST use []  
@@ -70,10 +72,7 @@ const HouseworkerProfile = () =>{
                 //     await axios.put(`http://localhost:5000/api/clients/updateImage/`, updateImage);
                 // }
     
-                const result = await axios.put(`http://localhost:5000/api/houseworker/update/`, newData);
-                const comms = result.data;
-                console.log("COMS : " + JSON.stringify(comms))
-    
+                await updateHouseworker(newData);
                 toast.success("Successfully updated")
             }
             catch(err){

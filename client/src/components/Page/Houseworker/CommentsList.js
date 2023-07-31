@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import axios from 'axios';
 import CommentItem  from '../../UI/CommentItem';
+import {getAuthenticatedUserComments} from '../../../services/houseworker.js'
 
 import './CommentsList.css'
 
@@ -20,14 +21,9 @@ const CommentsList = () =>{
     },[])
 
     const fetchComments = async() =>{
-        const result = await axios.get(`http://localhost:5000/api/houseworker/ourcomments/`);
-        const comms = result.data;
-        console.log("COMS : " + JSON.stringify(comms))
+        const comms = await getAuthenticatedUserComments();
         setComments(comms);
-      
-        // console.log("Data: +" + JSON.stringify(comm));
     }
-
     console.log("COMMENTS: " + JSON.stringify(comments));
 
     let commentList;

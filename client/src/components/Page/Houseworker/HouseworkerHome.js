@@ -1,45 +1,38 @@
 import {useState, useEffect} from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import {getRating, getCommentsCount, getConversationCount} from '../../../services/houseworker.js'
 
 
 import './HouseworkerHome.css'
 
 const HouseworkerHome = () =>{
 
-
     const {user} = useSelector((state) => state.auth)
     const [rating, setRating] = useState('');
     const [commentsCount, setCommentsCount] = useState('');
     const [conversationCount, setConversationCount] = useState('');
 
-
     const fetchRating = async() =>{
-        const result = await axios.get(`http://localhost:5000/api/houseworker/rating/${user.username}`)
-        const ratingValue = result.data;
-        //console.log("RATING: " + JSON.stringify(ratingValue));
+        //have to use await because getRating calling async function (axios request)
+        const ratingValue = await getRating(user.username); 
         setRating(ratingValue.toFixed(1));
     }   
     const fetchCommentsCount = async() => {
-        const result = await axios.get(`http://localhost:5000/api/houseworker/comments/count/${user.username}`)
-        const count = result.data;
+        const count = await getCommentsCount(user.username);
         setCommentsCount(count)
         
     }
     const fetchConversationCount = async() =>{
-        const result = await axios.get(`http://localhost:5000/api/chat/conversationCount/${user.userRedisID}`)
-        const count = result.data;
+        const count = await getConversationCount(user.userRedisID);
         setConversationCount(count);
     }
-    
 
-
-    useEffect( ()=>{
+    useEffect(()=>{
         fetchRating();
         fetchCommentsCount();
         fetchConversationCount();
     })
-
  
     
     //Take numb of ChatRooms
@@ -48,7 +41,6 @@ const HouseworkerHome = () =>{
 
     return (
         <div className='houseworker_container'>
-
             <div className ='houseworker_item_container'>
                 <div className ='houseworker_item'>
                     <div className='item_title'>
