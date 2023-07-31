@@ -222,11 +222,11 @@ const udpateHouseworker = async(req,res)=>{
         // }
 
         // res.json(result);
-        res.send("Success updated!!!");
+        res.send("Successfuly updated!!!");
     }
     catch(err){
         console.log("Error UpdateHouseworker(Yourself): " + err);
-        res.send(err).status(400);
+        res.send("Update Error").status(400);
     }
 }
 

@@ -131,7 +131,8 @@ const udpateClient = async(req,res)=>{
         if(newInfo.city)
             await clientModel.updateCity(username,newInfo.city)
             //console.log("CITY UPDATED")
-        res.json(result);
+        // res.json(result);
+        res.send("Successfully updated");
         
     }
     catch(err){
