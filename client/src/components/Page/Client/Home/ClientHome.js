@@ -1,9 +1,9 @@
 import axios from 'axios';
 import url from 'url';
 import { ReactFragment, useEffect, useState } from "react"
-import HouseworkerCard from './houseworkers/HouseworkerCard'
-import Filter from './houseworkers/Filter';
-import SearchAndSort from './houseworkers/SearchAndSort';
+import HouseworkerCard from './HouseworkerCard/HouseworkerCard.js'
+import Filter from './Filter/Filter.js';
+import SearchAndSort from './SearchAndSort/SearchAndSort.js';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 

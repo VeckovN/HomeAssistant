@@ -1,8 +1,8 @@
 import {useEffect, useState, useRef} from 'react';
 import {useSelector} from 'react-redux'
 import axios from 'axios';
-import Modal from '../../../UI/Modal.js'
-import CommentItem from '../../../UI/CommentItem'; 
+import Modal from '../../../../UI/Modal.js'
+import CommentItem from '../../../../UI/CommentItem.js'; 
 import './HouseworkerCard.css'
 import { toast } from 'react-toastify';
 

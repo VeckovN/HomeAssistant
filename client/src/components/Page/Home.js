@@ -1,6 +1,6 @@
 import { ReactFragment, useEffect } from "react";
 import { Router } from "react-router-dom";
-import ClientHome from "./Client/ClientHome.js";
+import ClientHome from "./Client/Home/ClientHome.js";
 import HouseworkerHome from './Houseworker/HouseworkerHome';
 import {Routes, Route} from 'react-router-dom';
 import {useSelector} from 'react-redux';

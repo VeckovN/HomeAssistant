@@ -1,6 +1,6 @@
 body{
     /* import background image */
-    background-image: url("../../../../public/assets/clientPage1.jpg");   /*../ zato sto mora da izadje iz css i da udje u images da bi video sliku*/
+    background-image: url("../../../../../public/assets/clientPage1.jpg");   /*../ zato sto mora da izadje iz css i da udje u images da bi video sliku*/
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
