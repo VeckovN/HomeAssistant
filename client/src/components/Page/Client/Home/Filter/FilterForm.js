@@ -32,9 +32,9 @@ const FilterForm = ({city_options, profession_options, onChange, onChangeCity, o
             </div>
 
             {/* GENDER */}
-            <label class='filter-lb'>Gender:</label>
-            <div class='filter-card'>
-                <div class='filter-item'>
+            <label className='filter-lb'>Gender:</label>
+            <div className='filter-card'>
+                <div className='filter-item'>
                     <input type="radio"  onChange={onChange} name="gender" value="Male"/>
                     <label >Male</label><br/>
                     <input type="radio" onChange={onChange} name="gender" value="Female"/>
@@ -43,20 +43,20 @@ const FilterForm = ({city_options, profession_options, onChange, onChangeCity, o
             </div>
 
             {/* AGE */}
-            <label class='filter-lb'>Age:</label>
-            <div class='filter-card'>
-                <div class='filter-item'>
+            <label className='filter-lb'>Age:</label>
+            <div className='filter-card'>
+                <div className='filter-item'>
                     <label>From</label>
-                    <input class='sl' type='number' onChange={onChange} name='ageFrom'/>
+                    <input className='sl' type='number' onChange={onChange} name='ageFrom'/>
                 </div>
-                <div class='filter-item'>
+                <div className='filter-item'>
                     <label>To</label>
-                    <input class='sl' type='number' onChange={onChange} name='ageTo'/>
+                    <input className='sl' type='number' onChange={onChange} name='ageTo'/>
                 </div>
             </div>
 
-            <div class='filter-card'>
-                <button class ='filter-button' onClick={filterClickHanlder}>Filter</button>
+            <div className='filter-card'>
+                <button className ='filter-button' onClick={filterClickHanlder}>Filter</button>
             </div>
 
         </div>

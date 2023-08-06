@@ -14,13 +14,10 @@ const SearchAndSort = (prop) => {
     const valueRef = useRef();
     const [searchName, setSearchName] = useState();
     
-
     const selectSortHandler = (opt) =>{
-        // setOption(opt);
         console.log("OPTION: " + opt);
-        // alert(opt);
-        prop.search({sort:opt}); //send selected option to parrent
-        
+        //send selected option to parrent
+        prop.search({sort:opt}); 
     }
 
     const selectSearchHandler = (e)=>{
@@ -32,7 +29,6 @@ const SearchAndSort = (prop) => {
     }
 
     return (
-
         <>
             <div class='search-box'>
                 <div class='input-search'>
@@ -64,46 +60,8 @@ const SearchAndSort = (prop) => {
                     </div>
                 </div>
 
-
-            </div>
-            
-            
-        
+            </div>        
         </>
-
-
-
-        // <div className = 'container_search_sort'>
-        //     <div class='sort_container'>
-        //         <div class="sort-box">
-        //             {/* <button class='sort-1' value="AgeUp" onClick={e => setOption(e.target.value)} />Godine 🠑 */}                    
-        //             <button class='sort-2' value="AgeUp" onClick={e => selectSortHandler(e.target.value)}>Godine 🠑
-        //             </button>
-        //             <button class='sort-2' value="AgeDown" onClick={e => selectSortHandler(e.target.value)}>Godine 🠓
-        //             </button>
-        //             <button class='sort-3' value="RatingUp" onClick={e => selectSortHandler(e.target.value)}>Ocena 🠑
-        //             </button>
-        //             <button class='sort-4' value="RatingDown" onClick={e => selectSortHandler(e.target.value)}>Ocena 🠓
-        //             </button>
-        //         </div>
-        //     </div>
-
-        //     <div className='search_container'>
-        //         <div class='box'>
-        //             <input 
-        //                 class='search' 
-        //                 type='text' 
-        //                 ref={valueRef}
-        //                 placeholder='Pretrazi kucnog pomocnika'
-        //                 onChange={selectSearchHandler}
-        //             />
-        //         </div>
-        //     </div>
-        // </div>
-
-
-
-
     )
 } 
 
