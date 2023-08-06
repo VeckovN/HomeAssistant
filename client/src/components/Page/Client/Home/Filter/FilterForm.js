@@ -1,6 +1,7 @@
+import Select from 'react-select';
 
 
-const FilterForm = () =>{
+const FilterForm = ({city_options, profession_options, onChange, onChangeCity, onChangeProffesions, filterClickHanlder }) =>{
 
     return (
         <div className='filterBox'>
@@ -9,14 +10,14 @@ const FilterForm = () =>{
                 <Select 
                     className='dropdown'
                     placeholder="Select profession"
-                    //Value for each option (in options object take key:Value )
-                    // value={options.filter(obj => )}
-                    options={options}
-                    onChange={onProfessionSelect}
+                    options={profession_options}
+                    onChange={onChangeProffesions}
                     isMulti
                     isClearable
                 />
             </div>
+
+            {/* Component for multiple option select */}
 
             {/* GRAD */}
             <label className='filter-lb'>City:</label>
@@ -24,10 +25,8 @@ const FilterForm = () =>{
                 <Select 
                     className='dropdown'
                     placeholder="Select a city"
-                    //Value for each option (in options object take key:Value )
-                    // value={options.filter(obj => )}
                     options={city_options}
-                    onChange={onCitySelect}
+                    onChange={onChangeCity}
                     isClearable
                 />
             </div>
@@ -36,9 +35,9 @@ const FilterForm = () =>{
             <label class='filter-lb'>Gender:</label>
             <div class='filter-card'>
                 <div class='filter-item'>
-                    <input type="radio"  onChange={onChangeHandler} name="gender" value="Male"/>
+                    <input type="radio"  onChange={onChange} name="gender" value="Male"/>
                     <label >Male</label><br/>
-                    <input type="radio" onChange={onChangeHandler} name="gender" value="Female"/>
+                    <input type="radio" onChange={onChange} name="gender" value="Female"/>
                     <label >Female</label><br/>
                 </div>
             </div>
@@ -46,19 +45,15 @@ const FilterForm = () =>{
             {/* AGE */}
             <label class='filter-lb'>Age:</label>
             <div class='filter-card'>
-
                 <div class='filter-item'>
                     <label>From</label>
-                    <input class='sl' type='number' onChange={onChangeHandler} name='ageFrom'/>
+                    <input class='sl' type='number' onChange={onChange} name='ageFrom'/>
                 </div>
-
                 <div class='filter-item'>
                     <label>To</label>
-                    <input class='sl' type='number' onChange={onChangeHandler} name='ageTo'/>
+                    <input class='sl' type='number' onChange={onChange} name='ageTo'/>
                 </div>
-        
             </div>
-
 
             <div class='filter-card'>
                 <button class ='filter-button' onClick={filterClickHanlder}>Filter</button>
