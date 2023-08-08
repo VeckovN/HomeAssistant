@@ -57,7 +57,7 @@ export const getRating = async(username) =>{
     try{
         const result = await axios.get(BASE_URL + `houseworker/rating/${username}`)
         const ratingValue = result.data;
-        console.log("RATIIIIING :" + ratingValue);
+        // console.log("RATIIIIING :" + ratingValue);
         return ratingValue;
     }
     catch(err){

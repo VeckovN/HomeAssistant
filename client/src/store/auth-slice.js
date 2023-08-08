@@ -11,16 +11,25 @@ axios.defaults.withCredentials = true
 //with login we set user in localStorage
 // const user = JSON.parse(localStorage.getItem('user'));
 const cookie = Cookie.get('user');
-const expressCookie = Cookie.get("sessionLog"); //track sessoin expire
+const expressCookie = Cookie.get("sessionLog"); //track sessoin expire ()
 console.log("EXP:  " + expressCookie);
 console.log("COOK" + cookie);
+
+//We can use Axios interceptors to delete Cookie("user") on "sessionLog" cookie expire
 let user;
-if(expressCookie && cookie!=undefined)
+if(expressCookie && cookie!=undefined) {
+    //when session expire then user cookie will be deleted
     user = JSON.parse(Cookie.get('user'));
+}
 else {
     user = false;
     Cookie.remove('user'); //also remove user
 }
+
+// if(!expressCookie && cookie==undefined){
+//     user = false;
+//     Cookie.remove('user');
+// }
    
 
 //console.log()
@@ -28,7 +37,8 @@ else {
 //when is logged Express send cookie to client (cookieID -> 'sessionLog")
 
 const initialState ={
-    user: user ? user : null,
+    //user: user ? user : null,
+    user: user || null,
     message:'',
     success:false,
     error: false,
@@ -58,7 +68,7 @@ export const register = createAsyncThunk(
             console.log("REPOSNE FORM DATA: " + response);
             if(response.data){
                  //GET USER FROM COOKIE -EXPRESS SESSION (WE DON't NEED PUT THIS USER IN LOCAL STORATE)
-                //if post request is success we put response (user) to localStorage
+                //if post request is success we put response (user) to localStorage 
                 //localStorage.setItem('user', JSON.stringify(response.data));
                 Cookie.set('user', JSON.stringify(response.data))
             }
@@ -88,6 +98,7 @@ export const login = createAsyncThunk(
                 if(!response.data.error){
                     //localStorage.setItem('user', JSON.stringify(response.data))
                     Cookie.set('user', JSON.stringify(response.data))
+                    //set cookie with same experation time as 'sessionLog' cookie
                     return response.data;
                 }
                 else
@@ -112,7 +123,8 @@ export const logout = createAsyncThunk(
         try{
             const response = await axios.get('http://localhost:5000/api/logout');
         //we want to set state.message and this will be seted in extraReducer case:fulfilled
-            localStorage.removeItem('user');
+            // localStorage.removeItem('user');
+            Cookie.remove('sessionLog');
             Cookie.remove('user');
          }
          catch(error){
