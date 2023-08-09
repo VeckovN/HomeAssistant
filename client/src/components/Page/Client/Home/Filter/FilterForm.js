@@ -17,9 +17,6 @@ const FilterForm = ({city_options, profession_options, onChange, onChangeCity, o
                 />
             </div>
 
-            {/* Component for multiple option select */}
-
-            {/* GRAD */}
             <label className='filter-lb'>City:</label>
             <div className='filter-card'>   
                 <Select 
@@ -31,7 +28,6 @@ const FilterForm = ({city_options, profession_options, onChange, onChangeCity, o
                 />
             </div>
 
-            {/* GENDER */}
             <label className='filter-lb'>Gender:</label>
             <div className='filter-card'>
                 <div className='filter-item'>
@@ -42,7 +38,6 @@ const FilterForm = ({city_options, profession_options, onChange, onChangeCity, o
                 </div>
             </div>
 
-            {/* AGE */}
             <label className='filter-lb'>Age:</label>
             <div className='filter-card'>
                 <div className='filter-item'>
