@@ -6,7 +6,7 @@ const BASE_URL = 'http://localhost:5000/api/'
 //username is included in the request and taken from session
 export const getUserData = async() =>{
     try{
-        const result = await axios.get(`http://localhost:5000/api/houseworker/info`);
+        const result = await axios.get(BASE_URL + `houseworker/info`);
         const houseworkerResult = result.data;
         return houseworkerResult;
     }
@@ -125,6 +125,13 @@ export const getAllProfessions = async() =>{
         console.log(err)
     }
 }
+
+export const getHouseworkerByFilter = async(params) =>{
+    const result = await axios.get(BASE_URL + `houseworker/filter?${params}`);
+    const houseworkers = result.data;
+    return houseworkers;;
+}
+
 
 export const s = async() =>{
     try{

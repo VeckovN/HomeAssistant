@@ -17,12 +17,6 @@ export const updateClient = async(newData) =>{
     await axios.put(BASE_URL + `clients/update/`, newData);
 }
 
-//move this to houseworker services?
-export const getHouseworkerByFilter = async(params) =>{
-    const result = await axios.get(BASE_URL + `houseworker/filter?${params}`);
-    const houseworkers = result.data;
-    return houseworkers;;
-}
 
 export const getRecommended= async(username) =>{
     const result = await axios.get(BASE_URL + `clients/recommended/${username}`);
