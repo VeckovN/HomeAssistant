@@ -94,8 +94,6 @@ const HouseworkersCard = (props) =>{
 
 //#endregion Rating,Professions Fetching
 
-
-    
     return (
        <HouseworkerCardContent 
             houseworkerUsername ={houseworkerUsername}

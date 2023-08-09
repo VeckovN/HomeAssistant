@@ -12,11 +12,11 @@ const SearchAndSort = (prop) => {
     //won't to reRender this component on input Change, only to send data to Parent(ClientHome) compoennt
     //this is reason why is useRef in use instead useState
     const valueRef = useRef();
-    const [searchName, setSearchName] = useState();
+    const [searchName, setSearchName] = useState('');
     
     const selectSortHandler = (opt) =>{
         console.log("OPTION: " + opt);
-        //send selected option to parrent
+        //send selected option to parrent (searchDataHanlder(searchDataObj))
         prop.search({sort:opt}); 
     }
 
