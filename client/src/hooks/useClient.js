@@ -62,7 +62,18 @@ const useClient = (user) =>{
             
             const houseworkers = await getHouseworkerByFilter(params);
             if(houseworkers.length >0){
-                setData(houseworkers);
+
+                //if is recommended user showned - exclude it from other users
+                if(showRecommended){
+                    const updatedData = houseworkers.filter(user =>{
+                        //return only different users
+                        return !recommended.some(prop => prop.username === user.username)
+                    })
+                    setData(updatedData);
+                }
+                else
+                    setData(houseworkers);
+
                 setOldData(houseworkers);
             }
             else
