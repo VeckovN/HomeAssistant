@@ -11,6 +11,8 @@ const useClient = (user) =>{
 
     //fetched(houseworker) Data based on filtered and searched Data
     const [data, setData] = useState([]);
+    //data before removing recommended users in data useState
+    const [oldData,setOldData] = useState([]); 
 
     const [recommended, setRecomended] = useState([]);
     const [showRecommended, setShowRecommended] = useState(false);
@@ -27,6 +29,8 @@ const useClient = (user) =>{
         //only when is recommended button clicked and not fetched yet
         if(showRecommended==true && recommended.length == 0)
             fetchRecommendedData();
+        else
+            setData(oldData);
     },[showRecommended])
 
 
@@ -57,8 +61,10 @@ const useClient = (user) =>{
             console.log("URL: " + `http://localhost:5000/api/houseworker/filter?/${params}`);
             
             const houseworkers = await getHouseworkerByFilter(params);
-            if(houseworkers.length >0)
+            if(houseworkers.length >0){
                 setData(houseworkers);
+                setOldData(houseworkers);
+            }
             else
                 setData(null)  
             
@@ -80,9 +86,11 @@ const useClient = (user) =>{
                     return !recommendedData.some(prop => prop.username === user.username)
                 })
                 setData(updatedData);
+                
             }
             else
                 setRecomended(null);
+                
         }
         catch(err){
             console.log("ERR" + err);
