@@ -1,6 +1,7 @@
 //Hook that manage filtered and searched data(Houseworkers) on client home page
 
 // TODO: -add pagination(Load first 5 on start then load more 5 on every bottom scroll)
+// FIXME: - City filter (probably others) doesn't work when is recommended button clicked(recommended showned)
 
 import {useState, useEffect} from 'react';
 import {getHouseworkerByFilter} from '../services/houseworker.js'
@@ -65,10 +66,7 @@ const useClient = (user) =>{
 
                 //if is recommended user showned - exclude it from other users
                 if(showRecommended){
-                    const updatedData = houseworkers.filter(user =>{
-                        //return only different users
-                        return !recommended.some(prop => prop.username === user.username)
-                    })
+                    const updatedData = excludeRecommendedFromUserData(data, recommended);
                     setData(updatedData);
                 }
                 else
@@ -90,14 +88,8 @@ const useClient = (user) =>{
             const recommendedData = await getRecommended(user.username);
             if(recommendedData.length >0){
                 setRecomended(recommendedData)
-
-                //recommended users deleted from data(prevent data for showing duplicate user(recommended))
-                const updatedData = data.filter(user =>{
-                    //return only different users
-                    return !recommendedData.some(prop => prop.username === user.username)
-                })
+                const updatedData = excludeRecommendedFromUserData(data, recommendedData);
                 setData(updatedData);
-                
             }
             else
                 setRecomended(null);
@@ -106,6 +98,14 @@ const useClient = (user) =>{
         catch(err){
             console.log("ERR" + err);
         }
+    }
+    
+    const excludeRecommendedFromUserData = (user_data, recommended_data) =>{
+        const updatedData = user_data.filter(user =>{
+            //return only different users
+            return !recommended_data.some(prop => prop.username === user.username)
+        })
+        return updatedData
     }
 
     
