@@ -6,7 +6,7 @@ import HouseworkerCard from './HouseworkerCard/HouseworkerCard.js'
 import Filter from './Filter/Filter.js';
 import SearchAndSort from './SearchAndSort/SearchAndSort.js';
 import { useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
+
 
 import './ClientHome.css'
 
@@ -48,7 +48,10 @@ const ClientHome = ({socket}) =>{
             )
             : recommendedList =[]
     }
-    
+
+    //FIXME: data shoudn't contain recommended users (one user should be showend only one time)
+
+
     //HOUSEWORKER USERS
     let houseworkerList;
     {data ? 

@@ -5,6 +5,7 @@
 import {useState, useEffect} from 'react';
 import {getHouseworkerByFilter} from '../services/houseworker.js'
 import {getRecommended} from '../services/client.js'
+import { toast } from 'react-toastify';
 
 const useClient = (user) =>{
 
@@ -70,8 +71,16 @@ const useClient = (user) =>{
     const fetchRecommendedData = async() =>{
         try{
             const recommendedData = await getRecommended(user.username);
-            if(recommendedData.length >0)
+            if(recommendedData.length >0){
                 setRecomended(recommendedData)
+
+                //recommended users deleted from data(prevent data for showing duplicate user(recommended))
+                const updatedData = data.filter(user =>{
+                    //return only different users
+                    return !recommendedData.some(prop => prop.username === user.username)
+                })
+                setData(updatedData);
+            }
             else
                 setRecomended(null);
         }
@@ -105,7 +114,7 @@ const useClient = (user) =>{
                 }
             }
             if(newKey == 'name' & newValue == ''){
-                if(search_obj['name']){//if name exists
+                if(search_obj['name']){
                     alert("EHIST");
                     delete search_obj.name;
                     return search_obj;
