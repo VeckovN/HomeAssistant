@@ -3,29 +3,26 @@
 import {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import useUser from '../../../hooks/useUser';
+import LoginForm from './LoginForm';
 import {login, reset} from '../../../store/auth-slice';
 import {toast} from 'react-toastify';
 
 import './Login.css';
 
 const Login = () =>{
+    const initialState ={
+        username:'',
+        password:'',
+    }
 
-    const [formData, setFormData] = useState(
-        {
-            username:'',
-            password:''
-        }
-    )
-
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const {user, loading, success, error, message} = useSelector( (state) => state.auth)
-    
-    console.log("REDUXXXXXXXX: " + user); 
-    
+    const {data:formData, onChange} = useUser(initialState);
     const {username, password} = formData
 
-    console.log("USERS: " + JSON.stringify({username, password}))
+    const {user, loading, success, error, message} = useSelector( (state) => state.auth)
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     useEffect(()=>{
         if(error)
             toast.error(message,{
@@ -39,75 +36,21 @@ const Login = () =>{
             })
         }
         dispatch(reset())
-            
-    },[user, loading, success, error, message, dispatch, navigate])
-
-    const onChange =(e)=>{
-
-        const name = e.target.name;
-        const value = e.target.value; 
-
-        setFormData(prev => (
-            {
-                ...prev,
-                [name]:value
-            }
-        ))
-
-        console.log(formData);
-    }
+    },[message,error,success])
 
     const onSubmit = (e)=>{
         e.preventDefault(); //without page refreshing
-        //dispatchFunction
-        
-        const data = {username, password}
-        dispatch(login(data))
+        dispatch(login({username, password}))
         dispatch(reset());
-        
     }
 
-
     return (
-        <>
-            <div className ='login_container'>
-                <div className="login_context">
-                    <div className='login_welcome'>
-                        <h3>Welcome</h3>
-                        <div className='logo-h'>Home Assistant</div>
-                    </div>
-                    <form className='login_form'>
-                        <div className='input_container'>
-                            <input
-                                className='input_field'
-                                type='text'
-                                name='username'
-                                value={username}
-                                placeholder='Enter username'
-                                onChange={onChange}
-                            />
-                        </div>
-
-                        <div className='input_container'>
-                            <input
-                                className='input_field'
-                                type='password'
-                                name='password'
-                                value={password}
-                                placeholder='Enter password'
-                                onChange={onChange}
-                            />
-                        </div>
-
-                        <div className ='button_container'>
-                            <button type='submit' onClick={onSubmit} className='btn'>Log in</button>
-                        </div>
-
-                    </form>
-                </div>
-            </div>
-
-        </>
+        <LoginForm
+            username={username}
+            password={password}
+            onChange={onChange}
+            onSubmit={onSubmit}
+        />
     )
 }
 
