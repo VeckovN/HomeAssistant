@@ -30,7 +30,8 @@ app.use("/assetss", express.static(path.join(__dirname, "public/assets")));
 // multer exprot and import in auth register
 const storage = multer.diskStorage({
     destination: (req,file,cb) =>{
-        cb(null, "public/assets");
+        // cb(null, "public/assets");
+        cb(null, "../client/public/assets/userImages"); //store in client folder
     },
     filename: (req, file, cb) =>{
         cb(null, Date.now() + '_' + file.originalname)
