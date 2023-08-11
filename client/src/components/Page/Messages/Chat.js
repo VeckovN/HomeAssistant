@@ -18,10 +18,10 @@ const Chat = ({socket, connected}) =>{
 
     const userRedisID = user.userRedisID;
 
-    const [rooms, setRooms] = useState([]);
-    const [roomMessages, setRoomMessages] = useState([]);
+    const [rooms, setRooms] = useState([]); //rooms of users - fetch on start
+    const [roomMessages, setRoomMessages] = useState([]); //messages in open rooms
     const [enteredRoomID, setEnteredRoomID] = useState('');
-    const [newMessage, setNewMessage] = useState('');
+    // const [newMessage, setNewMessage] = useState('');
 
     const [newRoom, setNewRoom] = useState(false);
 
@@ -136,9 +136,7 @@ const Chat = ({socket, connected}) =>{
         //room:1:2
         //PASS ONLY ROOMID
         const result = await axios.post('http://localhost:5000/api/chat/room/delete', {roomID:roomID});
-
         console.log("BEFORE ROOMS + "  + rooms);
-
         const otherRooms = rooms.filter(el => el.roomID!=roomID)
 
         //this will re-render rooms and message view
@@ -146,7 +144,6 @@ const Chat = ({socket, connected}) =>{
         setRoomMessages([]);
 
         console.log("AFTER ROOMS " + otherRooms);
-
         console.log("DELETE ROOM RESULT: " + JSON.stringify(result));
 
         toast.success("Uspesno si obrisao sobu",{
@@ -160,7 +157,6 @@ const Chat = ({socket, connected}) =>{
             const result = await axios.get('http://localhost:5000/api/houseworker/') ;
             const houseworkerResult = result.data;
             setHouseworkers(houseworkerResult);
-
         }
         getAllHouseworkers();
     },[]) 
@@ -185,20 +181,15 @@ const Chat = ({socket, connected}) =>{
         }
 
         const newRoomID = await axios.post('http://localhost:5000/api/chat/room/addUser',roomInfo);
-
         toast.info("Korisnik je dodat u Sobu: "+ roomID );
-
         // setRooms(prev=>({
         //     ...prev,
         //     [roomID]:newRoomID
         // }))
-
         setNewRoom(!newRoom);
-
         // setRooms(prev=>({
         //     ...prev
         // }))
-        
     }
 
     const onChangeSelectHandler = (e)=>{
@@ -327,7 +318,7 @@ const Chat = ({socket, connected}) =>{
                     </>
                     
                 }
-                {newMessage && <div>NEW MESSAGE: {newMessage}</div>}
+                {/* {newMessage && <div>NEW MESSAGE: {newMessage}</div>} */}
             </div>
         </div>
     )
