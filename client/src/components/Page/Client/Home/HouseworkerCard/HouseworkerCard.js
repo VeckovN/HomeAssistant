@@ -19,7 +19,6 @@ axios.defaults.withCredentials = true
 
 //@Todo //Custom Hook for useFetch
 const HouseworkersCard = (props) =>{
-
     const socket = props.socket;
 
     const userAuth = useSelector((state) => state.auth.user)

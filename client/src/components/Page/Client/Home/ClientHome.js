@@ -19,7 +19,6 @@ const ClientHome = ({socket}) =>{
     const {user} = useSelector((state) => state.auth)
     const {data, recommended, showRecommended, onShowRecommended, searchDataHanlder, filterDataHandler } = useClient(user);
 
-
     //RECOMMENDED USERS
     let recommendedList;
     {recommended ? 
@@ -48,9 +47,6 @@ const ClientHome = ({socket}) =>{
             )
             : recommendedList =[]
     }
-
-    //FIXME: data shoudn't contain recommended users (one user should be showend only one time)
-
 
     //HOUSEWORKER USERS
     let houseworkerList;
