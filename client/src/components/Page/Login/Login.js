@@ -36,7 +36,11 @@ const Login = () =>{
             })
         }
         dispatch(reset())
-    },[message,error,success])
+        //without navigate in dependecies on login submit 
+        console.log("SSSSSSSSSWWWWWWWWWWWW");
+
+    },[message,error,success, navigate])
+    //without navigate in dependecies navigation(on home page) after submition wont be executed
 
     const onSubmit = (e)=>{
         e.preventDefault(); //without page refreshing
