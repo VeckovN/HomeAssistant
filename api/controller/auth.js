@@ -99,7 +99,7 @@ const login = async(req,res)=>{
         console.log("USEEEEEERRRRRR");
         let userID = userRedis.split(':')[1]; //[user, {userID}]
 
-        req.session.user = {username:username, type:userType, userRedisID:userID}
+        req.session.user = {username:username, type:userType, userID:userID}
         console.log("SESSSSSLogion22222222: " + JSON.stringify(req.session))
         return res.send(req.session.user)
     }
