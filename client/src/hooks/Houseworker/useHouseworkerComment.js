@@ -2,7 +2,7 @@ import {useState, useRef, useEffect} from 'react';
 import {getComments} from '../../services/houseworker.js';
 import { toast } from 'react-toastify';
 
-const useHouseworkerComment = (isClient, client_username) =>{
+const useHouseworkerComment = (socket, isClient, client_username) =>{
 
     const [comments, setComments] = useState(null);
     const [newComment, setNewComments] = useState(false);

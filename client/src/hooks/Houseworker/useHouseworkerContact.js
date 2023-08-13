@@ -1,7 +1,7 @@
 import {useRef} from 'react';
 import { toast } from 'react-toastify';
 
-const useHouseworkerContact = (isClient, ) =>{
+const useHouseworkerContact = (socket, isClient, userID) =>{
 
     const contactMessageRef = useRef(null);
 
@@ -16,7 +16,7 @@ const useHouseworkerContact = (isClient, ) =>{
 
             if(messageFromContact!='')
             {
-                const ourID = userAuth.user.userRedisID
+                const ourID = userID;
                 //value prop of this button -> props.id 
                 const houseworkerID = e.target.value;
 

@@ -24,7 +24,7 @@ const HouseworkersCard = (props) =>{
     const userAuth = useSelector((state) => state.auth.user)
     const isClient = userAuth && userAuth.type === "Client";
     const client_username = userAuth?.username;
-    const client_redisID = userAuth?.userRedisID;
+    const client_ID = userAuth?.userID;
 
     const {
         comments, 
@@ -34,7 +34,7 @@ const HouseworkersCard = (props) =>{
         onCommentHandler, 
         onCommentSubmit, 
         onCloseComment
-    } = useHouseworkerComment(isClient, client_username)
+    } = useHouseworkerComment(socket, isClient, client_username)
     
     const {
         rate, 
@@ -48,7 +48,7 @@ const HouseworkersCard = (props) =>{
     const {
         contactMessageRef,
         onContactHandler
-    } = useHouseworkerContact(isClient, client_redisID)
+    } = useHouseworkerContact(socket, isClient, client_ID)
 
 
 
