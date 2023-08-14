@@ -1,5 +1,6 @@
 import {useState, useRef, useEffect} from 'react';
 import {io} from "socket.io-client";
+import { toast } from 'react-toastify';
 
 //take user info from redux
 const useSocket = (user) =>{
@@ -18,6 +19,27 @@ const useSocket = (user) =>{
             if(socket !== null){
                 console.log("socket.connect();")
                 socket.connect();
+
+                //because in Nodejs socket.on("message", async(messageObj)=>{ 
+                //there is async and this function expect promise
+                socket.on("messageResponseNotify", (messageObj) =>{
+                    console.log(messageObj);
+                    const parsedObj = JSON.parse(messageObj);
+                    const { message, from, roomID, fromUsername} = parsedObj;
+                    const users = roomID.split(':');
+
+                    //exclude sender from users notification
+                    const notifyUsers = users.filter(el => el!=from);
+
+                    //if our userID is in array of notifyUsers
+                    // if(users.includes(user.userID)){
+                    if(notifyUsers.includes(user.userID)){
+                        toast.info(`You received Message from ${fromUsername}`,{
+                            className:"toast-contact-message"
+                        })
+                    }
+
+                  })
             }
             else{
                 const socketIn = io("http://127.0.0.1:5000", {
@@ -37,6 +59,7 @@ const useSocket = (user) =>{
         //     }
         //     console.log("setConnected(false);")
         // }
+
 
 
     },[socket,user])
