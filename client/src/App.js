@@ -27,13 +27,8 @@ import 'react-toastify/dist/ReactToastify.min.css';
 
 function App() {
 
-  const {user} = useSelector((state) => state.auth)
-  // if(!user)
-    
+  const {user} = useSelector((state) => state.auth)    
   const [socket, connected] = useSocket(user);
-  // const socket = io("http://127.0.0.1:5000", {
-  //   withCredentials: true,
-  // });
 
   return (
     <BrowserRouter>
