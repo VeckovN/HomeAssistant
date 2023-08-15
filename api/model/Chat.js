@@ -125,31 +125,22 @@ const getMessages = async(roomID, offset=0, size=50) =>{
 }
 
 const getAllRooms = async(username)=>{
-    console.log("TESS");
-    
     let userID = await UserIdByUsername(username);
-    console.log("TESSS2");
     const userRoomKey = `user:${userID}:rooms`;
     let rooms =[];
     rooms = await smembers(userRoomKey);
 
     //through every room read another userID -> 1:7 , 1:3 in this situatin 7 and 3
-
     var roomsArr = []
-    let usernames =[];
+    let roomUsernames =[];
     for(const room of rooms){
         const roomID = room;
         const userIDS = roomID.split(":");
         console.log("ROOM ID" + roomID + '\n');
         //ourID = userID;
-        //return diferent userID then our
 
         const otherUsers = userIDS.filter(el => el!= userID)
-
         console.log("OTHER USERS: " + otherUsers);
-
-        //const otherUser = userIDS[0] == userID ? userIDS[1] : userIDS[0];
-
 
         //DONT USE FOREACH FOR ASYNC/AWAIT 
         //USE for() because this will wait for async execution
@@ -161,11 +152,17 @@ const getAllRooms = async(username)=>{
             //for each user return their username
             const user = await usernameByUserID(id);
             console.log("USERTTTTTTTTT: "+ user);
-            usernames.push(user);
+            roomUsernames.push(user);
         }
 
-        roomsArr.push({roomID, users:usernames});
-        usernames=[]; //reset -for other rooms
+        // console.log("USERNAME ARRAYS : " + usernames);
+        console.log("USERNAME ARRAYS : " + roomUsernames);
+
+        //without flat - users:[ ['user1'] ,['user'2']]
+        roomsArr.push({roomID, users:roomUsernames.flat()});
+        roomUsernames =[]; //reset -for other rooms
+
+        console.log(" ROOMS ARRAY : " + roomsArr[0].users);
     }
 
     // const roomsArr = rooms.map( async el =>{
