@@ -11,9 +11,6 @@ const useSocket = (user) =>{
 
     //on every useSocket will be this reRun
     useEffect(()=>{
-        console.log("US: " + JSON.stringify(user));
-        console.log("SS: " + user);
-        console.log("S@: " + !user );
         if(user){
             //if is socket initializated
             if(socket !== null){
@@ -51,14 +48,14 @@ const useSocket = (user) =>{
         setConnected(true);
         }   
         //userNotExxists (Not authorized)
-        // else{
-        //     console.log("HHHEEEEEE ELSEEEEEEEEEE");
-        //     if(socket !== null){
-        //         console.log("socket.disconnect();")
-        //         socket.disconnect();
-        //     }
-        //     console.log("setConnected(false);")
-        // }
+        else{
+            console.log("HHHEEEEEE ELSEEEEEEEEEE");
+            if(socket !== null){
+                console.log("socket.disconnect();")
+                socket.disconnect();
+            }
+            // console.log("setConnected(false);")
+        }
 
 
 
