@@ -170,12 +170,13 @@ server.listen(5000, ()=>{
 
     io.on('connection', async(socket)=>{
     
-        //when client enter the Room 
+        //when client enter the Room (client emit room.join when is click on room)
         socket.on("room.join", id =>{ //listen on 'room.join' event
             console.log("CLIENT ENTERED THE ROOM " + id);
             socket.join(`room:${id}`); //join room -> room:1:2 example or group room:1:5:7
         })
     
+        //when move to another room or leave page client emit leave.room
         socket.on("leave.room", id =>{
             console.log("You left the room: " + id);
             socket.leave(`room:${id}`)
@@ -190,7 +191,8 @@ server.listen(5000, ()=>{
             //io.emit('commentResponseNotify', data);
         })
     
-        socket.on("message", async(messageObj)=>{    
+        // socket.on("message", async(messageObj)=>{    
+        socket.on("message", async(messageObj)=>{ 
             const parsedObj = JSON.parse(messageObj);
             const { message, from, roomID} = parsedObj;
             //ZADD {room:1:3} 1615480369 {user:1, date:1615480369, message:'Hello"}

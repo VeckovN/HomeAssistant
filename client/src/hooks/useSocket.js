@@ -29,7 +29,6 @@ const useSocket = (user) =>{
                     const notifyUsers = users.filter(el => el!=from);
 
                     //if our userID is in array of notifyUsers
-                    // if(users.includes(user.userID)){
                     if(notifyUsers.includes(user.userID)){
                         toast.info(`You received Message from ${fromUsername}`,{
                             className:"toast-contact-message"
@@ -57,7 +56,9 @@ const useSocket = (user) =>{
             // console.log("setConnected(false);")
         }
 
-
+        // return () => {
+        //     socket.disconnect();
+        //   };
 
     },[socket,user])
 
