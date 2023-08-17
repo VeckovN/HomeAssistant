@@ -1,6 +1,6 @@
 //Adding session timeout in a page in Reactjs
 //https://stackoverflow.com/questions/50036145/adding-session-timeout-in-a-page-in-reactjs
-import {useState, useEffect} from 'react';
+import {useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import useUser from '../../../hooks/useUser';
@@ -36,14 +36,11 @@ const Login = () =>{
             })
         }
         dispatch(reset())
-        //without navigate in dependecies on login submit 
-        console.log("SSSSSSSSSWWWWWWWWWWWW");
-
     },[user,message,error,success])
     //without user in dependecies navigation(on home page) after submition wont be executed
 
     const onSubmit = (e)=>{
-        e.preventDefault(); //without page refreshing
+        e.preventDefault();
         dispatch(login({username, password}))
         dispatch(reset());
     }

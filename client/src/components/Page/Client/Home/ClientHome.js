@@ -1,6 +1,3 @@
-import axios from 'axios';
-import url from 'url';
-import { useState } from "react"
 import useClient from '../../../../hooks/useClient.js';
 import HouseworkerCard from './HouseworkerCard/HouseworkerCard.js'
 import Filter from './Filter/Filter.js';
@@ -15,7 +12,6 @@ const ClientHome = ({socket}) =>{
     //LIMIT IF IS GUEST 
     console.log("SOCKET " + socket);
 
-    //const userAuth = useSelector((state) => state.auth.user)
     const {user} = useSelector((state) => state.auth)
     const {data, recommended, showRecommended, onShowRecommended, searchDataHanlder, filterDataHandler } = useClient(user);
 
@@ -90,9 +86,7 @@ const ClientHome = ({socket}) =>{
                         {showRecommended && recommendedList}
                         {houseworkerList.length > 0 ? houseworkerList : <h3>No Matches</h3> }
                     </div>
-
                 </div>
-                
         </div>
     )
     

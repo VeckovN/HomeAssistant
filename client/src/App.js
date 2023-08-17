@@ -13,7 +13,6 @@ import {ToastContainer, toast} from 'react-toastify';
 //css class for custom style
 import './toastify.css'
 
-import {io} from "socket.io-client";
 
 import useSocket from './hooks/useSocket';
 import { useSelector } from 'react-redux';

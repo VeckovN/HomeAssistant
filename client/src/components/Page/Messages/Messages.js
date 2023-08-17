@@ -1,6 +1,5 @@
 import {useEffect, useRef, useReducer} from 'react'; 
 import { useSelector } from 'react-redux';
-import axios from 'axios';
 import Chat from './Chat/Chat.js';
 import Rooms from './Rooms/Rooms.js';
 import { toast } from 'react-toastify';

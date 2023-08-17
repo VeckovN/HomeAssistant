@@ -1,9 +1,6 @@
 import {useState, useEffect} from 'react';
-import axios from 'axios';
 import {toast} from 'react-toastify';
-import Select from 'react-select';
 import useUser from '../../../../hooks/useUser';
-import {city_options} from '../../../../utils/options.js';
 import ClientProfileForm from './ClientProfileForm';
 import {getUserData, updateClient} from '../../../../services/client.js';
 
@@ -34,8 +31,6 @@ const ClientProfile = () =>{
     }, [])
 
     const fetchData = async() =>{
-        // const result = await axios.get(`http://localhost:5000/api/clients/info`)
-        // const clientData = result.data;
         const clientData = await getUserData();
         console.log("DATA : "  + JSON.stringify(clientData))
         setClientData(clientData);

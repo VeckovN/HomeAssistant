@@ -1,22 +1,17 @@
-import {useRef, useCallback} from 'react';
+import {useRef} from 'react';
 import { toast } from 'react-toastify';
 
 import './Chat.css'
 
 
 const Chat = ({socket, roomMessages, roomRef, user}) =>{
-
-    console.log("CHAAAAAAAAAAAAATTTTTTTTTTTTTT");
-
     const messageRef = useRef(); //taken message from input
 
-    // const onSendMessageHandler = () =>{
-    const onSendMessageHandler = useCallback(() =>{
+    const onSendMessageHandler = () =>{
         const message = messageRef.current.value;
         const fromRoomID = roomRef.current.value;
 
         if(message != ''){
-            //In REDUX set redisID userID(for each username)
             messageRef.current.value = ''
             //emit io.socket event for sending mesasge
             //this will trigger evento on server (in index.js) and send message to room
@@ -30,7 +25,6 @@ const Chat = ({socket, roomMessages, roomRef, user}) =>{
             //emit message(server listen this for sending message to user(persist in db) )
             //and also client listen this event to notify another user for receiving message
             socket.emit('message', JSON.stringify(messageObj));
-            //io.emit or somethingn ('message', messageObj)
             toast.success("Poruka je poslata",{
                 className:'toast-contact-message'
             })
@@ -39,7 +33,7 @@ const Chat = ({socket, roomMessages, roomRef, user}) =>{
             toast.error("Ne mozes poslati praznu poruku",{
                 className:'toast-contact-message'
             })
-    },[roomRef, user,socket])
+    }
 
     let messageContext;
 
