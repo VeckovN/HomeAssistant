@@ -15,6 +15,17 @@ export const getUserData = async() =>{
     }
 }
 
+export const getHouseworkers = async() =>{
+    try{
+        const result = await axios.get(BASE_URL + `houseworker`);
+        const houseworkerResult = result.data;
+        return houseworkerResult;
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
 export const updateHouseworker = async(newData) =>{
     await axios.put( BASE_URL + `houseworker/update/`, newData);
 }
@@ -132,13 +143,4 @@ export const getHouseworkerByFilter = async(params) =>{
     return houseworkers;;
 }
 
-
-export const s = async() =>{
-    try{
-
-    }
-    catch(err){
-        console.log(err)
-    }
-}
 
