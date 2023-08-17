@@ -1,8 +1,8 @@
 import {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import axios from 'axios';
-import CommentItem  from '../../UI/CommentItem';
-import {getAuthenticatedUserComments} from '../../../services/houseworker.js'
+import CommentItem  from '../../../UI/CommentItem.js';
+import {getAuthenticatedUserComments} from '../../../../services/houseworker.js'
 
 import './CommentsList.css'
 
@@ -15,7 +15,6 @@ const CommentsList = () =>{
     const user = userAuth.user.username;
     console.log("YS2: " + user);
 
-    
     useEffect(()=>{
         fetchComments()
     },[])
@@ -37,7 +36,6 @@ const CommentsList = () =>{
         ))
         : commentList=[];
     }
-
 
     return (
         <div className='comments_container'>
