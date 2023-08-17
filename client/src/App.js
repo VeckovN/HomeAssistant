@@ -5,7 +5,7 @@ import Register from './components/Page/Register/Register.js'
 import ClientRegister from './components/Page/Register/Client/ClientRegister';
 import HouseworkerRegister from './components/Page/Register/Houseworker/HouseworkerRegister';
 import Login from './components/Page/Login/Login.js'
-import Comments from './components/Page/Houseworker/CommentsList';
+import Comments from './components/Page/Houseworker/CommentsList/CommentsList.js';
 import Profile from './components/Page/Profile';
 import Messages from './components/Page/Messages/Messages'
 
