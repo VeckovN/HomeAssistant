@@ -12,41 +12,26 @@ const path = require('path');
 const multer = require('multer');
 const {client:redisClient,  sub, RedisStore, set, get, sadd, smembers, hmget, srem, zadd, exists } = require('./db/redis');
 dotenv.config();
+const upload = require('./utils/Multer.js');
 const {register} = require('./controller/auth')
 // const redis = require('redis');
 
 console.log("STATUS 2: ");
 console.log(redisClient.status)
 
-
 const app = express()
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
 //multer config
 app.use("/assetss", express.static(path.join(__dirname, "public/assets")));
 
-// multer exprot and import in auth register
-const storage = multer.diskStorage({
-    destination: (req,file,cb) =>{
-        // cb(null, "public/assets");
-        cb(null, "../client/public/assets/userImages"); //store in client folder
-    },
-    filename: (req, file, cb) =>{
-        cb(null, Date.now() + '_' + file.originalname)
-        //cb(null, file.originalname)
-    }
-});
-const upload = multer({storage:storage});
+
+
 app.use((error, req, res, next) => {
     console.log('This is the rejected field ->', error.field);
 });
 
-// //Route With files(Multer)
-// app.post("/api/auth/register", upload.single("picture"), register);
-// //upload image
-// app.post("/api/update/picture", upload,single("picture"), updatePicture);
 
 var corsOptions={
     //access is allowed to everyone
@@ -77,6 +62,8 @@ const sessionMiddleware = session({
 //SESSION 
 app.use(sessionMiddleware);
 
+
+//Socket Server Init
 var Server = require("http").Server;
 var server = Server(app);
 var io = require("socket.io")(server, {
@@ -93,6 +80,7 @@ io.use(function(socket, next) {
     sessionMiddleware(socket.request, socket.request.res || {}, next);
 });
 
+
 //public data on "MESSAGE" channel 
 const publish = (type, data) =>{
     const dataSent ={
@@ -105,9 +93,7 @@ redisClient.publish("MESSAGES", JSON.stringify(dataSent));
 }
 
 
-
 (async () =>{
-
 //taking Messages from subscriber channel
 await sub.subscribe("MESSAGES", (message, channelName)=>{
 
