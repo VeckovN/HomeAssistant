@@ -5,12 +5,8 @@ const getClientByUsername = (req,res)=>{
     const username = req.params.username;
     clientModel.findByUsername(username)
     .then((data)=>{
-        //console.log("THEN DATA " + JSON.stringify(data));
-        // res.send(data).status(201);
-        
         //prvent password returning
         const {password, ...clientData} = data;
-        // res.json(data)
         res.json(clientData)
     })
     .catch(err=>{
@@ -53,7 +49,6 @@ const getClientInfo = async(req,res)=>{
 }
 
 
-
 const getComments = async(req,res)=>{
     try{
         const result = await clientModel.getAllComments(req.params.username);
@@ -67,15 +62,12 @@ const getComments = async(req,res)=>{
 
 const rateHouseworker = async (req,res)=>{
     try{
-        // console.log("ASSS:" + req.body);
-        //ClientUsername from session
         //client = req.session.user.username
         const client = req.body.client;
         const houseWorker = req.body.houseworker;
         const rating = req.body.rating;
         // const result = await clientModel.rateHouseworker(houseWorker,rating);
         const result = await clientModel.rateHouseworker(client, houseWorker,rating);
-        // const result = await clientModel.rateHouseworker(client, houseWorker,rating);
         res.json(result);
     }
     catch(err){
@@ -86,7 +78,6 @@ const rateHouseworker = async (req,res)=>{
 
 const commentHouseworker = async(req, res)=>{
     try{
-        //we comment
         // const client = req.session.user.username;
         const client= req.body.client
         const houseworker = req.body.houseworker;
@@ -130,7 +121,6 @@ const udpateClient = async(req,res)=>{
         //chech if city is necessery to update
         if(newInfo.city)
             await clientModel.updateCity(username,newInfo.city)
-            //console.log("CITY UPDATED")
         // res.json(result);
         res.send("Successfully updated");
         
@@ -144,13 +134,7 @@ const udpateClient = async(req,res)=>{
 const getRecommendedHouseworkers = async(req,res)=>{
     const username = req.params.username;
     try{
-
-        console.log("USERNAMEEE: " + username);
-
         const city = await clientModel.getCity(username);
-
-        console.log("CITTTTYYYYY : " + city);
-
         //take filter parameters from url
         const result = await clientModel.recomendedByCityAndInterest(username,city);
 
@@ -169,8 +153,6 @@ const getRecommendedHouseworkers = async(req,res)=>{
         res.send(err);
     }
 }
-
-
 
 
 module.exports = {

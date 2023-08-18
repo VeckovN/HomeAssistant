@@ -61,8 +61,6 @@ router.get('/cities',  getCities);
 //Here without conflict
 router.get('/:username', checkHouseworker, getHouseworkerByUsername);
 router.post('/professions/add', checkHouseworker, addProfession);
-
-
 router.post('/update/password', checkHouseworker, updatePassword)
 
 

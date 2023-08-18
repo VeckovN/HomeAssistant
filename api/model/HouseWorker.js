@@ -122,10 +122,7 @@ const checkFilterHouseworkerInCache = async (filters)=>{
         //no houseworker with filters in DB
         return null;
     }
-        
-
     //houseworker list will be Value in RedisDb
-
 }
 
 //FILTER
@@ -351,8 +348,6 @@ const findByUsernameAndDelete = async (username)=>{
             DELETE ra,b,o,l,g,cm,c,r,h,n`,
         {name:username}
     )
-
-
 
     //all others client
     session.close();

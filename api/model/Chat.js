@@ -27,7 +27,6 @@ const createUser = async(username, hashedPassword) =>{
 
 const UserIdByUsername = async (username)=>{
     //for test
-
     const user = await get(`username:${username}`); //user:{userID}
     console.log("USERRRRR : "  + user);
     let userID = user.split(':')[1]; //[user, {userID}]
@@ -38,7 +37,6 @@ const usernameByUserID = async (userID)=>{
     const username = await hmget(`user:${userID}`, "username")
     console.log("USERNAME " + username);
     return username;
-    
 }
 
 //get roomIDbyUsername

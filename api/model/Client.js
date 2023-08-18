@@ -273,17 +273,6 @@ const addInterest = async(username, interest) =>{
 
 const create = async(clientObject)=>{
     const session = driver.session();
-    //client obj
-    // {
-    //     username:"Sara", 
-    //     email:"sara@gmail.com", 
-    //     password:"pw1", 
-    //     first_name:"Sara",
-    //     last_name:"Veckov",
-    //     picture:"/",
-    //     city:"Nis",
-    //     gender:"Male"
-    // }
     const {id, username, email, password, first_name, last_name, picturePath, city, gender, interests} = clientObject;
 
     //WITH Clause is necessary between Create and Other part of query(Create Gender and City)
@@ -315,7 +304,6 @@ const create = async(clientObject)=>{
     `
     ,{id:id, username:username, email:email, password:password, first_name:first_name, last_name:last_name, picturePath:picturePath, city:city, gender:gender, interests:interests}
     )
-
 
     //Interests relation between profession and Client
     const interestsArray = interests.split(',');
@@ -402,8 +390,6 @@ const updateGender = async(gender)=>{
 
 //----------RECOMMENDATIONS
 
-// const recommended
-
 const interestedProfessions = async(professions)=>{
     // MATCH(n:User)-[:IS_HOUSEWORKER]->(h)-[:OFFERS]-(p:Profession {title:"Kuvar"}) return h, count(h) as add
     // ORDER BY add desc
@@ -425,7 +411,6 @@ const recomendedByCityAndInterest = async(username,city) =>{
     `,{username:username, city:city}
     )
     
-
     const houseworkers = result.records.map(el =>{
         let userInfo = {};
         const userNode = el.get(0).properties;
@@ -434,16 +419,13 @@ const recomendedByCityAndInterest = async(username,city) =>{
         //gotted id{"low":0,"high":0} it MUST parse to INT
         userInfo.city = el.get(2);
         userInfo.gender =el.get(3); 
-
         //console.log("USER INFOOOO : " + JSON.stringify(userInfo));
 
         return userInfo;
     })
 
-
     session.close();
     return houseworkers;
-
 }
 
 module.exports ={

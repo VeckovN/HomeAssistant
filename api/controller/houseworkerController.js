@@ -27,7 +27,6 @@ const getHouseworkerWithFilters = async(req,res)=>{
         })
         res.json(houseworkers);
 
-        //const result = await houseworkerModel.findUserWithFilters();
     }catch(err){
         console.log("ERROR HouseworkerFilters: " + err);
         res.send(err);
@@ -63,9 +62,6 @@ const getHouseworkerInfo = async(req,res)=>{
         console.log("ERROR GetClientInfo: " + err);
     }
 }
-
-
-
 
 const deleteHouseworker = async(req, res)=>{
     const houseworkerUsername = req.params.username;
@@ -205,7 +201,6 @@ const udpateHouseworker = async(req,res)=>{
 
         const newHouseworkerInfo = {address, phone_number, description};
 
-
         console.log("USERNAME: " + username );
         console.log("NewUserInfo: " + JSON.stringify(newUserInfo))
         console.log("NewHouseworkerInfo " + JSON.stringify(newHouseworkerInfo));
@@ -242,9 +237,6 @@ const updatePassword = async(req,res)=>{
         res.send(err).status(400);
     }
 }
-
-
-
 
 
 module.exports ={

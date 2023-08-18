@@ -38,15 +38,12 @@ const register = async (req,res)=>{
         console.log("REDIS USER: " + JSON.stringify(redisUser));
 
         if(type=='Client'){
-
             const user = {username:username, type:type}
             await clientModal.create(userData);
             //assign user to the session after creating the user /request from client(set the sesson to client)
             req.session.user = user
             console.log("SESION123123:" + JSON.stringify(req.session));
             return res.json(user); //created user
-
-
         }
         else if(type=='Houseworker'){ //houseworker
 
@@ -83,8 +80,10 @@ const login = async(req,res)=>{
     const {username, password} = req.body;
     //find user by username and password no matter what type it is
     const user = await userModal.findByUsername(username);
+
     if(!user)
         return res.send({error:"Korisnik nije pronadjen"})
+    
     const userType = user.type;
     const userInfo = user.props;
     console.log("TYPEEEE: " + userType + "PROPS : " + userInfo);
