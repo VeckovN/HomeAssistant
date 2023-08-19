@@ -1,5 +1,4 @@
 const express = require('express');
-// const uploadMulter = require('../utils/Multer.js');
 const UserModel = require('../model/User.js')
 
 const {
@@ -19,9 +18,8 @@ router.post('/login', login);
 router.get('/logout', logout)
 
 
-//ChangePaswwrod method
+//authenticated user change password 
 router.post('/changePassword', async(req,res) =>{
-
     const username = req.body.username
     const password = req.body.password;
 
@@ -34,8 +32,6 @@ router.post('/changePassword', async(req,res) =>{
         console.log(err);
         res.status(400);
     }
-    
-    
 })
 
 

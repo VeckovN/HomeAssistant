@@ -45,7 +45,6 @@ const checkUser = async(username)=>{
     if(userResult.records.length == 0){
         return null
     }
-    //Return userType
 
     session.close();
     return true;
@@ -57,7 +56,6 @@ const changePassword = async(username,password) =>{
 
     console.log("Passwrod: " + password);
     const hashedPassword = bcrypt.hashSync(password, 12);
-
     console.log("Hashed password: " + hashedPassword);
 
     const result = await session.run(
