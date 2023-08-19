@@ -1,5 +1,7 @@
 import {useState} from 'react';
 import { toast } from 'react-toastify';
+import axios from 'axios';
+import {rateUser} from '../../services/houseworker.js'
 
 const useHouseworkerRating = (isClient, client_username) =>{
 
@@ -32,9 +34,8 @@ const useHouseworkerRating = (isClient, client_username) =>{
                     houseworker: username,
                     rating:rate
                 }
-                const result = await axios.post('http://localhost:5000/api/clients/rate', rateObj);
-                console.log("RESULTT : " + JSON.stringify(result));
-
+                const rateResult = await rateUser(rateObj);
+            
                 toast.success(`Ocenili ste korisnika ${username} ocenom ${rate} `,{
                     className:'toast-contact-message'
                 })
