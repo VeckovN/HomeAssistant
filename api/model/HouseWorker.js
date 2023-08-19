@@ -425,7 +425,6 @@ const getRatings = async(username)=>{
         avgRating = avgSum / ratings.length;
     }
     else{
-
         session.close();
         // idk why return object {"low": 5,"high": 0} instead the value 5
         //and then prase it to INT

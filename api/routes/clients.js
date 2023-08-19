@@ -23,12 +23,7 @@ router.get('/comments/:username',checkClient, getComments);
 router.get('/recommended/:username' , getRecommendedHouseworkers);
 //HERE WONT WORK, because exists get route with one '/string' above 
 //just put it before router.get('/:username',
-// router.get('/info', checkClient, getClientInfo)
-
-// router.post('/rate', checkClient, rateHouseworker);
 router.post('/rate', checkClient, rateHouseworker);
-// router.post('/comment', checkClient,commentHouseworker);
 router.post('/comment', commentHouseworker);
-// router.put('/update', checkClient, udpateClient);
 
 module.exports = router;
