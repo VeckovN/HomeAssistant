@@ -1,6 +1,7 @@
 import {useState, useRef, useEffect} from 'react';
 import {getComments} from '../../services/houseworker.js';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const useHouseworkerComment = (socket, isClient, client_username) =>{
 
@@ -80,7 +81,6 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                     //comment:newCommentContext
                     comment:postComment.comment
                 }
-                console.log(comments.length);
 
                 //this will trigger Comp re-render
                 if(comments.length > 0) //if exist comments(push new comment)
