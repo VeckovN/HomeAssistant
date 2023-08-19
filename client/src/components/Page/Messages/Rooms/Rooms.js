@@ -18,7 +18,7 @@ const Rooms = ({rooms, roomRef, user, houseworkers, onAddUserToGroupHanlder, onD
                                                 <option value="">Izaberi korisnika</option>
                                             {
                                                 houseworkers.map(el =>(
-                                                    <option value={el.username}>{el.first_name}</option>
+                                                    <option value={el.username}>{el.username}</option>
                                                 ))
                                             }
                                             </>
