@@ -60,6 +60,11 @@ export const postComment = async(postComment) =>{
 
 export const rateUser = async(rateObject) =>{
     await axios.post(BASE_URL + 'clients/rate', rateObject)
+    //fetch newRate(new calcuation of avarage rate)
+    const result = await axios.get(BASE_URL + `houseworker/rating/${rateObject.houseworker}`)
+    const ratingValue = result.data;
+
+    return ratingValue;
 }
 
 
