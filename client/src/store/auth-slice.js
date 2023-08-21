@@ -143,9 +143,9 @@ const authSlice = createSlice({
         //for other ASYNC function we will use TRUNK func
         reset:(state)=>{
             state.message=' '
-            // state.success=false,
-            // state.error=false,
-            // state.loading=false 
+            state.success=false,
+            state.error=false,
+            state.loading=false 
         }
     },
     extraReducers: (builder) =>{

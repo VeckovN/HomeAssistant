@@ -34,7 +34,7 @@ function App() {
       {/* <div className="App_container">     */}
         <Header />
         {/* Context(Home.js) */}
-        <Home socket={socket} connected={connected} />
+        <Home socket={socket} connected={connected} user={user}/>
         <Routes>
           <Route path='/login' element={<Login/>}></Route>
           <Route path='/register' element={<Register/>}></Route>

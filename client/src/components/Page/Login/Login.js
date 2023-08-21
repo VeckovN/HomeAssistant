@@ -35,8 +35,11 @@ const Login = () =>{
                 className:'toast-contact-message'
             })
         }
+        //This caused unnecessary component re-rendering
         dispatch(reset())
-    },[user,message,error,success])
+
+    // },[user,message,error,success])
+    },[user,error,success])
     //without user in dependecies navigation(on home page) after submition wont be executed
 
     const onSubmit = (e)=>{
