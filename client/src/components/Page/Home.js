@@ -1,13 +1,8 @@
-import { ReactFragment, useEffect } from "react";
-import { Router } from "react-router-dom";
+import {useEffect } from "react";
 import ClientHome from "./Client/Home/ClientHome.js";
 import HouseworkerHome from './Houseworker/HouseworkerHome';
 import {Routes, Route} from 'react-router-dom';
-import {useSelector} from 'react-redux';
 import {toast} from 'react-toastify';
-import useSocket from '../../hooks/useSocket';
-
-import Cookie from 'js-cookie';
 
 
 //CLIENT - Serach, Filter, HouseworkersCard(wiht paggination)
@@ -20,18 +15,10 @@ import Cookie from 'js-cookie';
 //type=['client','houseworker']
 const Home = ({socket, connected, user}) =>{
     // const coo = Cookie.get("sessionLog");
-
-    // const userAuth = useSelector((state) => state.auth) 
-    // if(userAuth.user === null)
-    //     console.log("TESSSSSSSSS");
-
     if(user === null)
         console.log("TESSSSSSSS");
 
     let client;
-    // if(userAuth.user)
-    //     client = userAuth.user.type === 'Client' ? true : false;
-
     if(user)
         client = user.type === 'Client' ? true : false;
     //Message Receive Notification
@@ -39,7 +26,6 @@ const Home = ({socket, connected, user}) =>{
     console.log("JSON STT USER: " + JSON.stringify(user));
 
     useEffect(()=>{
-        //if(connected && userAuth.user){
         if(connected && user){
             console.log("NOTIIIIIIIFYU")
             socket.on("messageResponseNotify", data =>{
@@ -49,8 +35,6 @@ const Home = ({socket, connected, user}) =>{
                 // if(userAuth.user.userRedisID != dataObj.from)
                 if(user.userID != dataObj.from)
                 {
-                    // console.log("WEE E " + JSON.stringify(userAuth.user))
-                    // console.log('WE ' + userAuth.user.userRedisID)
                     console.log("WEE E " + JSON.stringify(user))
                     console.log('WE ' + user.userID)
                     const roomIDs = dataObj.roomID
@@ -58,7 +42,6 @@ const Home = ({socket, connected, user}) =>{
                     console.log("ROMSSSSS: " + JSON.stringify(rooms));
                     //show only members of message room(Are ourID is in RoomID)
                     // console.log(">?> : " + rooms.includes(userAuth.user.userRedisID));
-                    // if(rooms.includes(userAuth.user.userRedisID))
                     console.log(">?> : " + rooms.includes(user.userID));
                     if(rooms.includes(user.userID))
                     {
@@ -76,14 +59,12 @@ const Home = ({socket, connected, user}) =>{
                 const houseworkerID  =commentObj.houseworkerID;
                 const clientCommented = commentObj.client;
 
-                // if(userAuth.user.userRedisID == houseworkerID){
                 if(user.userID == houseworkerID){
                     console.log("HEEEEEE");
                     toast.info("Dobio si komentar od " + clientCommented)
                 }
             })
         }
-    // },[socket, userAuth.user])
     },[socket, user])
     
    
@@ -95,7 +76,6 @@ const Home = ({socket, connected, user}) =>{
                     path='/'
                     element ={
                         //client or guest(if is user null)
-                        // client || userAuth.user===null
                         client || user===null
                         // in ClientHome limit what Guest can do and see
                         ? <ClientHome socket={socket} /> 
