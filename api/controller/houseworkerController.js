@@ -11,7 +11,7 @@ const getHouseworkerByUsername = async(req,res)=>{
     }
     catch(err){
         console.log("ERROR GetHouseworkerBYUsername: " + err);
-        res.send(err);
+        res.status(404).json({error:'GetHouseworkerBYUsername Error'});
     }
 }
 
@@ -29,7 +29,7 @@ const getHouseworkerWithFilters = async(req,res)=>{
 
     }catch(err){
         console.log("ERROR HouseworkerFilters: " + err);
-        res.send(err);
+        res.status(404).json({error:'Houseworker filter error'});
     }
 }
 
@@ -46,7 +46,7 @@ const getHouseworkers = async(req,res)=>{
     }
     catch(err){
         console.log("ERROR GetHouseworkers: " + err);
-        res.send(err);
+        res.status(404).json({error:'Houseworkers Error'});
     }
 }
 
@@ -60,6 +60,7 @@ const getHouseworkerInfo = async(req,res)=>{
     }
     catch(err){
         console.log("ERROR GetClientInfo: " + err);
+        res.status(404).json({error:'Houseworkers Error'});
     }
 }
 
@@ -71,7 +72,7 @@ const deleteHouseworker = async(req, res)=>{
     }
     catch(err){
         console.log("ERROR GetHouseworkers: " + err);
-        res.send(err);
+        res.status(500).json({error:`Houseworkers can't be deleted`});
     }
 }
 
@@ -86,7 +87,7 @@ const getRatings = async(req,res)=>{
     }
     catch(err){
         console.log("ERROR GetHouseworkers: " + err);
-        res.send(err);
+        res.status(505).json({error:'Rating error'});
     }
 }
 
@@ -99,7 +100,7 @@ const getRatingUsername = async(req,res)=>{
     }
     catch(err){
         console.log("ERROR GetHouseworkers: " + err);
-        res.send(err);
+        res.status(404).json({error:'Get rating error'});
     }
 }
 
@@ -110,7 +111,7 @@ const getCities = async(req,res)=>{
     }
     catch(err){
         console.log("ERROR CITIES: " + err);
-        res.send(err);
+        res.status(404).json({error:'City error'});
     }
 }
 
@@ -127,7 +128,7 @@ const getOurComments = async(req,res)=>{
     }
     catch(err){
         console.log("ERROR Comments: " + err);
-        res.send(err);
+        res.status(404).json({error:'User comments error'});
     }
 }
 
@@ -142,7 +143,7 @@ const getComments = async(req,res)=>{
     }
     catch(err){
         console.log("ERROR Comments: " + err);
-        res.send(err);
+        res.status(404).json({error:'Comments Error'});
     }
 }
 
@@ -150,12 +151,11 @@ const getHouseworkerCommentsCount = async(req,res)=>{
     try{
         const username = req.params.username;
         const result = await houseworkerModel.getCommentsCount(username);
-        console.log("RESSS " + result); 
         res.json(result);
     }
     catch(err){
         console.log("ERROR Comments: " + err);
-        res.send(err);
+        res.status(404).json({error:'Comments Count error'});
     }
 }
 
@@ -168,7 +168,7 @@ const getProfessions = async(req,res)=>{
     }
     catch(err){
         console.log("ERROR GetHouseworkers: " + err);
-        res.send(err);
+        res.status(404).json({error:'Professions error'});
     }
 }
 
@@ -183,7 +183,7 @@ const addProfession = async(req,res)=>{
     }
     catch(err){
         console.log("ERROR GetHouseworkers: " + err);
-        res.send(err);
+        res.status(500).json({error:`Proffessions can't be added`});
     }
 }
 
@@ -208,7 +208,6 @@ const udpateHouseworker = async(req,res)=>{
 
         await houseworkerModel.update(username, newUserInfo, newHouseworkerInfo);
         
-        //update City 
         if(city)
             await houseworkerModel.updateCity(username, city);
         
@@ -216,12 +215,11 @@ const udpateHouseworker = async(req,res)=>{
         //     await houseworkerModel.updateProfessions(username,professions);
         // }
 
-        // res.json(result);
         res.send("Successfuly updated!!!");
     }
     catch(err){
         console.log("Error UpdateHouseworker(Yourself): " + err);
-        res.send("Update Error").status(400);
+        res.status(500).json({error:`Update error`});
     }
 }
 
@@ -234,7 +232,8 @@ const updatePassword = async(req,res)=>{
     }
     catch(err){
         console.log("Error UpdatePassword(Yourself): " + err);
-        res.send(err).status(400);
+        res.status(500).json({error:`Update password error`});
+        
     }
 }
 

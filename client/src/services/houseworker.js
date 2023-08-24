@@ -11,7 +11,8 @@ export const getUserData = async() =>{
         return houseworkerResult;
     }
     catch(err){
-        console.log(err)
+        console.log(err);
+        throw new Error(err);
     }
 }
 
@@ -23,11 +24,17 @@ export const getHouseworkers = async() =>{
     }
     catch(err){
         console.log(err)
+        throw new Error(err);
     }
 }
 
 export const updateHouseworker = async(newData) =>{
-    await axios.put( BASE_URL + `houseworker/update/`, newData);
+    try{
+        await axios.put( BASE_URL + `houseworker/update/`, newData);
+    }
+    catch(err){
+        throw new Error(err);
+    }
 }
 
 //user of authenticated user(username taken from  session data)
@@ -39,6 +46,7 @@ export const getAuthenticatedUserComments = async() =>{
     }
     catch(err){
         console.log(err);
+        throw new Error(err);
     }
 }
 
@@ -51,20 +59,33 @@ export const getComments = async(username) =>{
     }
     catch(err){
         console.log(err);
+        throw new Error(err);
     }
 }
 
 export const postComment = async(postComment) =>{
-    await axios.post(BASE_URL + `clients/comment`, postComment);
+    try{
+        await axios.post(BASE_URL + `clients/comment`, postComment);
+    }catch(err){
+        console.log(err)
+        throw new Error(err);
+    }
+    
 }
 
 export const rateUser = async(rateObject) =>{
-    await axios.post(BASE_URL + 'clients/rate', rateObject)
-    //fetch newRate(new calcuation of avarage rate)
-    const result = await axios.get(BASE_URL + `houseworker/rating/${rateObject.houseworker}`)
-    const ratingValue = result.data;
-
-    return ratingValue;
+    try{
+        await axios.post(BASE_URL + 'clients/rate', rateObject)
+        //fetch newRate(new calcuation of avarage rate)
+        const result = await axios.get(BASE_URL + `houseworker/rating/${rateObject.houseworker}`)
+        const ratingValue = result.data;
+    
+        return ratingValue;
+    }
+    catch(err){
+        console.log(err)
+        throw new Error(err);
+    }
 }
 
 
@@ -78,6 +99,7 @@ export const getRating = async(username) =>{
     }
     catch(err){
         console.log(err);
+        throw new Error(err);
     }
 }
 
@@ -90,6 +112,7 @@ export const getProfessions = async(username)=>{
     }
     catch(err){
         console.log(err)
+        throw new Error(err);
     }
 }
 
@@ -101,6 +124,7 @@ export const getCommentsCount = async(username) =>{
         return count;
     }catch(err){
         console.log(err);
+        throw new Error(err);
     }
 }
 
@@ -116,6 +140,7 @@ export const getConversationCount = async(userRedisID) =>{
     }
     catch(err){
         console.log(err);
+        throw new Error(err);
     }
 }
 
@@ -128,6 +153,7 @@ export const getAllCities = async() =>{
     }
     catch(err){
         console.log(err)
+        throw new Error(err);
     }
 }
 //get all professions that exist(provided by houseworkers)
@@ -139,13 +165,20 @@ export const getAllProfessions = async() =>{
     }
     catch(err){
         console.log(err)
+        throw new Error(err);
     }
 }
 
 export const getHouseworkerByFilter = async(params) =>{
-    const result = await axios.get(BASE_URL + `houseworker/filter?${params}`);
-    const houseworkers = result.data;
-    return houseworkers;;
+    try{
+        const result = await axios.get(BASE_URL + `houseworker/filter?${params}`);
+        const houseworkers = result.data;
+        return houseworkers;
+    }
+    catch(err){
+        console.log(err)
+        throw new Error(err);
+    }
 }
 
 

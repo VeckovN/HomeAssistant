@@ -10,16 +10,29 @@ export const getUserData = async() =>{
     }
     catch(err){
         console.log(err);
+        throw new Error(err);
     }
 }
 
 export const updateClient = async(newData) =>{
-    await axios.put(BASE_URL + `clients/update/`, newData);
+    try{
+        await axios.put(BASE_URL + `clients/update/`, newData);
+    }
+    catch(err)
+    {
+        console.log(err);
+        throw new Error(err);
+    }
 }
 
 
 export const getRecommended= async(username) =>{
-    const result = await axios.get(BASE_URL + `clients/recommended/${username}`);
-    const recommendedData = result.data;
-    return recommendedData;
+    try{
+        const result = await axios.get(BASE_URL + `clients/recommended/${username}`);
+        const recommendedData = result.data;
+        return recommendedData;
+    }
+    catch(err){
+        throw new Error(err);
+    }
 }

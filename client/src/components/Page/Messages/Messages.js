@@ -81,12 +81,22 @@ const Messages = ({socket,connected}) =>{
     
         const onDeleteRoomHandler = async(e)=>{ 
             const roomID = e.target.value;
-            await deleteRoom(roomID);
-            dispatch({type:"DELETE_ROOM", data:roomID});
 
-            toast.success("You have successfully deleted the room",{
-                className:"toast-contact-message"
-            });
+            try{
+                await deleteRoom(roomID);
+                dispatch({type:"DELETE_ROOM", data:roomID});
+    
+                toast.success("You have successfully deleted the room",{
+                    className:"toast-contact-message"
+                });
+            }
+            catch(error){
+                //catch error from service
+                console.error(error);
+                toast.error("The room can't be deleted",{
+                    className:"toast-contact-message"
+                });
+            }
         }
 
         useEffect(() =>{

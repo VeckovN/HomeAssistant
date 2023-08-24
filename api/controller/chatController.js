@@ -24,14 +24,19 @@ const getMessages = async(req,res)=>{
     }
     catch(err){
         console.log(err);
-        res.status(400);
+        res.status(400).json({error:"Message Errors"});
     }
 }
 
 const sendMessage = async(req,res)=>{
     const message = req.body;
-    const obj =  await chatModal.sendMessage(message);
-    res.json(obj)
+    try{
+        const obj =  await chatModal.sendMessage(message);
+        res.json(obj)
+    }
+    catch(err){
+        return res.status(500).json({error: "Message can't be sent"});
+    }
 
 }
 
@@ -42,7 +47,7 @@ const getAllRooms = async(req,res)=>{
         res.json(result);
     }catch(err){
         console.log(err);
-        res.status(400).send("error getAllRooms");
+        res.status(500).json({error:"Error durring getting all rooms"});
     }
 }
 
@@ -55,7 +60,7 @@ const deleteRoom = async(req, res)=>{
     }
     catch(err){
         console.log(err);
-        res.status(400).send("You can't delete Room");
+        res.status(400).json({error:"Room can't be deleted"});
     }
 }
 
@@ -70,7 +75,7 @@ const addUserToRoom = async(req,res) =>{
         res.status(200).json(result);
     }
     catch(err){
-        res.status(400).send('You cant add user to ROom')
+        res.status(400).json({error:'You cant add user to ROom'});
     }
         
 }
@@ -82,7 +87,7 @@ const getConversationCount = async(req,res)=>{
         res.status(200).json(result);
     }
     catch(err){
-        res.status(400).send('You cant add user to ROom')
+        res.status(400).json({error: 'Conversetion Count error'})
     }
 }
 

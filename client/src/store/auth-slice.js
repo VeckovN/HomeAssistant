@@ -77,7 +77,7 @@ export const register = createAsyncThunk(
             return response.data; 
 
         }catch(error){
-            const message = error.message || error || (error.response && error.response.data)
+            const message = (err.response && err.response.data.error) || err.message || err
             //using thinkApi (passed in this function)
             return thunkAPI.rejectWithValue(message); //that will actualy reject and send the message as payload:message
         }
@@ -106,8 +106,11 @@ export const login = createAsyncThunk(
                     return thunkAPI.rejectWithValue(response.data.error)//this is action.payload for message in useCase.login rejected
             }
         }
-        catch(error){
-            const message = error.message || error || (error.response && error.response.data)
+        catch(err){
+            console.log("ERRRRRRRR: " + JSON.stringify(err.response));
+            const message = (err.response && err.response.data.error) || err.message || err
+            //err.response.data.error
+            //to get "error" prop - return res.status(401).json({error: "Incorrect username or password"});
             return thunkAPI.rejectWithValue(message);
         }
     }

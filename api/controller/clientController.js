@@ -11,7 +11,7 @@ const getClientByUsername = (req,res)=>{
     })
     .catch(err=>{
         console.log("ERROR: " + err);
-        res.send(err).status(400);
+        res.status(400).json({error:'Error with client username'});
     });
 
 }
@@ -31,7 +31,7 @@ const getClients = async(req,res)=>{
     }
     catch(err){
         console.log("Error getClients: " + err);
-        res.send(err).status(400);
+        res.status(400).json({error:'Clients error'});
     }
 }
 
@@ -45,6 +45,7 @@ const getClientInfo = async(req,res)=>{
     }
     catch(err){
         console.log("ERROR GetClientInfo: " + err);
+        res.status(400).json({error:'You cant add user to ROom'});
     }
 }
 
@@ -57,6 +58,7 @@ const getComments = async(req,res)=>{
     catch(err){
         console.log("Error getComments: " + err);
         res.send(err).status(400);
+        res.status(404).json({error:`Comments not found`});
     }
 }
 
@@ -66,13 +68,12 @@ const rateHouseworker = async (req,res)=>{
         const client = req.body.client;
         const houseWorker = req.body.houseworker;
         const rating = req.body.rating;
-        // const result = await clientModel.rateHouseworker(houseWorker,rating);
         const result = await clientModel.rateHouseworker(client, houseWorker,rating);
         res.json(result);
     }
     catch(err){
         console.log("Error Rating: " + err);
-        res.send(err).status(400);
+        res.status(400).json({error:'Rate House error'});
     }
 }
 
@@ -89,7 +90,7 @@ const commentHouseworker = async(req, res)=>{
     }
     catch(err){
         console.log("Error Comment: " + err);
-        res.send(err).status(400);
+        res.status(400).json({error:'Comment error'});
     }
 }
 
@@ -121,13 +122,12 @@ const udpateClient = async(req,res)=>{
         //chech if city is necessery to update
         if(newInfo.city)
             await clientModel.updateCity(username,newInfo.city)
-        // res.json(result);
         res.send("Successfully updated");
-        
     }
     catch(err){
         console.log("Error UpdateClient(Yourself): " + err);
-        return res.status(406).send("Error with updating");
+        // return res.status(406).send("Error with updating");
+        res.status(400).json({error:'Error with updating'});
     }
 }
 
@@ -142,15 +142,13 @@ const getRecommendedHouseworkers = async(req,res)=>{
             const {password, ...houseworkerData} =el;
             return houseworkerData;
         })
-
-        console.log("\n HOUSEWORKERS: \n " + JSON.stringify(houseworkers));
-
         res.json(houseworkers);
 
         //const result = await houseworkerModel.findUserWithFilters();
     }catch(err){
         console.log("ERROR HouseworkerFilters: " + err);
-        res.send(err);
+        // res.send(err);
+        res.status(400).json({error:'Recomended Houseworker Erros'});
     }
 }
 

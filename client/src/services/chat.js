@@ -10,6 +10,7 @@ export const getUserRooms = async(username) =>{
     }
     catch(err){
         console.log(err);
+        throw new Error(err);
     }
 }
 
@@ -23,17 +24,19 @@ export const getMessagesByRoomID = async(roomID) =>{
     }
     catch(err){
         console.log(err);
+        throw new Error(err);
     }
 }
 
-
+//BECAUSE THIS SERVICES CATCH ERROR FROM CONTROLLER , THIS ERROR SHOULD BE RE-THROW IN COMPOENNT
 export const deleteRoom = async(roomID) =>{
     try{
         const result = await axios.post(BASE_URL +'chat/room/delete', {roomID:roomID});
         return result; //message 'Room sucessfully deleted'
     }
     catch(err){
-        console.log(err);
+        const errorMessage = (err.response && err.response.data.error) || err;
+        throw new Error(errorMessage);
     }
 }
 
@@ -47,6 +50,7 @@ export const addUserToRoom = async(roomInfo) =>{
     }
     catch(err){
         console.log(err);
+        throw new Error(err);
     }
 }
 

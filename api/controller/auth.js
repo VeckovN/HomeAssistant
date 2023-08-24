@@ -18,93 +18,102 @@ const register = async (req,res)=>{
     const {username,password, type, ...otherData} = req.body;
     const hashedPassword = bcrypt.hashSync(password, 12);
     //without type data and with picturePath
+    // const picturePath = req.files[0].filename;
+    //if picturePath exists
     const picturePath = req.files[0].filename;
+
     const userData = {username, password:hashedPassword, picturePath:picturePath, ...otherData};
 
     console.log("USERDATA: "+ JSON.stringify(userData));
     console.log('TP: ' + type);
 
     const userExists = await userModal.checkUser(username);
-    console.log("DAAAAA: " + JSON.stringify(userExists));
-
     if(userExists)
         return res.status(400).json({error:"User with this username exists"}) 
     else{
+        try{
+            const redisUser = await chatModel.createUser(username, hashedPassword);
+            console.log("IDDDDDDD : " + redisUser.id);
+            userData.id = Number(redisUser.id);
 
-        const redisUser = await chatModel.createUser(username, hashedPassword);
-        console.log("IDDDDDDD : " + redisUser.id);
-        userData.id = Number(redisUser.id);
+            console.log("REDIS USER: " + JSON.stringify(redisUser));
 
-        console.log("REDIS USER: " + JSON.stringify(redisUser));
+            if(type=='Client'){
+                const user = {username:username, type:type}
+                await clientModal.create(userData);
+                //assign user to the session after creating the user /request from client(set the sesson to client)
+                req.session.user = user
+                console.log("SESION123123:" + JSON.stringify(req.session));
+                return res.json(user); //created user
+            }
+            else if(type=='Houseworker'){ //houseworker
 
-        if(type=='Client'){
-            const user = {username:username, type:type}
-            await clientModal.create(userData);
-            //assign user to the session after creating the user /request from client(set the sesson to client)
-            req.session.user = user
-            console.log("SESION123123:" + JSON.stringify(req.session));
-            return res.json(user); //created user
+                const user = {username:username, type:type}
+                console.log("EHHHHHHH");
+                await houseworkerModal.create(userData);
+                req.session.user = user;
+                return res.json(user);
+            }
         }
-        else if(type=='Houseworker'){ //houseworker
-
-            const user = {username:username, type:type}
-            console.log("EHHHHHHH");
-            await houseworkerModal.create(userData);
-            req.session.user = user;
-            return res.json(user);
-
-            // const data = await houseworkerModal.findByUsername(username);
-            // console.log("EXIST:" + data);
-            // if(data)
-            //     return res.json({error:"User with this username exists"})
-            // else{
-            //     const user = {username:username, type:type}
-            //     console.log("EHHHHHHH");
-            //     await houseworkerModal.create(userData);
-            //     req.session.user = user;
-            //     return res.json(user);
-            // }
+        catch(error){
+            console.error("Error during creating user");
+            res.status(500).json({error:"An error during user registration"})
         }
+        
     } 
 
 }
 
 const login = async(req,res)=>{
-
-    console.log("PREEEE SESSION: " + JSON.stringify(req.session))
-
-    if(req.session.user)
-        // return res.redirect(`/${req.session.user.type}`) // /client or /houseworker
-        return res.json({connect:"You are still logged in"});
-
-    const {username, password} = req.body;
-    //find user by username and password no matter what type it is
-    const user = await userModal.findByUsername(username);
-
-    if(!user)
-        return res.send({error:"Korisnik nije pronadjen"})
+    try{
+        console.log("PREEEE SESSION: " + JSON.stringify(req.session))
+        if(req.session.user)
+            // return res.redirect(`/${req.session.user.type}`) // /client or /houseworker
+            return res.json({connect:"You are still logged in"});
     
-    const userType = user.type;
-    const userInfo = user.props;
-    console.log("TYPEEEE: " + userType + "PROPS : " + userInfo);
+        const {username, password} = req.body;
+        //find user by username and password no matter what type it is
+        const user = await userModal.findByUsername(username);
+    
+        if(!user)
+            return res.status(404).json({error: "User not found"});
+        
+        const userType = user.type;
+        const userInfo = user.props;
+        console.log("TYPEEEE: " + userType + "PROPS : " + userInfo);
+    
+        const match = bcrypt.compareSync(password, userInfo.password); 
+        //password from client and hashed password from DB
+        //if(user && match){ //both is unecessery because if match is true then 100% is user true
+        if(match){
+            //Take UserID from redisDB for chat purpose
+            try{ //because get method return promise (need to be try-catched)
+                const userRedis = await get(`username:${username}`); //user:{userID}
+                console.log("USERRRRR : "  + user);
 
-    const match = bcrypt.compareSync(password, userInfo.password); 
-    //password from client and hashed password from DB
-    //if(user && match){ //both is unecessery because if match is true then 100% is user true
-    if(match){
-        //Take UserID from redisDB for chat purpose
-        const userRedis = await get(`username:${username}`); //user:{userID}
-        console.log("USERRRRR : "  + user);
-        console.log("USEEEEEERRRRRR");
-        let userID = userRedis.split(':')[1]; //[user, {userID}]
+                let userID = userRedis.split(':')[1]; //[user, {userID}]
+        
+                req.session.user = {username:username, type:userType, userID:userID}
+                console.log("SESSSSSLogion22222222: " + JSON.stringify(req.session))
+                return res.send(req.session.user)
+            }
+            catch(error){
+                console.error("Error durring getting user id", error);
+                return res.status(500).json({error: "Can't get the redis ID"})
+            }
+        }
+        else
+            return res.status(401).json({error: "Incorrect username or password"});
+            //THIS should be caught as error.response - to get error object
+            //and then error.response.data.error to get this json prop
 
-        req.session.user = {username:username, type:userType, userID:userID}
-        console.log("SESSSSSLogion22222222: " + JSON.stringify(req.session))
-        return res.send(req.session.user)
+            //return res.send({error: "Incorrect username or password"});
+            
     }
-    else
-        return res.send({error:"Pogresna lozinka ili korisnicko ime"})
-
+    catch(error){
+        console.error("Error during login: ", error );
+        return res.status(500).json({error:"An internal error occurred"});
+    }
 }
 
 const logout = async(req,res)=>{
@@ -118,7 +127,7 @@ const logout = async(req,res)=>{
         return res.json({success:"You're logout now"});
     }
     else
-        return res.json({errorr:"You're not logged"})
+        return res.json({error:"You're not logged"})
    
 }
 
