@@ -58,7 +58,9 @@ const ClientRegister = () =>{
         e.preventDefault();
 
         if(password != passwordRepeat){
-            alert("Passwords ins't same");
+            toast.info("Password must be same",{
+                className:"toast-contact-message"
+            })
         }
         else{            
             //all state date append to data type variable 
