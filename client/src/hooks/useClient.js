@@ -3,10 +3,11 @@
 // TODO: -add pagination(Load first 5 on start then load more 5 on every bottom scroll)
 // FIXME: - City filter (probably others) doesn't work when is recommended button clicked(recommended showned)
 
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 import {getHouseworkerByFilter} from '../services/houseworker.js'
 import {getRecommended} from '../services/client.js'
 import { toast } from 'react-toastify';
+import debounce from 'lodash/debounce';
 
 const useClient = (user) =>{
 
@@ -18,12 +19,26 @@ const useClient = (user) =>{
     const [recommended, setRecomended] = useState([]);
     const [showRecommended, setShowRecommended] = useState(false);
 
+    //filtered data will be reset on compoent re-rendering(on every scroll )
+    //that i stored filter data in localStorage
     const [filteredData, setFilterData] = useState({});
     const [searchedData, setSearchData] = useState({});
+ 
+    const [loading, setLoading] = useState(false);
+    const pageNumberRef = useRef(0);
+    
+    //on initial check does localStorage (filtered Data exists and delete it)
+    useEffect(()=>{
+        if(localStorage.getItem("filteredData"))
+            localStorage.clear("filteredData")
+        
+        if(localStorage.getItem("searchedData"))
+            localStorage.clear('searchedData')
+    },[])
 
     //on every serachedData and filterData change reFeatch houseworkers
     useEffect(()=>{
-        fetchData();
+        fetchData(pageNumberRef.current);
     },[searchedData, filteredData]) 
 
     useEffect(()=>{
@@ -35,11 +50,39 @@ const useClient = (user) =>{
     },[showRecommended])
 
 
-    const fetchData = async()=>{
+    //this will ensure that the scroll event is not triggered multiple times in quick succession,
+    //and thus help in fetching data only once on each scroll event.
+    const debouncedHandleScroll = debounce(() =>{      
+        const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
+        if (window.scrollY >= scrollableHeight) {
+            const newPage =  pageNumberRef.current+ 1;
+            pageNumberRef.current = newPage;
+
+            fetchData(newPage);
+        }
+    }, 100); //debounce delay 
+
+    //scroll event listener attached on intial page rendering
+    useEffect(()=>{
+        window.addEventListener('scroll', debouncedHandleScroll);
+        //cleanup function remove event listener on component unmount
+        return () =>{
+            window.removeEventListener('scroll',debouncedHandleScroll);
+        }
+    },[]);
+
+
+    const fetchData = async(pageNubmer)=>{
         //Merge a filer and sort option to the queryParams OBJ
-        let queryParams = {};
-        if(filteredData!=''){
-            queryParams = {...filteredData};
+        //let queryParams = {};
+    
+        //pageNumber on initialization
+        let queryParams = {pageNumber:pageNubmer}
+        const savedFilteredData = JSON.parse(localStorage.getItem('filteredData'));
+        const savedSearchedData = JSON.parse(localStorage.getItem('searchedData'));
+
+        if(savedFilteredData!=null){
+            queryParams = {...queryParams, ...savedFilteredData};
             //Filter option could be:{
             //     profession:[],
             //     city:,
@@ -47,8 +90,8 @@ const useClient = (user) =>{
             //     age:,
             // }
         }
-        if(searchedData!=''){
-            queryParams = {...queryParams, ...searchedData};
+        if(savedSearchedData!=null){
+            queryParams = {...queryParams, ...savedSearchedData};
             //Search option could be:{
             //  Age:asc or desc, 
             //     Rating:asc or desc, 
@@ -56,32 +99,47 @@ const useClient = (user) =>{
             //
         }
         try{
-            //requestParams obj transfrom to URLParams
             const params = new URLSearchParams(queryParams);
             console.log("PARAMS: " + params);
             console.log("URL: " + `http://localhost:5000/api/houseworker/filter?/${params}`);
             
             const houseworkers = await getHouseworkerByFilter(params);
+            console.log("HOUSEWORKERSSSSSSSSSS: " +  JSON.stringify(houseworkers))
             if(houseworkers.length >0){
-
+                //if is new houseworkers fetched then contcatenate it with older houseworkers
+                
                 //if is recommended user showned - exclude it from other users
                 if(showRecommended){
                     const updatedData = excludeRecommendedFromUserData(data, recommended);
                     setData(updatedData);
                 }
-                else
+                if(pageNumberRef.current > 0){
+                    setData(prev =>([
+                        ...prev,
+                        ...houseworkers
+                    ]))
+                }
+                else{
                     setData(houseworkers);
-
+                }
+        
                 setOldData(houseworkers);
             }
-            else
-                setData(null)  
-            
+            else{
+                //if houseworekrs exist on page then delete scroll event(prevent to go on next page)
+                if(pageNumberRef.current > 0){
+                    toast.info("No more houseworkers",{
+                        className:"toast-contact-message"
+                    })
+                }
+                else{ //or on first page if there ins't houseworkers
+                    setData(null)
+                }
+            }        
         }catch(err){
             console.log("ERR: " + err);
         }   
     }
-
 
     const fetchRecommendedData = async() =>{
         try{
@@ -93,7 +151,6 @@ const useClient = (user) =>{
             }
             else
                 setRecomended(null);
-                
         }
         catch(err){
             console.log("ERR" + err);
@@ -107,7 +164,6 @@ const useClient = (user) =>{
         })
         return updatedData
     }
-
     
     const searchDataHanlder = (searchDataObj) =>{
         //searchData is data from SearchAndSort(Child) component
@@ -119,16 +175,17 @@ const useClient = (user) =>{
             //key of searchData (could be sort or name)
             const newKey = Object.keys(searchDataObj);
             const newValue = searchDataObj[newKey];
-        
+
             //existed key in object
-            const currentKey = Object.keys(search_obj);
+            const currentKeys = Object.keys(search_obj);
 
             //Ensure if we click on same Sort (example AgeUp) then replace this sort with default "ASC"
-            if(currentKey == 'sort'){
+            if(currentKeys.includes('sort')){
                 //curent sort ecual as new click sort
                 //example obj[currentKey] = 'AgeUp' and newValue ='AgeUp'
-                if(search_obj[currentKey] == newValue){
-                    search_obj[currentKey] = 'ASC';
+                if(search_obj['sort'] == newValue){
+                    search_obj['sort'] = 'ASC';
+                    localStorage.setItem('searchedData', JSON.stringify(search_obj));
                     return search_obj
                 }
             }
@@ -138,22 +195,23 @@ const useClient = (user) =>{
                     delete search_obj.name;
                     return search_obj;
                 } 
-                
             }
 
-            console.log("OBJ BEFORE: " + JSON.stringify(search_obj))
             search_obj[newKey] = newValue; //add or update key with value
-            console.log("OBJ AFTER: " + JSON.stringify(search_obj))
-            
+            localStorage.setItem('searchedData', JSON.stringify(search_obj));
             return search_obj;
         })
+        pageNumberRef.current = 0;
 
     }
 
     const filterDataHandler = (filterData) =>{
         //filteredData is passed data from Children Component (Filter)
         console.log("FILTERS IN PARRANET" + JSON.stringify(filterData));
+        pageNumberRef.current = 0;
         setFilterData(filterData);
+
+        localStorage.setItem('filteredData', JSON.stringify(filterData));
     }
 
     const onShowRecommended = ()=>{

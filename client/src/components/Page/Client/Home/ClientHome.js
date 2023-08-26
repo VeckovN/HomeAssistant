@@ -15,6 +15,8 @@ const ClientHome = ({socket}) =>{
     const {user} = useSelector((state) => state.auth)
     const {data, recommended, showRecommended, onShowRecommended, searchDataHanlder, filterDataHandler } = useClient(user);
 
+    // console.log("DATAAAAAAAAAA :" + JSON.stringify(data));
+
     //RECOMMENDED USERS
     let recommendedList;
     {recommended ? 

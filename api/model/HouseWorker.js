@@ -129,8 +129,34 @@ const checkFilterHouseworkerInCache = async (filters)=>{
 const findAllWithFilters = async(filters)=>{
     //all possible filterData
     const session = driver.session();
+    
+    //-----------This is only when is scroll triggerted----------
+    //using Limit and skip CLAUSES in neo4j
+    //Limit is same as itemsPerPage (limit = itemsPerPage)
+    //skipCount = pageNumber * itemsPerPage
+
+    //inital pageNumber = 0 limit = 10 SKIP = (0 * 10 = 0) don't skip (show all that limit said) LIMIT = itemsPerPage(10)  --> from 0 to 10(10 isn't included)
+    //second pageNubmer = 1 limit = 10 SKIP = (1* 10 = 10) that means skip first 10(0-9) -> go with index 10  LIMIT = itemsPerPage(10) ---> and return 10 new (start index:10 + 10new (10-19) index is returned)
+    //thirtd pageNumber = 2 limit = 10 SKIP = (2* 20 = 20) skip first 20 (0-19) -> go with index 20 LIMIT = itemsPerpage(10) => start index is:20 + 10 new that means (data with index of 20,21,22,23,24,25,26,27,28,29) is returned
+
+    //but with Skip and Limit that take 0 - and 9 index as count of 10 -> we don't need this ItemsPerPage -1 
+
+    //neo4j query should looks 
+    // MATCH (n:User)-[:IS_HOUSEWORKER]->(h:HouseWorker)
+    // MATCH (n)-[:LIVES_IN]->(c:City)
+    // MATCH (n)-[:GENDER]->(g:Gender)
+    // MATCH (h)-[o:OFFERS]->(p:Profession)
+    // WHERE c.name = 'Nis' AND g.type = 'Male' AND p.title IN ["Cistac"]
+    // RETURN n, h, c.name, g.type
+    // SKIP $skipCount // This value will be calculated based on the page number and items per page
+    // LIMIT $limitCount // This value represents the number of items per page
+        
+    //CHALLANGE how to manage catched REDIS data()    
+        
     const {
         limit = 10, //default value 10 (if isn't seted)
+        itemsPerPage = 2,
+        pageNumber,
         sort = 'ASC',
         city,
         gender, 
@@ -170,6 +196,11 @@ const findAllWithFilters = async(filters)=>{
         var where ='WHERE ';
         var With='WITH n,h,c,g ';
         var age = false;
+        var skipCount = pageNumber * itemsPerPage;
+
+        console.log("PAGE Number " + pageNumber)
+        console.log("ITEMS PER PAGE" + itemsPerPage);
+
         
         console.log("AGEEEEEEEEEEEEEEEEEEEE " + age);
 
@@ -293,7 +324,11 @@ const findAllWithFilters = async(filters)=>{
         queryNeo4j+=orderBy;
         queryNeo4j+=returnQ;
         // queryNeo4j+=orderBy;
-        queryNeo4j+=`LIMIT ${limit}`
+        // queryNeo4j+=`LIMIT ${limit}`
+
+        // //Infinity Scroll (SKIP AND LIMIT clausules)
+        queryNeo4j+=`SKIP ${skipCount} \n`
+        queryNeo4j+=`LIMIT ${itemsPerPage}`
 
         console.log("QUERY: \n" +  queryNeo4j + "\n");
         console.log("PARAMS1: " + city + '/ ' + gender + '/' + searchName);
@@ -313,10 +348,10 @@ const findAllWithFilters = async(filters)=>{
             return userInfo;
         })
 
-        //STORE(CATCH) FILTERED HOYUSEWORKER IN REDIS 
+        // //STORE(CATCH) FILTERED HOYUSEWORKER IN REDIS 
         await set(JSON.stringify(filters), JSON.stringify(houseworkers))
         await expire(JSON.stringify(filters), 10*60);
-        //with TTL 10 min
+        // //with TTL 10 min
         
         session.close();
         return houseworkers;
