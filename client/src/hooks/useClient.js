@@ -224,7 +224,7 @@ const useClient = (user) =>{
             })
     }
 
-    return {data, recommended, showRecommended, onShowRecommended, searchDataHanlder, filterDataHandler}
+    return {data, pageNumberRef, recommended, showRecommended, onShowRecommended, searchDataHanlder, filterDataHandler}
 }
 
 export default useClient;

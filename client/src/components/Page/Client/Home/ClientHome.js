@@ -1,3 +1,4 @@
+import {useState, useEffect} from 'react'
 import useClient from '../../../../hooks/useClient.js';
 import HouseworkerCard from './HouseworkerCard/HouseworkerCard.js'
 import Filter from './Filter/Filter.js';
@@ -12,10 +13,34 @@ const ClientHome = ({socket}) =>{
     //LIMIT IF IS GUEST 
     console.log("SOCKET " + socket);
 
+    const [showButton ,setShowButton] = useState(false);
     const {user} = useSelector((state) => state.auth)
     const {data, recommended, showRecommended, onShowRecommended, searchDataHanlder, filterDataHandler } = useClient(user);
 
-    // console.log("DATAAAAAAAAAA :" + JSON.stringify(data));
+
+    useEffect(()=>{
+        window.addEventListener('scroll', handleScroll);
+
+        return () =>{
+            window.removeEventListener('scroll', handleScroll);
+        }
+    }, []);
+
+    //event listener for showing button when is Y: +100px view
+    const handleScroll = () =>{
+        if(window.scrollY >= 1000)
+            setShowButton(true);
+        else
+            setShowButton(false)
+    }
+    
+    const scrollToTop = () =>{
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+    }
+
 
     //RECOMMENDED USERS
     let recommendedList;
@@ -89,6 +114,12 @@ const ClientHome = ({socket}) =>{
                         {houseworkerList.length > 0 ? houseworkerList : <h3>No Matches</h3> }
                     </div>
                 </div>
+
+                {showButton && 
+                    <div className='scroll_div'>
+                        <button className='scroll_to_top' onClick={scrollToTop}>Scroll To Top</button>
+                    </div>
+                }
         </div>
     )
     
