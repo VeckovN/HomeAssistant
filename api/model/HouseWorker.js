@@ -483,14 +483,16 @@ const getComments = async(username)=>{
         MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(m)
         MATCH(c:Comment)-[:BELONGS_TO]->(m)
         MATCH(c)<-[:COMMENTED]-(t)
-        RETURN c.context, t.username`,
+        RETURN ID(c) AS commentID, c.context, t.username`,
     {houseworker:username}
     )
     //{Comment:context, From:'clientUsername'}
     const comments = result.records.map(rec=>{
-        let commentProp = rec.get(0);
-        let clientProp = rec.get(1);
-        return {comment:commentProp, from:clientProp}
+        let id = rec.get(0);
+        let comment_id_integer = id.low + id.high;
+        let commentProp = rec.get(1);
+        let clientProp = rec.get(2);
+        return {commentID:comment_id_integer, comment:commentProp, from:clientProp}
     }) 
     session.close();
     return comments;
