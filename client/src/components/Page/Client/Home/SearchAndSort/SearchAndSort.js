@@ -28,11 +28,11 @@ const SearchAndSort = (prop) => {
 
     return (
         <>
-            <div class='search-box'>
-                <div class='input-search'>
-                    <div class='box_s'>
+            <div className='search-box'>
+                <div className='input-search'>
+                    <div className='box_s'>
                     <input 
-                        class='search' 
+                        className='search' 
                         type='text' 
                         value={searchName}
                         placeholder='Search houseworker (Enter username)'
@@ -42,18 +42,18 @@ const SearchAndSort = (prop) => {
                     </div>
                 </div>
 
-                <div class='sort'>
-                    <div class="sort-box">
-                        <button class='sort-1' value="AgeUp" onClick={e => selectSortHandler(e.target.value)}>Age 🠑
+                <div className='sort'>
+                    <div className="sort-box">
+                        <button className='sort-1' value="AgeUp" onClick={e => selectSortHandler(e.target.value)}>Age 🠑
                         </button>
 
-                        <button class='sort-2' value="AgeDown" onClick={e => selectSortHandler(e.target.value)}>Age 🠓
+                        <button className='sort-2' value="AgeDown" onClick={e => selectSortHandler(e.target.value)}>Age 🠓
                         </button>
 
-                        <button class='sort-3' value="RatingUp" onClick={e => selectSortHandler(e.target.value)}>Rating 🠑
+                        <button className='sort-3' value="RatingUp" onClick={e => selectSortHandler(e.target.value)}>Rating 🠑
                         </button>
 
-                        <button class='sort-4' value="RatingDown" onClick={e => selectSortHandler(e.target.value)}>Rating 🠓
+                        <button className='sort-4' value="RatingDown" onClick={e => selectSortHandler(e.target.value)}>Rating 🠓
                         </button>
                     </div>
                 </div>
