@@ -12,10 +12,12 @@ const HouseworkerCommentModal = ({comments, onCommentSubmit, postCommentRef, onC
             {comments ?
                 comments.map(comm => (
                     <CommentItem
+                        key={comm.commentID}
                         from={comm.from}
                         comment={comm.comment}
                     />
-                ))
+                )
+                )
                 : <div className='no_commentsModal'>Client doesn't have comments</div>
             }
             <div className='comment_input'>
