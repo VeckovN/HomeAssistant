@@ -30,13 +30,13 @@ const Header = () =>{
     
 
   return (
-    <nav class = "navbar">
-        <div class = "logo" >
-            <a href="/" class="logo-a">
-                Home <span class="logo-span">Assistant</span>
+    <nav className = "navbar">
+        <div className = "logo" >
+            <a href="/" className="logo-a">
+                Home <span className="logo-span">Assistant</span>
             </a>
         </div>
-        <div class="nav-list">
+        <div className="nav-list">
             {/* unAuthenticated users */}
             {!user ? (
                         <>
