@@ -41,7 +41,7 @@ const HouseworkerCardContent = ({
                         {/* <img clasName="image">IMG FROM DB</img> */}
                         {/* <img src={profilePicture}></img> */}
                         <img className='' src={`assets/userImages/${HouseworkerProps.picturePath}`}/>
-                        {/* <p1>{HouseworkerProps.picturePath}</p1> */}
+                        {/* <p>{HouseworkerProps.picturePath}</p> */}
                         {/* <img src={`data:image/jpeg;base64, ${HouseworkerProps.picturePath}`}></img> */}
                     </div>
 
@@ -103,7 +103,7 @@ const HouseworkerCardContent = ({
                             </div>
                                         
                             <div className='description-box'>
-                                <div className='div-text-desc'><p1>{isClient ? HouseworkerProps.description : <b>Log in</b>}</p1>
+                                <div className='div-text-desc'><p>{isClient ? HouseworkerProps.description : <b>Log in</b>}</p>
                                 </div>
                             </div>
 
@@ -112,7 +112,7 @@ const HouseworkerCardContent = ({
                             </div>
 
                             <div className='rating-box'>
-                                <div className='div-text-rating'><p1>{isClient ? parseFloat(rating).toFixed(1) : <b>Login</b>}</p1>
+                                <div className='div-text-rating'><p>{isClient ? parseFloat(rating).toFixed(1) : <b>Login</b>}</p>
                                 </div>
                                 <div className='rating-field'>
                                     {showRateInput && 
