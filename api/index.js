@@ -177,7 +177,7 @@ server.listen(5000, ()=>{
             //io.emit('commentResponseNotify', data);
         })
     
-        // socket.on("message", async(messageObj)=>{    
+        //store message from front to back-end(redis) 
         socket.on("message", async(messageObj)=>{ 
             const parsedObj = JSON.parse(messageObj);
             const { message, from, roomID} = parsedObj;
