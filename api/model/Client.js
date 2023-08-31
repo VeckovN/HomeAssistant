@@ -1,6 +1,7 @@
 const { response } = require('express');
 const {session,driver} = require('../db/neo4j');
 const { use } = require('../routes/clients');
+const { set, get, expire } = require('../db/redis');
 
 //When is important to return all properties of Node
 //we can return whole node with RETURN node and return records[0].get(0).properties
@@ -395,37 +396,58 @@ const interestedProfessions = async(professions)=>{
     // ORDER BY add desc
     // LIMIT 5
 }
+ 
+const checkRecommendedInCache = async(username) =>{
+    const data = await get("recommended:" + username);
+    if(data){
+        const dataObj = JSON.parse(data);
+        return dataObj
+    }
+    else
+        return null
+}
+
 
 const recomendedByCityAndInterest = async(username,city) =>{
     const session = driver.session();
 
-    const result = await session.run(`
-        MATCH(h:HouseWorker)-[:OFFERS]->(o:Profession)
-        MATCH(uu:User)-[:IS_CLIENT]->(c:Client)-[:INTEREST]->(o)
-        MATCH(h)<-[:IS_HOUSEWORKER]-(u:User)-[:LIVES_IN]->(l:City)
-        MATCH(u)-[:GENDER]->(g:Gender)
-        WHERE uu.username = $username and l.name = $city
-        RETURN u, h, l.name, g.type, rand() as rand
-        ORDER BY rand ASC
-        LIMIT 3
-    `,{username:username, city:city}
-    )
-    
-    const houseworkers = result.records.map(el =>{
-        let userInfo = {};
-        const userNode = el.get(0).properties;
-        const housworkerNode = el.get(1).properties;
-        userInfo ={...userNode, ...housworkerNode}
-        //gotted id{"low":0,"high":0} it MUST parse to INT
-        userInfo.city = el.get(2);
-        userInfo.gender =el.get(3); 
-        //console.log("USER INFOOOO : " + JSON.stringify(userInfo));
+    const catchedData = await checkRecommendedInCache(username);
 
-        return userInfo;
-    })
+    if(catchedData == null) {
+        const result = await session.run(`
+            MATCH(h:HouseWorker)-[:OFFERS]->(o:Profession)
+            MATCH(uu:User)-[:IS_CLIENT]->(c:Client)-[:INTEREST]->(o)
+            MATCH(h)<-[:IS_HOUSEWORKER]-(u:User)-[:LIVES_IN]->(l:City)
+            MATCH(u)-[:GENDER]->(g:Gender)
+            WHERE uu.username = $username and l.name = $city
+            RETURN u, h, l.name, g.type, rand() as rand
+            ORDER BY rand ASC
+            LIMIT 3
+            `,{username:username, city:city}
+        )
+
+        const houseworkers = result.records.map(el =>{
+            let userInfo = {};
+            const userNode = el.get(0).properties;
+            const housworkerNode = el.get(1).properties;
+            userInfo ={...userNode, ...housworkerNode}
+            //gotted id{"low":0,"high":0} it MUST parse to INT
+            userInfo.city = el.get(2);
+            userInfo.gender =el.get(3); 
+            //console.log("USER INFOOOO : " + JSON.stringify(userInfo));
+            return userInfo;
+        })
+
+        await set("recommended:" + username, JSON.stringify(houseworkers))
+        await expire("recommended:" + username, 10*60);
+
+        return houseworkers;
+    }
+    else{
+        return catchedData;
+    }
 
     session.close();
-    return houseworkers;
 }
 
 module.exports ={
