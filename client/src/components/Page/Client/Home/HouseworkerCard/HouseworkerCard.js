@@ -7,7 +7,7 @@ import useHouseworkerRating from '../../../../../hooks/Houseworker/useHouseworke
 import useHouseworkerContact from '../../../../../hooks/Houseworker/useHouseworkerContact.js';
 
 import './HouseworkerCard.css'
-import {getRating, getProfessions} from '../../../../../services/houseworker.js'
+import {getRating, getProfessionsByUsername} from '../../../../../services/houseworker.js'
 
 axios.defaults.withCredentials = true
 
@@ -62,7 +62,8 @@ const HouseworkersCard = (props) =>{
     } 
 
     const fetchProfessions = async() =>{
-        const professionsArray = await getProfessions(props.username);
+        // const professionsArray = await getProfessions(props.username);
+        const professionsArray = await getProfessionsByUsername(props.username);
         setProfessions(professionsArray);
     }
 

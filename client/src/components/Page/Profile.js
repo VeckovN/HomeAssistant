@@ -10,7 +10,7 @@ const Profile = () =>{
     var client;
     if(user)
         client = user.type === 'Client' ? true : false;
-
+    
     return (
         <>
             {client ? <ClientProfile/> : <HouseworkerProfile/> }

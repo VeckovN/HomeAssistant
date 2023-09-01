@@ -2,12 +2,33 @@ import axios from 'axios';
 import Select from 'react-select';
 import { city_options } from '../../../../utils/options';
 
-const HouseworkerProfileForm = ({updatedData, houseworkerData, onSubmitUpdate, onChange, onChangeCity  }) =>{
+const HouseworkerProfileForm = ({updatedData, houseworkerData, profession_options, onSubmitUpdate, onChange, onChangeProfession, onChangeCity  }) =>{
     return(
         <div className='profile_container'>
                 <h1>Houseworker Profile</h1>
+
                 <form className='profile_form' onSubmit={onSubmitUpdate}>
-                    {/* left side */}
+                    <div className ='professions'>
+                        <label>Professions</label>
+                            <Select 
+                                className='dropdown'
+                                placeholder="Select a profession"
+                                options={profession_options}
+                                onChange={onChangeProfession}
+                                isClearable
+                            />
+                            {updatedData.profession && updatedData.profession != " " &&
+                                <div className="working_hour">  
+                                    <input 
+                                        className='input_field'
+                                        type='number'
+                                        name='working_hour'
+                                        placeholder='Enter working hour' 
+                                        onChange={onChange}
+                                    />
+                                </div>}
+                    </div>
+
                     <div className='input-label-form'>
                         <div className='profile_input-container'>
                             <label>First name: <b>{houseworkerData.first_name}</b></label>
@@ -108,8 +129,6 @@ const HouseworkerProfileForm = ({updatedData, houseworkerData, onSubmitUpdate, o
                             <Select 
                                 className='dropdown'
                                 placeholder="Select a city"
-                                //Value for each option (in options object take key:Value )
-                                // value={options.filter(obj => )}
                                 options={city_options}
                                 onChange={onChangeCity}
                                 isClearable

@@ -576,6 +576,27 @@ const addProfession = async(username,profession, working_hour)=>{
     // return {profession:records[0].get(0), working_hour:records[0].get(1)}
 }
 
+const updateWorkingHour = async(username, profession, working_hour)=>{
+    const session = driver.session();
+    console.log("USERNAME: " + username);
+    console.log("PROFESSION: " + profession);
+    console.log("WORKING_H " + working_hour);
+    const result = await session.run(`
+        MATCH (n:User {username: $houseworker})-[:IS_HOUSEWORKER]->(m)
+        MATCH (p:Profession {title: $profession})
+        MATCH (m)-[r:OFFERS]->(p)
+        SET r.working_hour = $hour
+        RETURN p.title, r.working_hour`,
+    {houseworker:username, profession:profession, hour:working_hour}
+    )
+
+    session.close()
+    return {profession:result.records[0].get(0) , working_hour:result.records[0].get(1)}
+
+    //title of added profession
+    // return result.records[0].get(0).properties.title;
+}
+
 
 //creating Houseworker without professions
 const create = async(houseworkerObject)=>{
@@ -766,6 +787,7 @@ module.exports ={
     getComments,
     getProfessions,
     addProfession,
+    updateWorkingHour,
     update,
     updateCity,
     updateGender,

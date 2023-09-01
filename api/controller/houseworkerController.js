@@ -161,8 +161,21 @@ const getHouseworkerCommentsCount = async(req,res)=>{
 
 const getProfessions = async(req,res)=>{
     try{
+        //const username = req.params.username;
+        const username = req.session.user.username;
+        const result = await houseworkerModel.getProfessions(username);
+        res.json(result);
+    }
+    catch(err){
+        console.log("ERROR GetHouseworkers: " + err);
+        res.status(404).json({error:'Professions error'});
+    }
+}
+
+//username passed through put method
+const getProfessionsByUsername = async(req,res)=>{
+    try{
         const username = req.params.username;
-        // const username = req.session.user.username;
         const result = await houseworkerModel.getProfessions(username);
         res.json(result);
     }
@@ -195,17 +208,8 @@ const udpateHouseworker = async(req,res)=>{
         if(newData.password)
             newData.password = bcrypt.hashSync(newData.password, 12);
 
-        //desstructuring - address, phone_number and description belogn to Houseworker Node
-        //but all the others belong to User Node
         const {address, phone_number, description, city, professions, ...newUserInfo} = newData;
-
         const newHouseworkerInfo = {address, phone_number, description};
-
-        console.log("USERNAME: " + username );
-        console.log("NewUserInfo: " + JSON.stringify(newUserInfo))
-        console.log("NewHouseworkerInfo " + JSON.stringify(newHouseworkerInfo));
-        console.log("CITY: " + city);
-
         await houseworkerModel.update(username, newUserInfo, newHouseworkerInfo);
         
         if(city)
@@ -214,7 +218,6 @@ const udpateHouseworker = async(req,res)=>{
         // if(professions){
         //     await houseworkerModel.updateProfessions(username,professions);
         // }
-
         res.send("Successfuly updated!!!");
     }
     catch(err){
@@ -237,6 +240,23 @@ const updatePassword = async(req,res)=>{
     }
 }
 
+const updateProfessionWorkingHour = async(req,res)=>{
+    try{
+        const username = req.session.user.username;
+        const profession = req.body.profession;
+        const working_hour = req.body.working_hour;
+
+        console.log("USER: " + username + " \n PROFESSION: " + profession + " \n WORKING_HOUR: " + working_hour)
+        // const result = await houseworkerModel.updateWorkingHour(profession, working_hour);
+        const result = await houseworkerModel.updateWorkingHour(username, profession, working_hour);
+        res.status(200).json(result);
+    }
+    catch(err){
+        console.log("Error updateProfessionWorkingHour: " + err);
+        res.status(500).json({error:`Working hour update error`});
+    }
+}
+
 
 module.exports ={
     getHouseworkerByUsername,
@@ -246,8 +266,10 @@ module.exports ={
     getComments,
     getOurComments,
     getProfessions,
+    getProfessionsByUsername,
     addProfession,
     udpateHouseworker,
+    updateProfessionWorkingHour,
     getHouseworkerWithFilters,
     getRatingUsername,
     getCities,

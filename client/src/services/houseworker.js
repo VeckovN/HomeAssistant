@@ -37,6 +37,15 @@ export const updateHouseworker = async(newData) =>{
     }
 }
 
+export const updateProfessionWorkingHour = async(profession, working_hour) =>{
+    try{
+        await axios.put( BASE_URL + `houseworker/professions/update/`, {profession, working_hour});
+    }
+    catch(err){
+        throw new Error(err);
+    }
+}
+
 //user of authenticated user(username taken from  session data)
 export const getAuthenticatedUserComments = async() =>{
     try{
@@ -103,11 +112,24 @@ export const getRating = async(username) =>{
     }
 }
 
-//get all professions of the user with the given username
-export const getProfessions = async(username)=>{
+//get all professions of the user(based on session.user ) 
+export const getProfessions = async()=>{
+    try{
+        // const result = await axios.get(BASE_URL + `houseworker/professions/${username}`)
+        const result = await axios.get(BASE_URL + `houseworker/professions/`)
+        const professionsArray = result.data; 
+        return professionsArray;
+    }
+    catch(err){
+        console.log(err)
+        throw new Error(err);
+    }
+}
+
+export const getProfessionsByUsername = async(username)=>{
     try{
         const result = await axios.get(BASE_URL + `houseworker/professions/${username}`)
-        const professionsArray = result.data; //[{profession, rec.get(1)}]
+        const professionsArray = result.data; 
         return professionsArray;
     }
     catch(err){

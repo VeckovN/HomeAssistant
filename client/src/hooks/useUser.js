@@ -38,6 +38,27 @@ const useUser =(initialState)=>{
         ))
     }
 
+    //update profession on houseowrker 
+    const onChangeHouseworkerProfession = (e) =>{
+        //x button is clicked
+        if(e !== null){
+            setData(prev =>(
+                {
+                    ...prev,
+                    ["profession"]:e.value
+                }
+            ))
+        }
+        else{
+            setData(prev =>(
+                {
+                    ...prev,
+                    ["profession"]:" "
+                }
+            ))
+        }
+    }
+
 
     //Only for Client users
     const onChangeProffesions = (e) =>{
@@ -80,7 +101,7 @@ const useUser =(initialState)=>{
     }
 
 
-    return {data, onChange, onChangeHouseworker, onImageChange, onChangeCity, onChangeProffesions, onChangeInterest}
+    return {data, onChange, onChangeHouseworker, onImageChange, onChangeHouseworkerProfession, onChangeCity, onChangeProffesions, onChangeInterest}
 
 }
 
