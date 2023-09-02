@@ -633,11 +633,7 @@ const create = async(houseworkerObject)=>{
     //     description:"Ambicious, Hardworker",
     //     phone_number
 
-
-
-    console.log("TSWWWWWW1")
-    const {id, username, email, password, first_name, last_name, picturePath, address, description, city, gender, age, phone_number,professions } = houseworkerObject;
-    
+    const {id, username, email, password, first_name, last_name, picturePath, address, description, city, gender, age, phone_number,professions, houseworker_professions} = houseworkerObject;
     console.log("TSWWWWWW2")
     //WITH Clause is necessary between Create and Other part of query(Create Gender and City)
     const result = await session.run(`
@@ -673,19 +669,11 @@ const create = async(houseworkerObject)=>{
     ,{id:id ,username:username, email:email, password:password, first_name:first_name, last_name:last_name, picturePath:picturePath, address:address, description:description ,city:city, gender:gender, age:age, phone_number:phone_number}
     )
 
-    console.log("TSWWWWWW3")
-    //add Professions to user
-    //convert string to array (professions)
-    const professionsArray = professions.split(',');
-    console.log("PROFESSIONS: " + professions);
-    console.log("PROFESSIONSArray: " + JSON.stringify(professionsArray));
-    console.log("PROF: TYPEOF: " + typeof(professions));
-    console.log("PROF: TYPEOF ARRRAY: " + typeof(professionsArray));
-    //add professions
-    professionsArray.forEach(profession => {
-        console.log("PT: " + profession); 
-        addProfession(username, profession, "300");
-    });
+    const professionsArray = JSON.parse(houseworker_professions);
+    professionsArray.forEach(profession =>{
+        console.log("PROF: " + profession.label + " Working_hour: " + profession.working_hour + '\n');
+        addProfession(username, profession.label, profession.working_hour)
+    })
 
     const user = result.records[0].get(0).properties;
     const userGender = result.records[0].get(1);
@@ -695,7 +683,6 @@ const create = async(houseworkerObject)=>{
     return {
         user, gender:userGender, city:userCity
     }
-
 }
 
 //UNFINISHED
