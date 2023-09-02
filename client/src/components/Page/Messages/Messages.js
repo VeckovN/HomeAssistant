@@ -47,6 +47,8 @@ const Messages = ({socket,connected}) =>{
         const fetchAllRooms = async () =>{    
             const data = await getUserRooms(user.username);
             dispatch({type:"SET_ROOMS", data:data})
+
+            console.log('DATA ROOMS : \n' + JSON.stringify(data));
         }
 
         const getAllHouseworkers = async() =>{
@@ -76,6 +78,8 @@ const Messages = ({socket,connected}) =>{
             //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
             const messages = await getMessagesByRoomID(roomID)
             dispatch({type:"SET_ROOM_MESSAGES", data:messages})
+
+            console.log("ROOMM MESSAGES: \n " + JSON.stringify(messages));
 
         }
     
