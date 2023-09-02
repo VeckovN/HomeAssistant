@@ -18,7 +18,7 @@ const HouseworkerProfileForm = ({updatedData, houseworkerData, profession_option
                                 isClearable
                             />
                             {updatedData.profession && updatedData.profession != " " &&
-                                <div className="working_hour">  
+                                <div className='profile_input-container'> 
                                     <input 
                                         className='input_field'
                                         type='number'

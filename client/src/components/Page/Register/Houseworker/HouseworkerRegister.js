@@ -26,9 +26,11 @@ const HouseworkerRegister = () =>{
         description:'',
         phone_number:'',
         professions:[],
+        houseworker_professions:[]  //[{label:"Cleaner" , working_hour:320} , { } , { }]
+        
     }
     
-    const {data, onChangeHouseworker, onChangeCity, onImageChange, onChangeProffesions} = useUser(initialState);
+    const {data, onChangeHouseworker, onChangeHouseworkerProfessions, onChangeCity, onImageChange, onChangeProffesions} = useUser(initialState);
     const { password, passwordRepeat} = data;
     
     const navigate = useNavigate();
@@ -65,7 +67,12 @@ const HouseworkerRegister = () =>{
             for(const key in data){
                 console.log("DATA: " + JSON.stringify(data))
                 console.log(`${key}: ${data[key]}`)
-                formData.append(key, data[key]);         
+
+                if(key === 'houseworker_professions'){
+                    formData.append(key, JSON.stringify(data[key]))
+                }
+                else
+                    formData.append(key, data[key]);         
             }
             formData.append('type', 'Houseworker');
             dispatch(register(formData));
@@ -82,6 +89,7 @@ const HouseworkerRegister = () =>{
             onChangeCity={onChangeCity}
             onImageChange={onImageChange}
             onChangeProffesions={onChangeProffesions}
+            onChangeHouseworkerProfessions={onChangeHouseworkerProfessions}
         />
     )
 

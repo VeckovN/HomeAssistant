@@ -1,9 +1,11 @@
+import { update } from 'lodash';
 import {useState, useEffect} from 'react'
 
 //This handlers are repated in differt components
 const useUser =(initialState)=>{
 
     const [data, setData] = useState(initialState);
+    
 
     const onChange = (event) =>{
         const name = event.target.name;
@@ -72,6 +74,36 @@ const useUser =(initialState)=>{
         ))
     }
 
+    const onChangeHouseworkerProfessions = (e) =>{
+        const { name, value } = e.target;
+    
+        setData((prev) =>{
+            const updatedArray = [...prev.houseworker_professions]
+            //find the indef of object whihch the same label
+            const existingObjectIndex = updatedArray.findIndex( item => item.label === name)
+
+            if(value === "")
+            {
+                if(existingObjectIndex !== -1){
+                    //remove object wiht index existingObjectIndex , for 1 element
+                    updatedArray.splice(existingObjectIndex, 1); 
+                }
+            }
+            else{
+                if(existingObjectIndex !== -1)
+                    updatedArray[existingObjectIndex].working_hour = value;
+                else //there is new object(with new label)
+                    updatedArray.push({label:name, working_hour:value});
+            }
+
+            return{
+                ...prev,
+                houseworker_professions: updatedArray
+            }
+        })
+
+
+    }
 
     //Only for Houseworker users
     const onChangeHouseworker = (event) =>{
@@ -101,7 +133,7 @@ const useUser =(initialState)=>{
     }
 
 
-    return {data, onChange, onChangeHouseworker, onImageChange, onChangeHouseworkerProfession, onChangeCity, onChangeProffesions, onChangeInterest}
+    return {data, onChange, onChangeHouseworker, onChangeHouseworkerProfessions, onImageChange, onChangeHouseworkerProfession, onChangeCity, onChangeProffesions, onChangeInterest}
 
 }
 

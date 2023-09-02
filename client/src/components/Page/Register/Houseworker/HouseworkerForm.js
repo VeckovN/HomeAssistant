@@ -1,6 +1,6 @@
 import Select from 'react-select';
 
-const HouseworkerForm = ({data, profession_options, city_options, onSubmit, onChange, onChangeCity, onImageChange, onChangeProffesions}) =>{
+const HouseworkerForm = ({data, profession_options, city_options, onSubmit, onChange, onChangeCity, onImageChange, onChangeProffesions, onChangeHouseworkerProfessions}) =>{
 
     return (
         <div className='register_container'>
@@ -122,7 +122,7 @@ const HouseworkerForm = ({data, profession_options, city_options, onSubmit, onCh
 
                     <label className='label_input'>Profile picture</label>
                     <div className='form-group form-group-image'>
-                        <input type="file" onChange={onImageChange}  class='inputFile' name="picture" />
+                        <input type="file" onChange={onImageChange}  className='inputFile' name="picture" />
                     </div>
 
                     <br/>
@@ -134,7 +134,24 @@ const HouseworkerForm = ({data, profession_options, city_options, onSubmit, onCh
                         isMulti
                         isClearable
                     />
+                    
+                    {  //list profession
+                        data.professions.map((el,index) => (
+                        <div key={index}>
+                            <label><b>{el}</b></label>
+                            <input 
+                                className='input_field'
+                                type='number'
+                                name={el} //selected profession
+                                // value //entered value
+                                placeholder={`Enter ${el} working hour`} 
+                                onChange={onChangeHouseworkerProfessions}
+                            />
+                        </div>    
+                        ))
+                    }
                     <br/>
+                    
 
                     <label className='label_input'>Description</label>
                     <textarea onChange={onChange} rows="5" cols="20" className="descriptionBox"  name="description"></textarea>
