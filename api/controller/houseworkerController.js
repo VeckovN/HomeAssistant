@@ -187,11 +187,12 @@ const getProfessionsByUsername = async(req,res)=>{
 
 const addProfession = async(req,res)=>{
     // const houseworkerUsername = "Sara"
+    const username = req.session.user.username;
     const profession = req.body.profession;
     const working_hour = req.body.working_hour;
 
     try{
-        const result = await houseworkerModel.addProfession(profession, working_hour);
+        const result = await houseworkerModel.addProfession(username, profession, working_hour);
         res.json(result);
     }
     catch(err){

@@ -1,19 +1,24 @@
 import axios from 'axios';
 import Select from 'react-select';
-import { city_options } from '../../../../utils/options';
+import { city_options, profession_options } from '../../../../utils/options';
+import { update } from 'lodash';
 
-const HouseworkerProfileForm = ({updatedData, houseworkerData, profession_options, onSubmitUpdate, onChange, onChangeProfession, onChangeCity  }) =>{
+const HouseworkerProfileForm = ({updatedData, houseworkerData, onChangeProffesions, onChangeHouseworkerProfessions, onSubmitUpdate, onChange, onChangeProfession, onChangeCity, onAddProfessionHandler  }) =>{
+    
+    console.log("PROFESSION UPDATED STATE: " + JSON.stringify(updatedData) + "\n")
     return(
         <div className='profile_container'>
                 <h1>Houseworker Profile</h1>
 
                 <form className='profile_form' onSubmit={onSubmitUpdate}>
                     <div className ='professions'>
+                        <div className="profession_changing">
                         <label>Professions</label>
                             <Select 
                                 className='dropdown'
                                 placeholder="Select a profession"
-                                options={profession_options}
+                                // options={profession_options}
+                                options={houseworkerData.professions}
                                 onChange={onChangeProfession}
                                 isClearable
                             />
@@ -27,6 +32,43 @@ const HouseworkerProfileForm = ({updatedData, houseworkerData, profession_option
                                         onChange={onChange}
                                     />
                                 </div>}
+                        </div>
+                        <div className='profession_adding'>
+                            <label>Add Profession</label>
+                            <Select 
+                                className='dropdown'
+                                placeholder="Select a profession"
+                                // options={profession_options}
+                                options={houseworkerData.not_owned_professions}
+                                onChange={onChangeProffesions}
+                                isClearable
+                                isMulti
+                            />
+                            {  //list profession
+                                updatedData.professions.map((el,index) => (
+                                <div key={index}>
+                                    <label><b>{el}</b></label>
+                                    <input 
+                                        className='input_field'
+                                        type='number'
+                                        name={el} //selected profession
+                                        // value //entered value
+                                        placeholder={`Enter ${el} working hour`} 
+                                        onChange={onChangeHouseworkerProfessions}
+                                    />
+                                </div>    
+                                ))
+
+                            }
+                            {
+                                updatedData.houseworker_professions.length >0 && 
+                                    <div className='profession_add_button'>
+                                        <button onClick={onAddProfessionHandler}> Add</button>
+                                    </div>
+                            }
+
+                        </div>
+                        
                     </div>
 
                     <div className='input-label-form'>

@@ -1,8 +1,9 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useCallback, useMemo} from 'react';
 import {toast} from 'react-toastify';
 import useUser from '../../../../hooks/useUser';
 import HouseworkerProfileForm from './HouseworkerProfileForm';
-import {getUserData, getProfessions, updateHouseworker, updateProfessionWorkingHour} from '../../../../services/houseworker.js';
+import {profession_options} from '../../../../utils/options';
+import {getUserData, getProfessions, addProfession, updateHouseworker, updateProfessionWorkingHour} from '../../../../services/houseworker.js';
 
 import '../../../Page/Profile.css';
 
@@ -18,11 +19,13 @@ const HouseworkerProfile = () =>{//or prop.username
         phone_number:'',
         profession:'', //selected profession from select
         working_hour:'',
+        professions:[], //houseowrker professions
+        not_owned_professions:[],
+        houseworker_professions:[] //adding new profession
     }
 
-    const {data:updatedData, onChange, onChangeHouseworkerProfession, onChangeCity} = useUser(initialState)
+    const {data:updatedData, onChange, onChangeHouseworkerProfession, onChangeHouseworkerProfessions, onChangeProffesions, onChangeCity} = useUser(initialState)
     const [houseworkerData, setHouseworkerData] = useState({})
-    const [professionOptions, setProfessionOptions] = useState([]);
 
     useEffect(()=>{
         fetchData();
@@ -30,12 +33,18 @@ const HouseworkerProfile = () =>{//or prop.username
 
     const fetchData = async() =>{
         const houseworkerResult = await getUserData();
-        const professions = await getProfessions();
-        const profession_options = professions?.map(el =>({value: el.profession, label: el.profession + " " + el.working_hour +'din'}))
+        const houseworker_professions = await getProfessions(); //from users
 
-        setProfessionOptions(profession_options);
-        setHouseworkerData(houseworkerResult);
+        const profession_format = houseworker_professions?.map(el =>({value: el.profession, label: el.profession + " " + el.working_hour +'din'}))
+        const notProfessions = profession_options.filter((option) =>{
+            //return only not same object
+            return !profession_format.some((mine) => mine.value === option.value)
+        })
+        const newHouseworker = {...houseworkerResult, professions:[...profession_format], not_owned_professions:[...notProfessions]}
+        
+        setHouseworkerData(newHouseworker);
     }
+
 
 
     const onSubmitUpdate = async (e)=>{
@@ -72,13 +81,18 @@ const HouseworkerProfile = () =>{//or prop.username
                 if(updatedData.profession){
                     if(updatedData.working_hour){
                         const result = await updateProfessionWorkingHour(updatedData.profession, updatedData.working_hour)
-                        const newProfessionOptions = professionOptions.map(el =>{
+                        // const newProfessionOptions = professionOptions.map(el =>{
+                            //existtting houseworker profession = houseworkerData.professions
+                        const newProfessionOptions = houseworkerData.professions.map(el =>{
                             if(el.value === updatedData.profession)
                                 el.label = updatedData.profession + " " + updatedData.working_hour + "din"
 
                             return el;
                         })
-                        setProfessionOptions(newProfessionOptions);
+                        setHouseworkerData(prev =>({
+                            ...prev,
+                            ['professions']:newProfessionOptions
+                        }))
                         toast.success("Successfully profession updated")
                     }
                     else
@@ -100,16 +114,50 @@ const HouseworkerProfile = () =>{//or prop.username
             }
         }
     }
+    
+    const onAddProfessionHandler = async() =>{
+        try{
+            // //if there is more then 1 profession
+            // // updatedData.houseworker_professions.forEach(profession =>{
+            // //     await addProfession(profession.label, profession.working)
+            // // })
+
+            // //if there is more then 1 professio
+            if(updatedData.houseworker_professions.length > 1){
+                //We need array of promise because we have loop there fucntion should call as async
+                const addProfessionPromises = updatedData.houseworker_professions.map(async (profession) => {
+                    await addProfession(profession.label, profession.working);
+                })
+
+                //Wait for all promises to resolve using Promise.all
+                await Promise.all(addProfessionPromises);
+            }
+            else{
+                const label = updatedData.houseworker_professions[0].label;
+                const working_hour = updatedData.houseworker_professions[0].working_hour;
+                alert(" V: " + label + " w: " + working_hour);
+                await addProfession(label, working_hour);
+            }            
+            
+        }
+        catch(err){
+            console.log("Error: " + err);
+            
+        }
+    }
 
     return(
         <HouseworkerProfileForm 
             updatedData={updatedData}
             houseworkerData={houseworkerData}
-            profession_options={professionOptions}
+            // profession_options={professionOptions}
             onSubmitUpdate={onSubmitUpdate}
             onChange={onChange}
             onChangeProfession={onChangeHouseworkerProfession}
             onChangeCity={onChangeCity}
+            onChangeProffesions={onChangeProffesions}
+            onChangeHouseworkerProfessions={onChangeHouseworkerProfessions}
+            onAddProfessionHandler={onAddProfessionHandler}
         />
     )
 }

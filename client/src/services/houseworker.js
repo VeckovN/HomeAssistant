@@ -138,6 +138,19 @@ export const getProfessionsByUsername = async(username)=>{
     }
 }
 
+export const addProfession = async(label, working_hour) =>{
+    //profession object  
+    //professionObject. 
+    try{
+        const result = await axios.post(BASE_URL +'houseworker/professions/add', {profession:label, working_hour:working_hour});
+        return result; //message 'Room sucessfully deleted'
+    }
+    catch(err){
+        console.log(err);
+        throw new Error(err);
+    }
+}
+
 
 export const getCommentsCount = async(username) =>{
     try{
