@@ -11,6 +11,7 @@ const {
     getProfessions,
     getProfessionsByUsername,
     addProfession,
+    deleteProfession,
     udpateHouseworker,
     updateProfessionWorkingHour,
     getHouseworkerWithFilters,
@@ -30,6 +31,7 @@ router.put('/update', checkHouseworker, udpateHouseworker);
 router.get('/filter', getHouseworkerWithFilters);
 router.get('/info', checkHouseworker, getHouseworkerInfo )
 
+
 //IF IS THIS ROUTE (with :username - params) is ABOVE the /rating,comments,professions -get route 
 //will make conflict, this MUST BE BELOWE ALL OF THESE
 // router.get('/:username', checkHouseworker, getHouseworkerByUsername);
@@ -44,6 +46,7 @@ router.get('/ourcomments/', getOurComments)
 // router.get('/professions/:username', getProfessions);
 router.get('/professions/', checkHouseworker, getProfessions)
 router.get('/professions/:username', getProfessionsByUsername)
+router.delete('/professions/:profession', checkHouseworker, deleteProfession);
 router.put('/professions/update', checkHouseworker, updateProfessionWorkingHour);
 router.get('/cities',  getCities);
 router.get('/:username', checkHouseworker, getHouseworkerByUsername);

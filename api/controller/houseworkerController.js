@@ -201,6 +201,20 @@ const addProfession = async(req,res)=>{
     }
 }
 
+const deleteProfession = async(req,res)=>{
+    const username = req.session.user.username;
+    const profession = req.params.profession;
+    try{
+        const result = await houseworkerModel.deleteProfession(username, profession);
+        const listOfProfessions = result.records.map(record => ({ profession:record.get(0), working_hour:record.get(1)})) //or record.get('title')
+        res.json(listOfProfessions);
+    }
+    catch(err){
+        console.log("ERROR GetHouseworkers: " + err);
+        res.status(500).json({error:`Proffessions can't be deleted`});
+    }
+}
+
 const udpateHouseworker = async(req,res)=>{
     try{
         const newData = req.body;
@@ -269,6 +283,7 @@ module.exports ={
     getProfessions,
     getProfessionsByUsername,
     addProfession,
+    deleteProfession,
     udpateHouseworker,
     updateProfessionWorkingHour,
     getHouseworkerWithFilters,
