@@ -575,6 +575,22 @@ const addProfession = async(username,profession, working_hour)=>{
     session.close();
     // return {profession:records[0].get(0), working_hour:records[0].get(1)}
 }
+const deleteProfession = async(username,profession)=>{
+    const session = driver.session();
+    console.log("USERNAME: " + username);
+    console.log("PROFESSION: " + profession);
+    const result = await session.run(`
+        MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(m)
+        MATCH(m)-[r:OFFERS]->(p:Profession{title:$profession})
+        DELETE r
+        WITH m
+        MATCH(m)-[remainingR:OFFERS]->(remainingP:Profession)
+        RETURN remainingP.title, remainingR.working_hour`, //all remained professions are returned
+    {houseworker:username, profession:profession}
+    )
+    session.close();
+    return result;
+}
 
 const updateWorkingHour = async(username, profession, working_hour)=>{
     const session = driver.session();
@@ -774,6 +790,7 @@ module.exports ={
     getComments,
     getProfessions,
     addProfession,
+    deleteProfession,
     updateWorkingHour,
     update,
     updateCity,
