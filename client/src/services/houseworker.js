@@ -151,6 +151,19 @@ export const addProfession = async(label, working_hour) =>{
     }
 }
 
+export const deleteProfession = async(profession) =>{
+    try{
+        // const result = await axios.delete(BASE_URL +'houseworker/professions', {profession:profession});
+        //for delete method data should be send as query params
+        const result = await axios.delete(BASE_URL +`houseworker/professions/${profession}`);
+        return result;
+    }
+    catch(err){
+        console.log(err);
+        throw new Error(err);
+    }
+}
+
 
 export const getCommentsCount = async(username) =>{
     try{
