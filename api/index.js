@@ -36,7 +36,7 @@ app.use((error, req, res, next) => {
 var corsOptions={
     //access is allowed to everyone
     origin:"http://localhost:3000", //react app
-    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE"],
     credentials: true,
 }
 app.use(cors(corsOptions));
