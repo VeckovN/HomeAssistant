@@ -17,7 +17,6 @@ const HouseworkerProfileForm = ({updatedData, houseworkerData, onChangeProffesio
                             <Select 
                                 className='dropdown'
                                 placeholder="Select a profession"
-                                // options={profession_options}
                                 options={houseworkerData.professions}
                                 value={houseworkerData.profession}
                                 onChange={onChangeProfession}
@@ -55,8 +54,8 @@ const HouseworkerProfileForm = ({updatedData, houseworkerData, onChangeProffesio
                             <Select 
                                 className='dropdown'
                                 placeholder="Select a profession"
-                                // options={profession_options}
                                 options={houseworkerData.not_owned_professions}
+                                value={houseworkerData.profession}
                                 onChange={onChangeProffesions}
                                 isClearable
                                 isMulti
@@ -69,7 +68,6 @@ const HouseworkerProfileForm = ({updatedData, houseworkerData, onChangeProffesio
                                         className='input_field'
                                         type='number'
                                         name={el} //selected profession
-                                        // value //entered value
                                         placeholder={`Enter ${el} working hour`} 
                                         onChange={onChangeHouseworkerProfessions}
                                     />

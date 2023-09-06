@@ -6,7 +6,6 @@ const useUser =(initialState)=>{
 
     const [data, setData] = useState(initialState);
     
-
     const onChange = (event) =>{
         const name = event.target.name;
         const value = event.target.value;
@@ -104,6 +103,21 @@ const useUser =(initialState)=>{
 
     }
 
+    const resetProfessions = (event) =>{
+
+        //Set new Proffession in Select Profession 
+        //houseworker_profession add to houseworkerData.professions            
+
+        //remove added profession from not_owned_profession 
+
+        setData(prev => ( 
+            {
+                ...prev, 
+                professions:[]
+            }
+        ))
+    }
+
     //Only for Houseworker users
     const onChangeHouseworker = (event) =>{
         const name = event.target.name;
@@ -132,7 +146,7 @@ const useUser =(initialState)=>{
     }
 
 
-    return {data, onChange, onChangeHouseworker, onChangeHouseworkerProfessions, onImageChange, onChangeProfession, onChangeCity, onChangeProffesions, onChangeInterest}
+    return {data, onChange, onChangeHouseworker, onChangeHouseworkerProfessions, onImageChange, onChangeProfession, onChangeCity, onChangeProffesions, onChangeInterest, resetProfessions}
 
 }
 
