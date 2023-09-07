@@ -142,11 +142,19 @@ const HouseworkerProfile = () =>{//or prop.username
                 //Wait for all promises to resolve using Promise.all
                 await Promise.all(addProfessionPromises);
 
+                // for Choosing current user profeesions
                 const merged_houseworkers = [...houseworkerData.professions, ...new_houseworker_professions];
+
+                const remained_professions = profession_options.filter((option) =>{
+                    //return only not same object
+                    return !merged_houseworkers.some((mine) => mine.value === option.value)
+                })
+                
                 setHouseworkerData(prev => (
                     {
                         ...prev,
                         professions:merged_houseworkers,
+                        not_owned_professions:remained_professions,
                         profession:'' //reset select view
                     }
                 ))
@@ -162,11 +170,13 @@ const HouseworkerProfile = () =>{//or prop.username
                 const new_profession = format_houseworker_label(label, working_hour);
                 new_houseworker_professions.push(new_profession);
 
+                const remained_professions = houseworkerData.not_owned_professions.filter(el => el.value != label) 
                 setHouseworkerData(prev => (
                     {
                         ...prev,
                         professions:new_houseworker_professions,
-                        profession:'' //reset select view
+                        not_owned_professions:remained_professions,
+                        profession:'', //reset select view
                     }
                 ))
                 toast.success("Profession successfully added");
@@ -194,7 +204,7 @@ const HouseworkerProfile = () =>{//or prop.username
                 not_owned_professions:not_owned_professions //change Add Profession optiosn(add deleted profession)
             }))
 
-            onChangeProfession(null);          
+            onChangeProfession(null);         
             toast.success("Profession Successfuly deleted")
         }
         catch(err){

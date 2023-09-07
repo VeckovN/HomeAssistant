@@ -18,6 +18,7 @@ const HouseworkerProfileForm = ({updatedData, houseworkerData, onChangeProffesio
                                 className='dropdown'
                                 placeholder="Select a profession"
                                 options={houseworkerData.professions}
+                                // value={houseworkerData.profession}
                                 value={houseworkerData.profession}
                                 onChange={onChangeProfession}
                                 isClearable
@@ -43,7 +44,6 @@ const HouseworkerProfileForm = ({updatedData, houseworkerData, onChangeProffesio
                                     <div className = "delete_profession_button">
                                         {/* without ()=> this function will be executed immediately , also pass the e(event) for e.preventDefault*/}
                                         <button onClick={(e) => onDeleteProfessionHandler(e, updatedData.profession)} >Delete Profession</button>
-
                                     </div>
                                 </div>
                                 }

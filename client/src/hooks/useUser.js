@@ -113,7 +113,8 @@ const useUser =(initialState)=>{
         setData(prev => ( 
             {
                 ...prev, 
-                professions:[]
+                professions:[],
+                houseworker_professions:[] 
             }
         ))
     }
