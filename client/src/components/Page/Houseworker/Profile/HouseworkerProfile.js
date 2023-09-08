@@ -6,7 +6,7 @@ import {profession_options} from '../../../../utils/options';
 import {getUserData, getProfessions, addProfession, deleteProfession, updateHouseworker, updateProfessionWorkingHour} from '../../../../services/houseworker.js';
 import '../../../Page/Profile.css';
 
-const HouseworkerProfile = () =>{//or prop.username
+const HouseworkerProfile = () =>{
     const initialState = {
         email:'',
         password:'',
@@ -24,7 +24,7 @@ const HouseworkerProfile = () =>{//or prop.username
     }
 
     const {data:updatedData, onChange, resetProfessions, onChangeProfession, onChangeHouseworkerProfessions, onChangeProffesions, onChangeCity} = useUser(initialState)
-    const [houseworkerData, setHouseworkerData] = useState({})
+    const [houseworkerData, setHouseworkerData] = useState({}) //fetched (showned) data
 
     useEffect(()=>{
         fetchData();
@@ -67,7 +67,6 @@ const HouseworkerProfile = () =>{//or prop.username
                 //without re-fetching just override ClientData with updatedData
                 Object.keys(updatedData).forEach((key,index) =>{
                     //console.log("UPD: " + typeof(key)+ " : " + updatedData[key]);
-                    
                     //picture wont store in this object(for it use diferent request)
                     if(updatedData[key] != '' && key!='picture' && key!='profession' && key!='working_hour'){
                         //data object wiht only updated props (for HTTP request)
@@ -82,6 +81,7 @@ const HouseworkerProfile = () =>{//or prop.username
                         console.log("DATAAAA: " + JSON.stringify(newData));
                     }
                 })
+                
                 // if(updatedData.picture !=''){
                 //     await axios.put(`http://localhost:5000/api/clients/updateImage/`, updateImage);
                 // }

@@ -115,7 +115,7 @@ const HouseworkersCard = (props) =>{
             contactMessageRef={contactMessageRef}
             onContactHandler={onContactHandler}
             commentClick={commentClick}
-       />     
+       />      
     )
 
 }

@@ -16,14 +16,12 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
 
     useEffect(()=>{
         console.log("REFF CURRENT " + commentClick.current + " US: " + houseworkerUsername);
-
-        if(commentClick.current == true || newComment == true) //if is clicked --- true
+        if(commentClick.current == true || newComment == true) //if is clicked or newComment added
             getHouseworkerComments(houseworkerUsername)
     },[houseworkerUsername])
 
     const getHouseworkerComments = async(username) =>{
         const comms = await getComments(username);
-
         if(comms)
             if(comms.length > 0)
                 setComments(comms)
@@ -31,7 +29,7 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
 
     const onCommentHandler = (e) =>{
         if(!isClient){
-            toast.error("Uloguj se da bi komentarisao",{
+            toast.error("You must be logged in",{
                 className:"toast-contact-message"
             })
             return 
@@ -44,20 +42,21 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
         setHouseworkerID(id);
 
         commentClick.current = true;
+    }
 
+    const onCloseComment = ()=>{
+        setHouseworkerUsername('');
+        commentClick.current = false;
     }
 
     const onCommentSubmit = async (e) =>{
         e.preventDefault();
-        //const newComment = e.target.postComment.value; //postComment is name of input field
-        const newCommentContext = postCommentRef.current.value;
 
+        const newCommentContext = postCommentRef.current.value;
         if(newCommentContext == ''){
-            toast.error("Unesite komentar");
+            toast.error("Enter the comment");
         }
         else{
-            //comment is intended for this houseworker (For comment Notify)
-            // const houseworkerID = '4';
             //fetch out of useEffect(in this example won't be a problem)
             //this fetch will be only trigger on Comment submit this is a reason why we can fetch over the useEffect
             try{
@@ -67,9 +66,9 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                     houseworker:houseworkerUsername,
                     comment: newCommentContext
                 }
-                const result = await axios.post(`http://localhost:5000/api/clients/comment`, postComment);
+                await axios.post(`http://localhost:5000/api/clients/comment`, postComment);
                 
-                toast.success("Komentar je postavljen",{
+                toast.success("Comment successfully posted",{
                     className:'toast-contact-message'
                 })
                 // //SOCKET EMIT TO Server (IN Home.js is received)
@@ -78,23 +77,22 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                 const newComment = {
                     //we send (looged user) comment to (showenedModal ->oldComment)
                     from: client_username,
-                    //comment:newCommentContext
                     comment:postComment.comment
                 }
 
+                console.log("COMMENTs : " + JSON.stringify(comments) + " \n" );
+                console.log("MY COMMENT: " + JSON.stringify(newComment) + "\n");
+
                 //this will trigger Comp re-render
-                if(comments.length > 0) //if exist comments(push new comment)
+                if(comments)
                     setComments(oldComments =>[
-                        // ...oldComments,
-                        // newComment
-                        //FIRST show NewComment
-                        newComment,
-                        ...oldComments
+                        ...oldComments,
+                        newComment
                     ]);
                 else{
                     setNewComments(true)
                     setComments([
-                        newComment,
+                        newComment
                     ])
                 }
                     
@@ -102,12 +100,6 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                 console.log(err);
             }
         }
-        
-    }
-
-    const onCloseComment = ()=>{
-        setHouseworkerUsername('');
-        commentClick.current = false;
     }
 
     return {comments, postCommentRef, commentClick, houseworkerUsername, onCommentHandler, onCommentSubmit, onCloseComment}
