@@ -1,5 +1,6 @@
 import {useState, useRef, useEffect} from 'react';
 import {getComments} from '../../services/houseworker.js';
+import {deleteComment} from '../../services/client.js';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
@@ -49,6 +50,22 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
         commentClick.current = false;
     }
 
+    const onCommentDelete = async (e, comment_id, from)=>{
+        e.preventDefault();
+        try{
+            await deleteComment(from, comment_id);
+            //await service method
+            const newComments = comments.filter(comm => comm.commentID!=comment_id)
+            setComments(newComments);
+            toast.success("Comment successfully deleted",{
+                className:'toast-contact-message'
+            })
+        }   
+        catch(err){
+            console.log(err);
+        }
+    }
+
     const onCommentSubmit = async (e) =>{
         e.preventDefault();
 
@@ -86,8 +103,8 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                 //this will trigger Comp re-render
                 if(comments)
                     setComments(oldComments =>[
-                        ...oldComments,
-                        newComment
+                        newComment,
+                        ...oldComments
                     ]);
                 else{
                     setNewComments(true)
@@ -102,7 +119,7 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
         }
     }
 
-    return {comments, postCommentRef, commentClick, houseworkerUsername, onCommentHandler, onCommentSubmit, onCloseComment}
+    return {comments, postCommentRef, commentClick, houseworkerUsername, onCommentHandler, onCommentSubmit, onCommentDelete, onCloseComment}
 }
 
 

@@ -5,9 +5,11 @@ const HouseworkerCardContent = ({
     comments,
     onCommentSubmit, 
     postCommentRef, 
+    onCommentDelete,
     onCloseComment, 
     HouseworkerProps,
     isClient,
+    client_username,
     professions,
     rating,
     showRateInput,
@@ -28,8 +30,10 @@ const HouseworkerCardContent = ({
             {commentClick.current &&
                 <HouseworkerCommentModal
                     comments ={comments}
+                    client_username={client_username}
                     onCommentSubmit ={onCommentSubmit}
                     postCommentRef ={postCommentRef}
+                    onCommentDelete={onCommentDelete}
                     onCloseComment = {onCloseComment}
                 />
             }

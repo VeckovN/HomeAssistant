@@ -1,7 +1,7 @@
 import Modal from "../../../../UI/Modal";
 import CommentItem from "../../../../UI/CommentItem";
 
-const HouseworkerCommentModal = ({comments, onCommentSubmit, postCommentRef, onCloseComment}) =>{
+const HouseworkerCommentModal = ({comments, client_username, onCommentSubmit, postCommentRef, onCloseComment, onCommentDelete}) =>{
 
     const commentHeaderContext =
         'Comments';
@@ -11,11 +11,22 @@ const HouseworkerCommentModal = ({comments, onCommentSubmit, postCommentRef, onC
         <form onSubmit={onCommentSubmit}>
             {comments ?
                 comments.map(comm => (
-                    <CommentItem
-                        key={comm.commentID}
-                        from={comm.from}
-                        comment={comm.comment}
-                    />
+                    (client_username === comm.from) ? ( //delete button is only showned to clients that belongs comment
+                        <CommentItem
+                            // onDeleteCommentHandle={() => onDeleteComment(comm.commentID, comm.from)}
+                            onDeleteCommentHandler={onCommentDelete}
+                            id={comm.commentID}
+                            from={comm.from}
+                            comment={comm.comment}
+                        />
+                    ) : (             
+                        <CommentItem
+                            id={comm.commentID}
+                            from={comm.from}
+                            comment={comm.comment}
+                        />
+                    )
+                    
                 )
                 )
                 : <div className='no_commentsModal'>Client doesn't have comments</div>
@@ -28,13 +39,13 @@ const HouseworkerCommentModal = ({comments, onCommentSubmit, postCommentRef, onC
 
     //Comments
     const commentFooterContext = 
-        <div>Footer</div>
+        <></>
     
     return(
         <Modal
             HeaderContext = {commentHeaderContext}
             BodyContext = {commentBodyContext}
-            FooterContext = {commentFooterContext}
+            FooterContext = {null}
             onCloseModal={onCloseComment}
         />
     )

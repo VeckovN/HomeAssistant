@@ -77,6 +77,22 @@ const rateHouseworker = async (req,res)=>{
     }
 }
 
+const deleteComment = async(req,res) =>{
+    try{
+        const username = req.query.client_username;
+        const id = req.query.comment_id;
+    
+        await clientModel.deleteComment(username,id);
+        console.log("COMMENT: " + id + " username: " + username);
+        res.send({success:"Successfully deleted"}).status(200);
+    }
+    catch(err){
+        console.log("Error delete comment: " + err);
+        res.status(400).json({error:'Delete comment Error'});
+    }
+    
+}
+
 const commentHouseworker = async(req, res)=>{
     try{
         // const client = req.session.user.username;
@@ -159,6 +175,7 @@ module.exports = {
     getComments:getComments, 
     rateHouseworker,
     udpateClient,
+    deleteComment,
     commentHouseworker,
     createClient,
     getClientInfo,

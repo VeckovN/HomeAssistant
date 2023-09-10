@@ -195,22 +195,20 @@ const commentHouseworker = async(client, houseworker, comment)=>{
 
 const deleteComment = async(username, commentID)=>{
     const session = driver.session();
-    const ourUsername = "Novak";
 
+    const comment_id = parseInt(commentID);
     const result = await session.run(`
     MATCH(n:Client {username:$client})
-    MATCH(m:Houseworker {username:$houseworker})
-    MATCH(c:Comment {id:$commentID})
+    MATCH (c:Comment) WHERE ID(c) = $id
     MATCH(n)-[r:COMMENTED]->(c)
     MATCH(c)-[t:BELONGS_TO]->(m)
     DELETE r,t,c
     RETURN n`
-    , {client:ourUsername, houseworker:username, id:commentID}
+    , {client:username, id:comment_id}
     )
 
     session.close();
-    //client is returned
-    return result.records[0].get(0).properties;
+    return result.records[0];
 }
 
 

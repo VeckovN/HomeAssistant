@@ -21,6 +21,23 @@
     top:-.4rem;
     left:.5rem;
 }
+.btn_comment_delete{
+    position: absolute;
+    right:.4rem;
+    top:.4rem;
+
+    width: 1rem;
+    border:none;
+    background: none;
+
+    color:red;
+    font-size: .8rem;
+    font-weight: 600;
+}
+.btn_comment_delete:hover {
+    color:black;
+    font-size: .9rem;
+}
 
 .context{
     padding:.5rem 0rem;

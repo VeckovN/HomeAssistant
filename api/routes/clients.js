@@ -7,6 +7,7 @@ const {
     getComments,
     rateHouseworker,
     udpateClient,
+    deleteComment,
     commentHouseworker,
     getClientInfo,
     getRecommendedHouseworkers
@@ -19,6 +20,7 @@ router.put('/update', checkClient, udpateClient);
 router.get('/info', checkClient, getClientInfo)
 
 router.get('/:username',checkHouseworker, getClientByUsername);
+router.delete('/comment', checkClient, deleteComment);
 router.get('/comments/:username',checkClient, getComments);
 router.get('/recommended/:username' , getRecommendedHouseworkers);
 //HERE WONT WORK, because exists get route with one '/string' above 

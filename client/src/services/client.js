@@ -25,6 +25,18 @@ export const updateClient = async(newData) =>{
     }
 }
 
+//query params - Mostly used for DELETE
+export const deleteComment = async(client_username, comment_id) =>{
+    try{
+        const params = {client_username: client_username, comment_id: comment_id}
+        await axios.delete(BASE_URL + `clients/comment`, {params})
+    }
+    catch(err){
+        console.log(err);
+        throw new Error(err);
+    }
+}
+
 
 export const getRecommended= async(username) =>{
     try{

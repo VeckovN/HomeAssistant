@@ -33,6 +33,7 @@ const HouseworkersCard = (props) =>{
         houseworkerUsername, 
         onCommentHandler, 
         onCommentSubmit, 
+        onCommentDelete,
         onCloseComment
     } = useHouseworkerComment(socket, isClient, client_username)
     
@@ -100,9 +101,11 @@ const HouseworkersCard = (props) =>{
             comments ={comments}
             onCommentSubmit ={onCommentSubmit}
             postCommentRef ={postCommentRef}
+            onCommentDelete={onCommentDelete}
             onCloseComment = {onCloseComment}
             HouseworkerProps={props}
             isClient={isClient}
+            client_username={client_username}
             professions={professions}
             rating={rating}
             showRateInput={showRateInput}
