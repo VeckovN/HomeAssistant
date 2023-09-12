@@ -24,7 +24,7 @@ const HouseworkerHome = () =>{
         
     }
     const fetchConversationCount = async() =>{
-        const count = await getConversationCount(user.userRedisID);
+        const count = await getConversationCount(user.userID);
         setConversationCount(count);
     }
 
