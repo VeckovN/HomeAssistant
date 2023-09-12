@@ -34,8 +34,10 @@ function App() {
       {/* <div className="App_container">     */}
         <Header />
         {/* Context(Home.js) */}
-        <Home socket={socket} connected={connected} user={user}/>
+        {/* <Home socket={socket} connected={connected} user={user}/> */}
         <Routes>
+          <Route path='/' element={<Home socket={socket} connected={connected} user={user}/>}> </Route>
+    
           <Route path='/login' element={<Login/>}></Route>
           <Route path='/register' element={<Register/>}></Route>
           {/* // one solution to create 2 modals in /register (for Client and for Houseworker register)

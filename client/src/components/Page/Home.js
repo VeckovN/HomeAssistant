@@ -69,22 +69,33 @@ const Home = ({socket, connected, user}) =>{
     
    
     return (
+        // <div>
+        //     {/* SHOW ClientHome if is guest or client */}
+        //     <Routes>
+        //         <Route
+        //             path='/'
+        //             element ={
+        //                 //client or guest(if is user null)
+        //                 client || user===null
+        //                 // in ClientHome limit what Guest can do and see
+        //                 ? <ClientHome socket={socket} /> 
+        //                 // If is authenticated as Houseworker 
+        //                 : <HouseworkerHome/>
+        //             }
+        //         />
+        //     </Routes>
+        // </div>
+
         <div>
-            {/* SHOW ClientHome if is guest or client */}
-            <Routes>
-                <Route
-                    path='/'
-                    element ={
-                        //client or guest(if is user null)
-                        client || user===null
-                        // in ClientHome limit what Guest can do and see
-                        ? <ClientHome socket={socket} /> 
-                        // If is authenticated as Houseworker 
-                        : <HouseworkerHome/>
-                    }
-                />
-            </Routes>
+            {client || user===null
+                // in ClientHome limit what Guest can do and see
+                ? <ClientHome socket={socket} /> 
+                // If is authenticated as Houseworker 
+                : <HouseworkerHome/>
+            }
         </div>
+
+        
     )
 }
 
