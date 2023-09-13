@@ -3,7 +3,6 @@ import { toast } from 'react-toastify';
 
 import './Chat.css'
 
-
 const Chat = ({socket, roomMessages, roomRef, user}) =>{
     const messageRef = useRef(); //taken message from input
 
