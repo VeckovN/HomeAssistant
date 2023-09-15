@@ -237,9 +237,9 @@ const findAllWithFilters = async(filters)=>{
 
         if(searchName!=undefined && searchName!= ''){
             if(where.trim().length > 5)
-                where +=` AND n.username STARTS WITH '${searchName}' \n`
+                where +=` toLower(AND n.username) STARTS WITH toLower('${searchName}') \n`
             else
-                where+=`n.username STARTS WITH '${searchName}' \n`
+                where+=`toLower(n.username) STARTS WITH toLower('${searchName}') \n`
         }
 
         var professionsLength = 0;
