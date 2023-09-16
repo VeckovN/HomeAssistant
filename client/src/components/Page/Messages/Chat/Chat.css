@@ -98,7 +98,7 @@
 
 .my_message{
     display: flex;
-    justify-content: end;
+    justify-content:flex-end;
     /* background-color: green; */
 }
 .my_message span{
@@ -109,7 +109,7 @@
 
 .notMy_message{
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     color:white;
 }
 
