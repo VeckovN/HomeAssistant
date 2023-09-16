@@ -3,7 +3,7 @@ import Select from 'react-select';
 const ClientForm = ({data, city_options, options, onSubmit, onChange, onChangeCity, onChangeInterest, onImageChange}) =>{
     return (
         <div className='register_container'>
-            <form onSubmit={onSubmit} enctype="multipart/form-data">
+            <form onSubmit={onSubmit} encType="multipart/form-data">
             <div className='form_title'>Client Registration</div>
                 <div className='register_input_container'>
                     <input
@@ -88,8 +88,8 @@ const ClientForm = ({data, city_options, options, onSubmit, onChange, onChangeCi
                 </select>
 
                 <label>Profile Picture</label>
-                <div class='form-group form-group-image'>
-                    <input type="file" onChange={onImageChange}  class='inputFile' name="picture" />
+                <div className='form-group form-group-image'>
+                    <input type="file" onChange={onImageChange}  className ='inputFile' name="picture" />
                 </div>
                 
 
@@ -104,7 +104,7 @@ const ClientForm = ({data, city_options, options, onSubmit, onChange, onChangeCi
                 />
 
                 <div className ='register_button_container'>
-                    <button type='submit' onClick={onSubmit} className='btn'>Register</button>
+                    <button type='submit' className='btn'>Register</button>
                 </div>
 
             </form>

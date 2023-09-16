@@ -4,7 +4,7 @@ const HouseworkerForm = ({data, profession_options, city_options, onSubmit, onCh
 
     return (
         <div className='register_container'>
-                <form onSubmit={onSubmit} >
+                <form>
                 <div className='form_title'>Houseworker registration</div>
                     <div className='register_input_container'>
                         <input

@@ -46,13 +46,18 @@ const HouseworkerRegister = () =>{
         //register.fulfilled trigger success=true (when is register success )
         //or if user is logged (after register) 
         if(success || user){
+            console.log("@@#!@#!@#!@$!&@*#^!@&*(#^!&*(@#^&*!@^&#");
             navigate('/');
-            toast.success(message);
+            // toast.success(message);
+            toast.success("You have successfully created account",{
+                className:'toast-contact-message'
+            })
         }
         //after all of this actions, we want to reset states
         dispatch(reset());
 
     },[user, success,error, message, navigate, dispatch])
+
 
     console.log("DATA: " + JSON.stringify(data));
     
@@ -76,6 +81,8 @@ const HouseworkerRegister = () =>{
             }
             formData.append('type', 'Houseworker');
             dispatch(register(formData));
+
+            dispatch(reset());
         }
     }
 

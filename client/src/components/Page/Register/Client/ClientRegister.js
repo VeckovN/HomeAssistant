@@ -46,13 +46,19 @@ const ClientRegister = () =>{
         //register.fulfilled trigger success=true (when is register success )
         //or if user is logged (after register) 
         if(success || user){
+            alert("SSSSS");
+            console.log("@@#!@#!@#!@$!&@*#^!@&*(#^!&*(@#^&*!@^&#");
             navigate('/');
-            toast.success(message);
+            //toast.success(message);
+            toast.success("You have successfully created account",{
+                className:'toast-contact-message'
+            })
         }
         //after all of this actions, we want to reset states
         dispatch(reset());
 
-    },[user, success,error, message, navigate, dispatch])
+    },[user,success,error])
+    //},[user,error,success])
 
     const onSubmit = (e) =>{
         e.preventDefault();
@@ -73,6 +79,7 @@ const ClientRegister = () =>{
             //formData.append("picturePath", data['picture'].name);
             formData.append('type', 'Client');
             dispatch(register(formData));
+            dispatch(reset())
         }
     }
 

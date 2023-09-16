@@ -65,16 +65,15 @@ export const register = createAsyncThunk(
                     'Content-Type': `multipart/form-data`,
                 },
             });
+            alert("RESP :" + JSON.stringify(response));
             console.log("REPOSNE FORM DATA: " + response);
             if(response.data){
                  //GET USER FROM COOKIE -EXPRESS SESSION (WE DON't NEED PUT THIS USER IN LOCAL STORATE)
                 //if post request is success we put response (user) to localStorage 
                 //localStorage.setItem('user', JSON.stringify(response.data));
                 Cookie.set('user', JSON.stringify(response.data))
+                return response.data; 
             }
-               
-            
-            return response.data; 
 
         }catch(error){
             const message = (err.response && err.response.data.error) || err.message || err
@@ -94,6 +93,7 @@ export const login = createAsyncThunk(
             //     localStorage.setItem('user', JSON.stringify(response.data))
             
             // return response.data;
+            alert("RESP :" + JSON.stringify(response));
             if(response.data){
                 if(!response.data.error){
                     //localStorage.setItem('user', JSON.stringify(response.data))

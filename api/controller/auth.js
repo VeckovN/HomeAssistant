@@ -43,8 +43,9 @@ const register = async (req,res)=>{
                 await clientModal.create(userData);
                 //assign user to the session after creating the user /request from client(set the sesson to client)
                 req.session.user = user
-                console.log("SESION123123:" + JSON.stringify(req.session));
-                return res.json(user); //created user
+                console.log("SESION123123:" + JSON.stringify(user));
+                //return res.json(req.session.user); //created user
+                return res.send(req.session.user)
             }
             else if(type=='Houseworker'){ //houseworker
 
@@ -52,7 +53,9 @@ const register = async (req,res)=>{
                 console.log("EHHHHHHH");
                 await houseworkerModal.create(userData);
                 req.session.user = user;
-                return res.json(user);
+                console.log("REQ SESSION<> :" + JSON.stringify(req.session.user));
+                //return res.json(req.session.user);
+                return res.send(req.session.user)
             }
         }
         catch(error){

@@ -36,7 +36,7 @@ const Login = () =>{
             })
         }
         //This caused unnecessary component re-rendering
-        dispatch(reset())
+        // dispatch(reset())
 
     // },[user,message,error,success])
     },[user,error,success])
@@ -45,7 +45,7 @@ const Login = () =>{
     const onSubmit = (e)=>{
         e.preventDefault();
         dispatch(login({username, password}))
-        dispatch(reset());
+        // dispatch(reset());
     }
 
     return (
