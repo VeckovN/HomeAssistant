@@ -28,32 +28,6 @@ const Home = ({socket, connected, user}) =>{
     useEffect(()=>{
         if(connected && user){
             console.log("NOTIIIIIIIFYU")
-            socket.on("messageResponseNotify", data =>{
-                const dataObj = JSON.parse(data);
-                console.log("message");
-                //not show yourself
-                // if(userAuth.user.userRedisID != dataObj.from)
-                if(user.userID != dataObj.from)
-                {
-                    console.log("WEE E " + JSON.stringify(user))
-                    console.log('WE ' + user.userID)
-                    const roomIDs = dataObj.roomID
-                    const rooms = roomIDs.split(':'); //indexes [0][1]
-                    console.log("ROMSSSSS: " + JSON.stringify(rooms));
-                    //show only members of message room(Are ourID is in RoomID)
-                    // console.log(">?> : " + rooms.includes(userAuth.user.userRedisID));
-                    console.log(">?> : " + rooms.includes(user.userID));
-                    if(rooms.includes(user.userID))
-                    {
-                        console.log("Received message");
-                        //find username by userID
-                        //const receivedFrom = await getUsernameByUserID(data.from)
-                        // toast.info("You received message from :" + receivedFrom);
-                        toast.info("Stigla je poruka od :" + dataObj.fromUsername);
-                    }
-                }
-                
-            })
             socket.on("commentResponseNotify", data =>{
                 const commentObj = JSON.parse(data);
                 const houseworkerID  =commentObj.houseworkerID;
