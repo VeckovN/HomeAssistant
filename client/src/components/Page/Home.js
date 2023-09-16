@@ -21,9 +21,6 @@ const Home = ({socket, connected, user}) =>{
     let client;
     if(user)
         client = user.type === 'Client' ? true : false;
-    //Message Receive Notification
-
-    console.log("JSON STT USER: " + JSON.stringify(user));
 
     useEffect(()=>{
         if(connected && user){
@@ -43,23 +40,6 @@ const Home = ({socket, connected, user}) =>{
     
    
     return (
-        // <div>
-        //     {/* SHOW ClientHome if is guest or client */}
-        //     <Routes>
-        //         <Route
-        //             path='/'
-        //             element ={
-        //                 //client or guest(if is user null)
-        //                 client || user===null
-        //                 // in ClientHome limit what Guest can do and see
-        //                 ? <ClientHome socket={socket} /> 
-        //                 // If is authenticated as Houseworker 
-        //                 : <HouseworkerHome/>
-        //             }
-        //         />
-        //     </Routes>
-        // </div>
-
         <div>
             {client || user===null
                 // in ClientHome limit what Guest can do and see
