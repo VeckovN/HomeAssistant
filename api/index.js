@@ -58,7 +58,6 @@ const sessionMiddleware = session({
         maxAge: 1000* 60 * 10, //session max age in ms 
     }
 })
-
 //SESSION 
 app.use(sessionMiddleware);
 
@@ -73,7 +72,6 @@ var io = require("socket.io")(server, {
         credentials: true,
     },
     reconnection: false
-    
 });
 
 io.use(function(socket, next) {
@@ -92,9 +90,23 @@ const publish = (type, data) =>{
 redisClient.publish("MESSAGES", JSON.stringify(dataSent));
 }
 
+const publishData = (channel, type, data) =>{
+    const dataSent ={
+        type,
+        data
+    };
+    redisClient.publish(channel, JSON.stringify(dataSent));
+}
+
+//What i want'
+//only Houseworkers must be subsribed to notification channel (for comments , and  rating )
+
+//Client is publisher for this channel
+
 
 (async () =>{
 //taking Messages from subscriber channel
+//All users are subscribered to Message
 await sub.subscribe("MESSAGES", (message, channelName)=>{
 
     if(channelName == "MESSAGES")

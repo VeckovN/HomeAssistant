@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const { json } = require('body-parser');
+const {client:redisClient, sub} = require('../db/redis.js');
 //express-session
 //To store confidential session data, we can use the express-session package.
 // It stores the session data on the server and gives the client
@@ -71,19 +72,15 @@ const login = async(req,res)=>{
     try{
         console.log("PREEEE SESSION: " + JSON.stringify(req.session))
         if(req.session.user)
-            // return res.redirect(`/${req.session.user.type}`) // /client or /houseworker
             return res.json({connect:"You are still logged in"});
     
         const {username, password} = req.body;
-        //find user by username and password no matter what type it is
         const user = await userModal.findByUsername(username);
-    
         if(!user)
             return res.status(404).json({error: "User not found"});
         
         const userType = user.type;
         const userInfo = user.props;
-        console.log("TYPEEEE: " + userType + "PROPS : " + userInfo);
     
         const match = bcrypt.compareSync(password, userInfo.password); 
         //password from client and hashed password from DB
@@ -98,6 +95,27 @@ const login = async(req,res)=>{
         
                 req.session.user = {username:username, type:userType, userID:userID}
                 console.log("SESSSSSLogion22222222: " + JSON.stringify(req.session))
+
+                // if("Client"){
+                //     sub.subscribe('OnlineUsers', (err) => {
+                //         if (err) {
+                //           console.error('Failed to subscribe to Redis channel:', err);
+                //         } else {
+                //           console.log(`Houseworker ${username} subscribed to notifications.`);
+                //         }
+                //       });
+                // }
+
+                if("Houseworker"){
+                    sub.subscribe('Notifications', (err) => {
+                        if (err) {
+                          console.error('Failed to subscribe to Redis channel:', err);
+                        } else {
+                          console.log(`Houseworker ${username} subscribed to notifications.`);
+                        }
+                      });
+                }
+
                 return res.send(req.session.user)
             }
             catch(error){
@@ -123,6 +141,7 @@ const logout = async(req,res)=>{
 
     console.log("LOOGOUTTT: " + JSON.stringify(req.session))
     if(req.session.user){
+
         req.session.destroy((err)=>{
             if(err)
                 return res.json({error:err.message}).status(400);
