@@ -199,45 +199,95 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
     //this will change(extend) existing user room 
     //and create that updated room to new user
     const currentRoomKey = `room:${currentRoomID}` //room:1:2
-    // console.log("CURRENT ROOM: " + currentRoomID)
     const currentUserIDS = currentRoomID.split(':');
-    //add newUserID
-    currentUserIDS.push(newUserID)
-    const sortedUserIDS = currentUserIDS.sort();
-    // console.log("currentUserIDS : " + currentUserIDS); 
-    // console.log("newUSERID: " + newUserID);
 
-    let newRoomKey = "room";
-    sortedUserIDS.forEach(id =>{
-        console.log("el: " + id);
-        newRoomKey+=`:${id}`
-    })
+    console.log("CURRENT US: " + currentUserIDS);
+    console.log("TYPE: " + typeof(currentUserIDS));
+ 
 
-    //this is memeber of users Rooms -> user:{ID}:rooms
-    const newRoomID = sortedUserIDS.join(":"); //sorted ids with : between them =-- 1:2:5
-    console.log("NEW USERS ID VALUE: " + newRoomID);
-    //Put newUserID in order way   //allway order as room:1:5:9 not room:1:9:5
-    console.log("SADD: " + `user:${newUserID}:rooms` + "," +  newRoomID)    
+    //if a new user adding to existing chat with one user,
+    //then that chat is left, and new one is created with the newly added
+    if(currentUserIDS.length == 2 ) //client and one houseworker
+    {
+        console.log("OLD !!!!!!!!!!");
 
-    // //rename currentRoomKey room:1:2 to room:1:2:newUser  (sorted set which store messages)
-    await rename(currentRoomKey, newRoomKey);
-    //for new added user add memeber in user:{newID}:rooms
-    await sadd(`user:${newUserID}:rooms`, newRoomID);
+         //add newUserID
+        currentUserIDS.push(newUserID)
+        let newRoomKey = "room";
+        currentUserIDS.forEach(id =>{
+            console.log("el: " + id);
+            newRoomKey+=`:${id}`
+        })
 
-    // console.log("SADD: " + `user:${newUserID}:rooms` + "," +  newRoomID)
-    // console.log("RENAME: " + currentRoomKey + "," + newRoomKey)
+        //this is memeber of users Rooms -> user:{ID}:rooms
+        const newRoomID = currentUserIDS.join(":"); 
+        console.log("NEW USERS ID VALUE: " + newRoomID);
+        //Put newUserID in order way   //allway order as room:1:5:9 not room:1:9:5
+        console.log("SADD: " + `user:${newUserID}:rooms` + "," +  newRoomID)  
 
-    const oldUsersIDS = currentRoomID.split(':');
-    const oldRoomID = currentRoomID;
-    oldUsersIDS.forEach(async(id) =>{ 
-        await srem(`user:${id}:rooms`, currentRoomID);
-        console.log("SREM : " + `user:${id}:rooms` + "," + oldRoomID )
-        //add IDS of users seperated with : ----> 1:2:5
-        await sadd(`user:${id}:rooms`, newRoomID);
-        console.log("AWAIT SADD: " + `user:${id}:rooms` + "," +  newRoomID)
-    })
+        //add new user to currentRoomID and create new one
+
+        //new user 29
+        //we want to create new room this user:4:rooms (4:49:29) =newRoomID
+        //for old members we create newRoomID (4:49)
+        const oldUsersIDS = currentRoomID.split(':');
+        oldUsersIDS.forEach(async(id) =>{ 
+            console.log("ID USER: ");
+            //add IDS of users seperated with : ----> 1:2:5
+            await sadd(`user:${id}:rooms`, newRoomID);
+        })
+
+        //for new user olso
+        await sadd(`user:${newUserID}:rooms`, newRoomID);
+
+        //create new sorted Room
+        //room:4:49:29 - empty
+        const roomKey = `room:${newRoomID}`;
+        const date = Date.now();
+        const messageObj = JSON.stringify({message:"Chat Created", from:'Server', roomID:newRoomID})
+        await zadd(roomKey, date, messageObj);
+
+    }
+    else{
+        //just add new user to existing chat 
+        console.log("NEW !!!!!!!!!!!!");
+
+         //add newUserID
+        currentUserIDS.push(newUserID)
+        let newRoomKey = "room";
+        currentUserIDS.forEach(id =>{
+            console.log("el: " + id);
+            newRoomKey+=`:${id}`
+        })
+
+        //this is memeber of users Rooms -> user:{ID}:rooms
+        const newRoomID = currentUserIDS.join(":"); 
+        console.log("NEW USERS ID VALUE: " + newRoomID);
+        //Put newUserID in order way   //allway order as room:1:5:9 not room:1:9:5
+        console.log("SADD: " + `user:${newUserID}:rooms` + "," +  newRoomID); 
+
+        //REinaming Room:ROOMID - sorted set for storing messages
+        // //rename currentRoomKey room:1:2 to room:1:2:newUser  (sorted set which store messages)
+        await rename(currentRoomKey, newRoomKey);
+
+        //for new added user add memeber in user:{newID}:rooms
+        await sadd(`user:${newUserID}:rooms`, newRoomID);
+
+        //old memmbers (repacing)rooms with new roomsID.
+        const oldUsersIDS = currentRoomID.split(':');
+        const oldRoomID = currentRoomID;
+        oldUsersIDS.forEach(async(id) =>{ 
+            await srem(`user:${id}:rooms`, currentRoomID);
+            console.log("SREM : " + `user:${id}:rooms` + "," + oldRoomID )
+            //add IDS of users seperated with : ----> 1:2:5
+            await sadd(`user:${id}:rooms`, newRoomID);
+            console.log("AWAIT SADD: " + `user:${id}:rooms` + "," +  newRoomID)
+        })
+
+    }
 
 }
+
 
 const getRoomCount = async(userID)=>{
     const userKey = `user:${userID}:rooms`;
