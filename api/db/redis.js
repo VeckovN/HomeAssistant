@@ -34,8 +34,7 @@ client.on('error', function(err) {
 
 
 const resolvePromise = (resolve,reject)=>{
-    //redis.get-orWhaterver(key, (err, res) => {
-        console.log("TESSS");
+    // console.log("TESSS");
     return (err,data)=>{
         if(err)
             reject(err)
