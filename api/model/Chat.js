@@ -203,24 +203,25 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
 
     console.log("CURRENT US: " + currentUserIDS);
     console.log("TYPE: " + typeof(currentUserIDS));
- 
+
+    const isPrivateChat = currentUserIDS.length == 2 ? true :false 
+
+    currentUserIDS.push(newUserID)
+    let newRoomKey = "room";
+    currentUserIDS.forEach(id =>{
+        console.log("el: " + id);
+        newRoomKey+=`:${id}`
+    })
+
+    //this is memeber of users Rooms -> user:{ID}:rooms
+    const newRoomID = currentUserIDS.join(":"); 
 
     //if a new user adding to existing chat with one user,
     //then that chat is left, and new one is created with the newly added
-    if(currentUserIDS.length == 2 ) //client and one houseworker
+    if(isPrivateChat) //client and one houseworker
     {
         console.log("OLD !!!!!!!!!!");
 
-         //add newUserID
-        currentUserIDS.push(newUserID)
-        let newRoomKey = "room";
-        currentUserIDS.forEach(id =>{
-            console.log("el: " + id);
-            newRoomKey+=`:${id}`
-        })
-
-        //this is memeber of users Rooms -> user:{ID}:rooms
-        const newRoomID = currentUserIDS.join(":"); 
         console.log("NEW USERS ID VALUE: " + newRoomID);
         //Put newUserID in order way   //allway order as room:1:5:9 not room:1:9:5
         console.log("SADD: " + `user:${newUserID}:rooms` + "," +  newRoomID)  
@@ -246,19 +247,10 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
         const date = Date.now();
         const messageObj = JSON.stringify({message:"Chat Created", from:'Server', roomID:newRoomID})
         await zadd(roomKey, date, messageObj);
-
     }
     else{
         //just add new user to existing chat 
         console.log("NEW !!!!!!!!!!!!");
-
-         //add newUserID
-        currentUserIDS.push(newUserID)
-        let newRoomKey = "room";
-        currentUserIDS.forEach(id =>{
-            console.log("el: " + id);
-            newRoomKey+=`:${id}`
-        })
 
         //this is memeber of users Rooms -> user:{ID}:rooms
         const newRoomID = currentUserIDS.join(":"); 
@@ -283,9 +275,9 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
             await sadd(`user:${id}:rooms`, newRoomID);
             console.log("AWAIT SADD: " + `user:${id}:rooms` + "," +  newRoomID)
         })
-
     }
 
+    return {roomID:newRoomID, isPrivate:isPrivateChat};
 }
 
 
