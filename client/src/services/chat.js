@@ -46,7 +46,8 @@ export const addUserToRoom = async(roomInfo) =>{
         //   roomID
         //   newUsername
         //}
-        await axios.post( BASE_URL + 'chat/room/addUser',roomInfo);
+        const result = await axios.post( BASE_URL + 'chat/room/addUser',roomInfo);
+        return result;
     }
     catch(err){
         console.log(err);
