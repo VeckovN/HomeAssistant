@@ -110,6 +110,7 @@ const Messages = ({socket,connected}) =>{
     
         const onAddUserToGroupHanlder = async(e)=>{
             const roomID = e.target.value;
+            const oldRoomID = roomID;
 
             if(state.selectedUsername == ""){
                 toast.info("Select user that you want to add in room",{
@@ -122,11 +123,27 @@ const Messages = ({socket,connected}) =>{
                 roomID:roomID,
                 newUsername: state.selectedUsername
             }
-    
-            await addUserToRoom(roomInfo);
+
+            const result = await addUserToRoom(roomInfo);
+            const data = result.data;
+            
+            const newRoomID = data.roomID;
+            const isPrivate = data.isPrivate;
+            
+            console.log("NEW ROOM ID: " + newRoomID );
+            if(isPrivate){
+                //users of new rooms:
+                const roomUsers = state.rooms.filter(room => room.roomID == roomID);
+                const houseworker = roomUsers[0].users;
+                console.log("RPPM :  " + roomUsers[0].users);
+                //create new group (add user to new gruop)   
+                dispatch({type:"CREATE_NEW_GRUOP" , roomID:roomID, newRoomID:newRoomID, user:houseworker})
+            }
+            else{ //add user to existed group
+                dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID});
+            }
 
             toast.info("Korisnik je dodat u Sobu: "+ roomID );
-            dispatch({type:"ADD_USER_TO_GROUP", data:roomID});
         }
     
     return (
