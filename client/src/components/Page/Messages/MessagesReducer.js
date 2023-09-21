@@ -17,13 +17,22 @@ export const MessagesReducer = (state, action) =>{
                 ...state,
                 enteredRoomID:action.data
             }
+        case "CREATE_NEW_GRUOP":
+            return{
+                ...state,
+                //find room with added (houseworker user (action.user, ) new added houseworker (state.selectedUsername))
+                rooms: [...state.rooms, {roomID:action.newRoomID, users:[action.user, state.selectedUsername]}]
+            }
+
         case "ADD_USER_TO_GROUP":
             return{
                 ...state,
                 rooms: state.rooms.map(room =>{
-                    if(room.roomID === action.data){ //action-data = roomID
+                    if(room.roomID === action.roomID){ //action-data = roomID
+                        console.log("ROOM " + room);
                         return{
                             ...room,
+                            roomID:action.newRoomID,
                             users: [...room.users, state.selectedUsername]
                         }
                     }
