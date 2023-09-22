@@ -47,7 +47,6 @@ const Messages = ({socket,connected}) =>{
         const fetchAllRooms = async () =>{    
             const data = await getUserRooms(user.username);
             dispatch({type:"SET_ROOMS", data:data})
-
             console.log('DATA ROOMS : \n' + JSON.stringify(data));
         }
 
@@ -78,9 +77,6 @@ const Messages = ({socket,connected}) =>{
             //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
             const messages = await getMessagesByRoomID(roomID)
             dispatch({type:"SET_ROOM_MESSAGES", data:messages})
-
-            console.log("ROOMM MESSAGES: \n " + JSON.stringify(messages));
-
         }
     
         const onDeleteRoomHandler = async(e)=>{ 
@@ -110,7 +106,6 @@ const Messages = ({socket,connected}) =>{
     
         const onAddUserToGroupHanlder = async(e)=>{
             const roomID = e.target.value;
-            const oldRoomID = roomID;
 
             if(state.selectedUsername == ""){
                 toast.info("Select user that you want to add in room",{
@@ -126,13 +121,12 @@ const Messages = ({socket,connected}) =>{
 
             const result = await addUserToRoom(roomInfo);
             const data = result.data;
-            
             const newRoomID = data.roomID;
             const isPrivate = data.isPrivate;
             
             console.log("NEW ROOM ID: " + newRoomID );
             if(isPrivate){
-                //users of new rooms:
+                //users of the new rooms:
                 const roomUsers = state.rooms.filter(room => room.roomID == roomID);
                 const houseworker = roomUsers[0].users;
                 console.log("RPPM :  " + roomUsers[0].users);
@@ -143,7 +137,7 @@ const Messages = ({socket,connected}) =>{
                 dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID});
             }
 
-            toast.info("Korisnik je dodat u Sobu: "+ roomID );
+            toast.info("User is added to the room: "+ roomID );
         }
     
     return (

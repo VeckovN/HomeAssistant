@@ -20,6 +20,7 @@ export const MessagesReducer = (state, action) =>{
         case "CREATE_NEW_GRUOP":
             return{
                 ...state,
+                roomMessages:[],
                 //find room with added (houseworker user (action.user, ) new added houseworker (state.selectedUsername))
                 rooms: [...state.rooms, {roomID:action.newRoomID, users:[action.user, state.selectedUsername]}]
             }
@@ -27,6 +28,7 @@ export const MessagesReducer = (state, action) =>{
         case "ADD_USER_TO_GROUP":
             return{
                 ...state,
+                roomMessages:[],
                 rooms: state.rooms.map(room =>{
                     if(room.roomID === action.roomID){ //action-data = roomID
                         console.log("ROOM " + room);
@@ -36,7 +38,7 @@ export const MessagesReducer = (state, action) =>{
                             users: [...room.users, state.selectedUsername]
                         }
                     }
-                    return room; //return object
+                    return room;
                 })
             };
         case "SET_SELECTED_USERNAME":
@@ -63,12 +65,11 @@ export const MessagesReducer = (state, action) =>{
                 rooms: state.rooms.filter(el => el.roomID != action.data), //action.data = roomID
                 roomMessages:[]
             };
-
-
         
         default:
             return state;
     }
 
 
+    
 }
