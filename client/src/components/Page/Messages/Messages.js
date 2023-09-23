@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { MessagesReducer } from './MessagesReducer.js';
 import {getHouseworkers} from '../../../services/houseworker.js';
 import {getUserRooms, deleteRoom, addUserToRoom, getMessagesByRoomID} from '../../../services/chat.js';
-
+import Spinner from '../../UI/Spinner.js';
 
 //@TODO = ADD button on Houseworker Card for addding this user in some chat
 //@TODO = Add Search form for searching for houseworker which you want to add in chat 
@@ -44,7 +44,8 @@ const Messages = ({socket,connected}) =>{
             }
         },[socket]) //on socket change (SOCKET WILL CHANGE WHEN IS MESSAGE SEND --- socket.emit)
     
-        const fetchAllRooms = async () =>{    
+        const fetchAllRooms = async () =>{   
+            
             const data = await getUserRooms(user.username);
             dispatch({type:"SET_ROOMS", data:data})
             console.log('DATA ROOMS : \n' + JSON.stringify(data));
@@ -142,6 +143,7 @@ const Messages = ({socket,connected}) =>{
     
     return (
         <div className="chat_container">   
+
             <Rooms 
                 rooms={state.rooms}
                 houseworkers={state.houseworkers}

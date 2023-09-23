@@ -1,11 +1,13 @@
 .chat_container{
     display: flex;
+    position: relative;
     flex-direction: column;
     padding:6rem 0;
     gap:2rem;
     width: 100%;
     height: 100%;
 }
+
 
 .room_conainter{
     display: flex;

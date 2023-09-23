@@ -1,39 +1,29 @@
+import Spinner from "../../../UI/Spinner";
+import Room from "./Room";
 
 const Rooms = ({rooms, roomRef, user, houseworkers, onAddUserToGroupHanlder, onDeleteRoomHandler, onRoomClickHanlder, onChangeSelectHandler }) =>{
 
     return (
         <div className='room_conainter'>
-                {rooms &&
+                {rooms ?
                     rooms.map((el, index)=>(
-                    <div className='rooms'><span className='roomLabel'>Soba {index +1}</span>
-                        <div className='users'>{el.users.map((user,index)=> (<div className='roomUsers'> -{user}- <span/></div>))}</div>
-                        <div className='room_buttons'>
-                            <button value={el.roomID} ref={roomRef} onClick={onRoomClickHanlder}>Prikazi poruke </button>
-                            {/* client can delete The chat room */}
-                            {user.type=="Client" &&
-                                <>
-                                    <select onChange={onChangeSelectHandler}>
-                                        {houseworkers && 
-                                            <>
-                                                <option value="">Izaberi korisnika</option>
-                                            {
-                                                houseworkers.map(el =>(
-                                                    <option value={el.username}>{el.username}</option>
-                                                ))
-                                            }
-                                            </>
-                                        }
-                                    </select>
-                                    <button onClick={onAddUserToGroupHanlder} value={el.roomID}>Dodaj korisnika</button>
-                                    <button onClick={onDeleteRoomHandler} value={el.roomID}>Izbrisi sobu</button>
-                                </>
-                            }
-                        </div>
+                    <div className='rooms'><span className='roomLabel'>Room{index +1}</span>
+                        <Room
+                            roomInfo={el}
+                            user={user}
+                            roomRef={roomRef}
+                            houseworkers={houseworkers}
+                            onAddUserToGroupHanlder={onAddUserToGroupHanlder}
+                            onDeleteRoomHandler={onDeleteRoomHandler}
+                            onRoomClickHanlder={onRoomClickHanlder}
+                            onChangeSelectHandler={onChangeSelectHandler}
+                        />
                     </div>
                     ))
+                : <Spinner></Spinner>
                 }
                     
-                {rooms.length==0 && <div className='no_rooms'>Nemate poruke</div>}
+                {rooms.length==0 && <div className='no_rooms'>You have no conversation</div>}
                 
             </div>
     )
