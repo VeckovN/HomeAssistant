@@ -1,5 +1,5 @@
 import Spinner from "../../../UI/Spinner";
-import Room from "./Room";
+import Room from "./Room/Room.js";
 
 const Rooms = ({rooms, roomRef, user, houseworkers, onAddUserToGroupHanlder, onDeleteRoomHandler, onRoomClickHanlder, onChangeSelectHandler }) =>{
 
