@@ -8,6 +8,7 @@ import Login from './components/Page/Login/Login.js'
 import Comments from './components/Page/Houseworker/CommentsList/CommentsList.js';
 import Profile from './components/Page/Profile';
 import Messages from './components/Page/Messages/Messages'
+import PrivateRoute from './utils/PrivateRoute';
 
 import {ToastContainer, toast} from 'react-toastify';
 //css class for custom style
@@ -33,27 +34,34 @@ function App() {
     <BrowserRouter>
       {/* <div className="App_container">     */}
         <Header />
-        {/* Context(Home.js) */}
-        {/* <Home socket={socket} connected={connected} user={user}/> */}
         <Routes>
           <Route path='/' element={<Home socket={socket} connected={connected} user={user}/>}> </Route>
-    
           <Route path='/login' element={<Login/>}></Route>
           <Route path='/register' element={<Register/>}></Route>
-          {/* // one solution to create 2 modals in /register (for Client and for Houseworker register)
-          // second soluction  that /register is modal and /clientRegister and houseowrkerRgister pages  */}
           <Route path='/clientRegister' element={<ClientRegister/>}></Route>
           <Route path='/HouseworkerRegister' element={<HouseworkerRegister/>}></Route>
-          
-          {/* Houseworker */}
-          {/* <Route path='/houseworker'>
-            <Route path='/comments' element={<Comments/>}></Route>
-            <Route path='/profile' element={<Profile/>}></Route>
-          </Route> */}
-          <Route path='/comments' element={<Comments/>}></Route>
-          <Route path='/profile' element={<Profile/>}></Route>
-          <Route path='/messages' element={<Messages socket={socket} connected={connected}/>}></Route>        
+        
+          <Route path='/comments' element={
+              <PrivateRoute privacy='houseworker'>
+                <Comments/>
+              </PrivateRoute>
+            }
+          />
+         <Route path='/profile' element={
+              <PrivateRoute >
+                <Profile/> 
+              </PrivateRoute>
+            }
+          />
 
+          <Route path='/messages' element={
+              <PrivateRoute >
+                <Messages socket={socket} connected={connected}/>
+              </PrivateRoute>
+            }
+          />
+
+          
         </Routes>
         {/* IN THIS HOME WE HAVE MORE ROUTES  */}
         {/* Footer */}
