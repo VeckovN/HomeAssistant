@@ -1,0 +1,7 @@
+.dropdown-row{
+    background-color: aliceblue;
+    cursor: pointer;
+}
+.dropdown-row:hover{
+    background-color: rgb(168, 208, 243);
+}

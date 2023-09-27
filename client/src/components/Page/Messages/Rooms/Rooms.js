@@ -1,7 +1,7 @@
 import Spinner from "../../../UI/Spinner";
 import Room from "./Room/Room.js";
 
-const Rooms = ({rooms, roomRef, user, houseworkers, onAddUserToGroupHanlder, onDeleteRoomHandler, onRoomClickHanlder, onChangeSelectHandler }) =>{
+const Rooms = ({rooms, roomRef, user, selectedUsername, houseworkers, searchTerm, onSearchHandler, onAddUserToGroupHanlder, onDeleteRoomHandler, onRoomClickHanlder, onChangeSearchInputHandler }) =>{
 
     return (
         <div className='room_conainter'>
@@ -13,10 +13,13 @@ const Rooms = ({rooms, roomRef, user, houseworkers, onAddUserToGroupHanlder, onD
                             user={user}
                             roomRef={roomRef}
                             houseworkers={houseworkers}
+                            selectedUsername={selectedUsername}
+                            searchTerm={searchTerm}
+                            onSearchHandler={onSearchHandler}
                             onAddUserToGroupHanlder={onAddUserToGroupHanlder}
                             onDeleteRoomHandler={onDeleteRoomHandler}
                             onRoomClickHanlder={onRoomClickHanlder}
-                            onChangeSelectHandler={onChangeSelectHandler}
+                            onChangeSearchInputHandler={onChangeSearchInputHandler}
                         />
                     </div>
                     ))

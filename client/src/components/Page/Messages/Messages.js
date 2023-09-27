@@ -1,4 +1,4 @@
-import {useEffect, useRef, useReducer} from 'react'; 
+import {useEffect, useRef, useReducer, useState} from 'react'; 
 import { useSelector } from 'react-redux';
 import Chat from './Chat/Chat.js';
 import Rooms from './Rooms/Rooms.js';
@@ -21,11 +21,15 @@ const Messages = ({socket,connected}) =>{
         roomMessages: [],
         selectedUsername :'',
         houseworkers:'',
-        enteredRoomID:''
+        enteredRoomID:'',
+
     }
 
+    const [searchTerm, setSearchTerm] = useState('');
     const roomRef = useRef(); //value(roomID) of showned room
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
+
+    console.log("STATE SEARCHEDINPUT: " + state.selectedUsername);
 
     useEffect(() => {
             if(connected && user){
@@ -44,6 +48,21 @@ const Messages = ({socket,connected}) =>{
             }
         },[socket]) //on socket change (SOCKET WILL CHANGE WHEN IS MESSAGE SEND --- socket.emit)
     
+        const onSearchHandler = (serachInput) =>{
+            alert("ee: " + serachInput)
+            dispatch({type:"SET_SELECTED_USERNAME", data:serachInput})
+        }
+
+        // const onChangeSearchInputHandler = (e)=>{
+        //     //on entering value in input
+        //     setSearchTerm(e.target.value);
+        // }
+        const onChangeSearchInputHandler = (e, roomID)=>{
+            //is used to display the search list only for the adding room
+            roomRef.current = roomID; 
+            setSearchTerm(e.target.value);
+        }
+
         const fetchAllRooms = async () =>{   
             
             const data = await getUserRooms(user.username);
@@ -56,9 +75,7 @@ const Messages = ({socket,connected}) =>{
             dispatch({type:"SET_HOUSEWORKERS", data:houseworkerResult});
         }
 
-        const onChangeSelectHandler = (e)=>{
-            dispatch({type:"SET_SELECTED_USERNAME", data:e.target.value})
-        }
+        
     
         //onClick username read messages from him(from roomID where is it )
         const onRoomClickHanlder = async e =>{
@@ -147,12 +164,15 @@ const Messages = ({socket,connected}) =>{
             <Rooms 
                 rooms={state.rooms}
                 houseworkers={state.houseworkers}
+                selectedUsername ={state.selectedUsername}
                 roomRef={roomRef}
                 user={user}
+                searchTerm={searchTerm}
+                onSearchHandler={onSearchHandler}
                 onAddUserToGroupHanlder={onAddUserToGroupHanlder}
                 onDeleteRoomHandler={onDeleteRoomHandler}
                 onRoomClickHanlder={onRoomClickHanlder}
-                onChangeSelectHandler ={onChangeSelectHandler}
+                onChangeSearchInputHandler ={onChangeSearchInputHandler}
             />
 
             <Chat 
