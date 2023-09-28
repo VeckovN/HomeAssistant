@@ -22,7 +22,6 @@ const Messages = ({socket,connected}) =>{
         selectedUsername :'',
         houseworkers:'',
         enteredRoomID:'',
-
     }
 
     const [searchTerm, setSearchTerm] = useState('');
@@ -64,7 +63,6 @@ const Messages = ({socket,connected}) =>{
         }
 
         const fetchAllRooms = async () =>{   
-            
             const data = await getUserRooms(user.username);
             dispatch({type:"SET_ROOMS", data:data})
             console.log('DATA ROOMS : \n' + JSON.stringify(data));
@@ -74,8 +72,6 @@ const Messages = ({socket,connected}) =>{
             const houseworkerResult = await getHouseworkers();
             dispatch({type:"SET_HOUSEWORKERS", data:houseworkerResult});
         }
-
-        
     
         //onClick username read messages from him(from roomID where is it )
         const onRoomClickHanlder = async e =>{
@@ -122,10 +118,9 @@ const Messages = ({socket,connected}) =>{
             getAllHouseworkers();
         },[])
     
-        const onAddUserToGroupHanlder = async(e)=>{
-            const roomID = e.target.value;
-
-            if(state.selectedUsername == ""){
+        const onAddUserToGroupHanlder = async(roomID, username)=>{
+            // if(state.selectedUsername == ""){
+            if(username == ""){
                 toast.info("Select user that you want to add in room",{
                     className:"toast-contact-message"
                 })
@@ -134,7 +129,8 @@ const Messages = ({socket,connected}) =>{
 
             const roomInfo = {
                 roomID:roomID,
-                newUsername: state.selectedUsername
+                // newUsername: state.selectedUsername
+                newUsername: username
             }
 
             const result = await addUserToRoom(roomInfo);
@@ -149,18 +145,17 @@ const Messages = ({socket,connected}) =>{
                 const houseworker = roomUsers[0].users;
                 console.log("RPPM :  " + roomUsers[0].users);
                 //create new group (add user to new gruop)   
-                dispatch({type:"CREATE_NEW_GRUOP" , roomID:roomID, newRoomID:newRoomID, user:houseworker})
+                dispatch({type:"CREATE_NEW_GRUOP" , roomID:roomID, newRoomID:newRoomID, user:houseworker, newUsername:username})
             }
             else{ //add user to existed group
-                dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID});
+                dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username});
             }
 
             toast.info("User is added to the room: "+ roomID );
         }
     
     return (
-        <div className="chat_container">   
-
+        <div className="chat_container">
             <Rooms 
                 rooms={state.rooms}
                 houseworkers={state.houseworkers}
