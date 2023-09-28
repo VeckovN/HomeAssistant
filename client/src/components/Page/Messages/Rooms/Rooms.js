@@ -7,7 +7,7 @@ const Rooms = ({rooms, roomRef, user, selectedUsername, houseworkers, searchTerm
         <div className='room_conainter'>
                 {rooms ?
                     rooms.map((el, index)=>(
-                    <div className='rooms'><span className='roomLabel'>Room{index +1}</span>
+                    <div className='rooms' key={el.roomID}><span className='roomLabel'>Room{index +1}</span>
                         <Room
                             roomInfo={el}
                             user={user}
