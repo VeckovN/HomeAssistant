@@ -1,9 +1,17 @@
-
+import {useState} from 'react';
 import './Room.css'
 const Room = ({roomInfo, user, houseworkers, selectedUsername, searchTerm, roomRef, onSearchHandler, onRoomClickHanlder, onChangeSearchInputHandler, onAddUserToGroupHanlder, onDeleteRoomHandler}) =>{
     
-    console.log("SEARCHTERM: " + searchTerm);
-    console.log("")
+    //Every room has our own selectedUsername - we cann add user to group in multiple room
+    const [selectedUsername2, setSelectedUsernam2] = useState('');
+    const selectedHandler = (username) =>{
+        setSelectedUsernam2(username);
+        console.log("ROOM_ID: " + roomInfo.roomID + " SELECTED_USERNAME: " + username)    
+    }
+
+    // const onSelectInputHandler = (username) =>{
+    //     selectedHandler
+    // }
     
     return(
         <>
@@ -12,28 +20,16 @@ const Room = ({roomInfo, user, houseworkers, selectedUsername, searchTerm, roomR
                 <button value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder}>Show messages</button>
                 {/* client can delete The chat room, add houseworker to group */}
                 {user.type=="Client" &&
-                    <>
-                        {/* <select onChange={onChangeSelectHandler}>
-                            {houseworkers && 
-                                <>
-                                    <option value="">Chose the user</option>
-                                {
-                                    houseworkers.map(el =>(
-                                        <option value={el.username}>{el.username}</option>
-                                    ))
-                                }
-                                </>
-                            }
-                        </select> */}
-                        
+                    <>                        
                         <div> 
                             {roomInfo.roomID == roomRef.current ?
                             <>
                                 <input  
-                                        placeholder='Enter houseworker username'
-                                        type='text'
-                                        onChange={(e)=> onChangeSearchInputHandler(e, roomInfo.roomID)}                        
-                                    />
+                                    // placeholder={selectedUsername2 ? selectedUsername2 : 'Enter username'}
+                                    placeholder={selectedUsername2}
+                                    type='text'
+                                    onChange={(e)=> onChangeSearchInputHandler(e, roomInfo.roomID)}    
+                                />
 
                                 <div className='dropdown-list'>
                                     {
@@ -41,15 +37,17 @@ const Room = ({roomInfo, user, houseworkers, selectedUsername, searchTerm, roomR
                                         const searchInput = searchTerm.toLowerCase();
                                         const usernameMatch = item.username.toLowerCase();
 
-                                        console.log("usernameMath:  " + usernameMatch + 'and searchInpt: ' + selectedUsername.toLowerCase())
+                                        const usernameStartsWithSerachInput = searchInput && usernameMatch.startsWith(searchInput);
+                                        const isNotInRoomUsers =!roomInfo.users.includes(item.username)
 
-                                        //this should unshowned list when is username selected
-                                        return searchInput && usernameMatch.startsWith(searchInput)
+                                        //return searchInput && usernameMatch.startsWith(searchInput) && isNotInRoomUsers
+                                        return usernameStartsWithSerachInput && isNotInRoomUsers
                                     })
                                     .map((item) =>(
                                         <div
                                             key={item.id} 
-                                            onClick={() => onSearchHandler(item.username)} 
+                                            // onClick={() => onSearchHandler(item.username)} 
+                                            onClick={() => selectedHandler(item.username)}
                                             className='dropdown-row'>{item.username}
                                         </div>
                                     ))
@@ -65,7 +63,11 @@ const Room = ({roomInfo, user, houseworkers, selectedUsername, searchTerm, roomR
                                  />
                             }
                         </div>
-                        <button onClick={onAddUserToGroupHanlder} value={roomInfo.roomID}>Add user</button>
+                        <button 
+                            onClick={()=> onAddUserToGroupHanlder(roomInfo.roomID, selectedUsername2)} 
+                            disabled={!selectedUsername2}
+                            >Add user
+                        </button>
                         <button onClick={onDeleteRoomHandler} value={roomInfo.roomID}>Delete room</button>
                     </>
                 }
