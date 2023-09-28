@@ -22,7 +22,7 @@ export const MessagesReducer = (state, action) =>{
                 ...state,
                 roomMessages:[],
                 //find room with added (houseworker user (action.user, ) new added houseworker (state.selectedUsername))
-                rooms: [...state.rooms, {roomID:action.newRoomID, users:[action.user, state.selectedUsername]}]
+                rooms: [...state.rooms, {roomID:action.newRoomID, users:[action.user, action.newUsername]}]
             }
 
         case "ADD_USER_TO_GROUP":
@@ -35,7 +35,7 @@ export const MessagesReducer = (state, action) =>{
                         return{
                             ...room,
                             roomID:action.newRoomID,
-                            users: [...room.users, state.selectedUsername]
+                            users: [...room.users, action.newUsername]
                         }
                     }
                     return room;
