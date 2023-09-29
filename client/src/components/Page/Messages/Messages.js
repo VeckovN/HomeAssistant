@@ -19,16 +19,12 @@ const Messages = ({socket,connected}) =>{
     const initialState = {
         rooms:[],
         roomMessages: [],
-        selectedUsername :'',
         houseworkers:'',
         enteredRoomID:'',
     }
 
-    const [searchTerm, setSearchTerm] = useState('');
     const roomRef = useRef(); //value(roomID) of showned room
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
-
-    console.log("STATE SEARCHEDINPUT: " + state.selectedUsername);
 
     useEffect(() => {
             if(connected && user){
@@ -47,21 +43,6 @@ const Messages = ({socket,connected}) =>{
             }
         },[socket]) //on socket change (SOCKET WILL CHANGE WHEN IS MESSAGE SEND --- socket.emit)
     
-        const onSearchHandler = (serachInput) =>{
-            alert("ee: " + serachInput)
-            dispatch({type:"SET_SELECTED_USERNAME", data:serachInput})
-        }
-
-        // const onChangeSearchInputHandler = (e)=>{
-        //     //on entering value in input
-        //     setSearchTerm(e.target.value);
-        // }
-        const onChangeSearchInputHandler = (e, roomID)=>{
-            //is used to display the search list only for the adding room
-            roomRef.current = roomID; 
-            setSearchTerm(e.target.value);
-        }
-
         const fetchAllRooms = async () =>{   
             const data = await getUserRooms(user.username);
             dispatch({type:"SET_ROOMS", data:data})
@@ -119,7 +100,6 @@ const Messages = ({socket,connected}) =>{
         },[])
     
         const onAddUserToGroupHanlder = async(roomID, username)=>{
-            // if(state.selectedUsername == ""){
             if(username == ""){
                 toast.info("Select user that you want to add in room",{
                     className:"toast-contact-message"
@@ -129,7 +109,6 @@ const Messages = ({socket,connected}) =>{
 
             const roomInfo = {
                 roomID:roomID,
-                // newUsername: state.selectedUsername
                 newUsername: username
             }
 
@@ -141,7 +120,10 @@ const Messages = ({socket,connected}) =>{
             console.log("NEW ROOM ID: " + newRoomID );
             if(isPrivate){
                 //users of the new rooms:
+                console.log("ROOMS ssss: " + state.rooms);
+                    
                 const roomUsers = state.rooms.filter(room => room.roomID == roomID);
+
                 const houseworker = roomUsers[0].users;
                 console.log("RPPM :  " + roomUsers[0].users);
                 //create new group (add user to new gruop)   
@@ -159,15 +141,11 @@ const Messages = ({socket,connected}) =>{
             <Rooms 
                 rooms={state.rooms}
                 houseworkers={state.houseworkers}
-                selectedUsername ={state.selectedUsername}
                 roomRef={roomRef}
                 user={user}
-                searchTerm={searchTerm}
-                onSearchHandler={onSearchHandler}
                 onAddUserToGroupHanlder={onAddUserToGroupHanlder}
                 onDeleteRoomHandler={onDeleteRoomHandler}
                 onRoomClickHanlder={onRoomClickHanlder}
-                onChangeSearchInputHandler ={onChangeSearchInputHandler}
             />
 
             <Chat 
