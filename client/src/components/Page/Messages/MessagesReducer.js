@@ -41,11 +41,6 @@ export const MessagesReducer = (state, action) =>{
                     return room;
                 })
             };
-        case "SET_SELECTED_USERNAME":
-            return{
-                ...state,
-                selectedUsername:action.data
-            }
         case "SET_HOUSEWORKERS":
             return{
                 ...state,
