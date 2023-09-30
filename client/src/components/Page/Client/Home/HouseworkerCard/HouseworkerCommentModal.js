@@ -8,12 +8,11 @@ const HouseworkerCommentModal = ({comments, client_username, onCommentSubmit, po
 
     //Comment Modal context(use CommentItem)
     const commentBodyContext = 
-        <form onSubmit={onCommentSubmit}>
+        <div>
             {comments ?
                 comments.map(comm => (
                     (client_username === comm.from) ? ( //delete button is only showned to clients that belongs comment
                         <CommentItem
-                            // onDeleteCommentHandle={() => onDeleteComment(comm.commentID, comm.from)}
                             onDeleteCommentHandler={onCommentDelete}
                             id={comm.commentID}
                             from={comm.from}
@@ -26,16 +25,15 @@ const HouseworkerCommentModal = ({comments, client_username, onCommentSubmit, po
                             comment={comm.comment}
                         />
                     )
-                    
                 )
                 )
                 : <div className='no_commentsModal'>Client doesn't have comments</div>
             }
             <div className='comment_input'>
-                <input type='text' name="postComment" ref={postCommentRef} placeholder='Post comment'/>
-                <button type="submit">Send</button>
+                <input type='text' name="postComment"  ref={postCommentRef} placeholder='Post comment'/>
+                <button type="submit" onClick={onCommentSubmit}>Send</button>
             </div>
-        </form>
+        </div>
 
     //Comments
     const commentFooterContext = 
