@@ -77,7 +77,6 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
             //fetch out of useEffect(in this example won't be a problem)
             //this fetch will be only trigger on Comment submit this is a reason why we can fetch over the useEffect
             try{
-                //obj for POST Method
                 const postComment = {
                     client:client_username,
                     houseworker:houseworkerUsername,
@@ -101,17 +100,19 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                 console.log("MY COMMENT: " + JSON.stringify(newComment) + "\n");
 
                 //this will trigger Comp re-render
-                if(comments)
+                if(comments){
                     setComments(oldComments =>[
                         newComment,
                         ...oldComments
                     ]);
+                }
                 else{
                     setNewComments(true)
                     setComments([
                         newComment
                     ])
                 }
+                postCommentRef.current.value='';
                     
             }catch(err){
                 console.log(err);
