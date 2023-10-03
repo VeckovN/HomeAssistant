@@ -93,7 +93,7 @@ const HouseworkerCardContent = ({
                             professions ? 
                                 professions.map((pr,index) => 
                                         <div className='div-text-profession' key={index}>- <label className='label-text'>{pr.profession}</label>
-                                            <div className='profession-money'> {pr.working_hour}din </div>
+                                            <div className='profession-money'> €{pr.working_hour}/hr.</div>
                                         </div>
                                     )
                             :
