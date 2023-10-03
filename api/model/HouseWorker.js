@@ -535,6 +535,9 @@ const getProfessions_reqSession = async ()=>{
     return professions;
 }
 
+//Create Profession
+
+
 const getProfessions = async (username)=>{
     //Get Professions with working Hours
     const session = driver.session();
@@ -548,10 +551,27 @@ const getProfessions = async (username)=>{
         //title ='Dadilja" npr (rec.get(0) is WHOLE NODE and has the properties, while rec.get(1) ->r.working_hour is returned property)
         return {profession:rec.get(0) , working_hour:rec.get(1)}
     })
+
     session.close();
     return professions;
 }
 
+const getAllProffesions = async() =>{
+    const session = driver.session();
+    const result = await session.run(`
+            MATCH(n:Profession)
+            return n.title, n.description
+        `)
+    const professions = result.records.map(rec =>{
+        return {title: rec.get(0), description: rec.get(1)}
+    })
+
+    console.log("PROFESSIONS 55555 : " + professions);
+
+    session.close();
+    return professions;
+}
+ 
 const addProfession = async(username,profession, working_hour)=>{
     //const ourUsername ="Sara";
     //MERGE INSTEAD CREATE(m)-[r:OFFERS]->(p)
@@ -789,6 +809,7 @@ module.exports ={
     getRatings,
     getComments,
     getProfessions,
+    getAllProffesions,
     addProfession,
     deleteProfession,
     updateWorkingHour,

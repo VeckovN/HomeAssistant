@@ -207,8 +207,9 @@ export const getAllCities = async() =>{
 //get all professions that exist(provided by houseworkers)
 export const getAllProfessions = async() =>{
     try{
-        const result = await axios.get(BASE_URL +`houseworker/professions`);
+        const result = await axios.get(BASE_URL +`houseworker/professions/all`);
         const professionsResult = result.data;
+        console.log("RESLSLLSLSL: "  + professionsResult)
         return professionsResult;
     }
     catch(err){

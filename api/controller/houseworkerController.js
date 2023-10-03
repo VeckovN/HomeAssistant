@@ -159,6 +159,17 @@ const getHouseworkerCommentsCount = async(req,res)=>{
     }
 }
 
+const getAllProfessions = async(req,res) => {
+    try{
+        const result = await houseworkerModel.getAllProffesions();
+        res.json(result);
+
+    }catch(err){
+        console.log("ERROR GetHouseworkers: " + err);
+        res.status(404).json({error:'Professions error'});
+    }
+}
+
 const getProfessions = async(req,res)=>{
     try{
         //const username = req.params.username;
@@ -282,6 +293,7 @@ module.exports ={
     getOurComments,
     getProfessions,
     getProfessionsByUsername,
+    getAllProfessions,
     addProfession,
     deleteProfession,
     udpateHouseworker,

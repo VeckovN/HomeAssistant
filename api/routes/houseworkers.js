@@ -10,6 +10,7 @@ const {
     getOurComments,
     getProfessions,
     getProfessionsByUsername,
+    getAllProfessions,
     addProfession,
     deleteProfession,
     udpateHouseworker,
@@ -45,6 +46,7 @@ router.get('/comments/count/:username', getHouseworkerCommentsCount)
 router.get('/ourcomments/', getOurComments)
 // router.get('/professions/:username', getProfessions);
 router.get('/professions/', checkHouseworker, getProfessions)
+router.get('/professions/all', getAllProfessions)
 router.get('/professions/:username', getProfessionsByUsername)
 router.delete('/professions/:profession', checkHouseworker, deleteProfession);
 router.put('/professions/update', checkHouseworker, updateProfessionWorkingHour);
