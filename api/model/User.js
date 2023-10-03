@@ -70,7 +70,22 @@ const changePassword = async(username,password) =>{
     return result.records[0].get(0).properties;
 }
 
+// *****INITIAL CREATED
+// -Create gender on start of project(becase we don't have aditional gender after in project process)
+// CREATE(n:Gender {type:"Male"})
+// CREATE(n:Gender {type:"Female"})
 
+//PRofessions
+//CREATE(a:Profession {title:"Housekeeper", description:"Responsible for cleaning and maintaining the cleanliness of the house"})
+//CREATE(a:Profession {title:"Nanny", description:"Provides childcare services, including caring for children, preparing meals, and helping with homework"})
+//CREATE(a:Profession {title:"Personal Chef", description:"Prepares meals for the household, including planning menus and accommodating dietary restrictions"})
+//CREATE(a:Profession {title:"Gardener", description:"Takes care of the garden, lawn, and outdoor landscaping"})
+//CREATE(a:Profession {title:"Personal Driver", description:"Provides transportation services, particularly for families with multiple members"})
+//CREATE(a:Profession {title:"Elderly Caregiver", description:"Offers assistance and companionship to elderly family members"})
+//CREATE(a:Profession {title:"Pet Sitter", description:"Takes care of pets, including walking dogs, feeding, and grooming"})
+//CREATE(a:Profession {title:"Home Health Aide", description:"Provides medical and personal care to individuals with health needs"})
+//CREATE(a:Profession {title:"Personal Shopper", description:"Assists with shopping for groceries, clothing, and other household needs"})
+//CREATE(a:Profession {title:"Butler", description: "Manages various aspects of the household, such as scheduling, organizing, and supervising other staff"})
 
 
 //----------------CHAT PART--------------------
