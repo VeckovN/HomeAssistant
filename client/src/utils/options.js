@@ -34,7 +34,17 @@ const profession_options = [
     { value:'Kuvar', label:"Kuvar" },
     { value:'Staratelj', label:"Staratelj" },
     { value:'Sobarica', label:"Sobarica" },
-    { value:'Domacica', label:"Domacica" }
+    { value:'Domacica', label:"Domacica" },
+    { value:'Housekeeper', label:"Housekeeper" },
+    { value:'Nanny', label:"Nanny" },
+    { value:'Personal Chef', label:"Personal Chef" },
+    { value:'Gardener', label:"Gardener" },
+    { value:'Personal Driver', label:"Personal Driver"},
+    { value:'Elderly Caregiver', label:"Elderly Caregiver" },
+    { value:'Pet Sitter', label:"Pet Sitter" },
+    { value:'Home Health Aide', label:"Home Health Aide" },
+    { value:'Personal Shopper', label:"Personal Shopper" },
+    { value:'Butler', label:"Butler" }
 ]
 // const interests_options = [
 //     { value:'Cistac', label:"Cistac" },
