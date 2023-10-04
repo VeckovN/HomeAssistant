@@ -3,7 +3,6 @@ const {isLogged ,checkClient, checkHouseworker} = require('../middleware/checkLo
 
 const {
     getMessages,
-    sendMessage,
     getAllRooms,
     deleteRoom,
     addUserToRoom,
@@ -21,9 +20,7 @@ const router = express.Router();
 
 router.get('/room/:id/messages', isLogged, getMessages);
 router.post('/room/delete', checkClient, deleteRoom);
-router.post('/sendMessage', isLogged, sendMessage);
 router.post('/room/addUser', checkClient, addUserToRoom);
-
 router.get('/conversationCount/:userID', getConversationCount);
 
 //probelm with req.sessions

@@ -28,17 +28,6 @@ const getMessages = async(req,res)=>{
     }
 }
 
-const sendMessage = async(req,res)=>{
-    const message = req.body;
-    try{
-        const obj =  await chatModal.sendMessage(message);
-        res.json(obj)
-    }
-    catch(err){
-        return res.status(500).json({error: "Message can't be sent"});
-    }
-
-}
 
 const getAllRooms = async(req,res)=>{
     const username = req.params.username;
@@ -95,7 +84,6 @@ module.exports ={
     getRoomId,
     getUserIdByUsername,
     getMessages,
-    sendMessage,
     getAllRooms,
     deleteRoom,
     addUserToRoom,
