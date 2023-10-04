@@ -1,18 +1,12 @@
 const session = require('express-session');
 const Redis = require('ioredis');
-
 const dotenv = require('dotenv');
 dotenv.config();
 
 // const client = new Redis('redis://default:Ic4AULQZTPHR9QALfyqKW2jDJWDVi6Ro@redis-17664.c300.eu-central-1-1.ec2.cloud.redislabs.com:17664')
 const client = new Redis(process.env.REDIS_URL)
-console.log("STATUS: ");
-console.log(client.status)
-
 
 let RedisStore = require("connect-redis")(session)
-//create subscriber
-const sub = new Redis(process.env.REDIS_URL)
 
 // const incr = (key = "key") =>{
 //     new Promise((resolve, reject) =>{
@@ -31,7 +25,6 @@ const sub = new Redis(process.env.REDIS_URL)
 client.on('error', function(err) {
     console.log('Redis error: ' + err);
 }); 
-
 
 const resolvePromise = (resolve,reject)=>{
     // console.log("TESSS");
@@ -111,7 +104,6 @@ const scard = (key, newKey)=>
 
 module.exports ={
     client,
-    sub,
     RedisStore,
     incr,
     decr,

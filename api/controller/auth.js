@@ -90,31 +90,10 @@ const login = async(req,res)=>{
             try{ //because get method return promise (need to be try-catched)
                 const userRedis = await get(`username:${username}`); //user:{userID}
                 console.log("USERRRRR : "  + user);
-
-                let userID = userRedis.split(':')[1]; //[user, {userID}]
-        
+                let userID = userRedis.split(':')[1]; //[user, {userID}]        
+                
                 req.session.user = {username:username, type:userType, userID:userID}
                 console.log("SESSSSSLogion22222222: " + JSON.stringify(req.session))
-
-                // if("Client"){
-                //     sub.subscribe('OnlineUsers', (err) => {
-                //         if (err) {
-                //           console.error('Failed to subscribe to Redis channel:', err);
-                //         } else {
-                //           console.log(`Houseworker ${username} subscribed to notifications.`);
-                //         }
-                //       });
-                // }
-
-                if("Houseworker"){
-                    sub.subscribe('Notifications', (err) => {
-                        if (err) {
-                          console.error('Failed to subscribe to Redis channel:', err);
-                        } else {
-                          console.log(`Houseworker ${username} subscribed to notifications.`);
-                        }
-                      });
-                }
 
                 return res.send(req.session.user)
             }
