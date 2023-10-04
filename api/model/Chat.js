@@ -280,6 +280,53 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
     return {roomID:newRoomID, isPrivate:isPrivateChat};
 }
 
+const sendMessage = async(messageObj) =>{
+
+    const parsedObj = JSON.parse(messageObj);
+    const {roomID} = parsedObj;
+    //ZADD {room:1:3} 1615480369 {user:1, date:1615480369, message:'Hello"}
+    const date = Date.now();
+    const roomKey = `room:${roomID}`;
+    const roomExists = await exists(roomKey);
+
+    if(!roomExists){
+    //or we have to create room and then send message
+    //ROOM WILL BE ONLY CREATED WHEN Client send message TO HOUSEWORKER and this houseworker doesn't have room 
+        //get usersID from roomID => roomID->1:2
+        const usersID = roomID.split(":");//[1,2]
+        // const usersMemeber = usersID.join(":"); //1:2
+        //its same as roomID
+        const user1ID = usersID[0]; //1
+        const user2ID = usersID[1]; //2
+        await sadd(`user:${user1ID}:rooms`, `${roomID}`)
+        await sadd(`user:${user2ID}:rooms`, `${roomID}`)
+
+        //for more then 2 userIDs
+        usersID.forEach(async(id)=>{
+            await sadd(`user:${id}:rooms`, roomID);
+            console.log(`user:${id}:rooms`, roomID);
+        })
+
+        // const roomNotification={
+        //     id: message.roomID,
+        //     names:[
+        //         //name of users in room
+        //         usersID.forEach(async(id)=>{
+        //             await hmget(`user:${id}`, "username");
+        //         })
+        //     ]
+        // }
+
+        // //To all connected clients except the sender 
+        // socket.broadcast.emit('show.room', roomNotification);
+    }
+    //ZADD roomKey:1:2 1617197047 { "From": "2", "Date": 1617197047, "Message": "Hello", "RoomId": "1:2" }
+    //ZADD Key=room:1:2 Score=1617197047 Value=obj
+    await zadd(roomKey, date, messageObj);
+
+    return roomKey;
+}
+
 
 const getRoomCount = async(userID)=>{
     const userKey = `user:${userID}:rooms`;
@@ -324,6 +371,7 @@ module.exports ={
     getAllRooms,
     deleteRoomByRoomID,
     addUserToRoom,
-    getRoomCount
+    getRoomCount,
+    sendMessage
 }
 
