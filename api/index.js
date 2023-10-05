@@ -102,17 +102,16 @@ server.listen(5000, ()=>{
             socket.leave(`room:${id}`)
         })
 
-        socket.on("commentNotification", data=>{
-            console.log("Comment received " + data);
-            io.emit('commentResponseNotify', data);
+        socket.on("commentNotification", ({postComment, to}) =>{
+            console.log("COMMENT NOTIFICATION COMMENT " + JSON.stringify(postComment) + "TO: " +to);
+            //emit only to user whom the message is intended
+            io.emit(`privateCommentNotify-${to}`, {postComment});
         })
     
         socket.on("message", async(messageObj)=>{ 
             const roomKey = await sendMessage(messageObj);
-
             //message(showned) only for joined clients
             io.to(roomKey).emit("messageRoom", messageObj)
-            //client listeninig in home page to show message receive notification
             io.emit("messageResponseNotify" , messageObj);
         })
     

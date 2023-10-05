@@ -17,8 +17,7 @@ const useSocket = (user) =>{
                 console.log("socket.connect();")
                 socket.connect();
 
-                //because in Nodejs socket.on("message", async(messageObj)=>{ 
-                //there is async and this function expect promise
+                //message send to all users and user which id is in message obj should
                 socket.on("messageResponseNotify", (messageObj) =>{
                     console.log(messageObj);
                     const parsedObj = JSON.parse(messageObj);
@@ -27,15 +26,21 @@ const useSocket = (user) =>{
 
                     //exclude sender from users notification
                     const notifyUsers = users.filter(el => el!=from);
-
                     //if our userID is in array of notifyUsers
                     if(notifyUsers.includes(user.userID)){
                         toast.info(`You received Message from ${fromUsername}`,{
                             className:"toast-contact-message"
                         })
                     }
-
                   })
+
+                //listen only for comment that belongs to logged user
+                socket.on(`privateCommentNotify-${user.userID}`, ({postComment}) =>{
+                    toast.info(`You received Comment from ${postComment.client} `,{
+                        className:"toast-contact-message"
+                    })
+                })
+
             }
             else{
                 const socketIn = io("http://127.0.0.1:5000", {
@@ -62,9 +67,6 @@ const useSocket = (user) =>{
 
     },[socket,user])
 
-
-    //socket event listeners
-
     useEffect(()=>{
 
         if(connected && user){
@@ -77,7 +79,6 @@ const useSocket = (user) =>{
                 socket.off("user.room");
             }
         }
-
 
     },[])
 
