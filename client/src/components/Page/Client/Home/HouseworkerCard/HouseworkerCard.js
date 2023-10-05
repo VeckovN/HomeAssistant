@@ -49,7 +49,7 @@ const HouseworkersCard = (props) =>{
     const {
         contactMessageRef,
         onContactHandler
-    } = useHouseworkerContact(socket, isClient, client_ID)
+    } = useHouseworkerContact(socket, isClient, client_ID, client_username)
 
 
 

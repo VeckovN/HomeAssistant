@@ -1,7 +1,7 @@
 import {useRef} from 'react';
 import { toast } from 'react-toastify';
 
-const useHouseworkerContact = (socket, isClient, userID) =>{
+const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
 
     const contactMessageRef = useRef(null);
 
@@ -16,9 +16,11 @@ const useHouseworkerContact = (socket, isClient, userID) =>{
 
             if(messageFromContact!='')
             {
+                //DUPLICATED CODE - MOVE IT ON SOCKET SOMETHING FILE
                 const ourID = userID;
                 //value prop of this button -> props.id 
                 const houseworkerID = e.target.value;
+                alert("USERNAME: " + client_username);
 
                 console.log("HOUSEWORKERID " + houseworkerID);
                 //Room based on users ID
@@ -26,17 +28,19 @@ const useHouseworkerContact = (socket, isClient, userID) =>{
                 const messageObj = {
                         message: messageFromContact,
                         from:ourID,
-                        roomID:RoomID
+                        roomID:RoomID,
+                        fromUsername:client_username
+                        
                 }
                 // alert(JSON.stringify(messageObj));
                 socket.emit('message', JSON.stringify(messageObj))
-                toast.success("Poruka je poslata",{
+                toast.success("The message is send",{
                     className:'toast-contact-message'
                 })
                 contactMessageRef.current.value='';
             }
             else
-                toast.error("Ne mozes poslati praznu poruku",{
+                toast.error("You cannot send the empty message",{
                     className:"toast-contact-message"
                 })
         }   
