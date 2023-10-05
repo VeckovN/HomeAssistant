@@ -87,8 +87,8 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                 toast.success("Comment successfully posted",{
                     className:'toast-contact-message'
                 })
-                // //SOCKET EMIT TO Server (IN Home.js is received)
-                socket.emit('comment', JSON.stringify({...postComment, houseworkerID:houseworkerID}))
+
+                socket.emit('commentNotification', {postComment, to:houseworkerID});
 
                 const newComment = {
                     //we send (looged user) comment to (showenedModal ->oldComment)
