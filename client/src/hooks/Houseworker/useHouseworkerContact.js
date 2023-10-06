@@ -1,4 +1,5 @@
 import {useRef} from 'react';
+import { emitMessage } from '../../sockets/socketEmit';
 import { toast } from 'react-toastify';
 
 const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
@@ -30,10 +31,10 @@ const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
                         from:ourID,
                         roomID:RoomID,
                         fromUsername:client_username
-                        
                 }
                 // alert(JSON.stringify(messageObj));
-                socket.emit('message', JSON.stringify(messageObj))
+                emitMessage(socket, {messageObj});
+                
                 toast.success("The message is send",{
                     className:'toast-contact-message'
                 })

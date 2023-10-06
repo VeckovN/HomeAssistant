@@ -102,13 +102,25 @@ server.listen(5000, ()=>{
             socket.leave(`room:${id}`)
         })
 
-        socket.on("commentNotification", ({postComment, to}) =>{
-            console.log("COMMENT NOTIFICATION COMMENT " + JSON.stringify(postComment) + "TO: " +to);
+        socket.on("commentNotification", ({postComment}) =>{
             //emit only to user whom the message is intended
-            io.emit(`privateCommentNotify-${to}`, {postComment});
+            console.log("COMMENT SEND TO : " + postComment.houseworkerID)
+            io.emit(`privateCommentNotify-${postComment.houseworkerID}`, postComment.client);
+        })
+
+        socket.on("ratingNotification", ({ratingObj}) =>{
+            console.log("RATING OBJ " + JSON.stringify(ratingObj));
+            //emit only to user whom the message is intended
+            io.emit(`privateRatingNotify-${ratingObj.houseworkerID}`, ratingObj.client);
         })
     
-        socket.on("message", async(messageObj)=>{ 
+        socket.on("message", async({messageObj})=>{ 
+
+            console.log("MESSAD ASD ASD ASD: " + messageObj);
+            console.log("MEW NEW : " + JSON.stringify(messageObj));
+
+            console.log("\n \n")
+
             const roomKey = await sendMessage(messageObj);
             //message(showned) only for joined clients
             io.to(roomKey).emit("messageRoom", messageObj)

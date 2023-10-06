@@ -1,6 +1,7 @@
 import {useState, useRef, useEffect} from 'react';
 import {io} from "socket.io-client";
 import { toast } from 'react-toastify';
+import { listenForCommentNotification, listenForRatingNotfication, listenFormMessage} from '../sockets/socketListen';
 
 //take user info from redux
 const useSocket = (user) =>{
@@ -18,28 +19,10 @@ const useSocket = (user) =>{
                 socket.connect();
 
                 //message send to all users and user which id is in message obj should
-                socket.on("messageResponseNotify", (messageObj) =>{
-                    console.log(messageObj);
-                    const parsedObj = JSON.parse(messageObj);
-                    const { message, from, roomID, fromUsername} = parsedObj;
-                    const users = roomID.split(':');
-
-                    //exclude sender from users notification
-                    const notifyUsers = users.filter(el => el!=from);
-                    //if our userID is in array of notifyUsers
-                    if(notifyUsers.includes(user.userID)){
-                        toast.info(`You received Message from ${fromUsername}`,{
-                            className:"toast-contact-message"
-                        })
-                    }
-                  })
-
+                listenFormMessage(socket, user.userID);
                 //listen only for comment that belongs to logged user
-                socket.on(`privateCommentNotify-${user.userID}`, ({postComment}) =>{
-                    toast.info(`You received Comment from ${postComment.client} `,{
-                        className:"toast-contact-message"
-                    })
-                })
+                listenForCommentNotification(socket, user.userID);
+                listenForRatingNotfication(socket, user.userID);
 
             }
             else{

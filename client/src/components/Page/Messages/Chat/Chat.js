@@ -1,4 +1,5 @@
 import {useRef} from 'react';
+import { emitMessage } from '../../../../sockets/socketEmit';
 import { toast } from 'react-toastify';
 
 import './Chat.css'
@@ -23,13 +24,12 @@ const Chat = ({socket, roomMessages, roomRef, user}) =>{
             }
             //emit message(server listen this for sending message to user(persist in db) )
             //and also client listen this event to notify another user for receiving message
-            socket.emit('message', JSON.stringify(messageObj));
-            toast.success("Poruka je poslata",{
-                className:'toast-contact-message'
-            })
+            emitMessage(socket, {messageObj});
+
+            //SOUND NOTIFICATION WHEN ON MESSAGE SENDING
         }
         else
-            toast.error("Ne mozes poslati praznu poruku",{
+            toast.error("Empty message cannot be sent",{
                 className:'toast-contact-message'
             })
     }

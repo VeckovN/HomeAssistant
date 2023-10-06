@@ -5,6 +5,8 @@ import Rooms from './Rooms/Rooms.js';
 import { toast } from 'react-toastify';
 import { MessagesReducer } from './MessagesReducer.js';
 import {getHouseworkers} from '../../../services/houseworker.js';
+import { listenOnMessageInRoom } from '../../../sockets/socketListen.js';
+import { emitRoomJoin, emitLeaveRoom } from '../../../sockets/socketEmit.js';
 import {getUserRooms, deleteRoom, addUserToRoom, getMessagesByRoomID} from '../../../services/chat.js';
 import Spinner from '../../UI/Spinner.js';
 
@@ -31,10 +33,7 @@ const Messages = ({socket,connected}) =>{
                 console.log("HEEEEEEEEE");
                 //io.to(roomKey).emit("messageRoom", messageObj)
                 //users which looking on chat will  receive message 
-                socket.on("messageRoom", (contextObj) =>{
-                    const messageObj = JSON.parse(contextObj);
-                    dispatch({type:"SEND_MESSAGE", data:messageObj})
-                })
+                listenOnMessageInRoom(socket, dispatch);
     
                 //when is created new room show it with others
                 socket.on('show.room', (room) =>{
@@ -60,11 +59,12 @@ const Messages = ({socket,connected}) =>{
             //Assing clicked roomID to roomRef (read roomID valuewiht roomRef.current.value)
             roomRef.current = e.target;
             if(state.enteredRoomID !='' && state.enteredRoomID != roomID){
-                socket.emit('leave.room', state.enteredRoomID);
+                //socket.emit('leave.room', state.enteredRoomID);
+                emitLeaveRoom(socket, state.enteredRoomID);
                 console.log("leave.room : " + state.enteredRoomID);
             }
 
-            socket.emit('room.join', roomID);
+            emitRoomJoin(socket, roomID);
             console.log("JOIN ROOM: " + roomRef.current.value + "    ROOM ID " + roomID);
 
             dispatch({type:"SET_ENTERED_ROOM_ID", data:roomID})

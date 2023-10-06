@@ -44,7 +44,7 @@ const HouseworkersCard = (props) =>{
         onRateHandler, 
         onCloseRateHandler, 
         onChangeRate
-    } = useHouseworkerRating(isClient, client_username);
+    } = useHouseworkerRating(socket, isClient, client_username);
     
     const {
         contactMessageRef,

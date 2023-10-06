@@ -1,6 +1,7 @@
 import {useState, useRef, useEffect} from 'react';
 import {getComments} from '../../services/houseworker.js';
 import {deleteComment} from '../../services/client.js';
+import {emitCommentNotification} from '../../sockets/socketEmit.js'
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
@@ -12,14 +13,16 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
     const commentClick = useRef(false);
 
     //houseworker which comment modal is showned
-    const [houseworkerUsername,setHouseworkerUsername] = useState('');
-    const [houseworkerID, setHouseworkerID] = useState('');
+    const [houseworker, setHouseworker] = useState({
+        username:'',
+        id:''
+    })
 
     useEffect(()=>{
-        console.log("REFF CURRENT " + commentClick.current + " US: " + houseworkerUsername);
+        console.log("REFF CURRENT " + commentClick.current + " US: " + houseworker.username);
         if(commentClick.current == true || newComment == true) //if is clicked or newComment added
-            getHouseworkerComments(houseworkerUsername)
-    },[houseworkerUsername])
+            getHouseworkerComments(houseworker.username)
+    },[houseworker.username])
 
     const getHouseworkerComments = async(username) =>{
         const comms = await getComments(username);
@@ -35,18 +38,19 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
             })
             return 
         }
-        const username = e.target.value;
-        const id = e.target.id;
 
-        console.log("US:" + username);
-        setHouseworkerUsername(username);
-        setHouseworkerID(id);
-
+        setHouseworker({
+            username:e.target.value,
+            id:e.target.id
+        })
         commentClick.current = true;
     }
 
     const onCloseComment = ()=>{
-        setHouseworkerUsername('');
+        setHouseworker(prevState =>({
+            ...prevState,
+            username:''
+        }))
         commentClick.current = false;
     }
 
@@ -54,9 +58,9 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
         e.preventDefault();
         try{
             await deleteComment(from, comment_id);
-            //await service method
             const newComments = comments.filter(comm => comm.commentID!=comment_id)
             setComments(newComments);
+
             toast.success("Comment successfully deleted",{
                 className:'toast-contact-message'
             })
@@ -79,7 +83,7 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
             try{
                 const postComment = {
                     client:client_username,
-                    houseworker:houseworkerUsername,
+                    houseworker:houseworker.username,
                     comment: newCommentContext
                 }
                 await axios.post(`http://localhost:5000/api/clients/comment`, postComment);
@@ -88,16 +92,14 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                     className:'toast-contact-message'
                 })
 
-                socket.emit('commentNotification', {postComment, to:houseworkerID});
+                const postCommentNew = {...postComment, houseworkerID: houseworker.id}
+                emitCommentNotification(socket, postCommentNew)
 
                 const newComment = {
                     //we send (looged user) comment to (showenedModal ->oldComment)
                     from: client_username,
                     comment:postComment.comment
                 }
-
-                console.log("COMMENTs : " + JSON.stringify(comments) + " \n" );
-                console.log("MY COMMENT: " + JSON.stringify(newComment) + "\n");
 
                 //this will trigger Comp re-render
                 if(comments){
@@ -120,7 +122,7 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
         }
     }
 
-    return {comments, postCommentRef, commentClick, houseworkerUsername, onCommentHandler, onCommentSubmit, onCommentDelete, onCloseComment}
+    return {comments, postCommentRef, commentClick, houseworkerUsername:houseworker.username, onCommentHandler, onCommentSubmit, onCommentDelete, onCloseComment}
 }
 
 

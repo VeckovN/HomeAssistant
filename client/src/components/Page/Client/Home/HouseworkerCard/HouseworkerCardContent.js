@@ -126,7 +126,7 @@ const HouseworkerCardContent = ({
                                     </>
                                     
                                     }
-                                    <button onClick={onRateHandler} className={showRateInputCssClass} value={HouseworkerProps.username}>{showRateInput ? "Confirm" : "Rate"}</button>
+                                    <button onClick={onRateHandler} className={showRateInputCssClass} id={HouseworkerProps.id} value={HouseworkerProps.username}>{showRateInput ? "Confirm" : "Rate"}</button>
                                 </div>
                             </div>
 
