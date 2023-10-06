@@ -281,9 +281,8 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
 }
 
 const sendMessage = async(messageObj) =>{
+    const {roomID} = messageObj;
 
-    const parsedObj = JSON.parse(messageObj);
-    const {roomID} = parsedObj;
     //ZADD {room:1:3} 1615480369 {user:1, date:1615480369, message:'Hello"}
     const date = Date.now();
     const roomKey = `room:${roomID}`;
@@ -322,7 +321,7 @@ const sendMessage = async(messageObj) =>{
     }
     //ZADD roomKey:1:2 1617197047 { "From": "2", "Date": 1617197047, "Message": "Hello", "RoomId": "1:2" }
     //ZADD Key=room:1:2 Score=1617197047 Value=obj
-    await zadd(roomKey, date, messageObj);
+    await zadd(roomKey, date, JSON.stringify(messageObj));
 
     return roomKey;
 }
