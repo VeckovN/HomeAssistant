@@ -22,7 +22,7 @@ const useUser =(initialState)=>{
         setData(prev =>(
             {
                 ...prev,
-                ["picture"]:file
+                picture:file
             }
         ))
         console.log(file.name);
@@ -34,9 +34,10 @@ const useUser =(initialState)=>{
         setData(prev=>(
             {
                 ...prev,
-                ["city"]:city
+                city:city
             }
         ))
+        console.log("CITY: " + data.city)
     }
 
     //update profession on houseowrker 
@@ -46,7 +47,7 @@ const useUser =(initialState)=>{
             setData(prev =>(
                 {
                     ...prev,
-                    ["profession"]:e.value,
+                    profession:e.value,
                 }
             ))
         }
@@ -54,7 +55,7 @@ const useUser =(initialState)=>{
             setData(prev =>(
                 {
                     ...prev,
-                    ["profession"]:" ",
+                    profession:" ",
                 }
             ))
         }
@@ -67,7 +68,7 @@ const useUser =(initialState)=>{
         setData(prev =>(
             {
                 ...prev,
-                ["professions"]:professionsArray
+                professions:professionsArray
             }
         ))
     }
@@ -141,7 +142,7 @@ const useUser =(initialState)=>{
         setData(prev =>(
             {
                 ...prev,
-                ["interests"]:professionsArray
+                interests:professionsArray
             }
         ))
     }
