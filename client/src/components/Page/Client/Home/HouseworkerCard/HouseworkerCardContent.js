@@ -1,15 +1,14 @@
 import HouseworkerCommentModal from "./HouseworkerCommentModal";
 
 const HouseworkerCardContent = ({
-    houseworkerUsername,
     comments,
     onCommentSubmit, 
     postCommentRef, 
     onCommentDelete,
     onCloseComment, 
-    HouseworkerProps,
+    houseworkerProps,
     isClient,
-    client_username,
+    clientUsername,
     professions,
     rating,
     showRateInput,
@@ -30,7 +29,7 @@ const HouseworkerCardContent = ({
             {commentClick.current &&
                 <HouseworkerCommentModal
                     comments ={comments}
-                    client_username={client_username}
+                    clientUsername={clientUsername}
                     onCommentSubmit ={onCommentSubmit}
                     postCommentRef ={postCommentRef}
                     onCommentDelete={onCommentDelete}
@@ -39,17 +38,17 @@ const HouseworkerCardContent = ({
             }
 
             <div className="houseworker-card">
-                <div className={HouseworkerProps.recommended ? 'houseworker-content recommended' : 'houseworker-content'}>
+                <div className={houseworkerProps.recommended ? 'houseworker-content recommended' : 'houseworker-content'}>
                     
                     <div className="imgBox">
                         {/* <img clasName="image">IMG FROM DB</img> */}
                         {/* <img src={profilePicture}></img> */}
-                        <img className='' src={`assets/userImages/${HouseworkerProps.picturePath}`}/>
-                        {/* <p>{HouseworkerProps.picturePath}</p> */}
-                        {/* <img src={`data:image/jpeg;base64, ${HouseworkerProps.picturePath}`}></img> */}
+                        <img className='' src={`assets/userImages/${houseworkerProps.picturePath}`}/>
+                        {/* <p>{houseworkerProps.picturePath}</p> */}
+                        {/* <img src={`data:image/jpeg;base64, ${houseworkerProps.picturePath}`}></img> */}
                     </div>
 
-                    {HouseworkerProps.recommended && 
+                    {houseworkerProps.recommended && 
                         <div className='recommendedText'>Preporucen</div> 
                     }
 
@@ -60,28 +59,28 @@ const HouseworkerCardContent = ({
                                 <div className='line'> </div>  
                             </div>
 
-                            <div className='div-text'>Username: <label className='label-text'>{HouseworkerProps.username} </label>
+                            <div className='div-text'>Username: <label className='label-text'>{houseworkerProps.username} </label>
                             </div>
 
-                            <div className='div-text'>First name: <label className='label-text'>{HouseworkerProps.first_name} </label>
+                            <div className='div-text'>First name: <label className='label-text'>{houseworkerProps.first_name} </label>
                             </div>
 
-                            <div className='div-text'>Last name: <label className='label-text'>{HouseworkerProps.last_name}</label>
+                            <div className='div-text'>Last name: <label className='label-text'>{houseworkerProps.last_name}</label>
                             </div>
 
-                            <div className='div-text'>City: <label className='label-text'>{HouseworkerProps.city}</label>
+                            <div className='div-text'>City: <label className='label-text'>{houseworkerProps.city}</label>
                             </div>
 
-                            <div className='div-text'>Gender: <label className='label-text'>{HouseworkerProps.gender}</label>
+                            <div className='div-text'>Gender: <label className='label-text'>{houseworkerProps.gender}</label>
                             </div>
 
-                            <div className='div-text'>Address: <label className='label-text'> {isClient ? HouseworkerProps.address : <b><a href='/login'>Log in</a></b>}</label>
+                            <div className='div-text'>Address: <label className='label-text'> {isClient ? houseworkerProps.address : <b><a href='/login'>Log in</a></b>}</label>
                             </div>
 
-                            <div className='div-text'>Phone number: <label className='label-text'> {isClient ? HouseworkerProps.phone_number : <b><a href='/login'>Log in</a></b>}</label>
+                            <div className='div-text'>Phone number: <label className='label-text'> {isClient ? houseworkerProps.phone_number : <b><a href='/login'>Log in</a></b>}</label>
                             </div>
 
-                            <div className='div-text'>Age: <label className='label-text'>{isClient ? HouseworkerProps.age : <b><a href='/login'>Log in</a></b>}</label>
+                            <div className='div-text'>Age: <label className='label-text'>{isClient ? houseworkerProps.age : <b><a href='/login'>Log in</a></b>}</label>
                             </div>
                         </div>
 
@@ -107,7 +106,7 @@ const HouseworkerCardContent = ({
                             </div>
                                         
                             <div className='description-box'>
-                                <div className='div-text-desc'><p>{isClient ? HouseworkerProps.description : <b>Log in</b>}</p>
+                                <div className='div-text-desc'><p>{isClient ? houseworkerProps.description : <b>Log in</b>}</p>
                                 </div>
                             </div>
 
@@ -126,12 +125,12 @@ const HouseworkerCardContent = ({
                                     </>
                                     
                                     }
-                                    <button onClick={onRateHandler} className={showRateInputCssClass} id={HouseworkerProps.id} value={HouseworkerProps.username}>{showRateInput ? "Confirm" : "Rate"}</button>
+                                    <button onClick={onRateHandler} className={showRateInputCssClass} id={houseworkerProps.id} value={houseworkerProps.username}>{showRateInput ? "Confirm" : "Rate"}</button>
                                 </div>
                             </div>
 
                             <div className='comment-box'>
-                                <button className='comment-btn' onClick={onCommentHandler} id={HouseworkerProps.id} value={HouseworkerProps.username}>Comment</button>
+                                <button className='comment-btn' onClick={onCommentHandler} id={houseworkerProps.id} value={houseworkerProps.username}>Comment</button>
                             </div>
 
                         </div>
@@ -140,7 +139,7 @@ const HouseworkerCardContent = ({
 
                     <div className='communicate-box'>
                         <input ref={contactMessageRef}  type="text" placeholder='Send a message'/> 
-                        <button onClick={onContactHandler} value={HouseworkerProps.id}>Contact</button>
+                        <button onClick={onContactHandler} value={houseworkerProps.id}>Contact</button>
                     </div>
 
                 </div>

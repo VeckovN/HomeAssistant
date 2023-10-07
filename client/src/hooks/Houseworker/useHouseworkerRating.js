@@ -1,12 +1,23 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import { toast } from 'react-toastify';
 import {rateUser} from '../../services/houseworker.js'
+import { getRating } from '../../services/houseworker.js';
 import { emitRatingNotification } from '../../sockets/socketEmit.js';
 
-const useHouseworkerRating = (socket, isClient, client_username) =>{
+const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsername) =>{
 
-    const [rate, setRate] = useState('');
+    const [rate, setRate] = useState(''); //value from input
     const [showRateInput, setShowRateInput] = useState();
+    const [rating, setRating] = useState(''); //hosueworker current ranking value
+
+    const fetchRating = async() =>{
+        const ratingValue = await getRating(houseworkerUsername);
+        setRating(ratingValue);
+    } 
+
+    useEffect(()=>{
+        fetchRating();
+    },[])
 
     var showRateInputCssClass =''
     if(!showRateInput)
@@ -34,7 +45,7 @@ const useHouseworkerRating = (socket, isClient, client_username) =>{
         else {
             try{
                 const rateObj ={
-                    client: client_username,
+                    client: clientUsername,
                     houseworker: username,
                     rating:rateInt
                 }
@@ -43,7 +54,7 @@ const useHouseworkerRating = (socket, isClient, client_username) =>{
 
                 const ratingValue = await rateUser(rateObj);
                 emitRatingNotification(socket, {...rateObj, houseworkerID:id})
-
+                setRating(ratingValue);
 
                 toast.success(`You have rated the ${username} with rate ${rateInt} `,{
                     className:'toast-contact-message'
@@ -67,7 +78,7 @@ const useHouseworkerRating = (socket, isClient, client_username) =>{
         setRate(e.target.value);
     }
 
-    return {rate, showRateInput, showRateInputCssClass, onRateHandler, onCloseRateHandler, onChangeRate}
+    return {rate, rating, showRateInput, showRateInputCssClass, onRateHandler, onCloseRateHandler, onChangeRate}
 
 }
 
