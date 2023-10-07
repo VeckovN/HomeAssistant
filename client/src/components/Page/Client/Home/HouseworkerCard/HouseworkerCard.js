@@ -23,8 +23,8 @@ const HouseworkersCard = (props) =>{
 
     const userAuth = useSelector((state) => state.auth.user)
     const isClient = userAuth && userAuth.type === "Client";
-    const client_username = userAuth?.username;
-    const client_ID = userAuth?.userID;
+    const clientUsername = userAuth?.username;
+    const clientID = userAuth?.userID;
 
     const {
         comments, 
@@ -35,33 +35,24 @@ const HouseworkersCard = (props) =>{
         onCommentSubmit, 
         onCommentDelete,
         onCloseComment
-    } = useHouseworkerComment(socket, isClient, client_username)
+    } = useHouseworkerComment(socket, isClient, clientUsername)
     
     const {
         rate, 
+        rating,
         showRateInput, 
         showRateInputCssClass, 
         onRateHandler, 
         onCloseRateHandler, 
         onChangeRate
-    } = useHouseworkerRating(socket, isClient, client_username);
+    } = useHouseworkerRating(socket, isClient, clientUsername, props.username);
     
     const {
         contactMessageRef,
         onContactHandler
-    } = useHouseworkerContact(socket, isClient, client_ID, client_username)
+    } = useHouseworkerContact(socket, isClient, clientID, clientUsername)
 
-
-
-//#region Rating,Professions Fetching
-    const [rating, setRating] = useState('');
     const [professions, setProfessions] = useState([]);
-
-    const fetchRating = async() =>{
-        const ratingValue = await getRating(props.username);
-        setRating(ratingValue);
-    } 
-
     const fetchProfessions = async() =>{
         // const professionsArray = await getProfessions(props.username);
         const professionsArray = await getProfessionsByUsername(props.username);
@@ -83,17 +74,10 @@ const HouseworkersCard = (props) =>{
     // },[props.username])
 
     useEffect(()=>{
-        fetchRating();
+        // fetchRating();
         fetchProfessions(); 
     },[])
 
-    // useEffect(()=>{
-    //     // fetchRating();
-    //     fetchRatingCal()
-    //     fetchProfessions(); 
-    // },[fetchRatingCal])
-
-//#endregion Rating,Professions Fetching
 
     return (
        <HouseworkerCardContent 
@@ -103,9 +87,9 @@ const HouseworkersCard = (props) =>{
             postCommentRef ={postCommentRef}
             onCommentDelete={onCommentDelete}
             onCloseComment = {onCloseComment}
-            HouseworkerProps={props}
+            houseworkerProps={props}
             isClient={isClient}
-            client_username={client_username}
+            clientUsername={clientUsername}
             professions={professions}
             rating={rating}
             showRateInput={showRateInput}
