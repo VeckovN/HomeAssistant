@@ -66,19 +66,21 @@
     justify-content: center;
     align-items: center;
 
-    margin:4rem 0;
+    margin:rem 0;
     padding:2rem 0;   
 }
 
 .messages_box{
     background-color: rgb(229, 240, 234);
     width: 40%;
+    max-height: 30rem;
     /* position: relative; */
     padding: 1rem .1rem;
     display: flex;
     flex-direction: column;
     min-width: 600px;
     border-radius: 1.5rem;
+    overflow-y: scroll;
 }
 
 
