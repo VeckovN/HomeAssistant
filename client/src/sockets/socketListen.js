@@ -37,3 +37,5 @@ export const listenOnMessageInRoom = (socket, dispatch) =>{
         dispatch({type:"SEND_MESSAGE", data:contextObj})
     })
 }
+
+// export const listenOn
