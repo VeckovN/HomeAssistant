@@ -26,11 +26,7 @@ else {
     Cookie.remove('user'); //also remove user
 }
 
-// if(!expressCookie && cookie==undefined){
-//     user = false;
-//     Cookie.remove('user');
-// }
-   
+
 
 //console.log()
 //WITH LOGIN GET USER FROM COOKIE NOT FROM LOCALSTORAGE 
@@ -51,9 +47,7 @@ export const register = createAsyncThunk(
     'auth/register', //is action ,
     async(userFormData, thunkAPI) =>{ //user passed from register ( dispatch(register(userData) ))
         try{
-            console.log("USER TYPE:" + typeof(userFormData));
-            console.log("USER ST:" + JSON.stringify(userFormData));
-
+            alert("REDUX");
             //THIS FETCH FUNCTION COULD BE IN SERVICE FOLDER (as Api Calls)
             // const response = await axios.post('http://localhost:5000/api/register', user);
             //with context-type multipart/form-data
@@ -65,14 +59,22 @@ export const register = createAsyncThunk(
                     'Content-Type': `multipart/form-data`,
                 },
             });
-            alert("RESP :" + JSON.stringify(response));
+            alert("RESPONSE: " + response.data);
             console.log("REPOSNE FORM DATA: " + response);
             if(response.data){
+                alert("RESPONS DATA:");
                  //GET USER FROM COOKIE -EXPRESS SESSION (WE DON't NEED PUT THIS USER IN LOCAL STORATE)
                 //if post request is success we put response (user) to localStorage 
                 //localStorage.setItem('user', JSON.stringify(response.data));
-                Cookie.set('user', JSON.stringify(response.data))
-                return response.data; 
+                // Cookie.set('user', JSON.stringify(response.data))
+                // return response.data; 
+                if(!response.data.error){
+                    //localStorage.setItem('user', JSON.stringify(response.data))
+                    Cookie.set('user', JSON.stringify(response.data))
+                    return response.data;
+                }
+                else 
+                    return thunkAPI.rejectWithValue(response.data.error)
             }
 
         }catch(error){
@@ -89,16 +91,10 @@ export const login = createAsyncThunk(
         try{
             const response = await axios.post('http://localhost:5000/api/login', user);
             console.log("RESESEPEPE: " + JSON.stringify(response))            
-            // if(response.data)
-            //     localStorage.setItem('user', JSON.stringify(response.data))
-            
-            // return response.data;
-            alert("RESP :" + JSON.stringify(response));
             if(response.data){
                 if(!response.data.error){
                     //localStorage.setItem('user', JSON.stringify(response.data))
                     Cookie.set('user', JSON.stringify(response.data))
-                    //set cookie with same experation time as 'sessionLog' cookie
                     return response.data;
                 }
                 else
@@ -137,6 +133,20 @@ export const logout = createAsyncThunk(
     }
 )
 
+export const sessionExpired = createAsyncThunk(
+    'auth/sessionExpired',
+    async(trunkAPI) =>{
+        try{
+            await axios.get('http://localhost:5000/api/logout');
+            Cookie.remove('user');
+        }
+        catch(error){
+            const message =  error.message || error || (error.response.data.error && error.response.data && error.response)
+            trunkAPI.rejectWithValue(message)
+        }
+    }
+)
+
 const authSlice = createSlice({
     name:'auth',
     initialState,
@@ -158,12 +168,8 @@ const authSlice = createSlice({
                 state.loading = true;
             })
             .addCase(register.fulfilled, (state, action)=>{
-                //when is data backed (register is finnished)
-                //we wanna take this data (payload) and set to user state
                 state.loading = false;
                 state.success = true;
-
-                //add cookie info in action.payload
                 state.user = action.payload //payload returned from reg function (return response.data); which is await axios.post(reg) 
             })
             .addCase(register.rejected, (state,action) =>{
@@ -182,6 +188,8 @@ const authSlice = createSlice({
             .addCase(login.fulfilled, (state,action)=>{
                 state.loading = false;
                 state.error = false;
+                state.success = true;
+                state.message ="You have successfully logged in"
                 state.user = action.payload //our response from axios fetch
             })
             .addCase(login.rejected, (state, action)=>{
@@ -190,9 +198,15 @@ const authSlice = createSlice({
                 state.error = true;
                 state.user = null;
             })
-            ///// LOGOUT /////
             .addCase(logout.fulfilled, (state)=>{
                 state.user = null;
+                state.success = true;
+                state.message = "You are logged out"
+            })
+            .addCase(sessionExpired.fulfilled, (state)=>{
+                state.user = null;
+                state.success = true;
+                state.message = "Your session expired"
             })
             
     }

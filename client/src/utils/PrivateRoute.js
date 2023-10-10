@@ -1,13 +1,24 @@
-import { useSelector } from 'react-redux';
-import { Navigate, Outlet} from 'react-router-dom'; 
+import { useSelector, useDispatch} from 'react-redux';
+import { Navigate} from 'react-router-dom'; 
+import Cookie from 'js-cookie';
+import { logout, sessionExpired } from '../store/auth-slice';
+
 
 const PrivateRoute = ({children, privacy}) =>{
 
     const {user} = useSelector((state) => state.auth)  
     const user_type = user?.type;
-    //user_type woudn't exist if there was no user(logged-in)
+    const dispatch = useDispatch();
+
+    //i can check this does session exist in REACT
+    const expressCookie = Cookie.get("sessionLog"); 
 
     const isAuthenticated = () =>{
+        if(!expressCookie){
+            dispatch(sessionExpired())
+            return false;
+        }
+
         if(privacy === "houseworker" && user_type === "Houseworker"){
             return true;
         }

@@ -1,32 +1,40 @@
 import {Link, useNavigate} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
 import {logout, reset} from '../../../store/auth-slice';
+import { useEffect } from 'react';
+import {toast} from 'react-toastify';
 
 import './Header.css';
 
 const Header = () =>{
-
-    // const user = false;
-
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const userAuth = useSelector((state) => state.auth) //null when not exists
-    const {user} = useSelector((state) => state.auth) //null when not exists
+    const {user, message, error, success} = useSelector((state) => state.auth) //null when not exists
     let houseworker;
-    // if(userAuth.user)
+
     if(user)
         // client = userAuth.user.type === 'Client' ? true : false;
         houseworker = user.type === 'Houseworker' ? true : false;
 
     const logoutHandler = () =>{
-
         //emit disconnected socket
-        
         dispatch(logout())
-        dispatch(reset())
-        navigate('/');
     }
+
+    useEffect(()=>{
+        if(error)
+            toast.error(message,{
+                className:'toast-contact-message'
+            })
+
+        if(success){
+            navigate('/')
+            toast.success(message,{
+                className:'toast-contact-message'
+            })
+        }
+    },[user,error,success])
     
 
   return (
