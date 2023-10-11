@@ -3,7 +3,7 @@
 // TODO: -add pagination(Load first 5 on start then load more 5 on every bottom scroll)
 // FIXME: - City filter (probably others) doesn't work when is recommended button clicked(recommended showned)
 
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect, useRef, useCallback} from 'react';
 import {getHouseworkerByFilter} from '../services/houseworker.js'
 import {getRecommended} from '../services/client.js'
 import { toast } from 'react-toastify';
@@ -165,7 +165,7 @@ const useClient = (user) =>{
         return updatedData
     }
     
-    const searchDataHanlder = (searchDataObj) =>{
+    const searchDataHanlder = useCallback((searchDataObj) =>{
         //searchData is data from SearchAndSort(Child) component
         console.log("SEARCH: " + JSON.stringify(searchDataObj));
 ; 
@@ -203,16 +203,17 @@ const useClient = (user) =>{
         })
         pageNumberRef.current = 0;
 
-    }
+    },[]);
 
-    const filterDataHandler = (filterData) =>{
+    //On every re-rendering this function will be differentand without using useCallback and Filter component will be re-rendered(unnecessary)
+    const filterDataHandler = useCallback((filterData) =>{
         //filteredData is passed data from Children Component (Filter)
         console.log("FILTERS IN PARRANET" + JSON.stringify(filterData));
         pageNumberRef.current = 0;
         setFilterData(filterData);
 
         localStorage.setItem('filteredData', JSON.stringify(filterData));
-    }
+    },[]);
 
     const onShowRecommended = ()=>{
         console.log("USER: " + JSON.stringify(user));
