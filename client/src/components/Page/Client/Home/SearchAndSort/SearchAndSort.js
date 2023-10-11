@@ -1,11 +1,13 @@
 //component with Sort Buttons (By Age and Rating)
 //and in extension with serach bar
 
-import {useState, useRef} from 'react'
+import {useState, useRef, memo} from 'react'
 
 import './SearchAndSort.css'
 
 const SearchAndSort = (prop) => {
+
+    console.log("SEARCH AND SORT");
 
     //won't to reRender this component on input Change, only to send data to Parent(ClientHome) compoennt
     //this is reason why is useRef in use instead useState
@@ -63,4 +65,4 @@ const SearchAndSort = (prop) => {
     )
 } 
 
-export default SearchAndSort
+export default memo(SearchAndSort)

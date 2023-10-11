@@ -1,5 +1,5 @@
 //Compnent with different selection choice
-import {useState, useEffect, useRef, useMemo} from 'react';
+import {useState, useEffect, useRef, useMemo, memo} from 'react';
 import axios from 'axios';
 import Select from 'react-select';
 import {getAllCities, getAllProfessions} from '../../../../../services/houseworker.js'
@@ -10,6 +10,8 @@ import FilterForm from './FilterForm.js';
 import './Filter.css'
 
 const Filter = (prop) =>{
+    
+    console.log("FILTER RENDER");
     
     const [cities, setCities] = useState();
     const [professions, setProfessions] = useState();
@@ -59,4 +61,4 @@ const Filter = (prop) =>{
 
 }
 
-export default Filter;
+export default memo(Filter);
