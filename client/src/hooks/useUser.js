@@ -4,7 +4,39 @@ import {useState, useEffect} from 'react'
 //This handlers are repated in differt components
 const useUser =(initialState)=>{
 
+    console.log("useUSER RENDER")
+
     const [data, setData] = useState(initialState);
+    const [errors, setErrors] = useState({});
+
+    const validateLoginData = () =>{
+        let errorsMessage = {};
+
+        if(!data.username){
+            errorsMessage.username=" Username is required"
+        }
+
+        // if(!validator.isEmail(data.email)){
+        //     errorsMessage.email = "a valid email is required"
+        // }
+        return errorsMessage
+    }
+
+    const validateRegisterClientData = () =>{
+
+    } 
+
+    const handleSubmitSave = (e) =>{
+        // const errorsMessage = validateLoginData();
+        // if(Object.keys(errorsMessage).length){
+        //     setErrors(errorsMessage);
+        //     return;
+        // }
+
+        // setErrors({});
+        // console.log("Submited data: " + JSON.stringify(data));
+        // callbackSubmit(data); //pass back data 
+    }
     
     const onChange = (event) =>{
         const name = event.target.name;
@@ -137,6 +169,7 @@ const useUser =(initialState)=>{
     }
 
     const onChangeInterest = (e) =>{
+        console.log("ON CHANGE INTEREST")
         let professionsArray;
         professionsArray = Array.isArray(e) ? e.map(p => p.value): [];        
         setData(prev =>(
@@ -148,7 +181,7 @@ const useUser =(initialState)=>{
     }
 
 
-    return {data, onChange, onChangeHouseworker, onChangeHouseworkerProfessions, onImageChange, onChangeProfession, onChangeCity, onChangeProffesions, onChangeInterest, resetProfessions}
+    return {data,errors, onChange, handleSubmitSave, onChangeHouseworker, onChangeHouseworkerProfessions, onImageChange, onChangeProfession, onChangeCity, onChangeProffesions, onChangeInterest, resetProfessions}
 
 }
 
