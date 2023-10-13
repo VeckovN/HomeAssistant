@@ -1,35 +1,22 @@
-import {useEffect, useState, useMemo, useRef, useCallback} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
+
+import { useDispatch} from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {toast} from 'react-toastify'; //need be imported in App.js
 import {register as clientRegister, reset} from '../../../../store/auth-slice'
-import useUser from '../../../../hooks/useUser.js'
-import ClientForm from './ClientForm';
 import { city_options, profession_options } from '../../../../utils/options';
 import Select from 'react-select';
 import {useForm, useController} from 'react-hook-form'
 import {zodResolver} from "@hookform/resolvers/zod";
 // import { string, z, array} from "zod"; 
-import { clientRegisterSchema } from '../../../../lib/zodTypes';
+import { clientRegisterSchema } from '../../../../library/zodTypes.js';
 
 import '../Register.css'
 
 
 const ClientRegister = () =>{
     //@TODO - Create custom hook for storing and manipulation with this data( repeated in onther components)
+
     const initialState ={
-        username:'',
-        email:'',
-        password:'',
-        passwordRepeat:'',
-        first_name:'',
-        last_name:'',
-        picture:'',
-        city:'',
-        gender:'',
-        interests:[]
-    }
-    const initialStateN ={
         username:'',
         email:'',
         password:'',
@@ -43,7 +30,7 @@ const ClientRegister = () =>{
     }
 
     const {register, handleSubmit, control, formState: {errors, isSubmitting}, getValues} = useForm({
-        defaultValues: initialStateN,
+        defaultValues: initialState,
         // defaultValues: initialStateN, 
         resolver: zodResolver(clientRegisterSchema)
     })
