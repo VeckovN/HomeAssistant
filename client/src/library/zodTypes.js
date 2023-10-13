@@ -35,6 +35,5 @@ export const clientRegisterSchema = z.object({
 }).refine(data => data.password === data.confirmPassword ,{
     //cheking on matching password
     message: "Password must match",
-    path:["confirmPassword"] //name of error if exists
+    path:["confirmPassword"]
 })
-
