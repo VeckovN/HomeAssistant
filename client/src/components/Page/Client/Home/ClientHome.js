@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useCallback} from 'react'
 import useClient from '../../../../hooks/useClient.js';
 import HouseworkerCard from './HouseworkerCard/HouseworkerCard.js'
 import Filter from './Filter/Filter.js';
@@ -40,6 +40,7 @@ const ClientHome = ({socket}) =>{
             behavior: 'smooth'
           });
     }
+
 
 
     //RECOMMENDED USERS
@@ -102,11 +103,12 @@ const ClientHome = ({socket}) =>{
 
     return (
         <div className='home_container'>
-                {/* {searchedData && <h3>Search:{JSON.stringify(searchedData)}</h3>} */}
                 <button className="recommendedBtn" onClick={onShowRecommended}>{!showRecommended ? 'Show recommended' : 'Close Recommended'}</button>
                 <SearchAndSort search={searchDataHanlder}/>
                 <div className='filter_houseworkers_container'>
                     <Filter 
+                    //This FilterDataHandler is different on every render by default - so memo(Filter) won't work to prevent Filter unnecessary re-rendering
+                    //so i have to this filterDataHandler make unique (frize on first fucntion creating -> useCallback on filterDataHandler in useClient )
                         filterOptions={filterDataHandler}
                     />
                     <div className="houseworker-list">
