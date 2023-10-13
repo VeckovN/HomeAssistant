@@ -33,12 +33,12 @@ function App() {
   return (
     <BrowserRouter>
       {/* <div className="App_container">     */}
-        <Header />
+        <Header/>
         <Routes>
           <Route path='/' element={<Home socket={socket} connected={connected} user={user}/>}> </Route>
           <Route path='/login' element={<Login/>}></Route>
           <Route path='/register' element={<Register/>}></Route>
-          <Route path='/clientRegister' element={<ClientRegister/>}></Route>
+          <Route path='/clientRegister' element={<ClientRegister />}></Route>
           <Route path='/HouseworkerRegister' element={<HouseworkerRegister/>}></Route>
         
           <Route path='/comments' element={
