@@ -51,7 +51,10 @@
     color:black;
 }
 
-
+.input_error{
+    color:red;
+    font-size:.8rem;
+}
 
 
 .button_container{
