@@ -59,23 +59,12 @@ export const register = createAsyncThunk(
                     'Content-Type': `multipart/form-data`,
                 },
             });
-            alert("RESPONSE: " + response.data);
-            console.log("REPOSNE FORM DATA: " + response);
-            if(response.data){
-                alert("RESPONS DATA:");
-                 //GET USER FROM COOKIE -EXPRESS SESSION (WE DON't NEED PUT THIS USER IN LOCAL STORATE)
-                //if post request is success we put response (user) to localStorage 
-                //localStorage.setItem('user', JSON.stringify(response.data));
-                // Cookie.set('user', JSON.stringify(response.data))
-                // return response.data; 
-                if(!response.data.error){
-                    //localStorage.setItem('user', JSON.stringify(response.data))
-                    Cookie.set('user', JSON.stringify(response.data))
-                    return response.data;
-                }
-                else 
-                    return thunkAPI.rejectWithValue(response.data.error)
+
+            if(response.data && response.data.error) {
+                console.error("Registration error:", response.data.error);
+                return thunkAPI.rejectWithValue(response.data.error);
             }
+            return response.data;
 
         }catch(error){
             const message = (err.response && err.response.data.error) || err.message || err
@@ -112,10 +101,6 @@ export const login = createAsyncThunk(
     }
 )
 
-//that will be ok if we don't use Fetch in function (async call)
-// export const logout = async()=>{
-// }
-//but we use fetch(async) and that must be AsyncTrunk
 export const logout = createAsyncThunk(
     'auth/logout',
     async (trunkAPI) =>{
@@ -152,7 +137,6 @@ const authSlice = createSlice({
     initialState,
     reducers:{
         //reduce function ( dispatch(addItemToCart)) example
-        //reset sync function(after we logged or register, we want to reset this values on initial )
         //for other ASYNC function we will use TRUNK func
         reset:(state)=>{
             state.message=' '
@@ -170,7 +154,7 @@ const authSlice = createSlice({
             .addCase(register.fulfilled, (state, action)=>{
                 state.loading = false;
                 state.success = true;
-                state.user = action.payload //payload returned from reg function (return response.data); which is await axios.post(reg) 
+                state.message = "Client Sucessfully created"
             })
             .addCase(register.rejected, (state,action) =>{
                 state.loading = false;
@@ -178,10 +162,9 @@ const authSlice = createSlice({
                 state.error = true;
                 //we set payload to message state because in catch block in register functon
                 //we return thunkAPI.rejectWithValue(message); that return error in message const as payload
+                state.user = true;
                 state.message = action.payload
-                state.user = null; //ofc , user cant be seted
             })
-            ///LOGIN//
             .addCase(login.pending, (state)=>{
                 state.loading = true;
             })
@@ -190,7 +173,7 @@ const authSlice = createSlice({
                 state.error = false;
                 state.success = true;
                 state.message ="You have successfully logged in"
-                state.user = action.payload //our response from axios fetch
+                state.user = action.payload 
             })
             .addCase(login.rejected, (state, action)=>{
                 state.loading =false;
