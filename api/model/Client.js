@@ -271,8 +271,9 @@ const addInterest = async(username, interest) =>{
 }
 
 const create = async(clientObject)=>{
+
     const session = driver.session();
-    const {id, username, email, password, first_name, last_name, picturePath, city, gender, interests} = clientObject;
+    const {id, username, email, password, firstName, lastName, picturePath, city, gender, interests} = clientObject;
 
     //WITH Clause is necessary between Create and Other part of query(Create Gender and City)
     const result = await session.run(`
@@ -282,8 +283,8 @@ const create = async(clientObject)=>{
             username:$username, 
             email:$email, 
             password:$password, 
-            first_name:$first_name,
-            last_name:$last_name,
+            first_name:$firstName,
+            last_name:$lastName,
             picturePath:$picturePath
         }
         ) 
@@ -301,7 +302,7 @@ const create = async(clientObject)=>{
     MERGE(user)-[h:LIVES_IN]->(c)
     RETURN user,g.type,c.name
     `
-    ,{id:id, username:username, email:email, password:password, first_name:first_name, last_name:last_name, picturePath:picturePath, city:city, gender:gender, interests:interests}
+    ,{id:id, username:username, email:email, password:password, firstName:firstName, lastName:lastName, picturePath:picturePath, city:city, gender:gender, interests:interests}
     )
 
     //Interests relation between profession and Client
