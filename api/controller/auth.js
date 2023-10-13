@@ -18,54 +18,34 @@ const register = async (req,res)=>{
     //type='client' or 'houseworker'
     const {username,password, type, ...otherData} = req.body;
     const hashedPassword = bcrypt.hashSync(password, 12);
-    //without type data and with picturePath
     // const picturePath = req.files[0].filename;
     //if picturePath exists
-    const picturePath = req.files[0].filename;
-
+    const picturePath = req.files[0]?.filename;
     const userData = {username, password:hashedPassword, picturePath:picturePath, ...otherData};
-
-    console.log("USERDATA: "+ JSON.stringify(userData));
-    console.log('TP: ' + type);
-
     const userExists = await userModal.checkUser(username);
+
     if(userExists)
         return res.status(400).json({error:"User with this username exists"}) 
     else{
         try{
             const redisUser = await chatModel.createUser(username, hashedPassword);
-            console.log("IDDDDDDD : " + redisUser.id);
             userData.id = Number(redisUser.id);
 
-            console.log("REDIS USER: " + JSON.stringify(redisUser));
-
             if(type=='Client'){
-                const user = {username:username, type:type}
                 await clientModal.create(userData);
                 //assign user to the session after creating the user /request from client(set the sesson to client)
-                req.session.user = user
-                console.log("SESION123123:" + JSON.stringify(user));
-                //return res.json(req.session.user); //created user
-                return res.send(req.session.user)
+                res.status(200).send({success:true, message:"Client Sucessfully created"});
             }
             else if(type=='Houseworker'){ //houseworker
-
-                const user = {username:username, type:type}
-                console.log("EHHHHHHH");
                 await houseworkerModal.create(userData);
-                req.session.user = user;
-                console.log("REQ SESSION<> :" + JSON.stringify(req.session.user));
-                //return res.json(req.session.user);
-                return res.send(req.session.user)
+                res.status(200).send({success:true, message:"Houseworker  Sucessfully created"});
             }
         }
         catch(error){
             console.error("Error during creating user");
-            res.status(500).json({error:"An error during user registration"})
+            return res.status(500).json({error:"An error during user registration"})
         }
-        
     } 
-
 }
 
 const login = async(req,res)=>{
@@ -77,7 +57,7 @@ const login = async(req,res)=>{
         const {username, password} = req.body;
         const user = await userModal.findByUsername(username);
         if(!user)
-            return res.status(404).json({error: "User not found"});
+            return res.status(404).json({error: "User not found!!!"});
         
         const userType = user.type;
         const userInfo = user.props;
