@@ -108,6 +108,12 @@
     font-weight: 600;
 }
 
+.input_errors{
+    font-size: .8rem;
+    color:rgb(163, 18, 18);
+    font-weight:600;
+}
+
 .gender_option{
     width: 40%;
     height: 1.6rem;
