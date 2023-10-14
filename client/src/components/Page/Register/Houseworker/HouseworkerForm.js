@@ -4,7 +4,7 @@ import RegisterInput from '../RegisterInput';
 const HouseworkerForm = ({register, errors, getValues, cityField, professionField, handleSubmit, onChangeHouseworkerProfessionsHandler, onChangeProffesionsHandler, onChangeImageHandler, onChangeCityHandler, onSubmitHandler,  profession_options, city_options}) =>{
 
     const inputs =[{id:'1', name:'username', type:'text'}, {id:'2', name:'email' , type:'text'}, {id:'3',name:'password', type:'password'}, {id:'4',name:'confirmPassword', type:'password'}, 
-    {id:'5',name:'firstName' , type:'text'}, {id:'6',name:'lastName', type:'text'}, {id:'7', name:'age' , type:'text'}, {id:'8', name:'address' , type:'text'}, {id:'9', name:'phoneNumber' , type:'text', placeholder:"Enter phone number"}]
+    {id:'5',name:'firstName' , type:'text', placeholder:"Enter first name"}, {id:'6',name:'lastName', type:'text', placeholder:"Enter last name"}, {id:'7', name:'age' , type:'text'}, {id:'8', name:'address' , type:'text'}, {id:'9', name:'phoneNumber' , type:'text', placeholder:"Enter phone number"}]
 
     return (
         <div className='register_container'>
