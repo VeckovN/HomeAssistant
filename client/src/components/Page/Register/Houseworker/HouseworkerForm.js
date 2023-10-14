@@ -1,163 +1,104 @@
 import Select from 'react-select';
+import RegisterInput from '../RegisterInput';
 
-const HouseworkerForm = ({data, profession_options, city_options, onSubmit, onChange, onChangeCity, onImageChange, onChangeProffesions, onChangeHouseworkerProfessions}) =>{
+const HouseworkerForm = ({register, errors, getValues, cityField, professionField, handleSubmit, onChangeHouseworkerProfessionsHandler, onChangeProffesionsHandler, onChangeImageHandler, onChangeCityHandler, onSubmitHandler,  profession_options, city_options}) =>{
+
+    const inputs =[{id:'1', name:'username', type:'text'}, {id:'2', name:'email' , type:'text'}, {id:'3',name:'password', type:'password'}, {id:'4',name:'confirmPassword', type:'password'}, 
+    {id:'5',name:'firstName' , type:'text'}, {id:'6',name:'lastName', type:'text'}, {id:'7', name:'age' , type:'text'}, {id:'8', name:'address' , type:'text'}, {id:'9', name:'phoneNumber' , type:'text', placeholder:"Enter phone number"}]
 
     return (
         <div className='register_container'>
-                <form>
+                <form onSubmit ={handleSubmit(onSubmitHandler)} encType="multipart/form-data">
                 <div className='form_title'>Houseworker registration</div>
-                    <div className='register_input_container'>
-                        <input
-                            className='input_field'
-                            type='text'
-                            name='username'
-                            value={data.username}
-                            placeholder='Enter username'
-                            onChange={onChange}
-                        />
-                    </div>
-
-                    <div className='register_input_container'>
-                        <input
-                            className='input_field'
-                            type='text'
-                            name='email'
-                            value={data.email}
-                            placeholder='Enter email address'
-                            onChange={onChange}
-                        />
-                    </div>
-
-                    <div className='register_input_container'>
-                        <input
-                            className='input_field'
-                            type='password'
-                            name='password'
-                            value={data.password}
-                            placeholder='Enter password'
-                            onChange={onChange}
-                        />
-                    </div>
-
-                    <div className='register_input_container'>
-                        <input
-                            className='input_field'
-                            type='passwordRepeat'
-                            name='passwordRepeat'
-                            value={data.passwordRepeat}
-                            placeholder='Repeat password'
-                            onChange={onChange}
-                        />
-                    </div>
-
-                    <div className='register_input_container'>
-                        <input
-                            className='input_field'
-                            type='text'
-                            name='first_name'
-                            value={data.first_name}
-                            placeholder='Enter first name'
-                            onChange={onChange}
-                        />
-                    </div>
-
-                    <div className='register_input_container'>
-                        <input
-                            className='input_field'
-                            type='text'
-                            name='last_name'
-                            value={data.last_name}
-                            placeholder='Enter last name'
-                            onChange={onChange}
-                        />
-                    </div>
-
-                    <div className='register_input_container'>
-                        <input
-                            className='input_field'
-                            type='number'
-                            name='age'
-                            value={data.age}
-                            placeholder='Enter age'
-                            onChange={onChange}
-                        />
-                    </div>
-
-                    <div className='register_input_container'>
-                        <input
-                            className='input_field'
-                            type='address'
-                            name='address'
-                            value={data.address}
-                            placeholder='Enter address'
-                            onChange={onChange}
-                        />
-                    </div>
-                    <div className='register_input_container'>
-                        <input
-                            className='input_field'
-                            type='number'
-                            name='phone_number'
-                            value={data.phone_number}
-                            placeholder='Enter phone number'
-                            onChange={onChange}
-                        />
-                    </div>
+                
+                    {inputs.map(el => {
+                        return<div className='register_input_container' key={el.id}>
+                            <RegisterInput 
+                                type={el.type}
+                                name={el.name}
+                                placeholder={el.placeholder}
+                                register={register} 
+                                errors={errors}
+                            />
+                        </div>
+                    })}
 
                     <br></br>
                     <Select 
                         className='dropdown'
                         placeholder="Select a city"
+                        value={city_options.find(({value}) => value === cityField.value)}
                         options={city_options}
-                        onChange={onChangeCity}
+                        onChange={onChangeCityHandler}
                         isClearable
                     />
+                    <div className='input_errors'>{errors.city?.message}</div>
 
                     <label className='label_input'>Gender</label>
-                    <select className="gender_option" onChange={onChange} name="gender" id='gender'>
+                    <select className="gender_option" {...register('gender')}>
                         <option value="">Choose gender</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                     </select>
+                    <div className='input_errors'>{errors.gender?.message}</div>
 
-                    <label className='label_input'>Profile picture</label>
+                    <label className='label_input'>Profile Avatar</label>
                     <div className='form-group form-group-image'>
-                        <input type="file" onChange={onImageChange}  className='inputFile' name="picture" />
+                        <input 
+                            className='inputFile' 
+                            type="file" 
+                            // name="picture"
+                            onChange={onChangeImageHandler}  
+                        />
+                        <div className='input_errors'>{errors.avatar?.message}</div>
                     </div>
 
                     <br/>
+
+                    <label className='label_input'>Professions</label>
                     <Select 
                         className='dropdown'
-                        placeholder="Select Profession"
+                        placeholder="Select the Profession"
                         options={profession_options}
-                        onChange={onChangeProffesions}
+                        value={profession_options.find(({value}) => value === professionField.value)}
+                        onChange={onChangeProffesionsHandler}
                         isMulti
                         isClearable
                     />
+                    <div className='input_errors'>{errors.professions?.message}</div>
                     
                     {  //list profession
-                        data.professions.map((el,index) => (
+                        // data.professions.map((el,index) => (
+                        //getValues.professions
+                        getValues('professions')?.map((el,index) => (    
                         <div key={index}>
                             <label><b>{el}</b></label>
                             <input 
                                 className='input_field'
                                 type='number'
+                                placeholder={`Enter working hour`} 
                                 name={el} //selected profession
                                 // value //entered value
-                                placeholder={`Enter ${el} working hour`} 
-                                onChange={onChangeHouseworkerProfessions}
+                                onChange={onChangeHouseworkerProfessionsHandler}
                             />
+                            <div className='input_errors'>{errors?.houseworkerProfessions?.[index]?.working_hour}</div>
+                            <div className='input_errors'>{errors?.houseworkerProfessions?.working_hour}</div>
                         </div>    
                         ))
                     }
                     <br/>
-                    
-
+            
                     <label className='label_input'>Description</label>
-                    <textarea onChange={onChange} rows="5" cols="20" className="descriptionBox"  name="description"></textarea>
+                    <textarea 
+                        className="descriptionBox"  
+                        rows="5" 
+                        cols="20" 
+                        {...register('description')}
+                    />
+                    <div className='input_errors'>{errors.description?.message}</div>
 
                     <div className ='register_button_container'>
-                        <button type='submit' onClick={onSubmit} className='btn'>Register</button>
+                        <button type='submit'className='btn'>Register</button>
                     </div>
 
                 </form>

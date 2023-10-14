@@ -1,102 +1,137 @@
-import {useEffect} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch} from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import {register, reset} from '../../../../store/auth-slice';
-import useUser from '../../../../hooks/useUser.js'
+import {register as registerHouseworker, reset} from '../../../../store/auth-slice';
 import {toast} from 'react-toastify';
 import HouseworkerForm from './HouseworkerForm';
 import { city_options, profession_options } from '../../../../utils/options';
+import Select from 'react-select';
+import {useForm, useFieldArray ,useController} from 'react-hook-form'
+import {zodResolver} from "@hookform/resolvers/zod";
+import { houseworkerRegisterSchema } from '../../../../library/zodTypes';
 
 import '../Register.css';
 
-const HouseworkerRegister = () =>{
+//DATA: 
+//{"username":"Veckov","email":"veckov@gmail.com","password":"veckov","passwordRepeat":"veckov",
+//"first_name":"Novak","last_name":"Veckov","age":"25","picture":{},"gender":"Male",
+//"city":"Nis","address":"Mokranjceva","description":"My description","phone_number":"06012333213",
+//"professions":["Kuvar","Staratelj"],
+//"houseworker_professions":[{"label":"Staratelj","working_hour":"300"},{"label":"Kuvar","working_hour":"200"}]}
 
+const HouseworkerRegister = () =>{
     const initialState ={
         username:'',
         email:'',
+        firstName:'',
+        lastName:'',
         password:'',
-        passwordRepeat:'',
-        first_name:'',
-        last_name:'',
+        confirmPassword:'',
         age:'',
-        picture:'',
+        avatar:'',
         gender:'',
         city:'',
         address:'',
         description:'',
-        phone_number:'',
+        phoneNumber:'',
         professions:[],
-        houseworker_professions:[]  //[{label:"Cleaner" , working_hour:320} , { } , { }]
-        
+        houseworkerProfessions:[]  //[{label:"Cleaner" , working_hour:320} , { } , { }]
     }
-    
-    const {data, onChangeHouseworker, onChangeHouseworkerProfessions, onChangeCity, onImageChange, onChangeProffesions} = useUser(initialState);
-    const { password, passwordRepeat} = data;
+
+    const {register, handleSubmit, control, formState: {errors}, getValues} = useForm({
+        defaultValues: initialState,
+        resolver: zodResolver(houseworkerRegisterSchema)
+    })
+
+    const {field:cityField} = useController({name:"city", control});
+    const {field:avatarField} = useController({name:"avatar", control});
+    const {field:professionField} = useController({name:"professions", control});
+    //for every professionsField (selected) must exist object {label, workingHour}
+    //houseworkerProfessionField should be [{label:"professionName" workingHour:"--"}, {labeel , workingHour} if other exists]
+    const { fields:houseworkerProfessionsFields, append, remove } = useFieldArray({
+        control, // control props comes from useForm (optional: if you are using FormContext)
+        name: "houseworkerProfessions", // unique name for your Field Array
+      });
     
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const {user, loading, success, error, message} = useSelector( (state) => state.auth)
 
-    useEffect( ()=>{
-        //on every user,success,error,message state change chech status of states
-        //and show the appropriate notification
-        if(error)
-            toast.error(message);
-        
-        //register.fulfilled trigger success=true (when is register success )
-        //or if user is logged (after register) 
-        if(success || user){
-            console.log("@@#!@#!@#!@$!&@*#^!@&*(#^!&*(@#^&*!@^&#");
-            navigate('/');
-            // toast.success(message);
-            toast.success("You have successfully created account",{
+    const onSubmitHandler = async (data) =>{
+        console.log("Form DATA: \n " + JSON.stringify(data))
+
+        //check does profession working hours entered
+        if(getValues('professions') && houseworkerProfessionsFields.length == 0){
+            toast.error("You have to enter working hour for profession",{
                 className:'toast-contact-message'
             })
+            return;
         }
-        //after all of this actions, we want to reset states
-        dispatch(reset());
 
-    },[user, success,error, message, navigate, dispatch])
-
-
-    console.log("DATA: " + JSON.stringify(data));
-    
-    const onSubmit = (e) =>{
-        e.preventDefault();
-
-        if(password != passwordRepeat){
-            alert("Passwords ins't same");
-        }
-        else{            
-            const formData = new FormData();
-            for(const key in data){
-                console.log("DATA: " + JSON.stringify(data))
-                console.log(`${key}: ${data[key]}`)
-
-                if(key === 'houseworker_professions'){
-                    formData.append(key, JSON.stringify(data[key]))
-                }
-                else
-                    formData.append(key, data[key]);         
+        const formData = new FormData();
+        for(const key in data){
+            if(key === 'houseworkerProfessions'){
+                formData.append(key, JSON.stringify(getValues('houseworkerProfessions'))) 
             }
-            formData.append('type', 'Houseworker');
-            dispatch(register(formData));
+            else
+                formData.append(key, data[key]);         
+        }
+        formData.append('type', 'Houseworker');
 
-            dispatch(reset());
+        // for (const [key, value] of formData.entries()) {        
+        //     console.log(`${key}: ${value}`);
+        // }
+
+        dispatch(registerHouseworker(formData));
+        navigate('/login');
+        toast.success("You have successfully created account",{
+            className:'toast-contact-message'
+        })
+    }
+
+    const onChangeCityHandler = (option) =>{
+        console.log("cityField: ", cityField);
+        cityField.onChange(option.value);
+    }
+
+    const onChangeImageHandler = (event) =>{
+        avatarField.onChange(event.target.files[0]);
+        console.log("avatarField", avatarField);
+    }
+
+    const onChangeProffesionsHandler = (event) =>{
+        let professionsArray;
+        professionsArray = Array.isArray(event) ? event.map(p => p.value): [];
+        professionField.onChange(professionsArray);
+    }
+
+    const onChangeHouseworkerProfessionsHandler = (event) =>{
+        const {value, name} = event.target;
+
+        const existingObjectIndex = getValues('houseworkerProfessions').findIndex(item => item.label === name)
+        if(value === ""){
+            if(existingObjectIndex !== -1)
+                remove(existingObjectIndex);
+        }
+        else{
+            if(existingObjectIndex == -1)
+                append({label:name, working_hour:value});
         }
     }
 
     return (
         <HouseworkerForm
-            data={data}
-            city_options={city_options}
+            register={register}
+            errors={errors}
+            getValues={getValues}
+            cityField={cityField}
+            professionField={professionField}
+            handleSubmit={handleSubmit}
+            onSubmitHandler={onSubmitHandler}
+            onChangeHouseworkerProfessionsHandler={onChangeHouseworkerProfessionsHandler}
+            onChangeProffesionsHandler={onChangeProffesionsHandler}
+            onChangeImageHandler={onChangeImageHandler}
+            onChangeCityHandler={onChangeCityHandler}
             profession_options={profession_options}
-            onSubmit={onSubmit}
-            onChange={onChangeHouseworker}
-            onChangeCity={onChangeCity}
-            onImageChange={onImageChange}
-            onChangeProffesions={onChangeProffesions}
-            onChangeHouseworkerProfessions={onChangeHouseworkerProfessions}
+            city_options ={city_options}
         />
     )
 
