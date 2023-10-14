@@ -1,5 +1,5 @@
 import Select from 'react-select';
-import RegisterInput from '../RegisterInput';
+import FormInput from '../../../../utils/FormInput';
 
 const HouseworkerForm = ({register, errors, getValues, cityField, professionField, handleSubmit, onChangeHouseworkerProfessionsHandler, onChangeProffesionsHandler, onChangeImageHandler, onChangeCityHandler, onSubmitHandler,  profession_options, city_options}) =>{
 
@@ -13,7 +13,7 @@ const HouseworkerForm = ({register, errors, getValues, cityField, professionFiel
                 
                     {inputs.map(el => {
                         return<div className='register_input_container' key={el.id}>
-                            <RegisterInput 
+                            <FormInput 
                                 type={el.type}
                                 name={el.name}
                                 placeholder={el.placeholder}
