@@ -669,7 +669,7 @@ const create = async(houseworkerObject)=>{
     //     description:"Ambicious, Hardworker",
     //     phone_number
 
-    const {id, username, email, password, first_name, last_name, picturePath, address, description, city, gender, age, phone_number,professions, houseworker_professions} = houseworkerObject;
+    const {id, username, email, password, firstName, lastName, picturePath, address, description, city, gender, age, phoneNumber,professions, houseworkerProfessions} = houseworkerObject;
     console.log("TSWWWWWW2")
     //WITH Clause is necessary between Create and Other part of query(Create Gender and City)
     const result = await session.run(`
@@ -679,8 +679,8 @@ const create = async(houseworkerObject)=>{
                 username:$username, 
                 email:$email, 
                 password:$password, 
-                first_name:$first_name,
-                last_name:$last_name,
+                first_name:$firstName,
+                last_name:$lastName,
                 picturePath:$picturePath
             }
             ) 
@@ -691,7 +691,7 @@ const create = async(houseworkerObject)=>{
                 username:$username,
                 address:$address,
                 description:$description,
-                phone_number:$phone_number,
+                phone_number:$phoneNumber,
                 age:$age
             })
         WITH n as user , m as houseworker
@@ -702,10 +702,10 @@ const create = async(houseworkerObject)=>{
         MERGE(user)-[h:LIVES_IN]->(c)
         RETURN user,g.type,c.name
     `
-    ,{id:id ,username:username, email:email, password:password, first_name:first_name, last_name:last_name, picturePath:picturePath, address:address, description:description ,city:city, gender:gender, age:age, phone_number:phone_number}
+    ,{id:id ,username:username, email:email, password:password, firstName:firstName, lastName:lastName, picturePath:picturePath, address:address, description:description ,city:city, gender:gender, age:age, phoneNumber:phoneNumber}
     )
 
-    const professionsArray = JSON.parse(houseworker_professions);
+    const professionsArray = JSON.parse(houseworkerProfessions);
     professionsArray.forEach(profession =>{
         console.log("PROF: " + profession.label + " Working_hour: " + profession.working_hour + '\n');
         addProfession(username, profession.label, profession.working_hour)
