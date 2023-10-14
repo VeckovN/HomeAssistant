@@ -7,14 +7,14 @@ import { useForm } from 'react-hook-form';
 import {zodResolver} from "@hookform/resolvers/zod";
 import { string, z } from "zod";
 
+
 import './Login.css';
-
-
 
 const schema = z.object({
     username: string().min(4, {message:"Username must contain at least 4 characters"}),
     password: string().min(1, {message:"Password is required"})
 })
+
 
 const Login = () =>{
     const initialState ={
@@ -28,14 +28,10 @@ const Login = () =>{
     //UseEffect for restarting value of state
     useEffect(()=>{
         if(formState.isSubmitSuccessful){
-            reset({username:'', password:''})
+            const timer = setTimeout(() => reset({username:'', password:''}),500)
+            return () =>clearTimeout(timer);
         }
-    },[formState, reset, isSubmitSuccessful])
-
-    // const onSubmitHandlerNew = (e) =>{
-    //     e.preventDefault();
-    //     handleSubmitSave();
-    // } 
+    },[formState, isSubmitSuccessful])
 
     const onSubmitHandler = (formValues) =>{
         dispatch(login(formValues));
@@ -56,16 +52,12 @@ const Login = () =>{
                                 className='input_field'
                                 type='text'
                                 placeholder='Enter a username'
-                                //register has ("username", onChange, onBlur and ref props) 
+                                //register has (name="username", onChange, onBlur and ref props) 
                                 {...register('username')}
-                                // name='username'
-                                // value={username}
-                                // onChange={onChange}
                             />
                             <div className="input_error">{errors.username?.message}</div>
                         </div>
                         
-
                         <div className='input_container'>
                             <input
                                 className='input_field'
