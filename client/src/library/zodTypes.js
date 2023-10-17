@@ -20,7 +20,7 @@ const userRegisterSchemaProps = () =>{
             .refine((file) => file?.size <= 300000, `Max image size is 3MB.`)
             .refine((file) => ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file?.type),
             "Only .jpg, .jpeg, .png and .webp formats are supported."),
-        email: string().email(),
+        email: string().email().optional(),
         // phone: string().transform(data => Number(data)),
         password: 
             string()
