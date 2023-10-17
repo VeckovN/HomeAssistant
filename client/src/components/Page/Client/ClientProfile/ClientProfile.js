@@ -1,34 +1,41 @@
 import {useState, useEffect} from 'react';
 import {toast} from 'react-toastify';
-import useUser from '../../../../hooks/useUser';
 import ClientProfileForm from './ClientProfileForm';
 import {getUserData, updateClient} from '../../../../services/client.js';
-
+import {useForm, useController} from 'react-hook-form';
+import { city_options } from '../../../../utils/options';
 import './ClientProfile.css'
 
-
-//For user enterd value Validation use useState()
-//for only taking value on submit(without validation) better choice is useRef
 const ClientProfile = () =>{ 
-
-    //updatedData
     const initialState = {
         email:'',
         password:'',
-        passwordRepeat:'',
+        confirmRepeat:'',
         first_name:'',
         last_name:'',
-        picture:'',
+        avatar:'',
         city:'',
     }
 
-    const {data:updatedData, onChange:onChangeUpdate, onChangeCity} = useUser(initialState);
+    const {register, handleSubmit, watch,reset, getValues, control, formState: {errors, isSubmitSuccessful}} = useForm({
+        defaultValues: initialState
+    })
+    const {field:cityField} = useController({name:"city", control});
     const [clientData, setClientData] = useState({})
 
-    //setted value on fetch
     useEffect( ()=>{
+        console.log("On Initial render")
         fetchData()
     }, [])
+
+    useEffect( () =>{
+        //restaring entered input value
+        // const values = {...watch()}
+        // const resetElements = Object.keys(values).filter(key => values[key])
+        // const resetObj = Object.fromEntries(resetElements.map(el => [el, ""]));
+        //reset({...resetObj})
+        reset({...initialState})
+    },[isSubmitSuccessful])
 
     const fetchData = async() =>{
         const clientData = await getUserData();
@@ -36,56 +43,66 @@ const ClientProfile = () =>{
         setClientData(clientData);
     }
 
-    const onSubmitUpdate = async (e)=>{
-        e.preventDefault();
+    const onSubmitUpdate = async(updatedData) =>{
+        try{
+            //only props wiht updated data( !='') for HTTP request
+            let newData = {};
+            //without re-fetching just override ClientData with updatedData
+            Object.keys(updatedData).forEach(key =>{
+                //console.log("UPD: " + typeof(key)+ " : " + updatedData[key]);
+                //picture wont store in this object(for it use diferent request)
+                if(updatedData[key] != '' && key!='picture'){
+                    newData[key] = updatedData[key];
+                }
+            })
 
-        if(updatedData.password != updatedData.passwordRepeat)
-            toast.error("Sifre nisu iste");
-        else if(updatedData.first_name =="" && updatedData.last_name =="" && updatedData.email =="" && updatedData.city =="" && updatedData.password =="" && updatedData.passwordRepeat ==""){
-            toast.error("Unesite podatke");
-        }
-        else{
-            try{
-                //only props wiht updated data( !='') for HTTP request
-                let newData = {};
-                //without re-fetching just override ClientData with updatedData
-                Object.keys(updatedData).forEach((key,index) =>{
-                    console.log("UPD: " + typeof(key)+ " : " + updatedData[key]);
-                    
-                    //picture wont store in this object(for it use diferent request)
-                    if(updatedData[key] != '' && key!='picture'){
-                        //data object wiht only updated props (for HTTP request)
-                        newData[key] = updatedData[key];
-                        
-                        setClientData(prev =>({
-                            ...prev,
-                            //BECAUSE 'key' is STRING and MUST use []  
-                            [key] : updatedData[key] 
-                        }))
-                    }
+            if(Object.keys(newData).length == 0){
+                toast.error("You didn't enter any value",{
+                    className:'toast-contact-message'
                 })
-    
-                // if(updatedData.picture !=''){
-                //     await axios.put(`http://localhost:5000/api/clients/updateImage/`, updateImage);
-                // }
-    
-                await updateClient(newData);
-                toast.success("Successfuly updated!")
+                return;
             }
-            catch(err){
-                console.log("Erorr: " + err);
-                toast.error("Error updated")
-            }
+
+            // if(updatedData.picture !=''){
+            //     await axios.put(`http://localhost:5000/api/clients/updateImage/`, updateImage);
+            // }
+
+            await updateClient(newData);
+            toast.success("Successfuly updated!")
+
+            Object.keys(newData).forEach(key =>{
+                setClientData(prev =>({
+                    ...prev,
+                    //BECAUSE 'key' is STRING and MUST use []  
+                    [key] : newData[key] 
+                }))
+            })
+
         }
+        catch(err){
+            //sent through return res.status(400).json({error:"User with this email exists"})
+            //catch it with err.response.data.error (error is prop of data-obj in json : "User with this email exists")
+            const message = (err.response && err.response.data.error) || err.message || err
+            toast.error(message);
+        }
+    }
+
+    const onCityChangeHandler = (option) =>{
+        console.log("field", cityField);
+        cityField.onChange(option.value);
     }
 
     return(
         <ClientProfileForm 
-            updatedData = {updatedData}
             clientData={clientData}
+            cityField={cityField}
+            errors={errors}
+            register={register}
+            watch={watch} 
+            city_options={city_options} 
+            handleSubmit={handleSubmit}
             onSubmitUpdate={onSubmitUpdate}
-            onChangeUpdate ={onChangeUpdate}
-            onChangeCity={onChangeCity}
+            onCityChangeHandler={onCityChangeHandler}
         />
     )
 }
