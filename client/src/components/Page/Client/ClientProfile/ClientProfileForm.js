@@ -70,6 +70,7 @@ const ClientProfileForm = ({clientData, cityField, errors, register, watch, city
                             className='input_field'
                             type='password'
                             placeholder='Enter a password'
+                            autocomplete="off"
                             {...register('password')}
                             />
                         <div className='input_errors'>{errors.password?.message}</div>
@@ -84,6 +85,7 @@ const ClientProfileForm = ({clientData, cityField, errors, register, watch, city
                             type='password'
                             id='confirmPassword'
                             placeholder='Confirm password'
+                            autocomplete="off"
                             {...register('confirmPassword' , {
                                 validate:(val) =>{
                                     if(watch('password') !=val){
