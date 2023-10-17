@@ -50,6 +50,23 @@ const checkUser = async(username)=>{
     return true;
 }
 
+const checkEmail = async(email)=>{
+    const session = driver.session();
+
+    const userResult = await session.run(
+        `MATCH (n:User {email:$email}) 
+        RETURN n`,
+        {email:email}
+    )
+
+    if(userResult.records.length == 0){
+        return null
+    }
+
+    session.close();
+    return true;
+}
+
 
 const changePassword = async(username,password) =>{
     const session = driver.session();
@@ -95,4 +112,4 @@ const changePassword = async(username,password) =>{
 
 
 
-module.exports = {findByUsername, changePassword, checkUser};
+module.exports = {findByUsername, changePassword, checkUser, checkEmail};
