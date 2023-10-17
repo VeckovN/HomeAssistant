@@ -20,8 +20,27 @@ export const updateClient = async(newData) =>{
     }
     catch(err)
     {
-        console.log(err);
-        throw new Error(err);
+        //!!!BAD THROWING ERRORS
+        
+        //use new Error to create err.reponse() or if reponse exists only reThrow error 
+        //check does error.response exist
+        //for example if is returned  return res.status(400).json({error:"User with this email exists"})
+        //reponse.data.error exists
+        if(err.response){
+            console.log("HTTP RESPONSE ERROR: " , err.response)
+            throw err;
+            //in client err.response.data.error
+        }
+        else if(err.request){
+            // Network error (no response received)
+            console.log("NETWORK ERROR: ", err.request);
+            throw new Error("Network error");
+        }
+        else {
+            // Other errors
+            console.error("Other error:", err);
+            throw new Error(err.message);
+          }
     }
 }
 
