@@ -9,13 +9,12 @@ import {useForm, useController} from 'react-hook-form'
 import {zodResolver} from "@hookform/resolvers/zod";
 // import { string, z, array} from "zod"; 
 import { clientRegisterSchema } from '../../../../library/zodTypes.js';
+import FormInput from '../../../../utils/FormInput';
 
 import '../Register.css'
 
 
 const ClientRegister = () =>{
-    //@TODO - Create custom hook for storing and manipulation with this data( repeated in onther components)
-
     const initialState ={
         username:'',
         email:'',
@@ -38,30 +37,9 @@ const ClientRegister = () =>{
     const {field:avatarField} = useController({name:"avatar", control});
     const {field:interestField} = useController({name:"interests", control});
 
-
-    // const {data, onChange, onChangeCity, onImageChange, onChangeInterest} = useUser(initialState);
-    //const {user, message, error, success} = useSelector((state) => state.auth)
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    
-    //functions will be only re-created when is user state changed
-    // const onSomething = useCallback( () =>{
 
-    // },[user])
-
-    //checking if the function is the same
-    //const oldFunc = useRef();
-    // useEffect( () =>{
-    //     //render - at first time
-    //     console.log("AT FIRST TIME RENDER")
-    //     oldFunc.current = onChangeInterest;
-    // },[])
-
-    // // const oldFunction = onChangeInterest;
-    // if(oldFunc.current === onChangeInterest)
-    //     console.log("SAME FUNCTION");
-    // else
-    //     console.log("NEW CREATED FUNCTION");
 
     //set spinner when is loading true
     // if(loading){
@@ -73,14 +51,9 @@ const ClientRegister = () =>{
 
         const formData = new FormData();
         for(const key in data){
-            //console.log("DATA: " + JSON.stringify(data))
-            //console.log(`${key}: ${data[key]}`)
             formData.append(key, data[key]);
         }
         formData.append('type', 'Client');
-        // for (const [key, value] of formData.entries()) {
-        //     console.log(`${key}: ${value}`);
-        // }
 
         dispatch(clientRegister(formData));
         navigate('/login');
@@ -106,114 +79,29 @@ const ClientRegister = () =>{
         interestField.onChange(professionsArray);
     }
 
-    const onSubmit =(e) =>{
-        e.preventDefault();
-
-        // if(password != passwordRepeat){
-        if(data.password != data.passwordRepeat){
-            toast.info("Password must be same",{
-                className:"toast-contact-message"
-            })
-        }
-        else{            
-            //all state date append to data type variable 
-            const formData = new FormData();
-            for(const key in data){
-                console.log("DATA: " + JSON.stringify(data))
-                console.log(`${key}: ${data[key]}`)
-                formData.append(key, data[key]);
-            }
-            formData.append('type', 'Client');
-
-            console.log("FORM DATA: " + JSON.stringify(formData));
-
-            dispatch(clientRegister(formData));
-        }
-
-        navigate('/');
-        toast.success("You have successfully created account",{
-            className:'toast-contact-message'
-        })
-    }
-
-
+    const inputs =[{id:'1', name:'username', type:'text'}, {id:'2', name:'email' , type:'text'}, {id:'3',name:'password', type:'password'}, {id:'4',name:'confirmPassword', type:'password'}, 
+    {id:'5',name:'firstName' , type:'text', placeholder:"Enter first name"}, {id:'6',name:'lastName', type:'text', placeholder:"Enter last name"}]
 
     return (
         <div className='register_container'>
             <form onSubmit={handleSubmit(onSubmitHandler)} encType="multipart/form-data">
             <div className='form_title'>Client Registration</div>
-                <div className='register_input_container'>
-                    <input
-                        className='input_field'
-                        type='text'
-                        placeholder='Enter username'
-                        {...register('username')} //it's return ("username", onChange, onBlur and ref props )
-                        // name='username'
-                        // value={data.username}
-                        // onChange={onChange}
-                    />
-                    <div className='input_errors'>{errors.username?.message}</div>
-                </div>
-
-                <div className='register_input_container'>
-                    <input
-                        className='input_field'
-                        type='password'
-                        placeholder='Enter password'
-                        {...register('password')}
-                    />
-                    <div className='input_errors'>{errors.password?.message}</div>
-                </div>
-
-                <div className='register_input_container'>
-                    <input
-                        className='input_field'
-                        type='password'
-                        placeholder='Repeat password'
-                        {...register('confirmPassword')}
-                    />
-                    <div className='input_errors'>{errors.confirmPassword?.message}</div>
-                </div>
-
-                <div className='register_input_container'>
-                    <input
-                        className='email'
-                        type='email'
-                        placeholder='Enter email address'
-                        {...register('email')}
-                    />
-                    <div className='input_errors'>{errors.email?.message}</div>
-                </div>
-
-                <div className='register_input_container'>
-                    <input
-                        className='input_field'
-                        type='text'
-                        placeholder='Enter first name'
-                        // name='first_name'
-                        {...register('firstName')}
-                    />
-                    <div className='input_errors'>{errors.firstName?.message}</div>
-                </div>
-
-                <div className='register_input_container'>
-                    <input
-                        className='input_field'
-                        type='text'
-                        placeholder='Enter last name'
-                        //name='last_name'
-                        {...register('lastName')}
-                    />
-                    <div className='input_errors'>{errors.lastName?.message}</div>
-                </div>
+                {inputs.map(el => {
+                    return<div className='register_input_container' key={el.id}>
+                        <FormInput 
+                            type={el.type}
+                            name={el.name}
+                            placeholder={el.placeholder}
+                            register={register} 
+                            errors={errors}
+                        />
+                    </div>
+                })}                    
 
                 <br></br>
                 {/* //controler will be used here because the onChangeCity takes event.value -> not event.target.value as onChange */}
                 <Select 
-                    // className='dropdown'
-                    // placeholder="Select a city"
-                    // options={city_options}
-                    // onChange={onChangeCity}
+                    className='dropdown'
                     value={city_options.find(({value}) => value === cityField.value)}
                     options={city_options}
                     onChange={onCityChangeHandler}
@@ -239,7 +127,6 @@ const ClientRegister = () =>{
                     />
                     <div className='input_errors'>{errors.avatar?.message}</div>
                 </div>
-                
 
                 <label className='label_input'>Interests</label>
                 <Select 
