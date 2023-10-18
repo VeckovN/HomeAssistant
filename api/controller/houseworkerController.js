@@ -232,8 +232,8 @@ const udpateHouseworker = async(req,res)=>{
         const newData = req.body;
         const username = req.session.user.username;
 
-        if(newInfo.email){
-            const emailExists = await userModel.checkEmail(newInfo.email)
+        if(newData.email){
+            const emailExists = await userModel.checkEmail(newData.email)
             if(emailExists)
                 return res.status(400).json({error:"User with this email exists"})
         }
