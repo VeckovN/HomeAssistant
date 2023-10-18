@@ -1,5 +1,5 @@
 const clientModel = require('../model/Client');
-const userModal = require('../model/User');
+const userModel = require('../model/User');
 const bcrypt = require('bcrypt');
 
 const getClientByUsername = (req,res)=>{
@@ -129,7 +129,7 @@ const udpateClient = async(req,res)=>{
         const username = req.session.user.username;
 
         if(newInfo.email){
-            const emailExists = await userModal.checkEmail(newInfo.email)
+            const emailExists = await userModel.checkEmail(newInfo.email)
             if(emailExists)
                 return res.status(400).json({error:"User with this email exists"})
         }   
