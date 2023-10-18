@@ -751,22 +751,6 @@ const update = async(username, newUserValue, newHouseworkerValue,)=>{
 }
 
 
-const updatePassword = async(password)=>{
-    const session = driver.session();
-    const ourUsername ="Sara";   
-    const hashedPassword = bcrypt.hashSync(password, 12);
-    const result = await session.run(`
-        Match(n:User {username:$username})
-        SET n.password = $password
-        RETURN n
-    `,{username:ourUsername, password:hashedPassword}
-    )
-
-    session.close();
-    
-    return result.records[0].get(0);
-}
-
 const updateCity = async(username,city)=>{
     const session = driver.session();
     const result = await session.run(`
@@ -818,7 +802,6 @@ module.exports ={
     updateGender,
     create,
     findCities,
-    updatePassword,
     getCommentsCount
 
 }

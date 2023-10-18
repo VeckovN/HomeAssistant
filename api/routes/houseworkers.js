@@ -18,7 +18,6 @@ const {
     getHouseworkerWithFilters,
     getRatingUsername,
     getCities,
-    updatePassword,
     getHouseworkerInfo,
     getHouseworkerCommentsCount,
 } = require('../controller/houseworkerController');
@@ -53,7 +52,6 @@ router.put('/professions/update', checkHouseworker, updateProfessionWorkingHour)
 router.get('/cities',  getCities);
 router.get('/:username', checkHouseworker, getHouseworkerByUsername);
 router.post('/professions/add', checkHouseworker, addProfession);
-router.post('/update/password', checkHouseworker, updatePassword)
 
 
 

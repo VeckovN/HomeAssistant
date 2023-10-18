@@ -1,4 +1,5 @@
 const houseworkerModel = require('../model/HouseWorker');
+const userModel = require('../model/User')
 const bcrypt = require('bcrypt');
 
 const getHouseworkerByUsername = async(req,res)=>{
@@ -231,6 +232,12 @@ const udpateHouseworker = async(req,res)=>{
         const newData = req.body;
         const username = req.session.user.username;
 
+        if(newInfo.email){
+            const emailExists = await userModel.checkEmail(newInfo.email)
+            if(emailExists)
+                return res.status(400).json({error:"User with this email exists"})
+        }
+
         if(newData.password)
             newData.password = bcrypt.hashSync(newData.password, 12);
 
@@ -249,20 +256,6 @@ const udpateHouseworker = async(req,res)=>{
     catch(err){
         console.log("Error UpdateHouseworker(Yourself): " + err);
         res.status(500).json({error:`Update error`});
-    }
-}
-
-
-const updatePassword = async(req,res)=>{
-    try{
-        const newPassword = req.body.password
-        const result = await houseworkerModel.updatePassword(newPassword)
-        res.json(result);
-    }
-    catch(err){
-        console.log("Error UpdatePassword(Yourself): " + err);
-        res.status(500).json({error:`Update password error`});
-        
     }
 }
 
@@ -301,7 +294,6 @@ module.exports ={
     getHouseworkerWithFilters,
     getRatingUsername,
     getCities,
-    updatePassword,
     getHouseworkerInfo,
     getHouseworkerCommentsCount
 }
