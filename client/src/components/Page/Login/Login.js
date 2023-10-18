@@ -63,7 +63,7 @@ const Login = () =>{
                                 className='input_field'
                                 type='password'
                                 placeholder='Enter password'
-                                autocomplete="off"
+                                autoComplete="off"
                                 {...register('password')}
                             />
                              <div className="input_error">{errors.password?.message}</div>

@@ -79,7 +79,8 @@ const ClientRegister = () =>{
         interestField.onChange(professionsArray);
     }
 
-    const inputs =[{id:'1', name:'username', type:'text'}, {id:'2', name:'email' , type:'text'}, {id:'3',name:'password', type:'password'}, {id:'4',name:'confirmPassword', type:'password'}, 
+    const inputs =[{id:'1', name:'username', type:'text'}, {id:'2', name:'email' , type:'text' ,autoComplete:'off'}, {id:'3',name:'password', type:'password', autoComplete:"new-password"},
+     {id:'4',name:'confirmPassword', type:'password', autoComplete:"new-password"}, 
     {id:'5',name:'firstName' , type:'text', placeholder:"Enter first name"}, {id:'6',name:'lastName', type:'text', placeholder:"Enter last name"}]
 
     return (
@@ -92,6 +93,7 @@ const ClientRegister = () =>{
                             type={el.type}
                             name={el.name}
                             placeholder={el.placeholder}
+                            autoComplete={el.autoComplete}
                             register={register} 
                             errors={errors}
                         />
