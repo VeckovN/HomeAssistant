@@ -33,7 +33,21 @@ export const updateHouseworker = async(newData) =>{
         await axios.put( BASE_URL + `houseworker/update/`, newData);
     }
     catch(err){
-        throw new Error(err);
+        if(err.response){
+            console.log("HTTP RESPONSE ERROR: " , err.response)
+            throw err;
+            //in client err.response.data.error
+        }
+        else if(err.request){
+            // Network error (no response received)
+            console.log("NETWORK ERROR: ", err.request);
+            throw new Error("Network error");
+        }
+        else {
+            // Other errors
+            console.error("Other error:", err);
+            throw new Error(err.message);
+          }
     }
 }
 
