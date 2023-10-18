@@ -44,6 +44,7 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
                 className='input_field'
                 type='email'
                 placeholder='Enter email address'
+                autoComplete='off'
                 {...register('email',{
                     pattern: {
                         value: /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/,

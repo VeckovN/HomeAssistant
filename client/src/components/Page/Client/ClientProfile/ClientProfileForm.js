@@ -16,7 +16,7 @@ const ClientProfileForm = ({clientData, cityField, errors, register, watch, city
                             className='input_field'
                             type='type'
                             id='first_name'
-                            placeholder='Enter email address'
+                            placeholder='Enter First name'
                             {...register("first_name", {
                                 pattern: {
                                     value: /^[A-Z]+[a-z]?[a-zA-Z]+$/,
@@ -53,6 +53,7 @@ const ClientProfileForm = ({clientData, cityField, errors, register, watch, city
                             type='email'
                             id='email'
                             placeholder='Enter email address'
+                            autoComplete='off'
                             {...register("email", {
                                 pattern: {
                                     value: /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/,
@@ -70,7 +71,7 @@ const ClientProfileForm = ({clientData, cityField, errors, register, watch, city
                             className='input_field'
                             type='password'
                             placeholder='Enter a password'
-                            autocomplete="off"
+                            autoComplete="new-password"
                             {...register('password')}
                             />
                         <div className='input_errors'>{errors.password?.message}</div>
@@ -85,7 +86,7 @@ const ClientProfileForm = ({clientData, cityField, errors, register, watch, city
                             type='password'
                             id='confirmPassword'
                             placeholder='Confirm password'
-                            autocomplete="off"
+                            autoComplete="off"
                             {...register('confirmPassword' , {
                                 validate:(val) =>{
                                     if(watch('password') !=val){
