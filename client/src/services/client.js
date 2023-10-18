@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ThrowErorr } from '../utils/ThrowError'
 
 const BASE_URL = 'http://localhost:5000/api/'
 
@@ -9,8 +10,7 @@ export const getUserData = async() =>{
         return client_data;
     }
     catch(err){
-        console.log(err);
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
@@ -26,21 +26,22 @@ export const updateClient = async(newData) =>{
         //check does error.response exist
         //for example if is returned  return res.status(400).json({error:"User with this email exists"})
         //reponse.data.error exists
-        if(err.response){
-            console.log("HTTP RESPONSE ERROR: " , err.response)
-            throw err;
-            //in client err.response.data.error
-        }
-        else if(err.request){
-            // Network error (no response received)
-            console.log("NETWORK ERROR: ", err.request);
-            throw new Error("Network error");
-        }
-        else {
-            // Other errors
-            console.error("Other error:", err);
-            throw new Error(err.message);
-          }
+        // if(err.response){
+        //     console.log("HTTP RESPONSE ERROR: " , err.response)
+        //     throw err;
+        //     //in client err.response.data.error
+        // }
+        // else if(err.request){
+        //     // Network error (no response received)
+        //     console.log("NETWORK ERROR: ", err.request);
+        //     throw new Error("Network error");
+        // }
+        // else {
+        //     // Other errors
+        //     console.error("Other error:", err);
+        //     throw new Error(err.message);
+        // }
+        ThrowErorr(err);
     }
 }
 
@@ -51,8 +52,7 @@ export const deleteComment = async(client_username, comment_id) =>{
         await axios.delete(BASE_URL + `clients/comment`, {params})
     }
     catch(err){
-        console.log(err);
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
@@ -64,6 +64,6 @@ export const getRecommended= async(username) =>{
         return recommendedData;
     }
     catch(err){
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }

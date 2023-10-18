@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ThrowErorr } from '../utils/ThrowError'
 
 const BASE_URL = 'http://localhost:5000/api/'
 
@@ -9,8 +10,7 @@ export const getUserRooms = async(username) =>{
         return data;
     }
     catch(err){
-        console.log(err);
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
@@ -23,8 +23,7 @@ export const getMessagesByRoomID = async(roomID) =>{
         return messages;
     }
     catch(err){
-        console.log(err);
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
@@ -35,8 +34,9 @@ export const deleteRoom = async(roomID) =>{
         return result; //message 'Room sucessfully deleted'
     }
     catch(err){
-        const errorMessage = (err.response && err.response.data.error) || err;
-        throw new Error(errorMessage);
+        // const errorMessage = (err.response && err.response.data.error) || err;
+        // throw new Error(errorMessage);
+        ThrowErorr(err);
     }
 }
 
@@ -50,8 +50,7 @@ export const addUserToRoom = async(roomInfo) =>{
         return result;
     }
     catch(err){
-        console.log(err);
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 

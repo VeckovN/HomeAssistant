@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ThrowErorr } from '../utils/ThrowError';
 
 const BASE_URL = 'http://localhost:5000/api/'
 
@@ -11,8 +12,7 @@ export const getUserData = async() =>{
         return houseworkerResult;
     }
     catch(err){
-        console.log(err);
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
@@ -23,8 +23,7 @@ export const getHouseworkers = async() =>{
         return houseworkerResult;
     }
     catch(err){
-        console.log(err)
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
@@ -33,21 +32,7 @@ export const updateHouseworker = async(newData) =>{
         await axios.put( BASE_URL + `houseworker/update/`, newData);
     }
     catch(err){
-        if(err.response){
-            console.log("HTTP RESPONSE ERROR: " , err.response)
-            throw err;
-            //in client err.response.data.error
-        }
-        else if(err.request){
-            // Network error (no response received)
-            console.log("NETWORK ERROR: ", err.request);
-            throw new Error("Network error");
-        }
-        else {
-            // Other errors
-            console.error("Other error:", err);
-            throw new Error(err.message);
-          }
+        ThrowErorr(err);
     }
 }
 
@@ -56,7 +41,7 @@ export const updateProfessionWorkingHour = async(profession, working_hour) =>{
         await axios.put( BASE_URL + `houseworker/professions/update/`, {profession, working_hour});
     }
     catch(err){
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
@@ -68,8 +53,7 @@ export const getAuthenticatedUserComments = async() =>{
         return comms;
     }
     catch(err){
-        console.log(err);
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
@@ -81,8 +65,7 @@ export const getComments = async(username) =>{
         return comms;
     }
     catch(err){
-        console.log(err);
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
@@ -90,8 +73,7 @@ export const postComment = async(postComment) =>{
     try{
         await axios.post(BASE_URL + `clients/comment`, postComment);
     }catch(err){
-        console.log(err)
-        throw new Error(err);
+        ThrowErorr(err);
     }
     
 }
@@ -106,8 +88,7 @@ export const rateUser = async(rateObject) =>{
         return ratingValue;
     }
     catch(err){
-        console.log(err)
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
@@ -121,8 +102,7 @@ export const getRating = async(username) =>{
         return ratingValue;
     }
     catch(err){
-        console.log(err);
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
@@ -135,8 +115,7 @@ export const getProfessions = async()=>{
         return professionsArray;
     }
     catch(err){
-        console.log(err)
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
@@ -147,8 +126,7 @@ export const getProfessionsByUsername = async(username)=>{
         return professionsArray;
     }
     catch(err){
-        console.log(err)
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
@@ -160,8 +138,7 @@ export const addProfession = async(label, working_hour) =>{
         return result; //message 'Room sucessfully deleted'
     }
     catch(err){
-        console.log(err);
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
@@ -173,8 +150,7 @@ export const deleteProfession = async(profession) =>{
         return result;
     }
     catch(err){
-        console.log(err);
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
@@ -185,8 +161,7 @@ export const getCommentsCount = async(username) =>{
         const count = result.data;
         return count;
     }catch(err){
-        console.log(err);
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
@@ -201,8 +176,7 @@ export const getConversationCount = async(userRedisID) =>{
         return count;
     }
     catch(err){
-        console.log(err);
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
@@ -214,8 +188,7 @@ export const getAllCities = async() =>{
         return cities;
     }
     catch(err){
-        console.log(err)
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 //get all professions that exist(provided by houseworkers)
@@ -227,8 +200,7 @@ export const getAllProfessions = async() =>{
         return professionsResult;
     }
     catch(err){
-        console.log(err)
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
@@ -239,8 +211,7 @@ export const getHouseworkerByFilter = async(params) =>{
         return houseworkers;
     }
     catch(err){
-        console.log(err)
-        throw new Error(err);
+        ThrowErorr(err);
     }
 }
 
