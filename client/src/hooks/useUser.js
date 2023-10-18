@@ -20,6 +20,15 @@ const useUser =(initialState)=>{
         ))
     }
 
+    const onChangeWorkingHour = (event) =>{
+        setData(prev =>(
+        {
+            ...prev,
+            working_hour:event.target.value
+        }
+        ))
+    }
+
     const onImageChange = (event)=>{
         const file = event.target.files[0];
         setData(prev =>(
@@ -152,7 +161,7 @@ const useUser =(initialState)=>{
     }
 
 
-    return {data,errors, onChange, onChangeHouseworker, onChangeHouseworkerProfessions, onImageChange, onChangeProfession, onChangeCity, onChangeProffesions, onChangeInterest, resetProfessions}
+    return {data,errors, onChange, onChangeWorkingHour,onChangeHouseworker, onChangeHouseworkerProfessions, onImageChange, onChangeProfession, onChangeCity, onChangeProffesions, onChangeInterest, resetProfessions}
 
 }
 
