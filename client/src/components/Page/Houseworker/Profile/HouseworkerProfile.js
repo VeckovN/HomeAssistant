@@ -4,9 +4,22 @@ import useUser from '../../../../hooks/useUser';
 import HouseworkerProfileForm from './HouseworkerProfileForm';
 import {profession_options} from '../../../../utils/options';
 import {getUserData, getProfessions, addProfession, deleteProfession, updateHouseworker, updateProfessionWorkingHour} from '../../../../services/houseworker.js';
+import {useForm, useController} from 'react-hook-form';
 import '../../../Page/Profile.css';
 
 const HouseworkerProfile = () =>{
+
+    const initalStateForm = {
+        email:'',
+        password:'',
+        passwordRepeat:'',
+        first_name:'',
+        last_name:'',
+        city:'',
+        address:'',
+        phone_number:'',
+    }
+
     const initialState = {
         email:'',
         password:'',
@@ -23,12 +36,40 @@ const HouseworkerProfile = () =>{
         houseworker_professions:[] //adding new profession
     }
 
-    const {data:updatedData, onChange, resetProfessions, onChangeProfession, onChangeHouseworkerProfessions, onChangeProffesions, onChangeCity} = useUser(initialState)
+    //for professions part
+    const initialProfessionsState = {
+        // email:'',
+        // password:'',
+        // passwordRepeat:'',
+        // first_name:'',
+        // last_name:'',
+        // city:'',
+        // address:'',
+        // phone_number:'',
+        profession:'', //selected profession from select
+        working_hour:'',
+        professions:[], //fetched houseowrker professions
+        not_owned_professions:[],
+        houseworker_professions:[] //adding new profession
+    }
+    const {register, handleSubmit, watch,reset, getValues, control, formState: {errors, isSubmitSuccessful}} = useForm({
+        defaultValues: initalStateForm
+    })
+    const {field:cityField} = useController({name:"city", control});
+
+
+
+    //ForProfessions
+    const {data:updatedData, onChange,onChangeWorkingHour, resetProfessions, onChangeProfession, onChangeHouseworkerProfessions, onChangeProffesions, onChangeCity} = useUser(initialState)
     const [houseworkerData, setHouseworkerData] = useState({}) //fetched (showned) data
 
     useEffect(()=>{
         fetchData();
     }, [])
+
+    useEffect(()=>{
+        reset({...initalStateForm})
+    },[isSubmitSuccessful])
 
     const getNotOwnedProfessions = (houseworker_professions) =>{
         const profession_format = houseworker_professions?.map(el =>({value: el.profession, label: el.profession + " " + el.working_hour +'din'}))
@@ -54,46 +95,49 @@ const HouseworkerProfile = () =>{
     }
 
 
-    const onSubmitUpdate = async (e)=>{
-        e.preventDefault();
-
-        if(updatedData.password != updatedData.passwordRepeat)
-            toast.error("Password should be same")
-        else if(updatedData.first_name == "" && updatedData.last_name =="" && updatedData.email =="" && updatedData.city =="" && updatedData.address =="" && updatedData.phone_number =="" && updatedData.password =="" && updatedData.passwordRepeat =="" && updatedData.profession =="") 
-            toast.error("Enter values");
-        else{
-            try{
-                let newData = {};
-                //without re-fetching just override ClientData with updatedData
-                Object.keys(updatedData).forEach((key,index) =>{
-                    //console.log("UPD: " + typeof(key)+ " : " + updatedData[key]);
-                    //picture wont store in this object(for it use diferent request)
-                    if(updatedData[key] != '' && key!='picture' && key!='profession' && key!='working_hour'){
-                        //data object wiht only updated props (for HTTP request)
-                        newData[key] = updatedData[key];
-                        
-                        //not update here, update only when is post request sucessfully executed
-                        setHouseworkerData(prev =>({
-                            ...prev,
-                            [key] : updatedData[key]  //BECAUSE 'key' is STRING and MUST use [] 
-                        }))
-                        console.log("SDSDASD: " + JSON.stringify(houseworkerData));
-                        console.log("DATAAAA: " + JSON.stringify(newData));
-                    }
-                })
+    // const onSubmitUpdate = async (e)=>{
+    const onSubmitUpdate = async (submitData)=>{
+        console.log("SUBMITED VALUE: " , submitData)
+        try{
+            let newData = {};
+            Object.keys(submitData).forEach(key =>{
+                //console.log("UPD: " + typeof(key)+ " : " + updatedData[key]);
+                //picture wont store in this object(for it use diferent request)
+                if(submitData[key] != '' && key!='picture' && key!='profession' && key!='working_hour'){
+                    //data object wiht only updated props (for HTTP request)
+                    newData[key] = submitData[key];
                 
-                // if(updatedData.picture !=''){
-                //     await axios.put(`http://localhost:5000/api/clients/updateImage/`, updateImage);
-                // }
-    
-                await updateHouseworker(newData);
-                toast.success("Successfully updated")
+                    console.log("SDSDASD: " + JSON.stringify(houseworkerData));
+                    console.log("DATAAAA: " + JSON.stringify(newData));
+                }
+            })
+
+            if(Object.keys(newData).length == 0){
+                toast.error("You didn't enter any value",{
+                    className:'toast-contact-message'
+                })
+                return;
             }
-            catch(err){
-                console.log("Erorr: " + err);
-                toast.error("Error updated")
-            }
+            
+            // if(updatedData.picture !=''){
+            //     await axios.put(`http://localhost:5000/api/clients/updateImage/`, updateImage);
+            // }
+
+            await updateHouseworker(newData);
+            toast.success("Successfully updated")
+
+            Object.keys(newData).forEach(key =>{
+                setHouseworkerData(prev =>({
+                    ...prev,
+                    [key] : newData[key]  //BECAUSE 'key' is STRING and MUST use [] 
+                }))
+            })
         }
+        catch(err){
+            const message = (err.response && err.response.data.error) || err.message || err
+            toast.error(message);
+        }
+   
     }
 
     const onChangeProfessionHandler = async(e) =>{
@@ -105,7 +149,7 @@ const HouseworkerProfile = () =>{
                     const result = await updateProfessionWorkingHour(updatedData.profession, updatedData.working_hour)
                     const newProfessionOptions = houseworkerData.professions.map(el =>{
                         if(el.value === updatedData.profession)
-                            el.label = updatedData.profession + " " + updatedData.working_hour + "din"
+                            el.label = updatedData.profession + " " + updatedData.working_hour + "€"
                         return el;
                     })
                     setHouseworkerData(prev =>({
@@ -213,14 +257,24 @@ const HouseworkerProfile = () =>{
         }   
     }
 
+    const onChangeCityHandler = (option) =>{
+        console.log("cityField: ", cityField);
+        cityField.onChange(option.value);
+    }
+
     return(
         <HouseworkerProfileForm 
+            register={register}
+            errors={errors}
+            watch={watch}
+            cityField={cityField}
+            onChangeCityHandler={onChangeCityHandler}
+            handleSubmit={handleSubmit}
+            onSubmitUpdate={onSubmitUpdate}
             updatedData={updatedData}
             houseworkerData={houseworkerData}
-            onSubmitUpdate={onSubmitUpdate}
-            onChange={onChange}
+            onChangeWorkingHour={onChangeWorkingHour}
             onChangeProfession={onChangeProfession}
-            onChangeCity={onChangeCity}
             onChangeProffesions={onChangeProffesions}
             onChangeHouseworkerProfessions={onChangeHouseworkerProfessions}
             onChangeProfessionHandler={onChangeProfessionHandler}

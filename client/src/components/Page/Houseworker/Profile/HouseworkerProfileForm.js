@@ -3,14 +3,13 @@ import Select from 'react-select';
 import { city_options, profession_options } from '../../../../utils/options';
 import { update } from 'lodash';
 
-const HouseworkerProfileForm = ({updatedData, houseworkerData, onChangeProffesions, onChangeHouseworkerProfessions, onSubmitUpdate, onChange, onChangeProfession, onChangeCity, onAddProfessionHandler, onChangeProfessionHandler, onDeleteProfessionHandler }) =>{
+const HouseworkerProfileForm = ({updatedData, houseworkerData, cityField, register, errors, watch, handleSubmit, onChangeWorkingHour, onChangeProffesions, onChangeHouseworkerProfessions, onSubmitUpdate, onChangeProfession, onChangeCityHandler, onAddProfessionHandler, onChangeProfessionHandler, onDeleteProfessionHandler }) =>{
     
     console.log("PROFESSION UPDATED STATE: " + JSON.stringify(updatedData) + "\n")
     return(
         <div className='profile_container'>
                 <h1>Houseworker Profile</h1>
-
-                <form className='profile_form' onSubmit={onSubmitUpdate}>
+                <form className='profile_form' onSubmit={handleSubmit(onSubmitUpdate)}>
                     <div className ='professions'>
                         <div className="profession_changing">
                         <label>Professions</label>
@@ -30,7 +29,7 @@ const HouseworkerProfileForm = ({updatedData, houseworkerData, onChangeProffesio
                                         type='number'
                                         name='working_hour'
                                         placeholder='Enter working hour' 
-                                        onChange={onChange}
+                                        onChange={onChangeWorkingHour}
                                     />
                                     <br/>
                                     
@@ -47,7 +46,6 @@ const HouseworkerProfileForm = ({updatedData, houseworkerData, onChangeProffesio
                                     </div>
                                 </div>
                                 }
-                                
                         </div>
                         <div className='profession_adding'>
                             <label>Add Profession</label>
@@ -81,9 +79,7 @@ const HouseworkerProfileForm = ({updatedData, houseworkerData, onChangeProffesio
                                         <button onClick={onAddProfessionHandler}> Add</button>
                                     </div>
                             }
-
                         </div>
-                        
                     </div>
 
                     <div className='input-label-form'>
@@ -91,94 +87,125 @@ const HouseworkerProfileForm = ({updatedData, houseworkerData, onChangeProffesio
                             <label>First name: <b>{houseworkerData.first_name}</b></label>
                             <br/>
                             <input 
-                            className='input_field'
-                            type='text'
-                            name='first_name'
-                            value={updatedData.first_name}
-                            placeholder='Enter first name'
-                            onChange={onChange}
+                                className='input_field'
+                                type='text'
+                                id='first_name'
+                                placeholder='Enter First name'
+                                {...register('first_name',{
+                                    pattern: {
+                                        value: /^[A-Z]+[a-z]?[a-zA-Z]+$/,
+                                        message: "Should start with Capital latter",
+                                    }
+                                })}
                             />
+                            <div className='input_errors'>{errors.first_name?.message}</div>
                         </div>
 
                         <div className='profile_input-container'>
                             <label>Last name: <b>{houseworkerData.last_name}</b></label>
                             <br/>
                             <input 
-                            className='input_field'
-                            type='text'
-                            name='last_name'
-                            value={updatedData.last_name}
-                            placeholder='Enter last name'
-                            onChange={onChange}
+                                className='input_field'
+                                type='text'
+                                id='last_name'
+                                placeholder='Enter Last name'
+                                {...register('last_name',{
+                                    pattern: {
+                                        value: /^[A-Z]+[a-z]?[a-zA-Z]+$/,
+                                        message: "Should start with Capital latter",
+                                    }
+                                })}
                             />
+                            <div className='input_errors'>{errors.last_name?.message}</div>
                         </div>
                         
                         <div className='profile_input-container'>
                             <label>Email: <b>{houseworkerData.email}</b></label>
                             <br/>
                             <input 
-                            className='input_field'
-                            type='email'
-                            name='email'
-                            value={updatedData.email}
-                            placeholder='Enter email address'
-                            onChange={onChange}
+                                className='input_field'
+                                type='email'
+                                id='email'
+                                placeholder='Enter email address'
+                                {...register('email',{
+                                    pattern: {
+                                        value: /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/,
+                                        message: "Email address isn't correct",
+                                    }
+                                })}
                             />
+                            <div className='input_errors'>{errors.email?.message}</div>
                         </div>
 
                         <div className='profile_input-container'>
                             <label>Password</label>
                             <br/>
                             <input 
-                            className='input_field'
-                            type='password'
-                            name='password'
-                            value={updatedData.password}
-                            placeholder='Enter password'
-                            onChange={onChange}
+                                className='input_field'
+                                type='password'
+                                placeholder='Enter password'
+                                autocomplete="off"
+                                {...register('password')}
                             />
+                            <div className='input_errors'>{errors.password?.message}</div>
                         </div>
 
-                        {updatedData.password &&  //only if is password entered
+                        {watch('password') &&   //only if is password entered
                         <div className='profile_input-container'>
                             <label>Repeat password</label>
                             <br/>
                             <input 
-                            className='input_field'
-                            type='password'
-                            name='passwordRepeat'
-                            value={updatedData.passwordRepeat}
-                            placeholder='Repeat password'
-                            onChange={onChange}
+                                className='input_field'
+                                type='password'
+                                name='passwordRepeat'
+                                placeholder='Confirm the password'
+                                autocomplete="off"
+                                {...register('confirmPassword' , {
+                                    validate:(val) =>{
+                                        if(watch('password') !=val){
+                                            return "Your password must match"
+                                        }
+                                    }
+                                })}
                             />
+                            <div className='input_errors'>{errors.confirmPassword?.message}</div>
                         </div>
                         }
-
 
                         <div className='profile_input-container'>
                             <label>Address: <b>{houseworkerData.address}</b></label>
                             <br/>
                             <input 
-                            className='input_field'
-                            type='text'
-                            name='address'
-                            value={updatedData.address}
-                            placeholder='Enter address'
-                            onChange={onChange}
+                                className='input_field'
+                                type='text'
+                                name='address'
+                                placeholder='Enter address'
+                                {...register('address',{
+                                    pattern: {
+                                        value: /[A-Za-z0-9'\.\-\s\,]/,
+                                        message: "Invalid address",
+                                    }
+                                })}
                             />
+                            <div className='input_errors'>{errors.address?.message}</div>
                         </div>
 
                         <div className='profile_input-container'>
                             <label>Phone number: <b>{houseworkerData.phone_number}</b></label>
                             <br/>
                             <input 
-                            className='input_field'
-                            type='number'
-                            name='phone_number'
-                            value={updatedData.phone_number}
-                            placeholder='Enter phone number'
-                            onChange={onChange}
+                                className='input_field'
+                                type='number'
+                                name='phone_number'
+                                placeholder='Enter phone number'
+                                {...register("phone_number", {
+                                    pattern: {
+                                        value: /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/,
+                                        message: "Invalid phone number format",
+                                    }
+                                })}
                             />
+                            <div className='input_errors'>{errors.phone_number?.message}</div>
                         </div>
                         
                         <div className='profile_input-container'>
@@ -186,13 +213,15 @@ const HouseworkerProfileForm = ({updatedData, houseworkerData, onChangeProffesio
                             <Select 
                                 className='dropdown'
                                 placeholder="Select a city"
+                                value={city_options.find(({value}) => value === cityField.value)}
                                 options={city_options}
-                                onChange={onChangeCity}
+                                onChange={onChangeCityHandler}
                                 isClearable
                             />
+                            <div className='input_errors'>{errors.city?.message}</div>
                         </div>
                         <br></br>
-                        <button type='submit' className='profile_submit'>Update</button>
+                        <button type='submit'  className='profile_submit'>Update</button>
                     </div>
 
                 </form>
