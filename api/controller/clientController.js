@@ -144,7 +144,7 @@ const udpateClient = async(req,res)=>{
 
         //chech if city is necessery to update
         if(newInfo.city)
-            await clientModel.updateCity(username,newInfo.city)
+            await userModel.updateCityRelation(username, newInfo.city);
         res.send("Successfully updated");
     }
     catch(err){

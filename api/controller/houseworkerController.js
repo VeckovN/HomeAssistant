@@ -241,12 +241,13 @@ const udpateHouseworker = async(req,res)=>{
         if(newData.password)
             newData.password = bcrypt.hashSync(newData.password, 12);
 
+
         const {address, phone_number, description, city, professions, ...newUserInfo} = newData;
         const newHouseworkerInfo = {address, phone_number, description};
         await houseworkerModel.update(username, newUserInfo, newHouseworkerInfo);
         
         if(city)
-            await houseworkerModel.updateCity(username, city);
+            await userModel.updateCityRelation(username, city);
         
         // if(professions){
         //     await houseworkerModel.updateProfessions(username,professions);
