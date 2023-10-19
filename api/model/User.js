@@ -87,6 +87,25 @@ const changePassword = async(username,password) =>{
     return result.records[0].get(0).properties;
 }
 
+const updateCityRelation = async(username,city)=>{
+    const session = driver.session();
+    const result = await session.run(`
+        MATCH (n:User {username: $houseworker})-[oldRel:LIVES_IN]->(:City)
+        DELETE oldRel
+        WITH n
+        MERGE (c:City {name: $cityName})
+        MERGE (n)-[:LIVES_IN]->(c)
+        RETURN n;
+    `
+    ,{houseworker:username, cityName:city}
+    )
+    
+    session.close();
+    return result.records[0].get(0);
+}
+
+
+
 // *****INITIAL CREATED
 // -Create gender on start of project(becase we don't have aditional gender after in project process)
 // CREATE(n:Gender {type:"Male"})
@@ -112,4 +131,4 @@ const changePassword = async(username,password) =>{
 
 
 
-module.exports = {findByUsername, changePassword, checkUser, checkEmail};
+module.exports = {findByUsername, changePassword, checkUser, checkEmail, updateCityRelation};
