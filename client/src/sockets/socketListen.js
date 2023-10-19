@@ -57,6 +57,7 @@ export const listenOnMessageInRoom = (socket, dispatch) =>{
     socket.on("messageRoom", (contextObj) =>{
         dispatch({type:"SEND_MESSAGE", data:contextObj})
     })
+    
 }
 
 // export const listenOn
