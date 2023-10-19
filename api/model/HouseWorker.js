@@ -155,7 +155,7 @@ const findAllWithFilters = async(filters)=>{
         
     const {
         limit = 10, //default value 10 (if isn't seted)
-        itemsPerPage = 2,
+        itemsPerPage = 4,
         pageNumber,
         sort = 'ASC',
         city,
@@ -721,11 +721,11 @@ const create = async(houseworkerObject)=>{
     }
 }
 
-//UNFINISHED
-//!!!!!! we need also update relationships ->LIVES_IN and GENDER
-const update = async(username, newUserValue, newHouseworkerValue,)=>{
+const update = async(username, newUserValue, newHouseworkerValue)=>{
 
     //take only properties of User Node
+    console.log("newUserValue", newUserValue);
+    console.log("newHouseworkerValue", newHouseworkerValue);
     
 
     //other properties for HouseworkerNode and RelationSHips(like city and professions)
@@ -749,7 +749,7 @@ const update = async(username, newUserValue, newHouseworkerValue,)=>{
     session.close();
     return result.records[0].get(0).properties;
 }
-
+ 
 
 const updateCity = async(username,city)=>{
     const session = driver.session();
