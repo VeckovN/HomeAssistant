@@ -799,6 +799,7 @@ module.exports ={
     updateWorkingHour,
     update,
     updateCity,
+
     updateGender,
     create,
     findCities,
