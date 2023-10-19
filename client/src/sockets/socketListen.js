@@ -1,10 +1,18 @@
 import {toast} from "react-toastify"
+import messageSound from '../assets/sounds/message-sound.mp3'
+import announcementSound from '../assets/sounds/announcement-sound.mp3'
 
 export const listenForCommentNotification = async(socket, self_id) => {
     socket.on(`privateCommentNotify-${self_id}`, (client_username) =>{
         toast.info(`You received Comment from ${client_username} `,{
             className:"toast-contact-message"
         })
+
+        if(!document.hasFocus()){
+            //sound notification
+            const sound = new Audio(announcementSound);
+            sound.play();
+        }
     })
 }
 
@@ -13,6 +21,12 @@ export const listenForRatingNotfication = async(socket, self_id) =>{
         toast.info(`You got a Rate from ${client_username} `,{
             className:"toast-contact-message"
         })
+
+        if(!document.hasFocus()){
+            //sound notification
+            const sound = new Audio(announcementSound);
+            sound.play();
+        }
     })
 }
 
@@ -29,6 +43,13 @@ export const listenFormMessage = async(socket, self_id) =>{
                 className:"toast-contact-message"
             })
         }
+
+        if(!document.hasFocus()){
+            //sound notification
+            const sound = new Audio(messageSound);
+            sound.play();
+        }
+
       })
 }
 
