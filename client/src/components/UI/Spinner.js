@@ -8,7 +8,7 @@ const Spinner = () =>{
     return (
         <div className='spinner_container'>
             <ClockLoader
-                color="rgba(54, 89, 214, 1)"
+                color="rgba(180, 240, 250, 1)"
                 cssOverride={override}
             />
                 
