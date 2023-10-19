@@ -5,7 +5,7 @@ const userRegisterSchemaProps = () =>{
         username: 
             string()
             .min(1, "Username is required")
-            .min(5, "Username must contains at least 3 leters"),
+            .min(3, "Username must contains at least 3 leters"),
         firstName: 
             string()
             .min(1, "First name is required")
