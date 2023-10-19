@@ -1,7 +1,7 @@
 import Modal from "../../../../UI/Modal";
 import CommentItem from "../../../../UI/CommentItem";
 
-const HouseworkerCommentModal = ({comments, client_username, onCommentSubmit, postCommentRef, onCloseComment, onCommentDelete}) =>{
+const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, postCommentRef, onCloseComment, onCommentDelete}) =>{
 
     const commentHeaderContext =
         'Comments';
@@ -11,7 +11,7 @@ const HouseworkerCommentModal = ({comments, client_username, onCommentSubmit, po
         <div>
             {comments ?
                 comments.map(comm => (
-                    (client_username === comm.from) ? ( //delete button is only showned to clients that belongs comment
+                    (clientUsername === comm.from) ? ( //delete button is only showned to clients that belongs comment
                         <CommentItem
                             onDeleteCommentHandler={onCommentDelete}
                             id={comm.commentID}
