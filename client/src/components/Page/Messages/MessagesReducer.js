@@ -59,7 +59,12 @@ export const MessagesReducer = (state, action) =>{
                 ...state, ///other states
                 rooms: state.rooms.filter(el => el.roomID != action.data), //action.data = roomID
                 roomMessages:[]
-            };
+            }
+        case "SET_LOADING":
+            return{
+                ...state,
+                loading:action.payload
+            }
         
         default:
             return state;

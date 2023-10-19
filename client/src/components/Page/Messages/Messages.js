@@ -19,10 +19,11 @@ const Messages = ({socket,connected}) =>{
     const {user} = useSelector((state) => state.auth)
 
     const initialState = {
+        loading:true,
         rooms:[],
         roomMessages: [],
         houseworkers:'',
-        enteredRoomID:'',
+        enteredRoomID:''
     }
 
     const roomRef = useRef(); //value(roomID) of showned room
@@ -46,6 +47,7 @@ const Messages = ({socket,connected}) =>{
             const data = await getUserRooms(user.username);
             dispatch({type:"SET_ROOMS", data:data})
             console.log('DATA ROOMS : \n' + JSON.stringify(data));
+            dispatch({type:"SET_LOADING", payload:false})
         }
 
         const getAllHouseworkers = async() =>{
@@ -138,22 +140,26 @@ const Messages = ({socket,connected}) =>{
     
     return (
         <div className="chat_container">
-            <Rooms 
-                rooms={state.rooms}
-                houseworkers={state.houseworkers}
-                roomRef={roomRef}
-                user={user}
-                onAddUserToGroupHanlder={onAddUserToGroupHanlder}
-                onDeleteRoomHandler={onDeleteRoomHandler}
-                onRoomClickHanlder={onRoomClickHanlder}
-            />
+            {state.loading ? <Spinner/> :
+            <>
+                <Rooms 
+                    rooms={state.rooms}
+                    houseworkers={state.houseworkers}
+                    roomRef={roomRef}
+                    user={user}
+                    onAddUserToGroupHanlder={onAddUserToGroupHanlder}
+                    onDeleteRoomHandler={onDeleteRoomHandler}
+                    onRoomClickHanlder={onRoomClickHanlder}
+                />
 
-            <Chat 
-                socket={socket} 
-                roomRef={roomRef}
-                roomMessages={state.roomMessages}
-                user={user}
-            />
+                <Chat 
+                    socket={socket} 
+                    roomRef={roomRef}
+                    roomMessages={state.roomMessages}
+                    user={user}
+                />
+            </>
+            }
         </div>
     )
 }

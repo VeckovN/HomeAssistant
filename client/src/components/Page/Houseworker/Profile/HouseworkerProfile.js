@@ -24,6 +24,7 @@ const HouseworkerProfile = () =>{
     })
     const {field:cityField} = useController({name:"city", control});
     const [houseworkerData, setHouseworkerData] = useState({}) //fetched (showned) data
+    const [loading, setLoading] = useState(true);
 
     useEffect(()=>{
         fetchData();
@@ -50,6 +51,7 @@ const HouseworkerProfile = () =>{
         const newHouseworker = {...houseworkerResult, professions:[...profession_format], not_owned_professions:[...not_owned_professions]}
 
         setHouseworkerData(newHouseworker);
+        setLoading(false);
     }
 
     const onSubmitUpdate = async (submitData)=>{
@@ -99,6 +101,7 @@ const HouseworkerProfile = () =>{
 
     return(
         <HouseworkerProfileForm 
+            loading={loading}
             register={register}
             errors={errors}
             watch={watch}

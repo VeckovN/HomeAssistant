@@ -5,6 +5,7 @@ import {getUserData, updateClient} from '../../../../services/client.js';
 import {useForm, useController} from 'react-hook-form';
 import { city_options } from '../../../../utils/options';
 import './ClientProfile.css'
+import Spinner from '../../../UI/Spinner';
 
 const ClientProfile = () =>{ 
     const initialState = {
@@ -22,6 +23,7 @@ const ClientProfile = () =>{
     })
     const {field:cityField} = useController({name:"city", control});
     const [clientData, setClientData] = useState({})
+    const [loading, setLoading] = useState(true);
 
     useEffect( ()=>{
         console.log("On Initial render")
@@ -41,6 +43,7 @@ const ClientProfile = () =>{
         const clientData = await getUserData();
         console.log("DATA : "  + JSON.stringify(clientData))
         setClientData(clientData);
+        setLoading(false);
     }
 
     const onSubmitUpdate = async(updatedData) =>{
@@ -94,6 +97,7 @@ const ClientProfile = () =>{
 
     return(
         <ClientProfileForm 
+            loading={loading}
             clientData={clientData}
             cityField={cityField}
             errors={errors}
@@ -104,6 +108,7 @@ const ClientProfile = () =>{
             onSubmitUpdate={onSubmitUpdate}
             onCityChangeHandler={onCityChangeHandler}
         />
+        
     )
 }
 
