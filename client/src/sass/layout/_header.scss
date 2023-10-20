@@ -1,0 +1,94 @@
+// $nav-background-color: black;
+// $nav-hover-color: #13a7ec;
+@use '../abstracts/colors' as c;
+
+.navbar{
+    width:100%;
+    height: 4rem;
+    background-color: c.$nav-background-color;
+    position:fixed;
+    top:0;
+    z-index:15;
+    padding:0.5rem;
+}
+
+.logo{
+    position:absolute;
+    top:25%;
+    left:3rem;
+
+    a{
+        font-family:'MADE Soulmaze', sans-serif;
+        font-size:1.5rem;
+        font-weight: 800;
+        color:white;
+        letter-spacing: .1rem;
+        transition: color .3s;
+
+        span:first-child{
+            color:white;
+            transition: color .2s;
+        }
+
+        span:last-child{
+            color:c.$nav-hover-color;
+            transition: color .2s;
+        }
+
+        &:hover span:first-child{
+            color:c.$nav-hover-color;
+        }
+        &:hover span:last-child{
+            color:white;
+        }
+    }
+}
+
+.nav-list{
+    position:absolute;       /*Ovo je za stavke logoint i register kada se izlogujete sa naloga*/
+    top: 1.3rem;
+    right:2rem;
+}
+
+// .nav-list1{
+//     position:absolute;
+//     top: 1.3rem;              /*Ovo je za stavke poruke, profil i logout dok je korisnik logovan za klijenta i admina*/
+//     right:2rem;
+// }
+
+%nav-link-styles{
+    color:white;
+    letter-spacing: .08rem;
+    margin:.3rem;
+    font-weight: 700;
+    transition:color .4s;
+
+    &:hover{
+        // color:
+        cursor:pointer;
+    }
+}
+
+.nav-link{
+    @extend %nav-link-styles;
+
+    &:hover{
+        color:c.$nav-hover-color;
+    }
+}
+
+.nav-link-button{    
+    @extend %nav-link-styles;
+
+    background:none;
+    border:none;   
+    
+    &:hover{
+        color:#f55d4c;
+    }
+}
+
+
+.fas{
+    color:White;
+}
