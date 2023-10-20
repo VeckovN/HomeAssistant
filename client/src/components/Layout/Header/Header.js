@@ -4,7 +4,8 @@ import {logout, reset} from '../../../store/auth-slice';
 import { useEffect } from 'react';
 import {toast} from 'react-toastify';
 
-import './Header.css';
+// import './Header.css';
+import '../../../sass/layout/_header.scss';
 
 const Header = () =>{
     const navigate = useNavigate();
@@ -41,7 +42,8 @@ const Header = () =>{
     <nav className = "navbar">
         <div className = "logo" >
             <a href="/" className="logo-a">
-                Home <span className="logo-span">Assistant</span>
+                <span className='logo-span'>Home</span> 
+                <span className="logo-span">Assistant</span>
             </a>
         </div>
         <div className="nav-list">
