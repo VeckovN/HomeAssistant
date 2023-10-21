@@ -1,2 +1,59 @@
-$nav-background-color: black;
+//houseworker comp
+//saturation
+//#7E82A9
+//#6e74b9 - rgb(110,116,185)
+//#6069c7
+//#545ed3
+//#4753e0
+//#3a48ed
+
+//Houseworker card ligher/darker
+$color-hs-6:#42488a;
+$color-hs-5:#535aac;
+$color-hs-4:#6e74b9;
+$color-hs-3:#878cc5;
+$color-hs-2:#a9add6;
+$color-hs-1:#babdde;
+
+
+//between color-hs-label and nav-hover-color
+// #6e74b9
+// #607cc1
+// #5383c8
+// #458bd0
+// #2a9adf
+// #13a7ec
+
+
+
+//PALETE EXMP
+//#190482
+//#7752FE
+//#8E8FFA
+//#C2D9FF
+
+//Gray
+$black:#080808;
+$grey-10: #202020; //rgb(32,32,32)
+$grey-9: #383838;
+$grey-8:#505050;
+$grey-7:#686868;
+$grey-6:#787878;
+$grey-5:#989898;
+$grey-4:#B0B0B0;
+$grey-3:#C8C8C8;
+$grey-2:#D8D8D8;
+$grey-1:#E0E0E0;
+$white-smoke:#F5F5F5;
+$white:#F8F8F8;
+
+
+
+//nav
+// $nav-background-color: black;
+$nav-background-color:$black;
 $nav-hover-color: #13a7ec;
+
+// $color-hs-label:rgb(110,116,185);
+$color-hs-label: $color-hs-4;
+$color-hs-background:rgba(0,0,0,0.75);
