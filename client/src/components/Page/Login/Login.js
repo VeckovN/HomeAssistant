@@ -8,7 +8,8 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import { string, z } from "zod";
 
 
-import './Login.css';
+// import './Login.css';
+import '../../../sass/pages/_login.scss';
 
 const schema = z.object({
     username: string().min(4, {message:"Username must contain at least 4 characters"}),
@@ -49,7 +50,6 @@ const Login = () =>{
                     <form onSubmit={handleSubmit(onSubmitHandler)} className='login_form'>
                         <div className='input_container'>
                             <input
-                                className='input_field'
                                 type='text'
                                 placeholder='Enter a username'
                                 //register has (name="username", onChange, onBlur and ref props) 
@@ -60,7 +60,6 @@ const Login = () =>{
                         
                         <div className='input_container'>
                             <input
-                                className='input_field'
                                 type='password'
                                 placeholder='Enter password'
                                 autoComplete="off"
