@@ -1,0 +1,32 @@
+%bg-image {
+    width: 100%;
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+// image-one {
+//     @extend %bg-image;
+//     background-image:url(/img/image-one.jpg");
+// }
+
+// .image-two {
+//     @extend %bg-image;
+//     background-image:url(/img/image-two.jpg");
+// }
+
+
+//Header links
+%nav-link-styles{
+    color:white;
+    letter-spacing: .08rem;
+    margin:.3rem;
+    font-weight: 700;
+    transition:color .4s;
+
+    &:hover{
+        // color:
+        cursor:pointer;
+    }
+}
+
