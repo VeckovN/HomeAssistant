@@ -1,6 +1,7 @@
 import Select from 'react-select';
 
 const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, city_options, onChangeCityHandler}) =>{
+    console.log("HouseWDa: ", houseworkerData);
     return(
     <>
         <div className='profile_input-container'>
@@ -134,6 +135,25 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
                 isClearable
             />
             <div className='input_errors'>{errors.city?.message}</div>
+        </div>
+
+        <div className='profile_input-container'>  
+            <label>Description: </label>     
+            <br/>  
+            <textarea  
+                rows="4" 
+                cols="30" 
+                placeholder={houseworkerData.description}
+                {...register('description', {
+                    pattern: {
+                        // value: /[A-Za-z0-9'\.\-\s\,]{0,50}/,
+                        value :/^[a-zA-Z0-9\s.,!?'"-]{0,100}$/,
+                        message: "Too long description",
+                    }
+                })}
+
+            />
+            <div className='input_errors'>{errors.description?.message}</div>
         </div>
     </>
     )

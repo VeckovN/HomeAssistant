@@ -17,6 +17,7 @@ const HouseworkerProfile = () =>{
         city:'',
         address:'',
         phone_number:'',
+        description:''
     }
 
     const {register, handleSubmit, watch,reset, control, formState: {errors, isSubmitSuccessful}} = useForm({
