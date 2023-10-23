@@ -74,7 +74,7 @@ const useUser =(initialState)=>{
     }
 
     //Only for Client users
-    const onChangeProffesions = (e) =>{
+    const onChangeProffesions = (e) =>{  
         let professionsArray;
         professionsArray = Array.isArray(e) ? e.map(p => p.value): [];
         setData(prev =>(
@@ -117,12 +117,6 @@ const useUser =(initialState)=>{
     }
 
     const resetProfessions = (event) =>{
-
-        //Set new Proffession in Select Profession 
-        //houseworker_profession add to houseworkerData.professions            
-
-        //remove added profession from not_owned_profession 
-
         setData(prev => ( 
             {
                 ...prev, 
@@ -130,6 +124,13 @@ const useUser =(initialState)=>{
                 houseworker_professions:[] 
             }
         ))
+    }
+
+    const resetWorkingHour = () =>{
+        setData(prev =>({
+            ...prev,
+            working_hour:''
+        }))
     }
 
     //Only for Houseworker users
@@ -161,7 +162,7 @@ const useUser =(initialState)=>{
     }
 
 
-    return {data,errors, onChange, onChangeWorkingHour,onChangeHouseworker, onChangeHouseworkerProfessions, onImageChange, onChangeProfession, onChangeCity, onChangeProffesions, onChangeInterest, resetProfessions}
+    return {data, errors, onChange, onChangeWorkingHour,onChangeHouseworker, onChangeHouseworkerProfessions, onImageChange, onChangeProfession, onChangeCity, onChangeProffesions, onChangeInterest, resetProfessions, resetWorkingHour}
 
 }
 
