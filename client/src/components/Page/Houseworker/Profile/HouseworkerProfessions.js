@@ -3,6 +3,7 @@ import Select from 'react-select';
 import {toast} from 'react-toastify';
 import {addProfession, deleteProfession, updateProfessionWorkingHour} from '../../../../services/houseworker.js';
 import useUser from '../../../../hooks/useUser';
+import {useRef} from 'react';
 
 const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwnedProfessions}) =>{
     console.log("HOUSEOWRKER PROFESSIONs");
@@ -13,9 +14,16 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
         professions:[], //fetched houseowrker professions
         not_owned_professions:[],
         houseworker_professions:[] //adding new profession
+
     }
 
-    const {data:updatedData, onChangeWorkingHour, resetProfessions, onChangeProfession, onChangeHouseworkerProfessions, onChangeProffesions} = useUser(initialProfessionsState)
+    const changeProfessionRef = useRef();
+    const addProffesionRef = useRef();
+
+    const {data:updatedData, onChangeWorkingHour, resetProfessions, resetWorkingHour, onChangeProfession, onChangeHouseworkerProfessions, onChangeProffesions} = useUser(initialProfessionsState)
+
+    console.log(" updatedData.professions ",  updatedData.professions);
+    console.log("updatedData.houseworker_professions", updatedData.houseworker_professions);
 
     const format_houseworker_label = (value, working_hour) =>{
         return {value:value, label: `${value} ${working_hour}€`}
@@ -35,9 +43,10 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
                     })
                     setHouseworkerData(prev =>({
                         ...prev,
-                        ['professions']:newProfessionOptions
+                        professions:newProfessionOptions,
                     }))
                     toast.success("Successfully profession updated")
+                    resetWorkingHour();
                 }
                 else
                     toast.error("Enter working hour ")
@@ -55,7 +64,6 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
         e.preventDefault();
         try{
             if(updatedData.houseworker_professions.length > 1){
-                console.log("OLD : " + JSON.stringify(houseworkerData.professions) + "\n");
                 let new_houseworker_professions = [];
 
                 //We need array of promise because we have loop there fucntion should call as async
@@ -67,7 +75,7 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
                 //Wait for all promises to resolve using Promise.all
                 await Promise.all(addProfessionPromises);
 
-                // for Choosing current user profeesions
+                // for the current user's selection profeesions
                 const merged_houseworkers = [...houseworkerData.professions, ...new_houseworker_professions];
 
                 const remained_professions = profession_options.filter((option) =>{
@@ -79,11 +87,9 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
                     {
                         ...prev,
                         professions:merged_houseworkers,
-                        not_owned_professions:remained_professions,
-                        profession:'' //reset select view
+                        not_owned_professions:remained_professions
                     }
                 ))
-
                 toast.success("Successfully professions added");
             }
             else{
@@ -101,12 +107,12 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
                         ...prev,
                         professions:new_houseworker_professions,
                         not_owned_professions:remained_professions,
-                        profession:'', //reset select view
                     }
                 ))
                 toast.success("Profession successfully added");
             }     
             resetProfessions();
+            addProffesionRef.current.clearValue();
         }
         catch(err){
             console.log("Error: " + err);
@@ -125,12 +131,11 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
             setHouseworkerData(prev =>({
                 ...prev,
                 professions:profession_format,
-                profession:" ", //resent select 
                 not_owned_professions:not_owned_professions //change Add Profession optiosn(add deleted profession)
             }))
-
-            onChangeProfession(null);         
+ 
             toast.success("Profession Successfuly deleted")
+            changeProfessionRef.current.clearValue();
         }
         catch(err){
             console.log("Error: " + err);
@@ -146,10 +151,9 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
                     className='dropdown'
                     placeholder="Select a profession"
                     options={houseworkerData.professions}
-                    // value={houseworkerData.profession}
-                    value={houseworkerData.profession}
+                    ref={changeProfessionRef}
                     onChange={onChangeProfession}
-                    isClearable
+                    isClearable={true}
                 />
                 {updatedData.profession && updatedData.profession != " " &&
                     <div className='profile_input-container'> 
@@ -158,6 +162,7 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
                             type='number'
                             name='working_hour'
                             placeholder='Enter working hour' 
+                            value={updatedData.working_hour}
                             onChange={onChangeWorkingHour}
                         />
                         <br/>
@@ -182,8 +187,9 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
                     className='dropdown'
                     placeholder="Select a profession"
                     options={houseworkerData.not_owned_professions}
-                    value={houseworkerData.profession}
+                    //value={houseworkerData.profession}
                     onChange={onChangeProffesions}
+                    ref={addProffesionRef}
                     isClearable
                     isMulti
                 />

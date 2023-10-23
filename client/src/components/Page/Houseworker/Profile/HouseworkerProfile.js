@@ -51,6 +51,8 @@ const HouseworkerProfile = () =>{
         const {professions:not_owned_professions, profession_format } = getNotOwnedProfessions(houseworker_professions);
         const newHouseworker = {...houseworkerResult, professions:[...profession_format], not_owned_professions:[...not_owned_professions]}
 
+        console.log("HOUSEOWRKER DATA: " , newHouseworker)
+
         setHouseworkerData(newHouseworker);
         setLoading(false);
     }
