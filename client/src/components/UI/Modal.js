@@ -1,25 +1,26 @@
 import { Fragment } from 'react';
 import ReactDom from 'react-dom';
 
-import './Modal.css'
+//import './Modal.css'
+import '../../sass/components/_modal.scss';
 
 //onCloseBV(click in background to close Modal)
 //const ModalViewOverlay = props =>{
 const ModalViewOverlay = ({HeaderContext, onCloseMV, BodyContext, FooterContext}) =>{
     return <div className='modal'>
         <div className='modal-container'>
-            <div className='modal-header'>
-                <div>{HeaderContext}</div>
+            <div className='modal-container-header'>
+                <div className='context'>{HeaderContext}</div>
                 <button className='close_sign' onClick={onCloseMV}>X</button>
             </div>
 
-            <div className='modal-body'>    
+            <div className='modal-container-body'>    
                 {/* {props.children} */}
                 {BodyContext}
             </div>
 
             {FooterContext && 
-            <div className='modal-footer'>
+            <div className='modal-container-footer'>
                 {FooterContext}
             </div>}
         </div>

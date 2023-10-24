@@ -1,11 +1,12 @@
-import './CommentItem.css'
+//import './CommentItem.css'
+import '../../sass/components/_commnetItem.scss';
 
 const CommentItem = (props) =>{
 
     return(
-        <div className='comment_container' key={props.id} >
+        <div className='comment-container' key={props.id} >
             {props.onDeleteCommentHandler && 
-                <button className='btn_comment_delete' onClick={(e) => props.onDeleteCommentHandler(e, props.id, props.from)}>X</button>
+                <button className='btn-comment-delete' onClick={(e) => props.onDeleteCommentHandler(e, props.id, props.from)}>X</button>
             }
             <div className='info'>
                 <div className='commented'>Commented: {props.from}</div>
