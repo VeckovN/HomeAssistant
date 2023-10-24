@@ -2,6 +2,7 @@
 // $nav-hover-color: #13a7ec;
 @use '../abstracts/colors' as c;
 @use '../abstracts//placeholders' as *;
+@use '../abstracts//fonts' as *;
 
 .navbar{
     width:100%;
@@ -50,25 +51,6 @@
     top: 1.3rem;
     right:2rem;
 }
-
-// .nav-list1{
-//     position:absolute;
-//     top: 1.3rem;              /*Ovo je za stavke poruke, profil i logout dok je korisnik logovan za klijenta i admina*/
-//     right:2rem;
-// }
-
-// %nav-link-styles{
-//     color:white;
-//     letter-spacing: .08rem;
-//     margin:.3rem;
-//     font-weight: 700;
-//     transition:color .4s;
-
-//     &:hover{
-//         // color:
-//         cursor:pointer;
-//     }
-// }
 
 .nav-link{
     @extend %nav-link-styles;
