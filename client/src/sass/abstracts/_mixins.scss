@@ -1,4 +1,6 @@
 
+@use './colors' as *;
+
 @mixin flex-with-direction($direction:column){
     display: flex;
     flex-direction: $direction;
@@ -10,3 +12,34 @@
     justify-content: center;
     align-items: center;
 }
+
+@mixin flex-container($direction, $justify, $align) {
+    display: flex;
+    flex-direction: $direction;
+    justify-content: $justify;
+    align-items: $align;
+}
+
+
+@mixin profession-button-styles($color: $grey-5, $bg-color:$grey-1) {
+    color: $color;
+    letter-spacing: 0.05rem;
+    margin: 0.2rem;
+    padding:0.3em 0.5rem;
+
+
+    background-color: $bg-color;
+    border: 1px solid black;
+    border-radius: .2em;
+
+    font-weight: 700;
+    font-size:.8rem;
+    transition: color 0.4s;
+
+    &:hover {
+        color: $nav-hover-color;
+        cursor: pointer;
+    }
+}
+
+
