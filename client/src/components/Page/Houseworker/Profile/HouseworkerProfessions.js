@@ -145,7 +145,7 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
 
     return (
         <>
-            <div className="profession_changing">
+            <div className="profession-changing">
                 <label>Professions</label>
                 <Select 
                     className='dropdown'
@@ -156,7 +156,7 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
                     isClearable={true}
                 />
                 {updatedData.profession && updatedData.profession != " " &&
-                    <div className='profile_input-container'> 
+                    <div className='profession-input-container'> 
                         <input 
                             className='input_field'
                             type='number'
@@ -167,21 +167,23 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
                         />
                         <br/>
                         
-                        {
-                        updatedData.working_hour != "" &&
-                        <div className="add_profession_button">
-                            <button onClick={onChangeProfessionHandler}>ChangeProfession</button>
-                        </div>
-                        }
-                        
-                        <div className = "delete_profession_button">
-                            {/* without ()=> this function will be executed immediately , also pass the e(event) for e.preventDefault*/}
-                            <button onClick={(e) => onDeleteProfessionHandler(e, updatedData.profession)} >Delete Profession</button>
+                        <div className='action-buttons'>
+                            {
+                            updatedData.working_hour != "" &&
+                            <div className="change-profession">
+                                <button onClick={onChangeProfessionHandler}>Change</button>
+                            </div>
+                            }
+                            
+                            <div className = "delete-profession">
+                                {/* without ()=> this function will be executed immediately , also pass the e(event) for e.preventDefault*/}
+                                <button onClick={(e) => onDeleteProfessionHandler(e, updatedData.profession)} >Delete</button>
+                            </div>
                         </div>
                     </div>
                     }
             </div>
-            <div className='profession_adding'>
+            <div className='profession-adding'>
                 <label>Add Profession</label>
                 <Select 
                     className='dropdown'
@@ -195,7 +197,7 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
                 />
                 {  //list profession
                     updatedData.professions.map((el,index) => (
-                    <div key={index}>
+                    <div className='working-hours' key={index}>
                         <label><b>{el}</b></label>
                         <input 
                             className='input_field'
@@ -209,7 +211,7 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
                 }
                 {
                     updatedData.houseworker_professions.length >0 && 
-                        <div className='profession_add_button'>
+                        <div className='profession-add'>
                             <button onClick={onAddProfessionHandler}> Add</button>
                         </div>
                 }

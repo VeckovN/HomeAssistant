@@ -4,11 +4,11 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
     console.log("HouseWDa: ", houseworkerData);
     return(
     <>
-        <div className='profile_input-container'>
+        <div className='profile-input-container'>
             <label>First name: <b>{houseworkerData.first_name}</b></label>
             <br/>
             <input 
-                className='input_field'
+                className='input-field'
                 type='text'
                 placeholder='Enter First name'
                 {...register('first_name',{
@@ -21,11 +21,11 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
             <div className='input_errors'>{errors.first_name?.message}</div>
         </div>
 
-        <div className='profile_input-container'>
+        <div className='profile-input-container'>
             <label>Last name: <b>{houseworkerData.last_name}</b></label>
             <br/>
             <input 
-                className='input_field'
+                className='input-field'
                 type='text'
                 placeholder='Enter Last name'
                 {...register('last_name',{
@@ -38,11 +38,11 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
             <div className='input_errors'>{errors.last_name?.message}</div>
         </div>
         
-        <div className='profile_input-container'>
+        <div className='profile-input-container'>
             <label>Email: <b>{houseworkerData.email}</b></label>
             <br/>
             <input 
-                className='input_field'
+                className='input-field'
                 type='email'
                 placeholder='Enter email address'
                 autoComplete='off'
@@ -56,11 +56,11 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
             <div className='input_errors'>{errors.email?.message}</div>
         </div>
 
-        <div className='profile_input-container'>
+        <div className='profile-input-container'>
             <label>Password</label>
             <br/>
             <input 
-                className='input_field'
+                className='input-field'
                 type='password'
                 placeholder='Enter password'
                 autoComplete="off"
@@ -70,11 +70,11 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
         </div>
 
         {watch('password') &&   //only if is password entered
-        <div className='profile_input-container'>
+        <div className='profile-input-container'>
             <label>Repeat password</label>
             <br/>
             <input 
-                className='input_field'
+                className='input-field'
                 type='password'
                 placeholder='Confirm the password'
                 autoComplete="off"
@@ -90,11 +90,11 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
         </div>
         }
 
-        <div className='profile_input-container'>
+        <div className='profile-input-container'>
             <label>Address: <b>{houseworkerData.address}</b></label>
             <br/>
             <input 
-                className='input_field'
+                className='input-field'
                 type='text'
                 placeholder='Enter address'
                 {...register('address',{
@@ -107,11 +107,11 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
             <div className='input_errors'>{errors.address?.message}</div>
         </div>
 
-        <div className='profile_input-container'>
+        <div className='profile-input-container'>
             <label>Phone number: <b>{houseworkerData.phone_number}</b></label>
             <br/>
             <input 
-                className='input_field'
+                className='input-field'
                 type='number'
                 placeholder='Enter phone number'
                 {...register("phone_number", {
@@ -124,7 +124,7 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
             <div className='input_errors'>{errors.phone_number?.message}</div>
         </div>
         
-        <div className='profile_input-container'>
+        <div className='profile-input-container'>
             <label>City: <b>{houseworkerData.city}</b></label>
             <Select 
                 className='dropdown'
@@ -137,7 +137,7 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
             <div className='input_errors'>{errors.city?.message}</div>
         </div>
 
-        <div className='profile_input-container'>  
+        <div className='profile-input-container'>  
             <label>Description: </label>     
             <br/>  
             <textarea  
