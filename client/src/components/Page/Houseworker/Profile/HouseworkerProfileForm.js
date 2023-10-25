@@ -5,11 +5,11 @@ import Spinner from '../../../UI/Spinner';
 
 const HouseworkerProfileForm = ({loading, houseworkerData, setHouseworkerData, cityField, register, errors, watch, handleSubmit, getNotOwnedProfessions, onSubmitUpdate, onChangeCityHandler}) =>{
     return(
-        <div className='profile_container'>
+        <div className='profile-container'>
                 {loading ? <Spinner/> :
                 <>
                     <h1>Houseworker Profile</h1>
-                    <form className='profile_form' onSubmit={handleSubmit(onSubmitUpdate)}>
+                    <form className='hs-profile-form' onSubmit={handleSubmit(onSubmitUpdate)}>
                         <div className ='professions'>
                             <HouseworkerProfessions
                                 houseworkerData={houseworkerData}
@@ -28,7 +28,7 @@ const HouseworkerProfileForm = ({loading, houseworkerData, setHouseworkerData, c
                                 onChangeCityHandler={onChangeCityHandler}
                             />
                             <br></br>
-                            <button type='submit'  className='profile_submit'>Update</button>
+                            <button type='submit'  className='profile-submit'>Update</button>
                         </div>
 
                     </form>
