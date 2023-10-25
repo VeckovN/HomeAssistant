@@ -5,18 +5,18 @@ import Spinner from '../../../UI/Spinner';
 const ClientProfileForm = ({loading, clientData, cityField, errors, register, watch, city_options,handleSubmit ,onSubmitUpdate,onSubmitUpdateHandler, onCityChangeHandler }) =>{
 
     return(
-        <div className='profile_container'>
+        <div className='profile-container'>
             {loading ? <Spinner/> :
             <>
                 <h1>Client Profile</h1>
-                <form className='profile_form' onSubmit={handleSubmit(onSubmitUpdate)}>
+                <form className='cl-profile-form' onSubmit={handleSubmit(onSubmitUpdate)}>
                     {/* left side */}
                     <div className='input-label-form'>
-                        <div className='profile_input-container'>
+                        <div className='profile-input-container'>
                             <label>First Name: <b>{clientData.first_name}</b></label>
                             <br/>
                             <input
-                                className='input_field'
+                                className='input-field'
                                 type='type'
                                 id='first_name'
                                 placeholder='Enter First name'
@@ -30,11 +30,11 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                             <div className='input_errors'>{errors.first_name?.message}</div>
                         </div>
 
-                        <div className='profile_input-container'>
+                        <div className='profile-input-container'>
                             <label>Last name: <b>{clientData.last_name}</b></label>
                             <br/>
                             <input
-                                className='input_field'
+                                className='input-field'
                                 type='type'
                                 id='last_name'
                                 placeholder='Enter last name'
@@ -48,11 +48,11 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                             <div className='input_errors'>{errors.last_name?.message}</div>
                         </div>
 
-                        <div className='profile_input-container'>
+                        <div className='profile-input-container'>
                             <label>Email: <b>{clientData.email}</b></label>
                             <br/>
                             <input
-                                className='input_field'
+                                className='input-field'
                                 type='email'
                                 id='email'
                                 placeholder='Enter email address'
@@ -67,11 +67,11 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                             <div className='input_errors'>{errors.email?.message}</div>
                         </div>
 
-                        <div className='profile_input-container'>
+                        <div className='profile-input-container'>
                             <label>Password</label>
                             <br/>
                             <input 
-                                className='input_field'
+                                className='input-field'
                                 type='password'
                                 placeholder='Enter a password'
                                 autoComplete="new-password"
@@ -81,11 +81,11 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                         </div>
 
                         {watch('password') &&  //only if is password entered
-                        <div className='profile_input-container'>
+                        <div className='profile-input-container'>
                             <label>Confirm password</label>
                             <br/>
                             <input 
-                                className='input_field'
+                                className='input-field'
                                 type='password'
                                 id='confirmPassword'
                                 placeholder='Confirm password'
@@ -102,7 +102,7 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                         </div>
                         }
 
-                        <div className='profile_input-container'>
+                        <div className='profile-input-container'>
                             <label>City: <b>{clientData.city}</b></label><br/>
                             <Select 
                                 className='dropdown'
@@ -117,7 +117,7 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                         <br></br>
 
                         {/* button for submit Above inputs  */}
-                        <button type='submit' className='profile_submit'>Update</button>
+                        <button type='submit' className='profile-submit'>Update</button>
                     </div>
                 </form>
             </>
