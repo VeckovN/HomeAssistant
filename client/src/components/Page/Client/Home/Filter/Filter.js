@@ -1,13 +1,11 @@
 //Compnent with different selection choice
-import {useState, useEffect, useRef, useMemo, memo} from 'react';
-import axios from 'axios';
-import Select from 'react-select';
+import {useState, useEffect, useMemo, memo} from 'react';
 import {getAllCities, getAllProfessions} from '../../../../../services/houseworker.js'
 import useUser from '../../../../../hooks/useUser.js';
 import FilterForm from './FilterForm.js';
 
-
-import './Filter.css'
+import '../../../../../sass/components/_filter.scss';
+//import './Filter.css'
 
 const Filter = (prop) =>{
     
