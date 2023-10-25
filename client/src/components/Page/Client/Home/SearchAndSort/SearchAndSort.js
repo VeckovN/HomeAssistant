@@ -3,7 +3,8 @@
 
 import {useState, useRef, memo} from 'react'
 
-import './SearchAndSort.css'
+//import './SearchAndSort.css'
+import '../../../../../sass/components/_searchAndSort.scss';
 
 const SearchAndSort = (prop) => {
 
@@ -32,30 +33,30 @@ const SearchAndSort = (prop) => {
         <>
             <div className='search-box'>
                 <div className='input-search'>
-                    <div className='box_s'>
-                    <input 
-                        className='search' 
-                        type='text' 
-                        value={searchName}
-                        placeholder='Search houseworker (Enter username)'
-                        onChange={selectSearchHandler}
-                    />
-                    <button onClick={onSearchSubmitHandler}>Search</button>
+                    <div className='box-s'>
+                        <input 
+                            className='search' 
+                            type='text' 
+                            value={searchName}
+                            placeholder='Search houseworker (Enter username)'
+                            onChange={selectSearchHandler}
+                        />
+                        <button onClick={onSearchSubmitHandler}>Search</button>
                     </div>
                 </div>
 
                 <div className='sort'>
                     <div className="sort-box">
-                        <button className='sort-1' value="AgeUp" onClick={e => selectSortHandler(e.target.value)}>Age 🠑
+                        <button id='sort-1' value="AgeUp" onClick={e => selectSortHandler(e.target.value)}>Age 🠑
                         </button>
 
-                        <button className='sort-2' value="AgeDown" onClick={e => selectSortHandler(e.target.value)}>Age 🠓
+                        <button id='sort-2' value="AgeDown" onClick={e => selectSortHandler(e.target.value)}>Age 🠓
                         </button>
 
-                        <button className='sort-3' value="RatingUp" onClick={e => selectSortHandler(e.target.value)}>Rating 🠑
+                        <button id='sort-3' value="RatingUp" onClick={e => selectSortHandler(e.target.value)}>Rating 🠑
                         </button>
 
-                        <button className='sort-4' value="RatingDown" onClick={e => selectSortHandler(e.target.value)}>Rating 🠓
+                        <button id='sort-4' value="RatingDown" onClick={e => selectSortHandler(e.target.value)}>Rating 🠓
                         </button>
                     </div>
                 </div>
