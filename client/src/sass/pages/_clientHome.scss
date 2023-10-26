@@ -1,0 +1,59 @@
+
+.home-container{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    // display: -moz-flex;
+    display:flex;
+    flex-direction: column;
+    padding: 4rem 0;
+
+    .recommended-btn{
+        position:absolute;
+        top:-.5rem;
+        left:21%;
+    
+        width: 20rem;
+        height: 3rem;
+        border-radius: .5rem;
+        font-size:1rem;
+        font-weight: 600;
+        letter-spacing: 0.4px;
+    
+        background-color: rgb(24, 154, 187);
+
+        &:hover{
+            background-color: rgb(255, 255, 255);
+        }
+    }
+
+    .filter-houseworkers-container{
+        display:flex;
+        flex-direction:row;
+        margin:0;
+
+        .houseworker-list{
+            /* display: flex;
+            flex-direction: column;
+            flex-wrap: wrap; */
+           
+        }
+
+    }
+
+    .scroll-div{
+        position: fixed;
+        bottom: 1rem;
+        right:1rem;
+        background-color: #f2f2f2;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+        button{
+            //design 
+        }
+    }
+}
+
+
