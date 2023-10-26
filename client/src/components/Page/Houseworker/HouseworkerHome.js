@@ -1,10 +1,8 @@
 import {useState, useEffect} from 'react';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
 import {getRating, getCommentsCount, getConversationCount} from '../../../services/houseworker.js'
 
-
-import './HouseworkerHome.css'
+import '../../../sass/pages/_houseworkerHome.scss';
 import Spinner from '../../UI/Spinner.js';
 
 const HouseworkerHome = () =>{
@@ -53,35 +51,35 @@ const HouseworkerHome = () =>{
     },[])
  
     return (
-        <div className='houseworker_container'>
+        <div className='houseworker-container'>
             {loading ? <Spinner/> :
             <>
-                <div className ='houseworker_item_container'>
-                    <div className ='houseworker_item'>
-                        <div className='item_title'>
+                <div className ='houseworker-item-container'>
+                    <div className ='houseworker-item'>
+                        <div className='item-title'>
                             <label>Chat</label>
                             <div>IKONICA</div>
                         </div>
                         
-                        <div className='item_info'>{conversationCount}</div>
+                        <div className='item-info'>{conversationCount}</div>
                     </div>
 
-                    <div className ='houseworker_item'>
-                        <div className='item_title'>
+                    <div className ='houseworker-item'>
+                        <div className='item-title'>
                             <label>Rating</label>
                             <div>IKONICA</div>
                         </div>
 
-                        <div className='item_info'>{rating}</div>
+                        <div className='item-info'>{rating}</div>
                     </div>
 
-                    <div className ='houseworker_item'>
-                        <div className='item_title'>
+                    <div className ='houseworker-item'>
+                        <div className='item-title'>
                             <label>Comments</label>
                             <div>IKONICA</div>
                         </div>
                         
-                        <div className='item_info'>{commentsCount}</div>
+                        <div className='item-info'>{commentsCount}</div>
                     </div>
                 </div>
             </>
