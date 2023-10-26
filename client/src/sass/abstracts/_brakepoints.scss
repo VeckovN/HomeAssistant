@@ -1,0 +1,12 @@
+// xs < 576px
+// sm ≥ 576px
+// md ≥ 768px
+// lg ≥ 992px
+// xl ≥ 1200px
+// xxl ≥ 1400px
+
+// // overview
+// calc( min-font-size + ( ( max-font-size - min-font-size ) * ( 100vw - min-screen-width ) / ( max-screen-width - min-screen-width) ) )
+
+// // actual usage
+// calc( 16px + ( ( 24 - 16 ) * ( 100vw - 480 ) / ( 1280 - 480) ) )
