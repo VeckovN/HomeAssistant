@@ -5,18 +5,13 @@ import HouseworkerCardContent from './HouseworkerCardContent.js';
 import useHouseworkerComment from '../../../../../hooks/Houseworker/useHouseworkerComment.js'
 import useHouseworkerRating from '../../../../../hooks/Houseworker/useHouseworkerRating.js';
 import useHouseworkerContact from '../../../../../hooks/Houseworker/useHouseworkerContact.js';
-
-//import './HouseworkerCard.css'
-import '../../../../../sass/components/_houseworkerCard.scss';
 import {getProfessionsByUsername} from '../../../../../services/houseworker.js'
 
 axios.defaults.withCredentials = true
 
-
 //CLIENT - Serach, Filter, HouseworkersCard(wiht paggination)
 //GUEST sees everything just like THE CLIENT but 
 // -can't see all information(Working hours, Rating) and cant send message and post comment
-
 
 //@Todo //Custom Hook for useFetch
 const HouseworkersCard = (props) =>{
@@ -79,7 +74,6 @@ const HouseworkersCard = (props) =>{
         fetchProfessions(); 
     },[])
 
-
     return (
        <HouseworkerCardContent 
             houseworkerUsername ={houseworkerUsername}
@@ -105,7 +99,6 @@ const HouseworkersCard = (props) =>{
             commentClick={commentClick}
        />      
     )
-
 }
 
 export default HouseworkersCard
