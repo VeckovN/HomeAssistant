@@ -1,4 +1,4 @@
-.comment-container{
+.comment{
     position: relative;
     background-color: aliceblue;
 
@@ -14,7 +14,7 @@
     margin:.5rem 0rem;
     border-radius: .7rem;
 
-    .btn-comment-delete{
+    .comment-delete-btn{
         position: absolute;
         right:.4rem;
         top:.4rem;
@@ -42,6 +42,7 @@
 
     .context{
         padding:.5rem 0rem;
+        margin-top:.2em;
     }
 }
 // .comment_container .info{
