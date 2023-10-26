@@ -1,0 +1,39 @@
+.comment-container{
+    width: 80%;
+    
+    max-width: 40em;
+    min-width: 0rem;
+}
+
+.comment_input{
+    margin:.7rem 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+
+    input{
+        height: 1.3rem;
+        width: 50%;
+        max-width: 300px;
+        margin:0rem 1rem;
+
+        &::placeholder{
+            text-align: center;
+        }
+    }
+
+    button{
+        height: 1.6rem;
+        width: 4.5rem;
+        border-radius: .5rem;
+        background-color: rgb(44, 36, 36);
+        color:white;
+        cursor: pointer;
+
+        &:hover{
+            background-color: rgb(7, 7, 7);
+        }
+    }
+
+}
