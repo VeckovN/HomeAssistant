@@ -1,12 +1,12 @@
-import {useState, useEffect, useCallback} from 'react'
+import {useState, useEffect} from 'react'
 import useClient from '../../../../hooks/useClient.js';
 import HouseworkerCard from './HouseworkerCard/HouseworkerCard.js'
 import Filter from './Filter/Filter.js';
 import SearchAndSort from './SearchAndSort/SearchAndSort.js';
 import { useSelector } from 'react-redux';
 
-
-import './ClientHome.css'
+//import './ClientHome.css'
+import '../../../../sass/pages/_clientHome.scss';
 
 const ClientHome = ({socket}) =>{
 
@@ -40,7 +40,6 @@ const ClientHome = ({socket}) =>{
             behavior: 'smooth'
           });
     }
-
 
 
     //RECOMMENDED USERS
@@ -102,13 +101,13 @@ const ClientHome = ({socket}) =>{
     }
 
     return (
-        <div className='home_container'>
-                <button className="recommendedBtn" onClick={onShowRecommended}>{!showRecommended ? 'Show recommended' : 'Close Recommended'}</button>
+        <div className='home-container'>
+                <button className="recommended-btn" onClick={onShowRecommended}>{!showRecommended ? 'Show recommended' : 'Close Recommended'}</button>
                 <SearchAndSort search={searchDataHanlder}/>
-                <div className='filter_houseworkers_container'>
+                <div className='filter-houseworkers-container'>
                     <Filter 
                     //This FilterDataHandler is different on every render by default - so memo(Filter) won't work to prevent Filter unnecessary re-rendering
-                    //so i have to this filterDataHandler make unique (frize on first fucntion creating -> useCallback on filterDataHandler in useClient )
+                    //so i had to this filterDataHandler made unique (frize on first fucntion creating -> useCallback on filterDataHandler in useClient )
                         filterOptions={filterDataHandler}
                     />
                     <div className="houseworker-list">
@@ -118,8 +117,8 @@ const ClientHome = ({socket}) =>{
                 </div>
 
                 {showButton && 
-                    <div className='scroll_div'>
-                        <button className='scroll_to_top' onClick={scrollToTop}>Scroll To Top</button>
+                    <div className='scroll-div'>
+                        <button className='scroll-to-top' onClick={scrollToTop}>Scroll To Top</button>
                     </div>
                 }
         </div>
