@@ -102,7 +102,6 @@ const ClientHome = ({socket}) =>{
 
     return (
         <div className='home-container'>
-                <button className="recommended-btn" onClick={onShowRecommended}>{!showRecommended ? 'Show recommended' : 'Close Recommended'}</button>
                 <SearchAndSort search={searchDataHanlder}/>
                 <div className='filter-houseworkers-container'>
                     <Filter 
@@ -111,8 +110,9 @@ const ClientHome = ({socket}) =>{
                         filterOptions={filterDataHandler}
                     />
                     <div className="houseworker-list">
+                    <button className="recommended-btn" onClick={onShowRecommended}>{!showRecommended ? 'Show recommended' : 'Close Recommended'}</button>
                         {showRecommended && recommendedList}
-                        {houseworkerList.length > 0 ? houseworkerList : <h3>No Matches</h3> }
+                        {houseworkerList.length > 0 ? houseworkerList : <h3 id='none'>No Matches</h3> }
                     </div>
                 </div>
 
