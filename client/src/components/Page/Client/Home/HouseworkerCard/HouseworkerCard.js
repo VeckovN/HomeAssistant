@@ -6,8 +6,9 @@ import useHouseworkerComment from '../../../../../hooks/Houseworker/useHousework
 import useHouseworkerRating from '../../../../../hooks/Houseworker/useHouseworkerRating.js';
 import useHouseworkerContact from '../../../../../hooks/Houseworker/useHouseworkerContact.js';
 
-import './HouseworkerCard.css'
-import {getRating, getProfessionsByUsername} from '../../../../../services/houseworker.js'
+//import './HouseworkerCard.css'
+import '../../../../../sass/components/_houseworkerCard.scss';
+import {getProfessionsByUsername} from '../../../../../services/houseworker.js'
 
 axios.defaults.withCredentials = true
 

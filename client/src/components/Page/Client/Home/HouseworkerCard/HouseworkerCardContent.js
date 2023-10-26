@@ -1,4 +1,5 @@
 import HouseworkerCommentModal from "./HouseworkerCommentModal";
+import '../../../../../sass/components/_houseworkerCard.scss';
 
 const HouseworkerCardContent = ({
     comments,
@@ -40,19 +41,16 @@ const HouseworkerCardContent = ({
             <div className="houseworker-card">
                 <div className={houseworkerProps.recommended ? 'houseworker-content recommended' : 'houseworker-content'}>
                     
-                    <div className="imgBox">
-                        {/* <img clasName="image">IMG FROM DB</img> */}
-                        {/* <img src={profilePicture}></img> */}
+                    <div className="img-box">
                         <img className='' src={`assets/userImages/${houseworkerProps.picturePath}`}/>
-                        {/* <p>{houseworkerProps.picturePath}</p> */}
                         {/* <img src={`data:image/jpeg;base64, ${houseworkerProps.picturePath}`}></img> */}
                     </div>
 
                     {houseworkerProps.recommended && 
-                        <div className='recommendedText'>Preporucen</div> 
+                        <label id='recommended-lb'>Preporucen</label> 
                     }
 
-                    <div className="textBox">
+                    <div className="box-text">
 
                         <div className="personal-info">
                             <div className='div-text'><label className='label-category'>Personal Info</label>
@@ -92,7 +90,7 @@ const HouseworkerCardContent = ({
                             professions ? 
                                 professions.map((pr,index) => 
                                         <div className='div-text-profession' key={index}>- <label className='label-text'>{pr.profession}</label>
-                                            <div className='profession-money'> €{pr.working_hour}/hr.</div>
+                                            <div id='profession-money'> €{pr.working_hour}/hr.</div>
                                         </div>
                                     )
                             :
@@ -106,7 +104,7 @@ const HouseworkerCardContent = ({
                             </div>
                                         
                             <div className='description-box'>
-                                <div className='div-text-desc'><p>{isClient ? houseworkerProps.description : <b>Log in</b>}</p>
+                                <div className='div-text-desc'><p>{isClient ? houseworkerProps.description : <a href='/login'>Log in</a>}</p>
                                 </div>
                             </div>
 
@@ -115,7 +113,7 @@ const HouseworkerCardContent = ({
                             </div>
 
                             <div className='rating-box'>
-                                <div className='div-text-rating'><p>{isClient ? parseFloat(rating).toFixed(1) : <b>Login</b>}</p>
+                                <div className='div-text-rating'><p>{isClient ? parseFloat(rating).toFixed(1) : <a href='/login'>Log in</a>}</p>
                                 </div>
                                 <div className='rating-field'>
                                     {showRateInput && 
@@ -132,7 +130,6 @@ const HouseworkerCardContent = ({
                             <div className='comment-box'>
                                 <button className='comment-btn' onClick={onCommentHandler} id={houseworkerProps.id} value={houseworkerProps.username}>Comment</button>
                             </div>
-
                         </div>
 
                     </div>

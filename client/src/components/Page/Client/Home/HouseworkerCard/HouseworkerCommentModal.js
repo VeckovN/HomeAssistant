@@ -1,6 +1,8 @@
 import Modal from "../../../../UI/Modal";
 import CommentItem from "../../../../UI/CommentItem";
 
+import '../../../../../sass/components/_houseworkerCommentModal.scss';
+
 const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, postCommentRef, onCloseComment, onCommentDelete}) =>{
 
     const commentHeaderContext =
@@ -9,6 +11,7 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
     //Comment Modal context(use CommentItem)
     const commentBodyContext = 
         <div>
+            <div className='comment-container'>
             {comments ?
                 comments.map(comm => (
                     (clientUsername === comm.from) ? ( //delete button is only showned to clients that belongs comment
@@ -28,7 +31,8 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
                 )
                 )
                 : <div className='no_commentsModal'>Client doesn't have comments</div>
-            }
+                }
+            </div>
             <div className='comment_input'>
                 <input type='text' name="postComment"  ref={postCommentRef} placeholder='Post comment'/>
                 <button type="submit" onClick={onCommentSubmit}>Send</button>
