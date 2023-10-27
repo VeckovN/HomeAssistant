@@ -1,5 +1,7 @@
 import {useState} from 'react';
-import './Room.css'
+//import './Room.css'
+import '../../../../../sass/components/_room.scss';
+
 const Room = ({roomInfo, user, houseworkers, roomRef, onRoomClickHanlder, onAddUserToGroupHanlder, onDeleteRoomHandler}) =>{
 
     console.log("searchTerm : " )
@@ -30,13 +32,12 @@ const Room = ({roomInfo, user, houseworkers, roomRef, onRoomClickHanlder, onAddU
     return(
         <>
             <div className='users'>{roomInfo.users.map((user)=>  (<div className='roomUsers'> -{user}:{}- <span/></div>))}</div>
-            <div className='room_buttons'>
-                <button value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder}>Show messages</button>
+            <div className='room-buttons'>
+                <button className='show-room-btn' value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder}>Show messages</button>
                 {/* client can delete The chat room, add houseworker to group */}
                 {user.type=="Client" &&
                     <>                        
-                        <div className='search_container'> 
-                            <div className='input_field'>
+                        <div className='search-container'> 
                                 {roomInfo.roomID == roomRef.current ?
                                 <>
                                     <input  
@@ -76,14 +77,14 @@ const Room = ({roomInfo, user, houseworkers, roomRef, onRoomClickHanlder, onAddU
                                         value={searchTerm}                    
                                     />
                                 }
-                            </div>
                         </div>
                         <button 
+                            onClass='add-user-to-group-btn'
                             onClick={()=> AddUserToGroupHandler(roomInfo.roomID, selectedUsername)}
                             disabled={!selectedUsername}
                             >Add user
                         </button>
-                        <button onClick={onDeleteRoomHandler} value={roomInfo.roomID}>Delete room</button>
+                        <button onClass='delete-room-btn' onClick={onDeleteRoomHandler} value={roomInfo.roomID}>Delete room</button>
                     </>
                 }
             </div>

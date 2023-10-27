@@ -2,7 +2,8 @@ import {useRef} from 'react';
 import { emitMessage } from '../../../../sockets/socketEmit';
 import { toast } from 'react-toastify';
 
-import './Chat.css'
+//import './Chat.css'
+import '../../../../sass/components/_chat.scss';
 
 const Chat = ({socket, roomMessages, roomRef, user}) =>{
     const messageRef = useRef(); //taken message from input
@@ -38,16 +39,16 @@ const Chat = ({socket, roomMessages, roomRef, user}) =>{
 
     return(
         // <div className="chat_container">            
-        <div className='messages_container'>
+        <div className='messages-container'>
             {roomMessages.length >0 &&
                 <>
-                    <div className='messages_box'>
+                    <div className='messages-box'>
                     {roomMessages.map(el =>{
                         if(user.userID==el.from){
-                            messageContext=' my_message'
+                            messageContext=' my-message'
                         }
                         else{
-                            messageContext=' notMy_message'
+                            messageContext=' notMy-message'
                         }
 
                         return <>
@@ -56,7 +57,7 @@ const Chat = ({socket, roomMessages, roomRef, user}) =>{
                                 </div>
                             </>
                     })}
-                    <div className='sendMessageBox'>
+                    <div className='messages-box-send'>
                         <input
                             type='text'
                             name='message-text'

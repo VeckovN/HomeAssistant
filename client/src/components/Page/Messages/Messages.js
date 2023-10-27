@@ -10,6 +10,8 @@ import { emitRoomJoin, emitLeaveRoom } from '../../../sockets/socketEmit.js';
 import {getUserRooms, deleteRoom, addUserToRoom, getMessagesByRoomID} from '../../../services/chat.js';
 import Spinner from '../../UI/Spinner.js';
 
+import '../../../sass/pages/_messages.scss';
+
 //@TODO = ADD button on Houseworker Card for addding this user in some chat
 //@TODO = Add Search form for searching for houseworker which you want to add in chat 
 //instead fetching all houseworkers and list them
@@ -139,7 +141,7 @@ const Messages = ({socket,connected}) =>{
         }
     
     return (
-        <div className="chat_container">
+        <div className="chat-container">
             {state.loading ? <Spinner/> :
             <>
                 <Rooms 
