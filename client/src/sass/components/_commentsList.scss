@@ -1,0 +1,25 @@
+.comments-container{
+    padding:8rem 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h1{
+        margin-bottom: 2rem;
+    }
+
+    .no-hs-comments{
+        padding:8rem 0;
+        font-size: 2rem;
+        font-weight: 600;
+        color:white;
+    }
+}
+
+
+.no_commentsModal{
+    font-weight: 600;
+    font-size:1.5rem;
+    margin: 1.3rem 0;
+}
