@@ -1,0 +1,45 @@
+.register-container{
+    
+    background-color: rgba(219, 226, 226,0.8);
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+
+    .register-options{
+        padding:10rem 0;
+        position:absolute;
+        top:50%;
+        left:50%;
+        transform: translate(-50% , -50%);
+
+        .register-item{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        
+            margin:40px;
+
+            .register-link{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 16rem;
+                height: 4.5rem;
+                border-radius: 8px;
+                font-family: trebuchet ms;
+                font-size: 1.6rem;
+                text-decoration: none;
+        
+                /* border-color: rgb(97, 195, 235); */
+                background-color: rgb(97, 195, 235);
+                color:white;
+
+                &:hover{
+                    background-color: rgb(20, 118, 156);
+                }
+            }
+        }
+    }
+
+}
