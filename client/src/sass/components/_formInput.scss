@@ -1,0 +1,29 @@
+@use '../abstracts/colors' as  *;
+@use '../abstracts/placeholders' as *;
+
+.form-input{
+    margin:.2em;
+
+    .input-field{
+        width: 100%;
+        height: 1.5rem;
+    
+        border:none;
+        background-color: transparent;
+        border-bottom: 2px solid $grey-10;
+        outline: none;
+        color:black;
+    
+        &:focus{
+            color:black;
+            border-color:$black;
+        }
+    
+        &::placeholder{
+            color:$grey-9;
+        }
+    }
+    .input-errors{
+        @extend %form-input-error;
+    }
+}
