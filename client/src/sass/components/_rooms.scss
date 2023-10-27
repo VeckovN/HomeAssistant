@@ -1,0 +1,29 @@
+.room-conainter{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap:3rem 1rem;
+
+    .rooms{
+        background-color: aliceblue;
+        display: flex;
+        width: 20rem;
+        height: 5rem;
+        flex-direction: column;
+
+        .room-label{
+            text-align: center;
+        }
+    }
+
+    .no_rooms{
+        padding:10rem 0;
+        font-size: 2rem;
+        font-weight: 600;
+        color:white;
+    }
+}
+
+
+
