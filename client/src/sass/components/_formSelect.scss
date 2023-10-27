@@ -1,0 +1,24 @@
+@use '../abstracts/placeholders' as *;
+
+.form-select{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    .select-box{
+        width: 100%;
+    }
+
+    .label-input{
+        @extend %form-label-input;
+    }
+
+    .dropdown{
+
+    }
+
+    .input-errors{
+        @extend %form-input-error;
+    }
+
+}
