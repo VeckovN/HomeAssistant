@@ -1,12 +1,11 @@
 import {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
-import axios from 'axios';
 import CommentItem  from '../../../UI/CommentItem.js';
 import {getAuthenticatedUserComments} from '../../../../services/houseworker.js'
 
-import './CommentsList.css'
+// import './CommentsList.css';
+import '../../../../sass/components/_commentsList.scss';
 import Spinner from '../../../UI/Spinner.js';
-
 
 const CommentsList = () =>{
     //{comment:commentProp, from:clientProp}
@@ -41,7 +40,7 @@ const CommentsList = () =>{
     }
 
     return (
-        <div className='comments_container'>
+        <div className='comments-container'>
             {loading ? <Spinner/> : 
             <>
                 {commentList.length >0 
@@ -51,14 +50,10 @@ const CommentsList = () =>{
                         {commentList}
                     </>
                     :
-                    <div className='no_commentsHouseworker'>No comments</div>
-                    
+                    <div className='no-hs-comments'>No comments</div>
                 }
             </>
             }
-            {/* <h1>Komentari</h1> */}
-            {/* {comments ? commentList : <div>No comments</div>} */}
-            {/* {commentList.length >0 ? commentList : <div className='no_comments'>Nemate komentara</div>} */}
         </div>
     )
 
