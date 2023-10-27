@@ -1,17 +1,17 @@
 
-import { useDispatch} from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import {useDispatch} from 'react-redux';
+import {useNavigate } from 'react-router-dom';
 import {toast} from 'react-toastify'; //need be imported in App.js
-import {register as clientRegister, reset} from '../../../../store/auth-slice'
+import {register as clientRegister} from '../../../../store/auth-slice'
 import { city_options, profession_options } from '../../../../utils/options';
-import Select from 'react-select';
 import {useForm, useController} from 'react-hook-form'
 import {zodResolver} from "@hookform/resolvers/zod";
-// import { string, z, array} from "zod"; 
-import { clientRegisterSchema } from '../../../../library/zodTypes.js';
+import {clientRegisterSchema } from '../../../../library/zodTypes.js';
 import FormInput from '../../../../utils/FormInput';
+import FormSelect from '../../../../utils/FormSelect';
 
-import '../Register.css'
+// import '../Register.css'
+import '../../../../sass/pages/Register/_registerUser.scss';
 
 
 const ClientRegister = () =>{
@@ -84,11 +84,11 @@ const ClientRegister = () =>{
     {id:'5',name:'firstName' , type:'text', placeholder:"Enter first name"}, {id:'6',name:'lastName', type:'text', placeholder:"Enter last name"}]
 
     return (
-        <div className='register_container'>
+        <div className='register-user-container'>
             <form onSubmit={handleSubmit(onSubmitHandler)} encType="multipart/form-data">
-            <div className='form_title'>Client Registration</div>
+            <div className='form-title'>Client Registration</div>
                 {inputs.map(el => {
-                    return<div className='register_input_container' key={el.id}>
+                    return<div className='register-input-container' key={el.id}>
                         <FormInput 
                             type={el.type}
                             name={el.name}
@@ -101,48 +101,50 @@ const ClientRegister = () =>{
                 })}                    
 
                 <br></br>
-                {/* //controler will be used here because the onChangeCity takes event.value -> not event.target.value as onChange */}
-                <Select 
-                    className='dropdown'
-                    value={city_options.find(({value}) => value === cityField.value)}
+
+                <FormSelect
+                    placeholder="Select a city"
+                    title="City"
                     options={city_options}
-                    onChange={onCityChangeHandler}
-                    isClearable
+                    onChangeHandler={onCityChangeHandler}
+                    formFieldValue={cityField.value}
+                    errorsMessage={errors.city?.message}
                 />
-                <div className='input_errors'>{errors.city?.message}</div>
 
-                <label className='label_input'>Gender</label>
-                <select className="gender_option" {...register('gender')}>
-                    <option value="">Choose gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                </select>
-                <div className='input_errors'>{errors.gender?.message}</div>
-
-                <label>Profile Avatar</label>
-                <div className='form-group form-group-image'>
-                    <input 
-                        className ='inputFile' 
-                        type="file" 
-                        //name="picture" />
-                        onChange={onImageChangeHandler}   
-                    />
-                    <div className='input_errors'>{errors.avatar?.message}</div>
+                <div className='gender-container'>
+                    <label className='label-input'>Gender</label>
+                    <select className="gender-option" {...register('gender')}>
+                        <option value="">Choose gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                    <div className='input-error'>{errors.gender?.message}</div>
                 </div>
 
-                <label className='label_input'>Interests</label>
-                <Select 
-                    className='dropdown'
-                    placeholder="Select the professions that interest you"
-                    options={profession_options}
-                    onChange={onChangeInterestHandler}
-                    value={profession_options.find(({value}) => value === interestField.value)}
-                    isMulti
-                    isClearable
-                />
-                <div className='input_errors'>{errors.interests?.message}</div>
+                <div className='avatar-container'>
+                    <label className='label-input'>Profile Avatar</label>
+                    <div className='form-group form-group-image'>
+                        <input 
+                            className ='inputFile' 
+                            type="file" 
+                            //name="picture" />
+                            onChange={onImageChangeHandler}   
+                        />
+                        <div className='input-error'>{errors.avatar?.message}</div>
+                    </div>
+                </div>
 
-                <div className ='register_button_container'>
+                <FormSelect
+                    placeholder="Select the professions that interest you"
+                    title="Interests"
+                    options={profession_options}
+                    onChangeHandler={onChangeInterestHandler}
+                    formFieldValue={interestField.value}
+                    errorsMessage={errors.interests?.message}
+                    isMulti
+                />
+
+                <div className ='register-button-container'>
                     <button type='submit' className='btn'>Register</button>
                 </div>
 

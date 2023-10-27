@@ -1,15 +1,12 @@
 import { useDispatch} from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import {register as registerHouseworker, reset} from '../../../../store/auth-slice';
+import {register as registerHouseworker} from '../../../../store/auth-slice';
 import {toast} from 'react-toastify';
 import HouseworkerForm from './HouseworkerForm';
 import { city_options, profession_options } from '../../../../utils/options';
-import Select from 'react-select';
 import {useForm, useFieldArray ,useController} from 'react-hook-form'
 import {zodResolver} from "@hookform/resolvers/zod";
 import { houseworkerRegisterSchema } from '../../../../library/zodTypes';
-
-import '../Register.css';
 
 //DATA: 
 //{"username":"Veckov","email":"veckov@gmail.com","password":"veckov","passwordRepeat":"veckov",

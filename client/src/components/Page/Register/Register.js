@@ -1,17 +1,18 @@
 import {Link} from 'react-router-dom'
 
-import './Register.css'
+// import './Register.css'
+import '../../../sass/pages/Register/_register.scss';
 
 const Register = () =>{
 
     return (
-        <div className='registre_container'>
-            <div className='register_options'>
-                <div className='register_item'>
-                    <Link to='/clientRegister' className='register_link'>Client</Link>
+        <div className='register-container'>
+            <div className='register-options'>
+                <div className='register-item'>
+                    <Link to='/clientRegister' className='register-link'>Client</Link>
                 </div>
-                <div className='register_item'>
-                    <Link to='/houseworkerRegister' className='register_link'>Houseworker</Link>
+                <div className='register-item'>
+                    <Link to='/houseworkerRegister' className='register-link'>Houseworker</Link>
                 </div>
             </div>
         </div>
