@@ -43,7 +43,7 @@ const useClient = (user) =>{
 
     useEffect(()=>{
         //only when is recommended button clicked and not fetched yet
-        if(showRecommended==true && recommended.length == 0)
+        if(showRecommended==true && recommended?.length == 0)
             fetchRecommendedData();
         else
             setData(oldData);
