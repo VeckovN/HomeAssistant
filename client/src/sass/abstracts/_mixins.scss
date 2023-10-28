@@ -2,12 +2,12 @@
 @use './colors' as *;
 @use './fonts' as *;
 
-@mixin flex-with-direction($direction:column){
+@mixin flex-with-direction($direction:row){
     display: flex;
     flex-direction: $direction;
 }
 
-@mixin flex-with-direction-center($direction:column){
+@mixin flex-with-direction-center($direction:row){
     display: flex;
     flex-direction: $direction;
     justify-content: center;

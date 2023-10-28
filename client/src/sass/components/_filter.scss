@@ -1,7 +1,7 @@
 @use '../abstracts/mixins' as *;
 
 .filterBox{
-    @include flex-with-direction-center;
+    @include flex-with-direction-center($direction:column);
 
     width:17em;
     height: 70%;
