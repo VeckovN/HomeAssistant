@@ -1,10 +1,12 @@
 import '../sass/components/_formInput.scss';
 
-const FormInput = ({type, name, register, errors, placeholder, autoComplete}) =>{    
+const FormInput = ({type, name, register, errors, placeholder, autoComplete, className}) =>{    
+    const inputClassName = className ? `input-field ${className} ` : 'input-field';
+
     return(
         <div className='form-input'>
             <input
-                className='input-field'
+                className={inputClassName}
                 type={type}
                 placeholder={placeholder || `Enter ${name}`}
                 {...register(name)}
