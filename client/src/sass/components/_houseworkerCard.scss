@@ -1,4 +1,7 @@
 @use '../abstracts/colors' as *;
+@use '../abstracts/fonts' as *;
+@use '../base/typography' as *;
+@use '../abstracts/mixins' as *;
 
 //this class doesn't exist in houseworkerCard
 // .main-container{
@@ -7,18 +10,27 @@
 //     flex-direction: column;
 // }
 
+// $text-xs
+// $text-sm 
+// $text-md 
+// $text-lg
+// $text-xl 
+// $text-xxl
+// $text-xxxl
+
 
 .houseworker-card-empty{
-    display: -moz-flex;
-    display:flex;
-    flex-direction: column;
+    // display:flex;
+    // flex-direction: column;
+    // justify-content: center;
+    // align-items: center;
+    @include flex-with-direction-center($direction:column);
+
     margin:1.5rem 1rem;
     padding: .3rem; 
     /*  border:1px solid black;  */                  /*Ovo je klasa za celu karticu*/
     width: 40rem;
     height: 30rem; 
-    justify-content: center;
-    align-items: center;
 
     margin-top:35px;
     margin-bottom: 35px;
@@ -31,43 +43,42 @@
 }
 
 
-
-
 .houseworker-card{
- 
-    display: -moz-flex;
-    display:flex;
-    flex-direction: column;
+    // display:flex;
+    // flex-direction: column;
+    // justify-content: center;
+    // align-items: center;
+    @include flex-with-direction-center($direction:column);
+
     margin:1.5rem 1rem;
     padding: .3rem; 
     /*  border:1px solid black;  */                  /*Ovo je klasa za celu karticu*/
     width: 40rem;
     height: 35rem; 
-    justify-content: center;
-    align-items: center;
 
-    margin-top:35px;
-    margin-bottom: 35px;
-    margin-right: 25px;
-    margin-left: 25px;
+    margin:35px 25px 35px 25px;
+    margin:2em 1.5em 2em 1.5em;
 
 
     position:relative;
     top:200px;
 
+    .label-text{
+        font-weight: 600;
+        //font-size:.8rem;
+        font-size: $fs5;
+       /* color:black; */
+        color:white;
+    }
+
     //Div-text for all children
     .div-text{
         font-weight: 700;
-        font-size:1rem;
+        // font-size:1rem;
+        font-size: $fs5;
+
         color:#6e74b9;
         padding:.4rem;
-
-        .label-text{
-            font-weight: 600;
-            font-size:.8rem;
-           /* color:black; */
-            color:white;
-        }
         
         .line{
             border-bottom: 1px solid white;
@@ -76,7 +87,8 @@
 
         .label-category{
             font-weight: 600;
-            font-size:.8rem;
+            // font-size:.8rem;
+            font-size: $fs5;
            /* color:black; */
             color:rgb(226, 217, 205);
         }
@@ -186,9 +198,8 @@
             // }
 
             .div-text-profession{
-
                 font-weight: 700;
-                font-size:1rem;
+                font-size:$fs5;
                 color:#6e74b9;
                 padding:.4rem;
             
@@ -197,12 +208,6 @@
             
                 align-items: center;
 
-                .label-text{
-                    font-weight: 600;
-                    font-size:.8rem;
-                   /* color:black; */
-                    color:white;
-                }
 
                 #profession-money{
                     margin-left:.5rem;
@@ -542,15 +547,15 @@
 
 
 
-.rate-info{
-    width:35rem;
-}
+// .rate-info{
+//     width:35rem;
+// }
 
 
 
 
-.poruka{
-    position:relative;
-    left:4px;
-    width: 100%;
-} 
+// .poruka{
+//     position:relative;
+//     left:4px;
+//     width: 100%;
+// } 

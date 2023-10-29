@@ -1,1 +1,37 @@
 //h1, h2, h3 other headers 
+
+/* set base values */
+$text-base-size: 1em;
+$text-scale-ratio: 1.1;
+$line-height: 1.5;
+
+:root{
+    //te
+    
+}
+
+// /* type scale */
+// $text-xs: calc(1em / $text-scale-ratio);
+// $text-sm: calc(1em / $text-scale-ratio * $text-scale-ratio);
+// $text-md: calc(1em * $text-scale-ratio);
+// $text-lg: calc(1em * $text-scale-ratio) * $text-scale-ratio;
+// $text-xl: calc(1em * $text-scale-ratio) * $text-scale-ratio * $text-scale-ratio;
+// $text-xxl: calc(1em * $text-scale-ratio) * $text-scale-ratio * $text-scale-ratio * $text-scale-ratio;
+// $text-xxxl: calc(1em * $text-scale-ratio * $text-scale-ratio * $text-scale-ratio * $text-scale-ratio * $text-scale-ratio);
+
+
+
+$fs1:1.3em;
+$fs2:1.2em;
+$fs3:1.1em;
+$fs4:1em;
+$fs5:.9em;
+$fs6:.8em;
+$fs7:.7em;
+$fs8:.6em;
+
+// h1,h2,h3,h4{
+
+// }
+
+// clamp(min, val, max)

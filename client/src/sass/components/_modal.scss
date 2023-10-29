@@ -48,14 +48,14 @@
                 letter-spacing: 0.05rem;
                 font-weight: 700;
                 //font-size: 1.2rem;
-                font-size: $f3;
+                font-size: $fs3;
                 padding-left: 1rem; //$f5
                 color:white;
             }
 
             button{ /* second div of modal-header */ 
                 color:rgb(201, 5, 5);
-                font-size:$f6;
+                font-size:$fs6;
                 font-weight: bold;
                 margin-right:7rem;
                 cursor: pointer;
@@ -66,7 +66,7 @@
 
                 &:hover{
                     color:white;
-                    font-size:$f4;
+                    font-size:$fs4;
                 }
             }
         }
