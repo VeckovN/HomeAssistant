@@ -1,7 +1,8 @@
 import '../sass/components/_formInput.scss';
 
 const FormInput = ({type, name, register, errors, placeholder, autoComplete, className}) =>{    
-    const inputClassName = className ? `input-field ${className} ` : 'input-field';
+    const additionalClassName = className ? `input-field ${className} ` : 'input-field';
+    const inputClassName = errors[name] ? `input-error-line ${additionalClassName} ` : `${additionalClassName}`;
 
     return(
         <div className='form-input'>

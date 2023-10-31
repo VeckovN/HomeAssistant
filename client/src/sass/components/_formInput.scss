@@ -10,20 +10,24 @@
     
         border:none;
         background-color: transparent;
-        border-bottom: 2px solid $grey-10;
+        border-bottom: 2px solid $grey-8;
         outline: none;
         color:black;
     
-        &:focus{
-            color:black;
-            border-color:$black;
-        }
+        // &:focus{
+        //     color:black;
+        //     border-color:$black;
+        // }
     
         &::placeholder{
-            color:$grey-9;
+            color:$black;
         }
     }
     .input-errors{
         @extend %form-input-error;
+    }
+
+    .input-error-line{
+       border-color: rgb(182, 47, 47);
     }
 }
