@@ -94,6 +94,11 @@ const HouseworkerRegister = () =>{
         console.log("avatarField", avatarField);
     }
 
+    const onRemoveAvatarHanlder = (e) =>{
+        e.preventDefault();
+        avatarField.onChange(null);
+    }
+
     const onChangeProffesionsHandler = (event) =>{
         let professionsArray;
         professionsArray = Array.isArray(event) ? event.map(p => p.value): [];
@@ -121,6 +126,8 @@ const HouseworkerRegister = () =>{
             getValues={getValues}
             cityField={cityField}
             professionField={professionField}
+            avatarField={avatarField}
+            onRemoveAvatarHanlder={onRemoveAvatarHanlder}
             handleSubmit={handleSubmit}
             onSubmitHandler={onSubmitHandler}
             onChangeHouseworkerProfessionsHandler={onChangeHouseworkerProfessionsHandler}
