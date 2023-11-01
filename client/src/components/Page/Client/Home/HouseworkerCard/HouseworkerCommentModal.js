@@ -10,7 +10,7 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
 
     //Comment Modal context(use CommentItem)
     const commentBodyContext = 
-        <div>
+        <>
             <div className='comment-container'>
             {comments ?
                 comments.map(comm => (
@@ -30,14 +30,14 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
                     )
                 )
                 )
-                : <div className='no_commentsModal'>Client doesn't have comments</div>
+                : <div className='no-comments-modal'>Client doesn't have comments</div>
                 }
             </div>
-            <div className='comment_input'>
+            <div className='comment-input'>
                 <input type='text' name="postComment"  ref={postCommentRef} placeholder='Post comment'/>
                 <button type="submit" onClick={onCommentSubmit}>Send</button>
             </div>
-        </div>
+        </>
 
     //Comments
     const commentFooterContext = 

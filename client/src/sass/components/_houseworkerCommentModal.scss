@@ -1,11 +1,24 @@
+@use '../abstracts/fonts' as *;
+@use '../base/typography' as *;
+
 .comment-container{
-    width: 80%;
-    
-    max-width: 40em;
-    min-width: 0rem;
+    width: 90%;
+    // max-width: 40em;
+    min-width: 500px;
+
+    .no-comments-modal{
+        margin:1em 0em .5em 0em;
+        font-family: $root-font-family-1;
+        font-size: $fs3;
+        font-weight: 700;
+        letter-spacing: .05em;
+    }
 }
 
-.comment_input{
+
+.comment-input{
+    position: relative;
+
     margin:.7rem 0;
     width: 100%;
     height: 100%;
@@ -13,19 +26,19 @@
     justify-content: center;
 
     input{
-        height: 1.3rem;
+        height: 1.8em;
         width: 50%;
         max-width: 300px;
-        margin:0rem 1rem;
-
+        margin:.2em .5em .5em .5em;
+        
         &::placeholder{
             text-align: center;
         }
     }
 
     button{
-        height: 1.6rem;
-        width: 4.5rem;
+        height: 2em;
+        width: 5.5em;
         border-radius: .5rem;
         background-color: rgb(44, 36, 36);
         color:white;
