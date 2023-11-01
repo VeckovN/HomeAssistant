@@ -4,7 +4,7 @@ import CommentItem  from '../../../UI/CommentItem.js';
 import {getAuthenticatedUserComments} from '../../../../services/houseworker.js'
 
 // import './CommentsList.css';
-import '../../../../sass/components/_commentsList.scss';
+import '../../../../sass/pages/_commentsList.scss';
 import Spinner from '../../../UI/Spinner.js';
 
 const CommentsList = () =>{
