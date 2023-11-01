@@ -14,7 +14,7 @@
     align-items: center;
 }
 
-@mixin flex-container($direction, $justify, $align) {
+@mixin flex-container($direction:column, $justify, $align) {
     display: flex;
     flex-direction: $direction;
     justify-content: $justify;
