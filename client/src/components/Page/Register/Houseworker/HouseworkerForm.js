@@ -16,7 +16,7 @@ const HouseworkerForm = ({register, errors, getValues, cityField, professionFiel
             <form className='houseworker-form' onSubmit ={handleSubmit(onSubmitHandler)} encType="multipart/form-data">
                 <div className='form-title'>Houseworker registration</div>
 
-                <div className='form-inputs'>
+                <div className='form-inputs hs-form-inputs'>
                     <div className='register-box inputs'>
                         {inputs.map(el => {
                             return(
@@ -61,21 +61,21 @@ const HouseworkerForm = ({register, errors, getValues, cityField, professionFiel
 
                         <div className='avatar-container'>
                             <label className='label-input'>Profile Avatar</label>
-                            <div className='form-group form-group-image'>
+                            <div className='form-group'>
                                 <input 
-                                    className='inputFile' 
                                     type="file" 
-                                    // name="picture"
-                                    onChange={onChangeImageHandler}  
+                                    id="inputFile"
+                                    onChange={onChangeImageHandler}
                                 />
-                                <div className='image_place'>
+                                <label htmlFor="inputFile" className="custom-file-button">Choose File</label>
+                                <div className='avatar-place'>
                                     {avatarField.value && (
-                                        <div className='image_container'>
+                                        <div className='avatar-preview-container'>
                                             <img
                                                 src={URL.createObjectURL(avatarField.value)}
                                                 alt="avatar"
                                             />
-                                            <button onClick={onRemoveAvatarHanlder} className='removeImageButton'>
+                                            <button onClick={onRemoveAvatarHanlder} className='remove-avatar-btn'>
                                                 Remove Image
                                             </button>
                                         </div>
