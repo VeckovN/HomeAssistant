@@ -1,14 +1,18 @@
+@use '../abstracts/mixins' as *;
+@use '../abstracts/fonts' as *;
+@use '../base/typography' as *;
+
 .comment{
     position: relative;
     background-color: aliceblue;
 
     width: 70%;
-    height: 4rem;
+    // height: 4rem;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    font-size: $fs5;
+    font-family: $root-font-family-5;
+
+    @include flex-with-direction-center($direction:column);
 
     padding:.5rem 0rem;
     margin:.5rem 0rem;
@@ -34,40 +38,34 @@
     }
 
     .info{
+
         margin:.5rem 0rem;
         position: absolute;
         top:-.4rem;
         left:.5rem;
+
+        span{
+            font-family: $root-font-family-1;
+            font-weight: 700;
+            margin-left:.3em;
+        }
+
+        .commented{
+            display: flex;
+            flex-direction: row;
+        }
     }
 
-    .context{
-        padding:.5rem 0rem;
-        margin-top:.2em;
+    .context-container{
+        text-align: center;
+        .context{
+            padding:.5rem 0rem;
+            margin-top:.5em;
+            font-size: $fs5;
+            font-family: $root-font-family-5;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+        }
     }
+
 }
-// .comment_container .info{
-//     margin:.5rem 0rem;
-//     position: absolute;
-//     top:-.4rem;
-//     left:.5rem;
-// }
-// .btn_comment_delete{
-//     position: absolute;
-//     right:.4rem;
-//     top:.4rem;
-
-//     width: 1rem;
-//     border:none;
-//     background: none;
-
-//     color:red;
-//     font-size: .8rem;
-//     font-weight: 600;
-// }
-// .btn_comment_delete:hover {
-//     color:black;
-//     font-size: .9rem;
-// }
-// .context{
-//     padding:.5rem 0rem;
-// }

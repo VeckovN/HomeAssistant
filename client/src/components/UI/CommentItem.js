@@ -9,9 +9,12 @@ const CommentItem = (props) =>{
                 <button className='comment-delete-btn' onClick={(e) => props.onDeleteCommentHandler(e, props.id, props.from)}>X</button>
             }
             <div className='info'>
-                <div className='commented'>Commented: {props.from}</div>
+                <div className='commented'>Commented:<span>{props.from}</span></div>
             </div>
-            <div className='context'>{props.comment}</div>
+            <div className='context-container'>
+                <div className='context'>{props.comment}</div>
+            </div>
+            
         </div>
     )
 }
