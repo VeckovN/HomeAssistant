@@ -1,39 +1,122 @@
 @use '../../abstracts/placeholders' as *;
+@use '../../abstracts/mixins' as *;
+@use '../../abstracts/fonts' as *;
+@use '../../abstracts/colors' as *;
+@use '../../base/typography' as *;
 
 .register-user-container{
-    width: 100%;
-    height: 100%;
     background-color: rgba(219, 226, 226, 0.7);
-    padding:10rem 0rem;
+    //containre wans't on full page( there was space between bottom and container
+    //this fixed it
+    min-height: 100vh;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
+    padding:4rem 0rem;
+    @include flex-container($direction:column ,$justify:space-evenly, $align:center);
+    
+    .houseworker-form{
+        min-width: 600px;
+        max-width: 800px;
+    }
+
+    .client-form{
+        min-width: 300px;
+        max-width: 450px;
+    }
 
     form{
-        margin:3rem 0rem 0rem 0rem;
+
+        font-family: $root-font-family-5;
+        width: 60%;
+        margin-top:2em;
         padding:1.4rem 1rem;
+
+
+        @include flex-with-direction-center($direction:column);        
         
-        width: 40%;
-        max-width: 450px;
-        min-width:300px;
+        // width: 40%;
+        // max-width: 450px;
+        // min-width:350px;
     
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        //@include flex-with-direction-center($direction:column);
         border-radius: 1rem;
-    
-        background-color: rgb(87, 148, 204);
-    
-        display: flex;
-        flex-direction: column;
+        background-color: rgb(209, 227, 243);
 
         .form-title{
-            font-size:1.1rem;
+            font-size:$fs1;
+            font-family: $root-font-family-5;
+            letter-spacing: .03em;
             font-weight: 700;
             padding-bottom: 1rem;        
+        }
+
+        .form-client-inputs{
+            width: 70%;
+           
+            .client-inputs{
+                // display: flex;
+                // flex-direction: column;
+                // justify-content: center;
+                // align-items: center;
+            }
+        }
+
+        // .hs-form-inputs{
+        //     align-items: flex-start;
+        // }
+        
+        .cl-form-inputs{
+            // width: 80%;
+            padding-left: 2em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        // .cl-selectors{
+        //     @include flex-with-direction-center($direction:column);
+        // }
+
+        .form-inputs{
+            width: 100%;
+            display: flex;
+
+            .register-box{
+                margin:0 0em;
+                width: 80%; 
+                // height: 100%;
+
+                &-input{
+                    // background-color: aqua;
+                    width: 90%;
+                    display: flex;
+                    flex-direction: column;
+                    margin:.3em 0;
+
+                    .input-lab{
+                        margin-left: .5em;
+                        font-weight: 600;
+                    }
+                }
+
+            }
+
+            .inputs{
+                width: 80%;
+                margin:1em 0 1em 0;
+                padding-left: 1em;
+                display: flex;
+                flex-direction: column;
+                // justify-content: center;
+                align-items: flex-end;
+                
+            }
+            .selectors{
+                padding:1em 0 0 0;
+            }
+
+            .input-lab{
+                font-size:$fs5;
+            }
+
         }
 
         .label-input{
@@ -45,38 +128,143 @@
         }
 
         .register-input-container{
-            padding:.1rem .5rem;
+            padding:0em .5rem;
+            //width: 80%; 
+        }
+
+        .city-container{            
+            .select-box{
+                width: 60%;
+            }
         }
 
         .gender-container{
             //do smth
-
+            @include flex-with-direction-center($direction:column);
+          
             .gender-option{
-                width: 40%;
+                width: 30%;
                 height: 1.6rem;
-                margin-bottom: .6rem;
             }
         }
 
         .avatar-container{
+            @include flex-with-direction-center($direction:column);
+            margin:.4em 0;
             .form-group{
                 //asd
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                #inputFile{
+                    // padding-left:4em;
+                    display: none; //default chooseFile unshowned
+                }
+
+                .custom-file-button{
+
+                    padding:.2em .5em ;
+                    margin:0em 0 .3em 0;
+                    
+                    font-size: $fs6;
+                
+                    background-color: rgb(237, 239, 241);
+                    border: none;
+                    cursor: pointer;
+                    border-radius: .2rem;
+        
+                    &:hover{
+                        background-color: rgb(214, 214, 205);
+                    }
+                }
+
+                .avatar-place{
+                    margin:.2rem 0rem;
+                    display: flex;
+                    flex-direction: column;
+                }
+                .avatar-preview-container{
+                    @include flex-with-direction-center($direction:column);
+        
+                    &{
+                        img{
+                            width: 90%;
+                            max-width: 200px;
+                            max-height: 250px;
+                        }
+                    }
+                
+                }
+        
+                .remove-avatar-btn{
+                    width: 50%;
+                    margin-top:.4rem;
+                    height: 1.5rem;
+                
+                    background-color: rgb(237, 239, 241);
+                    border: none;
+                    cursor: pointer;
+                    border-radius: .2rem;
+        
+                    &:hover{
+                        background-color: rgb(214, 214, 205);
+                    }
+                }
+
             }
-            .form-group-image{
-                //asd
+        }
+
+        .professions-container{
+            .select-box{
+                width: 70%;
             }
         }
 
         .working-hour-container{
+            display: flex;
+            flex-direction: column;
+            justify-items: center;
+            // align-items: center;
 
+            font-size: $fs5;
+            
+            .working-hours{
+                margin:.2em 0;
+                display: flex;
+                justify-content: center;
+                align-self: center;
+                // background-color: rebeccapurple;
+    
+                label{
+                    margin:0 .5em;
+                }
+
+                input{
+                    @extend %input-style;
+                    width: 6em;
+            
+                    &:focus{
+                        color:black;
+                        border-color:$grey-9;
+                    }
+                }
+            }
         }
 
+
         .desc-container{
+            @include flex-with-direction-center($direction:column);
 
             .description-box{
-                width: 70%;
+                width: 80%;
                 resize: none;
             }
+        }
+
+        .interest-container{
+            margin:1em 0;
+            // width: 70%;
         }
 
         .register-button-container{
@@ -98,10 +286,8 @@
                 }
             }
         }
-        
 
     }
-
 
 }
 
