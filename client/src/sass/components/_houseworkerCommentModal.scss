@@ -2,9 +2,19 @@
 @use '../base/typography' as *;
 
 .comment-container{
-    width: 90%;
     // max-width: 40em;
+    width: 100%;
     min-width: 500px;
+
+    display: flex;
+    flex-direction: column;
+    //justify-content: center;
+    align-items: center;
+
+    max-height: 500px; /* Set a maximum height */
+    overflow-y: auto;
+
+
 
     .no-comments-modal{
         margin:1em 0em .5em 0em;
