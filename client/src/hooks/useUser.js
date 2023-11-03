@@ -42,14 +42,25 @@ const useUser =(initialState)=>{
 
 
     const onChangeCity = (e) =>{
-        let city = e.value;
-        setData(prev=>(
-            {
-                ...prev,
-                city:city
-            }
-        ))
-        console.log("CITY: " + data.city)
+        console.log("ONC HANGE CITY :  ", e );
+        if(e !== null){
+            let city = e.value;
+            setData(prev =>(
+                {
+                    ...prev,
+                    city:city,
+                }
+            ))
+        }
+        else{
+            setData(prev=>(
+                {
+                    ...prev,
+                    city:""
+                }
+            ))
+        }
+        //console.log("CITY: " + data.city)
     }
 
     //update profession on houseowrker 
