@@ -4,7 +4,7 @@
 import {useState, useRef, memo} from 'react'
 
 //import './SearchAndSort.css'
-import '../../../../../sass/components/_searchAndSort.scss';
+// import '../../../../../sass/components/_searchAndSort.scss';
 
 const SearchAndSort = (prop) => {
 

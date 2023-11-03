@@ -2,8 +2,9 @@ import {useState, useEffect} from 'react'
 import useClient from '../../../../hooks/useClient.js';
 import HouseworkerCard from './HouseworkerCard/HouseworkerCard.js'
 import Filter from './Filter/Filter.js';
-import SearchAndSort from './SearchAndSort/SearchAndSort.js';
 import { useSelector } from 'react-redux';
+import Search from './SearchAndSort/Search.js';
+import Sort from './SearchAndSort/Sort.js';
 
 //import './ClientHome.css'
 import '../../../../sass/pages/_clientHome.scss';
@@ -102,25 +103,30 @@ const ClientHome = ({socket}) =>{
 
     return (
         <div className='home-container'>
-                <SearchAndSort search={searchDataHanlder}/>
-                <div className='filter-houseworkers-container'>
+            <div className='search-box'>
+                <Search search={searchDataHanlder}></Search>
+                <Sort search={searchDataHanlder}></Sort>
+            </div>
+            <div className='filter-houseworkers-container'>
+                <div className='filter-options'>
                     <Filter 
                     //This FilterDataHandler is different on every render by default - so memo(Filter) won't work to prevent Filter unnecessary re-rendering
                     //so i had to this filterDataHandler made unique (frize on first fucntion creating -> useCallback on filterDataHandler in useClient )
                         filterOptions={filterDataHandler}
                     />
-                    <div className="houseworker-list">
-                    <button className="recommended-btn" onClick={onShowRecommended}>{!showRecommended ? 'Show recommended' : 'Close Recommended'}</button>
-                        {showRecommended && recommendedList}
-                        {houseworkerList.length > 0 ? houseworkerList : <h3 id='none'>No Matches</h3> }
-                    </div>
                 </div>
+                <div className="houseworker-list">
+                    <button className="recommended-btn" onClick={onShowRecommended}>{!showRecommended ? 'Show recommended' : 'Close Recommended'}</button>
+                    {showRecommended && recommendedList }
+                    {houseworkerList.length > 0 ? houseworkerList : <h3 id='none'>No Matches</h3> }
+                </div>
+            </div>
 
-                {showButton && 
-                    <div className='scroll-div'>
-                        <button className='scroll-to-top' onClick={scrollToTop}>Scroll To Top</button>
-                    </div>
-                }
+            {showButton && 
+                <div className='scroll-div'>
+                    <button className='scroll-to-top' onClick={scrollToTop}>Scroll To Top</button>
+                </div>
+            }
         </div>
     )
     

@@ -1,13 +1,4 @@
 
-.search-box{
-    position:relative;
-
-    height: 5rem;
-    width: 100%;
-    /* background-color: gray; */
-    /* opacity: .7; */
-    margin:.8rem 0 .8rem 0;
-
     .input-search{
         position:absolute;
         /* background-color: wheat; */
@@ -33,9 +24,8 @@
             .search{
                 position:relative;
                 width: 100%;
-                height: 100%;
+                height: 2.2em;
                 opacity: .7;
-            
                 border-radius: .4rem;
             }
 
@@ -57,4 +47,3 @@
         }
     }
     
-}

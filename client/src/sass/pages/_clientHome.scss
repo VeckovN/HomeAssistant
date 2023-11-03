@@ -27,6 +27,15 @@
             background-color: rgb(255, 255, 255);
         }
     }
+    .search-box{
+        position:relative;
+    
+        height: 5rem;
+        width: 100%;
+        /* background-color: gray; */
+        /* opacity: .7; */
+        margin:3rem 0 .8rem 0;
+    }
 
     .filter-houseworkers-container{
         display:flex;
@@ -44,7 +53,7 @@
             align-items: center;
             /* flex-wrap: wrap; */
             flex-flow:wrap;
-            margin-top:-10rem;
+            margin-top:-6rem;
             /* width: 100%;
             height: 100%;     */
 
