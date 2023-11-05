@@ -14,6 +14,10 @@
     max-height: 500px; /* Set a maximum height */
     overflow-y: auto;
 
+    &::-webkit-scrollbar{
+        
+    }
+
 
 
     .no-comments-modal{

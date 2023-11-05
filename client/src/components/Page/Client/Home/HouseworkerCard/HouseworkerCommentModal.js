@@ -1,9 +1,21 @@
+import {useRef, useEffect} from 'react';
 import Modal from "../../../../UI/Modal";
 import CommentItem from "../../../../UI/CommentItem";
 
 import '../../../../../sass/components/_houseworkerCommentModal.scss';
 
 const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, postCommentRef, onCloseComment, onCommentDelete}) =>{
+
+    const endMessageRef = useRef(null);
+    
+    const scrollToBottom = () =>{
+        endMessageRef.current?.scrollIntoView({ behavior: "instant" });
+    }
+
+    useEffect(() =>{
+        scrollToBottom();
+    },[comments]);
+
 
     const commentHeaderContext =
         'Comments';
@@ -13,7 +25,8 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
         <>
             <div className='comment-container'>
             {comments ?
-                comments.map(comm => (
+                <>
+                {comments.map(comm => (
                     (clientUsername === comm.from) ? ( //delete button is only showned to clients that belongs comment
                         <CommentItem
                             onDeleteCommentHandler={onCommentDelete}
@@ -21,15 +34,17 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
                             from={comm.from}
                             comment={comm.comment}
                         />
-                    ) : (             
-                        <CommentItem
-                            id={comm.commentID}
-                            from={comm.from}
-                            comment={comm.comment}
-                        />
+                        ) : (             
+                            <CommentItem
+                                id={comm.commentID}
+                                from={comm.from}
+                                comment={comm.comment}
+                            />
+                        )
                     )
-                )
-                )
+                )}
+                <div ref={endMessageRef}></div>
+                </>
                 : <div className='no-comments-modal'>Client doesn't have comments</div>
                 }
             </div>
