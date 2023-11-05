@@ -1,6 +1,7 @@
-import {memo} from 'react';
+import {memo, useState} from 'react';
 import {useSelector} from 'react-redux'
 import { toast } from 'react-toastify';
+import SortButton from '../../../../../utils/SortButton';
 import '../../../../../sass/components/_sort.scss';
 
 
@@ -11,6 +12,8 @@ const Sort = (prop) =>{
 
     const userAuth = useSelector((state) => state.auth.user)
     const isClient = userAuth && userAuth.type === "Client";
+
+    const [selectedOption, setSelectedOption] = useState('');
     
     const selectSortHandler = (opt) =>{
         if(!isClient){
@@ -20,6 +23,14 @@ const Sort = (prop) =>{
             return 
         }
         console.log("OPTION: " + opt);
+        console.log("SELECTED: " + selectedOption);
+
+        //toggle effect
+        if(selectedOption === opt)
+            setSelectedOption('')
+        else
+            setSelectedOption(opt);
+    
         //send selected option to parrent (searchDataHanlder(searchDataObj))
         prop.search({sort:opt}); 
     }
@@ -28,17 +39,43 @@ const Sort = (prop) =>{
     <>
         <div className='sort'>
             <div className="sort-box">
-                <button id='sort-1' value="AgeUp" onClick={e => selectSortHandler(e.target.value)}>Age 🠑
-                </button>
+                <SortButton
+                    label="Age 🠑"
+                    value="AgeUp" 
+                    selectSortHandler={selectSortHandler}
+                    selectedOption={selectedOption}
+                />
 
-                <button id='sort-2' value="AgeDown" onClick={e => selectSortHandler(e.target.value)}>Age 🠓
-                </button>
+                <SortButton
+                    id='sort-2' 
+                    label="Age 🠓"
+                    value="AgeDown" 
+                    selectSortHandler={selectSortHandler}
+                    selectedOption={selectedOption}
+                />
 
-                <button id='sort-3' value="RatingUp" onClick={e => selectSortHandler(e.target.value)}>Rating 🠑
-                </button>
+                <SortButton
+                    label="Rating 🠑"
+                    value="RatingUp" 
+                    selectSortHandler={selectSortHandler}
+                    selectedOption={selectedOption}
+                />
 
-                <button id='sort-4' value="RatingDown" onClick={e => selectSortHandler(e.target.value)}>Rating 🠓
-                </button>
+                <SortButton
+                    label="Rating 🠓"
+                    value="RatingDown" 
+                    selectSortHandler={selectSortHandler}
+                    selectedOption={selectedOption}
+                />
+
+                {/* <button 
+                    // id='sort-4' 
+                    value="RatingDown" 
+                    onClick={e => selectSortHandler(e.target.value)}
+                    className={selectedOption === 'RatingDown' ? 'selected sort' : 'sort'}
+                >
+                    Rating 🠓
+                </button> */}
             </div>
         </div>     
     </>
