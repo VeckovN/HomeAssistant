@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useRef} from 'react';
 import {useSelector} from 'react-redux';
 import CommentItem  from '../../../UI/CommentItem.js';
 import {getAuthenticatedUserComments} from '../../../../services/houseworker.js'
@@ -27,6 +27,16 @@ const CommentsList = () =>{
     }
     console.log("COMMENTS: " + JSON.stringify(comments));
 
+    const endMessageRef = useRef(null);
+    
+    const scrollToBottom = () =>{
+        endMessageRef.current?.scrollIntoView({ behavior: "instant" });
+    }
+
+    useEffect(() =>{
+        scrollToBottom();
+    },[comments]);
+
     let commentList;
     {comments ?
         commentList = comments.map(comm =>(
@@ -47,7 +57,10 @@ const CommentsList = () =>{
                     ?
                     <>
                         <h1>Comments</h1>
-                        {commentList}
+                        <div className='context-container'>
+                            {commentList}
+                            <div ref={endMessageRef}></div>
+                        </div>
                     </>
                     :
                     <div className='no-hs-comments'>No comments</div>

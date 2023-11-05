@@ -1,7 +1,6 @@
 import {useRef, useEffect} from 'react';
 import Modal from "../../../../UI/Modal";
 import CommentItem from "../../../../UI/CommentItem";
-
 import '../../../../../sass/components/_houseworkerCommentModal.scss';
 
 const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, postCommentRef, onCloseComment, onCommentDelete}) =>{
@@ -15,7 +14,6 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
     useEffect(() =>{
         scrollToBottom();
     },[comments]);
-
 
     const commentHeaderContext =
         'Comments';
