@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 import Search from './SearchAndSort/Search.js';
 import Sort from './SearchAndSort/Sort.js';
 
-//import './ClientHome.css'
 import '../../../../sass/pages/_clientHome.scss';
 
 const ClientHome = ({socket}) =>{

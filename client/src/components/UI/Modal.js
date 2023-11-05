@@ -1,7 +1,6 @@
 import { Fragment } from 'react';
 import ReactDom from 'react-dom';
 
-//import './Modal.css'
 import '../../sass/components/_modal.scss';
 
 //onCloseBV(click in background to close Modal)

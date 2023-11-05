@@ -4,7 +4,6 @@ import {logout, reset} from '../../../store/auth-slice';
 import { useEffect } from 'react';
 import {toast} from 'react-toastify';
 
-// import './Header.css';
 import '../../../sass/layout/_header.scss';
 
 const Header = () =>{

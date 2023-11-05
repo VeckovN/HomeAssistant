@@ -1,5 +1,5 @@
 import {useState} from 'react';
-//import './Room.css'
+
 import '../../../../../sass/components/_room.scss';
 
 const Room = ({roomInfo, user, houseworkers, roomRef, onRoomClickHanlder, onAddUserToGroupHanlder, onDeleteRoomHandler}) =>{

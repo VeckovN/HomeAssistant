@@ -7,8 +7,6 @@ import { useForm } from 'react-hook-form';
 import {zodResolver} from "@hookform/resolvers/zod";
 import { string, z } from "zod";
 
-
-// import './Login.css';
 import '../../../sass/pages/_login.scss';
 
 const schema = z.object({

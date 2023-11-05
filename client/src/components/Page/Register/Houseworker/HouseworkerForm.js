@@ -2,7 +2,6 @@ import Select from 'react-select';
 import FormInput from '../../../../utils/FormInput';
 import FormSelect from '../../../../utils/FormSelect';
 
-// import '../Register.css';
 import '../../../../sass/pages/Register/_registerUser.scss';
 
 const HouseworkerForm = ({register, errors, getValues, cityField, professionField, avatarField, handleSubmit, onRemoveAvatarHanlder, onChangeHouseworkerProfessionsHandler, onChangeProffesionsHandler, onChangeImageHandler, onChangeCityHandler, onSubmitHandler,  profession_options, city_options}) =>{

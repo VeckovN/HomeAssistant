@@ -2,10 +2,9 @@ import {useEffect, useState, useRef} from 'react';
 import {useSelector} from 'react-redux';
 import CommentItem  from '../../../UI/CommentItem.js';
 import {getAuthenticatedUserComments} from '../../../../services/houseworker.js'
-
-// import './CommentsList.css';
-import '../../../../sass/pages/_commentsList.scss';
 import Spinner from '../../../UI/Spinner.js';
+
+import '../../../../sass/pages/_commentsList.scss';
 
 const CommentsList = () =>{
     //{comment:commentProp, from:clientProp}

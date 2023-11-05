@@ -1,7 +1,6 @@
 import Select from 'react-select';
 import Spinner from '../../../UI/Spinner';
 
-
 const ClientProfileForm = ({loading, clientData, cityField, errors, register, watch, city_options,handleSubmit ,onSubmitUpdate,onSubmitUpdateHandler, onCityChangeHandler }) =>{
 
     return(
@@ -115,6 +114,10 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                             <div className='input_errors'>{errors.city?.message}</div>
                         </div>
                         <br></br>
+
+                        <div className='professions'>
+                            
+                        </div>
 
                         {/* button for submit Above inputs  */}
                         <button type='submit' className='profile-submit'>Update</button>

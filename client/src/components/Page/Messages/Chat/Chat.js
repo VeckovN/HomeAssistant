@@ -2,7 +2,6 @@ import {useRef} from 'react';
 import { emitMessage } from '../../../../sockets/socketEmit';
 import { toast } from 'react-toastify';
 
-//import './Chat.css'
 import '../../../../sass/components/_chat.scss';
 
 const Chat = ({socket, roomMessages, roomRef, user}) =>{

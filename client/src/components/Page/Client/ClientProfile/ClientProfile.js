@@ -4,9 +4,7 @@ import ClientProfileForm from './ClientProfileForm';
 import {getUserData, updateClient} from '../../../../services/client.js';
 import {useForm, useController} from 'react-hook-form';
 import { city_options } from '../../../../utils/options';
-//import './ClientProfile.css'
 import '../../../../sass/pages/_clientProfile.scss';
-
 
 import Spinner from '../../../UI/Spinner';
 

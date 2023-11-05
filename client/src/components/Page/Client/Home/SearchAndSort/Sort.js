@@ -2,11 +2,8 @@ import {memo, useState} from 'react';
 import {useSelector} from 'react-redux'
 import { toast } from 'react-toastify';
 import SortButton from '../../../../../utils/SortButton';
+
 import '../../../../../sass/components/_sort.scss';
-
-
-
-
 
 const Sort = (prop) =>{
 

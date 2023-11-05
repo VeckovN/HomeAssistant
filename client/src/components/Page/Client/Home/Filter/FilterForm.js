@@ -1,8 +1,6 @@
 import Select from 'react-select';
 
-
 const FilterForm = ({city_options, profession_options, onChange, onChangeCity, onChangeProffesions, filterClickHanlder }) =>{
-
     return (
         <div className='filterBox'>
 

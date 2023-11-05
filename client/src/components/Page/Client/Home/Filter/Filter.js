@@ -5,7 +5,6 @@ import useUser from '../../../../../hooks/useUser.js';
 import FilterForm from './FilterForm.js';
 
 import '../../../../../sass/components/_filter.scss';
-//import './Filter.css'
 
 const Filter = (prop) =>{
     

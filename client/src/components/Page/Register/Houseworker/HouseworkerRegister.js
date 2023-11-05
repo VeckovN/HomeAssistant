@@ -8,13 +8,6 @@ import {useForm, useFieldArray ,useController} from 'react-hook-form'
 import {zodResolver} from "@hookform/resolvers/zod";
 import { houseworkerRegisterSchema } from '../../../../library/zodTypes';
 
-//DATA: 
-//{"username":"Veckov","email":"veckov@gmail.com","password":"veckov","passwordRepeat":"veckov",
-//"first_name":"Novak","last_name":"Veckov","age":"25","picture":{},"gender":"Male",
-//"city":"Nis","address":"Mokranjceva","description":"My description","phone_number":"06012333213",
-//"professions":["Kuvar","Staratelj"],
-//"houseworker_professions":[{"label":"Staratelj","working_hour":"300"},{"label":"Kuvar","working_hour":"200"}]}
-
 const HouseworkerRegister = () =>{
     const initialState ={
         username:'',

@@ -1,9 +1,9 @@
 import {useState, useEffect} from 'react';
 import { useSelector } from 'react-redux';
 import {getRating, getCommentsCount, getConversationCount} from '../../../services/houseworker.js'
+import Spinner from '../../UI/Spinner.js';
 
 import '../../../sass/pages/_houseworkerHome.scss';
-import Spinner from '../../UI/Spinner.js';
 
 const HouseworkerHome = () =>{
 

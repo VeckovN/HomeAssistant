@@ -15,18 +15,16 @@ const Search = (prop) =>{
 
     return (
     <>
-        <div className='search-box'>
-            <div className='input-search'>
-                <div className='box-s'>
-                    <input 
-                        className='search' 
-                        type='text' 
-                        value={searchName}
-                        placeholder='Search houseworker (Enter username)'
-                        onChange={selectSearchHandler}
-                    />
-                    <button onClick={onSearchSubmitHandler}>Search</button>
-                </div>
+        <div className='input-search'>
+            <div className='box-s'>
+                <input 
+                    className='search' 
+                    type='text' 
+                    value={searchName}
+                    placeholder='Search houseworker (Enter username)'
+                    onChange={selectSearchHandler}
+                />
+                <button onClick={onSearchSubmitHandler}>Search</button>
             </div>
         </div>
     </>

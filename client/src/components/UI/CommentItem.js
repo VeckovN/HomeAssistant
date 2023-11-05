@@ -1,4 +1,3 @@
-//import './CommentItem.css'
 import '../../sass/components/_commnetItem.scss';
 
 const CommentItem = (props) =>{
