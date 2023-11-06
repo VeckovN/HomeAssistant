@@ -149,16 +149,7 @@
 
                 input{
                     @extend %input-style;
-                    // margin:.1rem 0;
-                    // border:none;
-                    // background-color: transparent;
-                    // border-bottom: 2px solid rgba(19, 16, 16, 0.466);
-                    // outline: none;
-                    // color:black;
-
-                    // &::placeholder{
-                    //     color:black;
-                    // }
+                    width:70%;
                 }
 
                 //select
