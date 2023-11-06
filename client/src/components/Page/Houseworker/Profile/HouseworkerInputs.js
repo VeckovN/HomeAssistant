@@ -5,7 +5,7 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
     return(
     <>
         <div className='profile-input-container'>
-            <label>First name: <b>{houseworkerData.first_name}</b></label>
+            <label>First name: <span>{houseworkerData.first_name}</span></label>
             <br/>
             <input 
                 className='input-field'
@@ -18,11 +18,11 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
                     }
                 })}
             />
-            <div className='input_errors'>{errors.first_name?.message}</div>
+            <div className='input-errors'>{errors.first_name?.message}</div>
         </div>
 
         <div className='profile-input-container'>
-            <label>Last name: <b>{houseworkerData.last_name}</b></label>
+            <label>Last name: <span>{houseworkerData.last_name}</span></label>
             <br/>
             <input 
                 className='input-field'
@@ -35,11 +35,11 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
                     }
                 })}
             />
-            <div className='input_errors'>{errors.last_name?.message}</div>
+            <div className='input-errors'>{errors.last_name?.message}</div>
         </div>
         
         <div className='profile-input-container'>
-            <label>Email: <b>{houseworkerData.email}</b></label>
+            <label>Email: <span>{houseworkerData.email}</span></label>
             <br/>
             <input 
                 className='input-field'
@@ -53,7 +53,7 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
                     }
                 })}
             />
-            <div className='input_errors'>{errors.email?.message}</div>
+            <div className='input-errors'>{errors.email?.message}</div>
         </div>
 
         <div className='profile-input-container'>
@@ -66,7 +66,7 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
                 autoComplete="off"
                 {...register('password')}
             />
-            <div className='input_errors'>{errors.password?.message}</div>
+            <div className='input-errors'>{errors.password?.message}</div>
         </div>
 
         {watch('password') &&   //only if is password entered
@@ -86,12 +86,12 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
                     }
                 })}
             />
-            <div className='input_errors'>{errors.confirmPassword?.message}</div>
+            <div className='input-errors'>{errors.confirmPassword?.message}</div>
         </div>
         }
 
         <div className='profile-input-container'>
-            <label>Address: <b>{houseworkerData.address}</b></label>
+            <label>Address: <span>{houseworkerData.address}</span></label>
             <br/>
             <input 
                 className='input-field'
@@ -104,11 +104,11 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
                     }
                 })}
             />
-            <div className='input_errors'>{errors.address?.message}</div>
+            <div className='input-errors'>{errors.address?.message}</div>
         </div>
 
         <div className='profile-input-container'>
-            <label>Phone number: <b>{houseworkerData.phone_number}</b></label>
+            <label>Phone number: <span>{houseworkerData.phone_number}</span></label>
             <br/>
             <input 
                 className='input-field'
@@ -121,11 +121,11 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
                     }
                 })}
             />
-            <div className='input_errors'>{errors.phone_number?.message}</div>
+            <div className='input-errors'>{errors.phone_number?.message}</div>
         </div>
         
         <div className='profile-input-container'>
-            <label>City: <b>{houseworkerData.city}</b></label>
+            <label>City: <span>{houseworkerData.city}</span></label>
             <Select 
                 className='dropdown'
                 placeholder="Select a city"
@@ -134,7 +134,7 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
                 onChange={onChangeCityHandler}
                 isClearable
             />
-            <div className='input_errors'>{errors.city?.message}</div>
+            <div className='input-errors'>{errors.city?.message}</div>
         </div>
 
         <div className='profile-input-container'>  
@@ -153,7 +153,7 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
                 })}
 
             />
-            <div className='input_errors'>{errors.description?.message}</div>
+            <div className='input-errors'>{errors.description?.message}</div>
         </div>
     </>
     )

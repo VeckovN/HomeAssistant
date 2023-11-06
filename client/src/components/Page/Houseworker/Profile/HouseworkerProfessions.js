@@ -146,7 +146,7 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
     return (
         <>
             <div className="profession-changing">
-                <label>Professions</label>
+                <label id="changing-label">Change profession</label>
                 <Select 
                     className='dropdown'
                     placeholder="Select a profession"
@@ -184,7 +184,7 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
                     }
             </div>
             <div className='profession-adding'>
-                <label>Add Profession</label>
+                <label id="addProfession-label">Add Profession</label>
                 <Select 
                     className='dropdown'
                     placeholder="Select a profession"
@@ -195,6 +195,10 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
                     isClearable
                     isMulti
                 />
+                {
+                    updatedData.professions.length > 0 &&
+                    <label id='enter-hs-wr'>Enter houseworker working hour </label>
+                }
                 {  //list profession
                     updatedData.professions.map((el,index) => (
                     <div className='working-hours' key={index}>
