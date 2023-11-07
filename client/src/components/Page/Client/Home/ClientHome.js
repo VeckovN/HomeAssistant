@@ -114,8 +114,10 @@ const ClientHome = ({socket}) =>{
                         filterOptions={filterDataHandler}
                     />
                 </div>
-                <div className="houseworker-list">
-                    <button className="recommended-btn" onClick={onShowRecommended}>{!showRecommended ? 'Show recommended' : 'Close Recommended'}</button>
+                
+                <button className="recommended-btn" onClick={onShowRecommended}>{!showRecommended ? 'Show recommended' : 'Close Recommended'}</button>
+                
+                <div className="houseworker-list">    
                     {showRecommended && recommendedList }
                     {houseworkerList.length > 0 ? houseworkerList : <h3 id='none'>No Matches</h3> }
                 </div>

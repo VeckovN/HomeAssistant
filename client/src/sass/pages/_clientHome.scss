@@ -9,11 +9,9 @@
     flex-direction: column;
     padding: 4rem 0;
 
-    .recommended-btn{
-        position:absolute;
-        top:9em;
-        left:33%;
-    
+    .recommended-btn{    
+        position: absolute;
+        left:33%;    
         width: 20rem;
         height: 3rem;
         border-radius: .5rem;
@@ -27,6 +25,7 @@
             background-color: rgb(255, 255, 255);
         }
     }
+   
     .search-box{
         position:relative;
     
