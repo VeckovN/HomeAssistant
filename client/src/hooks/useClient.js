@@ -11,6 +11,8 @@ import debounce from 'lodash/debounce';
 
 const useClient = (user) =>{
 
+    console.log("USECLIENT");
+
     //fetched(houseworker) Data based on filtered and searched Data
     const [data, setData] = useState([]);
     //data before removing recommended users in data useState
@@ -34,6 +36,13 @@ const useClient = (user) =>{
         
         if(localStorage.getItem("searchedData"))
             localStorage.clear('searchedData')
+
+        //scroll event listener attached on intial page rendering
+        window.addEventListener('scroll', debouncedHandleScroll);
+        //cleanup function remove event listener on component unmount
+        return () =>{
+            window.removeEventListener('scroll',debouncedHandleScroll);
+        }
     },[])
 
     //on every serachedData and filterData change reFeatch houseworkers
@@ -62,14 +71,14 @@ const useClient = (user) =>{
         }
     }, 100); //debounce delay 
 
-    //scroll event listener attached on intial page rendering
-    useEffect(()=>{
-        window.addEventListener('scroll', debouncedHandleScroll);
-        //cleanup function remove event listener on component unmount
-        return () =>{
-            window.removeEventListener('scroll',debouncedHandleScroll);
-        }
-    },[]);
+    // //scroll event listener attached on intial page rendering
+    // useEffect(()=>{
+    //     window.addEventListener('scroll', debouncedHandleScroll);
+    //     //cleanup function remove event listener on component unmount
+    //     return () =>{
+    //         window.removeEventListener('scroll',debouncedHandleScroll);
+    //     }
+    // },[]);
 
 
     const fetchData = async(pageNubmer)=>{
