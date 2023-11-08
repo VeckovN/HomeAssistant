@@ -29,12 +29,6 @@ const city_options =[
 
 //interests_option for Client Context
 const profession_options = [
-    { value:'Cistac', label:"Cistac" },
-    { value:'Dadilja', label:"Dadilja" },
-    { value:'Kuvar', label:"Kuvar" },
-    { value:'Staratelj', label:"Staratelj" },
-    { value:'Sobarica', label:"Sobarica" },
-    { value:'Domacica', label:"Domacica" },
     { value:'Housekeeper', label:"Housekeeper" },
     { value:'Nanny', label:"Nanny" },
     { value:'Personal Chef', label:"Personal Chef" },
