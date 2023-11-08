@@ -23,8 +23,7 @@ const useClient = (user) =>{
     //that i stored filter data in localStorage
     const [filteredData, setFilterData] = useState({});
     const [searchedData, setSearchData] = useState({});
- 
-    const [loading, setLoading] = useState(false);
+
     const pageNumberRef = useRef(0);
     
     //on initial check does localStorage (filtered Data exists and delete it)
