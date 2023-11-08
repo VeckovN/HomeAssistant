@@ -18,6 +18,7 @@ const useClient = (user) =>{
 
     const [recommended, setRecomended] = useState([]);
     const [showRecommended, setShowRecommended] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     //filtered data will be reset on compoent re-rendering(on every scroll )
     //that i stored filter data in localStorage
@@ -134,7 +135,9 @@ const useClient = (user) =>{
                 else{ //or on first page if there ins't houseworkers
                     setData(null)
                 }
-            }        
+            }   
+            
+            setLoading(false);
         }catch(err){
             console.log("ERR: " + err);
         }   
@@ -223,7 +226,7 @@ const useClient = (user) =>{
             })
     }
 
-    return {data, pageNumberRef, recommended, showRecommended, onShowRecommended, searchDataHanlder, filterDataHandler}
+    return {data, loading, pageNumberRef, recommended, showRecommended, onShowRecommended, searchDataHanlder, filterDataHandler}
 }
 
 export default useClient;

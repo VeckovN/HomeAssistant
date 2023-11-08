@@ -5,6 +5,7 @@ import Filter from './Filter/Filter.js';
 import { useSelector } from 'react-redux';
 import Search from './SearchAndSort/Search.js';
 import Sort from './SearchAndSort/Sort.js';
+import Spinner from '../../../UI/Spinner.js';
 
 import '../../../../sass/pages/_clientHome.scss';
 
@@ -15,8 +16,8 @@ const ClientHome = ({socket}) =>{
 
     const [showButton ,setShowButton] = useState(false);
     const {user} = useSelector((state) => state.auth)
-    const {data, recommended, showRecommended, onShowRecommended, searchDataHanlder, filterDataHandler } = useClient(user);
-
+    const {data, loading, recommended, showRecommended, onShowRecommended, searchDataHanlder, filterDataHandler } = useClient(user);
+    // const [loading, setLoading] = useState(true);
 
     useEffect(()=>{
         window.addEventListener('scroll', handleScroll);
@@ -117,10 +118,16 @@ const ClientHome = ({socket}) =>{
                 
                 <button className="recommended-btn" onClick={onShowRecommended}>{!showRecommended ? 'Show recommended' : 'Close Recommended'}</button>
                 
+                
                 <div className="houseworker-list">    
-                    {showRecommended && recommendedList }
-                    {houseworkerList.length > 0 ? houseworkerList : <h3 id='none'>No Matches</h3> }
-                </div>
+                    {loading ? <Spinner/> :
+                    <>
+                        {showRecommended && recommendedList }
+                        {houseworkerList.length > 0 ? houseworkerList : <h3 id='none'>No Matches</h3> }
+                    </>
+                    }
+                </div>   
+                       
             </div>
 
             {showButton && 
