@@ -21,7 +21,6 @@ const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
                 const ourID = userID;
                 //value prop of this button -> props.id 
                 const houseworkerID = e.target.value;
-                alert("USERNAME: " + client_username);
 
                 console.log("HOUSEWORKERID " + houseworkerID);
                 //Room based on users ID
