@@ -4,10 +4,10 @@
         /* background-color: wheat; */
         /* opacity: .9; */
         height: 80%;
-        width:80%;
+        width:70%;
         /* max-width: 20rem; */
-        left:25%;
-        top: 0;
+        left:26%;
+        top: .5em;
 
         .box-s{
             display: flex;
@@ -31,15 +31,18 @@
 
             button{
                 position: absolute;
-                right: .2rem;
+                right: .1rem;
                 width:3.4rem;
-                height: 1.7rem;
+                height: 1.6rem;
+                border-radius: 0em .5em .5em 0em;
+                border:none;
                 font-weight: 600;
 
                 &:hover{
                     background-color: rgb(192, 192, 192);
                     /* border:none; */
                     border:1px solid  black;
+                    cursor: pointer;
                 }
             }
 
