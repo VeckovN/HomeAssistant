@@ -191,9 +191,8 @@ const useClient = (user) =>{
             }
             if(newKey == 'name' & newValue == ''){
                 if(search_obj['name']){
-                    alert("EHIST");
                     delete search_obj.name;
-                    return search_obj;
+                    // return search_obj;
                 } 
             }
 
