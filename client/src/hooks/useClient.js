@@ -31,6 +31,7 @@ const useClient = (user) =>{
     
     //on initial check does localStorage (filtered Data exists and delete it)
     useEffect(()=>{
+        console.log("FIRST USE EFFFFFE");
         if(localStorage.getItem("filteredData"))
             localStorage.clear("filteredData")
         
@@ -56,7 +57,7 @@ const useClient = (user) =>{
             fetchRecommendedData();
         else
             setData(oldData);
-    },[showRecommended])
+    },[showRecommended, recommended])
 
 
     //this will ensure that the scroll event is not triggered multiple times in quick succession,
@@ -69,7 +70,7 @@ const useClient = (user) =>{
 
             fetchData(newPage);
         }
-    }, 100); //debounce delay 
+    }, 50); //debounce delay 
 
     // //scroll event listener attached on intial page rendering
     // useEffect(()=>{
@@ -79,6 +80,8 @@ const useClient = (user) =>{
     //         window.removeEventListener('scroll',debouncedHandleScroll);
     //     }
     // },[]);
+
+    
 
 
     const fetchData = async(pageNubmer)=>{
