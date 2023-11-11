@@ -1,4 +1,6 @@
 import HouseworkerCommentModal from "./HouseworkerCommentModal";
+import Rating from '@mui/material/Rating';
+import StarIcon from '@mui/icons-material/Star';
 import '../../../../../sass/components/_houseworkerCard.scss';
 
 const HouseworkerCardContent = ({
@@ -23,6 +25,8 @@ const HouseworkerCardContent = ({
     onContactHandler,
     commentClick
 }) =>{
+    console.log("TYPE OF " + typeof(parseFloat(rating)) + " VALUE: " + parseFloat(rating));
+    //alert("HS CArd Context --- " + "username: "  +  houseworkerProps.username);
     return (
         <>
             {/* When is comment button Clicked */}
@@ -113,8 +117,19 @@ const HouseworkerCardContent = ({
                             </div>
 
                             <div className='rating-box'>
-                                <div className='div-text-rating'><p>{isClient ? parseFloat(rating).toFixed(1) : <a href='/login'>Log in</a>}</p>
+                                <div className='div-text-rating'>
+                                    <p>{isClient ? 
+                                        <Rating 
+                                            name="half-rating-read" 
+                                            size="small"
+                                            defaultValue={parseFloat(rating)} 
+                                            emptyIcon={<StarIcon style={{ color: 'grey' }} fontSize="inherit" />}
+                                            precision={0.5} 
+                                            readOnly /> 
+                                        : <a href='/login'>Log in</a>}
+                                    </p>
                                 </div>
+                                
                                 <div className='rating-field'>
                                     {showRateInput && 
                                     <>
