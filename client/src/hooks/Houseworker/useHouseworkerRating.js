@@ -4,7 +4,9 @@ import {rateUser} from '../../services/houseworker.js'
 import { getRating } from '../../services/houseworker.js';
 import { emitRatingNotification } from '../../sockets/socketEmit.js';
 
+//Not fatching propertly - one time its good fetched , next time some houseworker doesn;t have rating
 const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsername) =>{
+    // alert("useHouseworkerRating " );
 
     const [rate, setRate] = useState(''); //value from input
     const [showRateInput, setShowRateInput] = useState();
@@ -12,11 +14,22 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
 
     const fetchRating = async() =>{
         const ratingValue = await getRating(houseworkerUsername);
+        console.log("raingValue , " + ratingValue + "houseworekrusername: "  + houseworkerUsername);
+        //console.log("FETING RATINGL " + ratingValue );
         setRating(ratingValue);
+        // alert("setRating(ratingValue);")
     } 
 
+    // Function to initialize the data fetching
+    const ratingInitialize = async () => {
+        await fetchRating();
+      };
+    
+
     useEffect(()=>{
-        fetchRating();
+        // alert("FETCHING RATING");
+        ratingInitialize();
+        // alert("fetchRating();")
     },[])
 
     var showRateInputCssClass =''
@@ -40,8 +53,10 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
         }
         //when rate value not exist , again click on Rate button 
         //will close input
-        if(rate == '')
+        if(rate == ''){
             setShowRateInput(prev => !prev);
+            alert("setShowRateInput(prev => !prev)");
+        }
         else {
             try{
                 const rateObj ={
@@ -54,7 +69,7 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
 
                 const ratingValue = await rateUser(rateObj);
                 emitRatingNotification(socket, {...rateObj, houseworkerID:id})
-                setRating(ratingValue);
+                alert("setRating(ratingValue)")
 
                 toast.success(`You have rated the ${username} with rate ${rateInt} `,{
                     className:'toast-contact-message'
@@ -71,14 +86,17 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
     const onCloseRateHandler =()=>{
         setShowRateInput(false);
         setRate('');
+        alert("setShowRateInput(false)")
+        alert("setRate('')")
     }
 
     const onChangeRate = (e)=>{
         // setRate(parseInt(e.target.value));
         setRate(e.target.value);
+        alert("setRate(e.target.value)");
     }
 
-    return {rate, rating, showRateInput, showRateInputCssClass, onRateHandler, onCloseRateHandler, onChangeRate}
+    return {rate, rating, ratingInitialize, showRateInput, showRateInputCssClass, onRateHandler, onCloseRateHandler, onChangeRate}
 
 }
 
