@@ -63,6 +63,9 @@
     position:relative;
     top:200px;
 
+    animation: fadeIn .5s;
+
+
     .label-text{
         font-weight: 600;
         //font-size:.8rem;
@@ -535,8 +538,10 @@
 }
 
 
-
-
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
 
 // .rate-info{
 //     width:35rem;
