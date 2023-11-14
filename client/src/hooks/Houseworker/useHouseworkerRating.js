@@ -14,8 +14,7 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
 
     const fetchRating = async() =>{
         const ratingValue = await getRating(houseworkerUsername);
-        console.log("raingValue , " + ratingValue + "houseworekrusername: "  + houseworkerUsername);
-        //console.log("FETING RATINGL " + ratingValue );
+        //console.log("raingValue , " + ratingValue + "houseworekrusername: "  + houseworkerUsername);
         setRating(ratingValue);
         // alert("setRating(ratingValue);")
     } 

@@ -4,7 +4,8 @@ import {useState, useEffect} from 'react'
 //This handlers are repated in differt components
 const useUser =(initialState)=>{
 
-    console.log("useUSER RENDER")
+    //alert("useUSER RENDER")
+    // console.log("useUSER RENDER");
 
     const [data, setData] = useState(initialState);
     const [errors, setErrors] = useState({});

@@ -10,8 +10,7 @@ import { toast } from 'react-toastify';
 import debounce from 'lodash/debounce';
 
 const useClient = (user) =>{
-
-    console.log("USECLIENT");
+    console.log("use Client");
 
     //fetched(houseworker) Data based on filtered and searched Data
     const [data, setData] = useState([]);
@@ -31,7 +30,7 @@ const useClient = (user) =>{
     
     //on initial check does localStorage (filtered Data exists and delete it)
     useEffect(()=>{
-        console.log("FIRST USE EFFFFFE");
+        //console.log("FIRST USE EFFFFFE");
         if(localStorage.getItem("filteredData"))
             localStorage.clear("filteredData")
         
@@ -48,21 +47,31 @@ const useClient = (user) =>{
 
     //on every serachedData and filterData change reFeatch houseworkers
     useEffect(()=>{
+        //alert('fetchData(pageNumberRef.current);');
         fetchData(pageNumberRef.current);
     },[searchedData, filteredData]) 
 
-    useEffect(()=>{
-        //only when is recommended button clicked and not fetched yet
-        if(showRecommended==true && recommended?.length == 0)
-            fetchRecommendedData();
-        else
-            setData(oldData);
-    },[showRecommended, recommended])
+
+    //IT"S APPLIED ON FIRST (Mounted ) BUT AND CAUSED UNNECESSARY RE-rENDERING 
+    //It should be only trigger when is recomended button click
+
+    // useEffect(()=>{
+    //     alert('useEffect(() showrec, recmonmended');
+    //     //only when is recommended button clicked and not fetched yet
+    //     if(showRecommended==true && recommended?.length == 0)
+    //         fetchRecommendedData();
+    //     else{
+    //         alert('setData(oldData);');
+    //         setData(oldData);
+    //     }
+            
+    // },[showRecommended, recommended])
 
 
     //this will ensure that the scroll event is not triggered multiple times in quick succession,
     //and thus help in fetching data only once on each scroll event.
-    const debouncedHandleScroll = debounce(() =>{      
+    const debouncedHandleScroll = debounce(() =>{  
+        // alert("debouncedHandleScroll = debounce(()")    
         const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
         if (window.scrollY >= scrollableHeight) {
             const newPage =  pageNumberRef.current+ 1;
@@ -85,6 +94,7 @@ const useClient = (user) =>{
 
 
     const fetchData = async(pageNubmer)=>{
+        //alert('fetchData = async(pageNubmer)');
         //Merge a filer and sort option to the queryParams OBJ
         //let queryParams = {};
     
@@ -124,47 +134,61 @@ const useClient = (user) =>{
                 if(showRecommended){
                     const updatedData = excludeRecommendedFromUserData(data, recommended);
                     setData(updatedData);
+                    alert("setData(updatedData);");
                 }
                 if(pageNumberRef.current > 0){
                     setData(prev =>([
                         ...prev,
                         ...houseworkers
                     ]))
+                    //alert(" setData(prev =>([...prev,...houseworkers]))")
                 }
                 else{
                     setData(houseworkers);
+                    //alert("setData(houseworkers);")
                 }
-        
-                setOldData(houseworkers);
+
+                
+                // setOldData(houseworkers);
+                // alert("setOldData(houseworkers);;")
             }
             else{
                 //if houseworekrs exist on page then delete scroll event(prevent to go on next page)
                 if(pageNumberRef.current > 0){
+                    alert("pageNumberRef.current > 0")
                     toast.info("No more houseworkers",{
                         className:"toast-contact-message"
                     })
                 }
                 else{ //or on first page if there ins't houseworkers
                     setData(null)
+                    alert("setData(null)")
                 }
             }   
             
             setLoading(false);
+           //alert("setLoading(false);")
         }catch(err){
             console.log("ERR: " + err);
         }   
     }
 
     const fetchRecommendedData = async() =>{
+        alert('const fetchRecommendedData = async() =>{');
         try{
             const recommendedData = await getRecommended(user.username);
             if(recommendedData.length >0){
                 setRecomended(recommendedData)
+                alert('setRecomended(recommendedData)');
                 const updatedData = excludeRecommendedFromUserData(data, recommendedData);
                 setData(updatedData);
+                alert("setData(updatedData);")
             }
-            else
+            else{
                 setRecomended(null);
+                alert("setRecomended(null);")
+            }
+            
         }
         catch(err){
             console.log("ERR" + err);
@@ -172,6 +196,7 @@ const useClient = (user) =>{
     }
     
     const excludeRecommendedFromUserData = (user_data, recommended_data) =>{
+        alert("excludeRecommendedFromUserData = (user_data, recommended_data) =>{")
         const updatedData = user_data.filter(user =>{
             //return only different users
             return !recommended_data.some(prop => prop.username === user.username)
@@ -182,6 +207,7 @@ const useClient = (user) =>{
     const searchDataHanlder = useCallback((searchDataObj) =>{
         //searchData is data from SearchAndSort(Child) component
         console.log("SEARCH: " + JSON.stringify(searchDataObj));
+        alert("searchDataHanlder = useCallback((searchDataObj)");
 ; 
         //This will ensure that the old key is overide with new value and new key added to this object
         setSearchData(prev=>{
@@ -224,14 +250,19 @@ const useClient = (user) =>{
         console.log("FILTERS IN PARRANET" + JSON.stringify(filterData));
         pageNumberRef.current = 0;
         setFilterData(filterData);
+        // alert(" setFilterData(filterData);");
 
         localStorage.setItem('filteredData', JSON.stringify(filterData));
     },[]);
 
     const onShowRecommended = ()=>{
+        alert("const onShowRecommended = ()=>{");
         console.log("USER: " + JSON.stringify(user));
         if(user?.type === "Client") // ?. -if 'user' exist then user.type can be readed
+        {
             setShowRecommended(!showRecommended);
+            alert("setShowRecommended(!showRecommended);")
+        }
         else
             toast.error("Log in to see recommendetion",{
                 className:"toast-contact-message"

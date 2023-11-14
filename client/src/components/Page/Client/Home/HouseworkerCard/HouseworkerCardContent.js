@@ -25,7 +25,7 @@ const HouseworkerCardContent = ({
     onContactHandler,
     commentClick
 }) =>{
-    console.log("TYPE OF " + typeof(parseFloat(rating)) + " VALUE: " + parseFloat(rating));
+    //console.log("TYPE OF " + typeof(parseFloat(rating)) + " VALUE: " + parseFloat(rating));
     //alert("HS CArd Context --- " + "username: "  +  houseworkerProps.username);
     return (
         <>

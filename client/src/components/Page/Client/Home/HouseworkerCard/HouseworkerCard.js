@@ -19,10 +19,8 @@ axios.defaults.withCredentials = true
 
 //@Todo //Custom Hook for useFetch
 const HouseworkersCard = (props) =>{
-    // alert("RENDER: " + props.first_name);
-    console.log("RENDER: " + props.first_name) ;
+    //console.log("RENDER: " + props.first_name) ;
     // console.log("Props: \n", JSON.stringify(props));
-    // alert("RE " + props);
     const socket = props.socket;
 
     const userAuth = useSelector((state) => state.auth.user)
@@ -67,7 +65,6 @@ const HouseworkersCard = (props) =>{
         const professionsArray = await getProfessionsByUsername(props.username);
         setProfessions(professionsArray);
         //alert('setProfessions(professionsArray);')
-        console.log("setProfessions(professionsArray);");
     }
 
 
