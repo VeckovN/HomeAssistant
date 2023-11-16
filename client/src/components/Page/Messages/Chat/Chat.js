@@ -36,41 +36,97 @@ const Chat = ({socket, roomMessages, roomRef, user}) =>{
 
     let messageContext;
 
-    return(
-        // <div className="chat_container">            
-        <div className='messages-container'>
-            {roomMessages.length >0 &&
-                <>
-                    <div className='messages-box'>
-                    {roomMessages.map(el =>{
-                        if(user.userID==el.from){
-                            messageContext=' my-message'
-                        }
-                        else{
-                            messageContext=' notMy-message'
-                        }
-
-                        return <>
-                                <div className='message'>
-                                    <div className={`context ${messageContext}`}><span> <span className='user_name'>{user.userID==el.from ? 'Ja' : el.fromUsername}</span> : {el.message}</span> </div>
-                                </div>
-                            </>
-                    })}
-                    <div className='messages-box-send'>
-                        <input
-                            type='text'
-                            name='message-text'
-                            placeholder="Unesite poruku"
-                            ref={messageRef}
-                        />
-                        
-                        <button onClick={onSendMessageHandler}>Send</button>
-                    </div>
-            </div>  
-                </>          
-            }
+    let lastUser = '';
+    return(     
+        <>
+            <div className="header-chat">
+                <i className="icon fa fa-user-o" aria-hidden="true"></i>
+                <p className="name">Megan Leib</p>
+                <i className="icon clickable fa fa-ellipsis-h right" aria-hidden="true"></i>
+            </div>
             
-        </div>
+            {roomMessages.length >0 &&    
+            <>
+                {roomMessages.map(el =>{
+                    if(user.userID==el.from){
+                        //messageContext=' my-message'
+                        //My message -
+
+                        <div className="message text-only">
+                            <div className="response">
+                                <p className="text"> {el.message}</p>
+                            </div>
+                        </div>
+                        // if there is more continious message of the same user then print next message
+                        //or print time of last message
+                    }
+                    else{
+                        // messageContext=' notMy-message'
+                        //set picture with message context
+                        <div className="message">
+                            <div className="photo" style={{backgroundImage: "url(https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80)"}}>
+                            {/* ADD PICTURE PATH IN USER OBJ */}
+                            {/* <div className="photo" src={`assets/userImages/${user.picturePath}`}> */}
+                                <div className="online"></div>
+                            </div>
+                            <p className="text"> {el.message}</p>
+                        </div>
+                        // if is it last message in row of user then show timer
+                        // <p className="time"> 14h58</p>
+                    }
+                })}
+
+            </>
+            }
+            <div className="footer-chat">
+                <i className="icon fa fa-smile-o clickable" style={{fontSize:"25pt"}} aria-hidden="true"></i>
+                {/* <input type="text" className="write-message" placeholder="Type your message here"></input> */}
+                <input
+                    type='text'
+                    className="write-message"
+                    placeholder="Type your message here"
+                    name='message-text'
+                    ref={messageRef}
+                />
+                <i className="icon send fa fa-paper-plane-o clickable" onClick={onSendMessageHandler} aria-hidden="true"></i>
+            </div>
+            
+        </>
+
+        // <div className='messages-container'>
+        //     {roomMessages.length >0 &&
+        //         <>
+        //             <div className='messages-box'>
+        //             {roomMessages.map(el =>{
+        //                 if(user.userID==el.from){
+        //                     messageContext=' my-message'
+        //                 }
+        //                 else{
+        //                     messageContext=' notMy-message'
+        //                 }
+
+        //                 return <>
+        //                         <div className='message'>
+        //                             <div className={`context ${messageContext}`}><span> <span className='user_name'>{user.userID==el.from ? 'Ja' : el.fromUsername}</span> : {el.message}</span> </div>
+        //                         </div>
+        //                     </>
+        //             })}
+        //             <div className='messages-box-send'>
+        //                 <input
+        //                     type='text'
+        //                     name='message-text'
+        //                     placeholder="Unesite poruku"
+        //                     ref={messageRef}
+        //                 />
+                        
+        //                 <button onClick={onSendMessageHandler}>Send</button>
+        //             </div>
+        //     </div>  
+        //         </>          
+        //     }
+            
+        // </div>
+    
     )
 }
 
