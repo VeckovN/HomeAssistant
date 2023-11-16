@@ -1,94 +1,102 @@
-.messages-container{
-    /* background-color: aliceblue; */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    margin:rem 0;
-    padding:2rem 0;   
-
-    .messages-box{
-        background-color: rgb(229, 240, 234);
-        width: 40%;
-        max-height: 30rem;
-        /* position: relative; */
-        padding: 1rem .1rem;
-        display: flex;
-        flex-direction: column;
-        min-width: 600px;
-        border-radius: 1.5rem;
-        overflow-y: scroll;
 
 
-        .message{
-            //There isn't something
 
-            .context{
-    
-                padding:.5rem 1.5rem;
-                text-align: center;
-            }  
 
-            .my-message{
-                display: flex;
-                justify-content:flex-end;
-                /* background-color: green; */
+
+
+//----------------------OLD------------------------//
+
+// .messages-container{
+//     /* background-color: aliceblue; */
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: center;
+//     align-items: center;
+//     // font-family:'Montserrat', sans-serif;
+
+//     margin:rem 0;
+//     padding:2rem 0;   
+
+//     .messages-box{
+//         background-color: rgb(229, 240, 234);
+//         width: 40%;
+//         max-height: 30rem;
+//         /* position: relative; */
+//         padding: 1rem .1rem;
+//         display: flex;
+//         flex-direction: column;
+//         min-width: 600px;
+//         border-radius: 1.5rem;
+//         overflow-y: scroll;
+
+
+//         .message{
+//             //There isn't something
+
+//             .context{
+//                 padding:.5rem 1.5rem;
+//                 text-align: center;
+//             }  
+
+//             .my-message{
+//                 display: flex;
+//                 justify-content:flex-end;
+//                 /* background-color: green; */
         
-                span{
-                    background-color: rgb(120, 219, 120);
-                    padding:.5rem .5rem;
-                    border-radius: .6rem;
-                }
-            }
-            .notMy-message{
-                display: flex;
-                justify-content: flex-start;
-                color:white;
+//                 span{
+//                     background-color: rgb(120, 219, 120);
+//                     padding:.5rem .5rem;
+//                     border-radius: .6rem;
+//                 }
+//             }
+//             .notMy-message{
+//                 display: flex;
+//                 justify-content: flex-start;
+//                 color:white;
         
-                span{
-                    background-color: rgb(46, 153, 196);
-                    padding:.5rem .5rem;
-                    border-radius: .6rem;
-                }
-            }
+//                 span{
+//                     background-color: rgb(46, 153, 196);
+//                     padding:.5rem .5rem;
+//                     border-radius: .6rem;
+//                 }
+//             }
             
-            .user_name{
-                font-weight: 600;
-                color:black;
-            }
+//             .user_name{
+//                 font-weight: 600;
+//                 color:black;
+//             }
 
-        }
+//         }
     
 
-        //messages-box-send
-        &-send{
-            display: flex;
-            /* background-color: bisque; */
-            width: 100%;
-            justify-content: center;
-            align-items: center;
-            margin:1rem 0 -.5rem 0;
+//         //messages-box-send
+//         &-send{
+//             display: flex;
+//             /* background-color: bisque; */
+//             width: 100%;
+//             justify-content: center;
+//             align-items: center;
+//             margin:1rem 0 -.5rem 0;
 
-            input{
-                width:40%;
-                height: 1.5rem;
+//             input{
+//                 width:40%;
+//                 height: 1.5rem;
 
-                &::placeholder{
-                    text-align: center;
-                }
-            }
+//                 &::placeholder{
+//                     text-align: center;
+//                 }
+//             }
 
-            button{
-                margin-left: 1rem;
-                width: 4rem;
-                height: 1.8rem;
-            }
-        }
+//             button{
+//                 margin-left: 1rem;
+//                 width: 4rem;
+//                 height: 1.8rem;
+//             }
+//         }
 
-    }
+//     }
 
-}
+// }
 
 
 

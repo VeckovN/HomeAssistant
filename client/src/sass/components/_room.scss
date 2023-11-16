@@ -1,58 +1,61 @@
-.users{
-    display: flex;
-    flex-direction:row;
-    padding:1rem 1rem;
-    justify-content: center;
-    align-items: center;
+//--------------------OLD------------------------//
 
-    .roomUsers span{
-        margin-left: .4rem;
-    }
-}
+// .users{
+//     display: flex;
+//     flex-direction:row;
+//     padding:1rem 1rem;
+//     justify-content: center;
+//     align-items: center;
 
-.room-buttons{
-    display: flex;
-    width: 100%;
-    height: 100%;
+//     // font-family:'Montserrat', sans-serif;
+//     .roomUsers span{
+//         margin-left: .4rem;
+//     }
+// }
 
-    .show-room-btn{
+// .room-buttons{
+//     display: flex;
+//     width: 100%;
+//     height: 100%;
 
-    }
-    .add-user-to-group-btn{
+//     .show-room-btn{
 
-    }
-    .delete-room-btn{
+//     }
+//     .add-user-to-group-btn{
 
-    }
-    //or one button selector for all of them
-    // button{
+//     }
+//     .delete-room-btn{
 
-    // }
+//     }
+//     //or one button selector for all of them
+//     // button{
 
-}
+//     // }
 
-.search-container{
-    //ds
+// }
 
-    input{
-        //ds
-    }
+// .search-container{
+//     //ds
 
-    .dropdown-list{
-        //ds
+//     input{
+//         //ds
+//     }
 
-        .dropdown-row{
-            background-color: aliceblue;
-            cursor: pointer;
+//     .dropdown-list{
+//         //ds
 
-            &:hover{
-                background-color: rgb(168, 208, 243);
-            }
-        }
+//         .dropdown-row{
+//             background-color: aliceblue;
+//             cursor: pointer;
+
+//             &:hover{
+//                 background-color: rgb(168, 208, 243);
+//             }
+//         }
         
-    }
+//     }
 
-}
+// }
 
 
 
