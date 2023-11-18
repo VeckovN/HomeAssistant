@@ -28,13 +28,6 @@ const Rooms = ({rooms, roomRef, user, houseworkers, onAddUserToGroupHanlder, onD
                 
         //     </div>
             <>
-                <div className='room search'>
-                    <div className="searchbar">
-                        <i className="fa fa-search" aria-hidden="true"></i>
-                        <input type="text" placeholder="Search..."></input>
-                    </div>
-                </div>
-
                 {rooms ?
                     rooms.map((el, index)=>(      
                         <Room

@@ -59,6 +59,8 @@ const Messages = ({socket,connected}) =>{
     
         //onClick username read messages from him(from roomID where is it )
         const onRoomClickHanlder = async e =>{
+            console.log("E VALUE: " ,e.target );
+            console.log("e target value:" + e .target.value);
             const roomID = e.target.value;
             //Assing clicked roomID to roomRef (read roomID valuewiht roomRef.current.value)
             roomRef.current = e.target;
@@ -167,59 +169,56 @@ const Messages = ({socket,connected}) =>{
         <div className='messages-container'>
             {state.loading ? <Spinner/> :
             <>
-            <div className='row'>
-                <nav className='menu'>
-                    <ul>
-                        <li className="item">
-                            <i className="fa fa-home" aria-hidden="true">Ho</i>
-                        </li>
-                        <li className="item">
-                            <i className="fa fa-user" aria-hidden="true">Us</i>
-                        </li>
-                        <li className="item">
-                            <i className="fa fa-pencil" aria-hidden="true">Pe</i>
-                        </li>
-                        <li className="item item-active">
-                            <i className="fa fa-commenting" aria-hidden="true">Co</i>
-                        </li>
-                        <li className="item">
-                            <i className="fa fa-file" aria-hidden="true">Fi</i>
-                        </li>
-                        <li className="item">
-                            <i className="fa fa-cog" aria-hidden="true">C</i>
-                        </li>
-                    </ul>
-                </nav>
+            {/* <nav className='menu'>
+                <ul>
+                    <li className="item">
+                        <i className="fa fa-home" aria-hidden="true">Ho</i>
+                    </li>
+                    <li className="item">
+                        <i className="fa fa-user" aria-hidden="true">Us</i>
+                    </li>
+                    <li className="item">
+                        <i className="fa fa-pencil" aria-hidden="true">Pe</i>
+                    </li>
+                    <li className="item item-active">
+                        <i className="fa fa-commenting" aria-hidden="true">Co</i>
+                    </li>
+                    <li className="item">
+                        <i className="fa fa-file" aria-hidden="true">Fi</i>
+                    </li>
+                    <li className="item">
+                        <i className="fa fa-cog" aria-hidden="true">C</i>
+                    </li>
+                </ul>
+            </nav> */}
 
-                <section className='rooms-container'>
-                    <div className='room search'>
-                        <div className="searchbar">
-                            <i className="fa fa-search" aria-hidden="true">SIcon</i>
-                            <input type="text" placeholder="Search..."></input>
-                        </div>
+            <section className='rooms-container'>
+                <div className='room search'>
+                    <div className="searchbar">
+                        <i className="fa fa-search" aria-hidden="true"></i>
+                        <input type="text" placeholder="Search..."></input>
                     </div>
+                </div>
 
-                    <Rooms 
-                        rooms={state.rooms}
-                        houseworkers={state.houseworkers}
-                        roomRef={roomRef}
-                        user={user}
-                        onAddUserToGroupHanlder={onAddUserToGroupHanlder}
-                        onDeleteRoomHandler={onDeleteRoomHandler}
-                        onRoomClickHanlder={onRoomClickHanlder}
-                    />
-                    
-                </section>
+                <Rooms 
+                    rooms={state.rooms}
+                    houseworkers={state.houseworkers}
+                    roomRef={roomRef}
+                    user={user}
+                    onAddUserToGroupHanlder={onAddUserToGroupHanlder}
+                    onDeleteRoomHandler={onDeleteRoomHandler}
+                    onRoomClickHanlder={onRoomClickHanlder}
+                />
+            </section>
 
-                <section className = 'chat-container'>
-                    <Chat 
-                        socket={socket} 
-                        roomRef={roomRef}
-                        roomMessages={state.roomMessages}
-                        user={user}
-                    />
-                </section>
-            </div>
+            <section className='chat-container'>
+                <Chat 
+                    socket={socket} 
+                    roomRef={roomRef}
+                    roomMessages={state.roomMessages}
+                    user={user}
+                />
+            </section>
             </>
             }
         </div>
