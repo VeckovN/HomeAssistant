@@ -1,3 +1,97 @@
+.room{
+    width: 100%;
+    height: 90px;
+    background-color: #FAFAFA;
+    border:none;
+    border-bottom: solid 1px #E0E0E0;
+    display:flex;
+    align-items: center;
+    cursor: pointer;
+
+    .photo{
+        margin-left:20px;
+        display: block;
+        width: 45px;
+        height: 45px;
+        background: #E6E7ED;
+        border-radius: 50px;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
+    .room-contact{
+        height: 43px;
+        width:60%;
+        white-space: nowrap;
+        text-align: start;
+        // overflow: hidden;
+        // text-overflow: ellipsis;
+
+        .name {
+            margin: 0 0 0 20px;
+            font-family:'Montserrat', sans-serif;
+            font-size: 11pt;
+            color:#515151;
+        }
+        .message {
+            margin: 6px 0 0 20px;
+            font-family:'Montserrat', sans-serif;
+            font-size: 9pt;
+            color:#515151;
+        }
+    }
+    .online{
+        position: relative;
+        top: 30px;
+        left: 35px;
+        width: 13px;
+        height: 13px;
+        background-color: #8BC34A;
+        border-radius: 13px;
+        border: 3px solid #FAFAFA;
+    }
+
+    .timer{
+        height: 2em;
+        width: 5em;
+        margin-left: 10%;
+        font-family:'Open Sans', sans-serif;
+        font-size: 11px;
+        padding: 3px 8px;
+        color: #BBB;
+        background-color: #FFF;
+        border: 1px solid #E5E5E5;
+        border-radius: 15px;
+    }
+}
+
+.group{
+    // display: flex;;
+    position: relative;
+
+    .group-sign{
+        position: absolute;
+        top:.2em;
+        left:.5em;
+    }
+
+    .timer{
+        float:right;
+        margin-left: 15%;
+    }
+}
+
+.active{
+    width: 98.5%;
+    height: 90px;
+    background-color: #FFF;
+    border-bottom: solid 1px #E0E0E0;
+}
+
+
+
+
 //--------------------OLD------------------------//
 
 // .users{
