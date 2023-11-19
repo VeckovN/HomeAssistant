@@ -1,15 +1,28 @@
 
+.container{
+    display: flex;
+    justify-content: center;
+
+    height: 100%;
+    width:100%;
+    // height: 700px;
+    // max-width: 1100px;
+    background-color: hsla(0, 4%, 90%, 0.541);
+}
+
 .messages-container{
 
     display:flex;
     // justify-content: center;
     // flex-direction: row;
-    // align-items: center;
+    align-items: center;
 
     margin:7em 0em;
     background-color: #FFF; 
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-    height: 700px;
+    // height: 700px;
+    height: 80%;
+    width:90%;
     max-width: 1100px;
 
     .menu{
@@ -43,11 +56,13 @@
     // ROOMS 
     .rooms-container{
         height: 100%;
-        width: 500px;
+        // width: 400px;
+        width:400px;
+        // min-width: 250px;
         box-shadow: 0px 8px 10px rgba(0,0,0,0.20);
         overflow: scroll;
-        background-color: #87a3ec;
-        float: left;
+        // background-color: #87a3ec;
+        // float: left;
 
         .search{
             display:flex;
@@ -85,16 +100,37 @@
             height: 90px;
             background-color: #FFF;
             border-bottom: solid 1px #E0E0E0;
+            position:relative;
+
+            // &::before{
+            //     content: '';
+            //     // position:absolute;
+            //     width:.4em;
+            //     height: 100%;
+            //     background-color: #87a3ec;
+            // }
+
+            &::after{
+                content: '';
+                position:absolute;
+                right:-.4em;
+                width:.4em;
+                height: 100%;
+                background-color: #87a3ec;
+            }
           }
+        
     }
 
     //CHAT
     .chat-container{
-        // display: inline-block;
         display: flex;
         flex-direction: column;
-        width: calc(65% - 85px);
+       
         height: 100%;
+        width: 80%;
+        // width: calc(80% - 85px);
+        // min-width: 500px;
     }
 }
 

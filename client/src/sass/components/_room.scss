@@ -1,3 +1,5 @@
+@use '../abstracts/fonts' as *;
+
 .room{
     width: 100%;
     height: 90px;
@@ -6,23 +8,37 @@
     border-bottom: solid 1px #E0E0E0;
     display:flex;
     align-items: center;
+    justify-content: space-between;
     cursor: pointer;
+
+    .room-info{
+        display:flex;
+    }
 
     .photo{
         margin-left:20px;
-        display: block;
-        width: 45px;
-        height: 45px;
+        // display: block;
+        // width: 45px;
+        // height: 45px;
+        width:3.2em;
+        height: 3.2em;
         background: #E6E7ED;
-        border-radius: 50px;
+        border-radius: 50%;
         background-position: center;
         background-size: cover;
         background-repeat: no-repeat;
+        position:relative;
+
+        .user-label{
+            position:absolute;
+            bottom:-1.1em;
+            font-weight: 600;
+        }
     }
 
     .room-contact{
-        height: 43px;
-        width:60%;
+        // height: 43px;
+        // width:4em;
         white-space: nowrap;
         text-align: start;
         // overflow: hidden;
@@ -36,7 +52,8 @@
         }
         .message {
             margin: 6px 0 0 20px;
-            font-family:'Montserrat', sans-serif;
+            // font-family:'Montserrat', sans-serif;
+            font-family: $message-font-family;
             font-size: 9pt;
             color:#515151;
         }
@@ -69,6 +86,10 @@
 .group{
     // display: flex;;
     position: relative;
+    // display:inline-block;
+    justify-content: flex-start;
+    
+    // justify-content: space-around;
 
     .group-sign{
         position: absolute;
@@ -77,7 +98,9 @@
     }
 
     .timer{
-        float:right;
+        // float:right;
+        position:absolute;
+        right:.5em;
         margin-left: 15%;
     }
 }
