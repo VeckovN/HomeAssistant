@@ -35,13 +35,11 @@ const Chat = ({socket, roomMessages, roomRef, user}) =>{
     }
 
     let messageContext;
-
-    let lastUser = '';
     return(     
         <>
             <div className="header-chat">
                 <i className="icon fa fa-user-o" aria-hidden="true"></i>
-                <p className="name">Megan Leib</p>
+                <p className="name">{user.username}</p>
                 <i className="icon right clickable fa fa-ellipsis-h" aria-hidden="true"></i>
             </div>
             
@@ -83,7 +81,7 @@ const Chat = ({socket, roomMessages, roomRef, user}) =>{
             }
             </div>
             <div className="footer-chat">
-                <i className="icon fa fa-smile-o clickable" style={{fontSize:"25pt"}} aria-hidden="true"></i>
+                {/* <i className="icon fa fa-smile-o clickable" style={{fontSize:"25pt"}} aria-hidden="true"></i> */}
                 {/* <input type="text" className="write-message" placeholder="Type your message here"></input> */}
                 <input
                     type='text'
@@ -96,41 +94,6 @@ const Chat = ({socket, roomMessages, roomRef, user}) =>{
             </div>
             
         </>
-
-        // <div className='messages-container'>
-        //     {roomMessages.length >0 &&
-        //         <>
-        //             <div className='messages-box'>
-        //             {roomMessages.map(el =>{
-        //                 if(user.userID==el.from){
-        //                     messageContext=' my-message'
-        //                 }
-        //                 else{
-        //                     messageContext=' notMy-message'
-        //                 }
-
-        //                 return <>
-        //                         <div className='message'>
-        //                             <div className={`context ${messageContext}`}><span> <span className='user_name'>{user.userID==el.from ? 'Ja' : el.fromUsername}</span> : {el.message}</span> </div>
-        //                         </div>
-        //                     </>
-        //             })}
-        //             <div className='messages-box-send'>
-        //                 <input
-        //                     type='text'
-        //                     name='message-text'
-        //                     placeholder="Unesite poruku"
-        //                     ref={messageRef}
-        //                 />
-                        
-        //                 <button onClick={onSendMessageHandler}>Send</button>
-        //             </div>
-        //     </div>  
-        //         </>          
-        //     }
-            
-        // </div>
-    
     )
 }
 
