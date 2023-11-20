@@ -50,6 +50,17 @@ const Messages = ({socket,connected}) =>{
             const data = await getUserRooms(user.username);
             dispatch({type:"SET_ROOMS", data:data})
             console.log('DATA ROOMS : \n' + JSON.stringify(data));
+
+            //show message of first fetched room
+            const roomID = data[0].roomID;
+            dispatch({type:"SET_ENTERED_ROOM_ID", data:roomID})
+            //Also put room id in ref
+
+            roomRef.current = roomID;
+            //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
+            const messages = await getMessagesByRoomID(roomID)
+            dispatch({type:"SET_ROOM_MESSAGES", data:messages})
+
             dispatch({type:"SET_LOADING", payload:false})
         }
 
