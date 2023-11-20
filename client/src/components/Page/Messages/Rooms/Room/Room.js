@@ -38,15 +38,16 @@ const Room = ({roomInfo, user, houseworkers, roomRef, onRoomClickHanlder, onAddU
             {roomInfo.users.length > 1 
             ?
             // Group Room
-
-            <button className='room group' value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder}>
+            
+            <div className={`room group ${(roomInfo.roomID == roomRef.current || roomInfo.roomID==roomRef.current.value) ? 'active' : ""}`} >
+            {console.log("USER: aaaaa " , roomInfo)}
+            <button className='handler-surface' value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder}></button>
             {/* </button><button className={`room group ${roomInfo.roomID === roomInfo.roomID == roomRef.current && 'active'}`} value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder}> */}
                 {roomInfo.users.map((user) => 
                 {
                     return(
                     <>
                         <div className='group-sign'>Group</div>
-
                         <PhotoWithHover
                             url="url(https://i.pinimg.com/originals/a9/26/52/a926525d966c9479c18d3b4f8e64b434.jpg)"
                             user={user}
@@ -56,18 +57,19 @@ const Room = ({roomInfo, user, houseworkers, roomRef, onRoomClickHanlder, onAddU
                 })}
                 <div className="timer">3 min </div>
                 {/* <div className="timer">3 min {roomInfo.lastMessageTime}</div> */}
-            </button>
+            </div>
 
             :
                 //For Private
                 // only active room
                // roomInfo.roomID == roomRef.current -> then set active className
 
-            <button className ='room active' value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder}>
-            {/* <button className={`room ${roomInfo.roomID === roomInfo.roomID == roomRef.current && 'active'}`} value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder}> */}
-                {console.log("USER: aaaaa " , roomInfo)}
-                {/* IF PRIVATE THAT SHOW PROFILE PICTURE WITH NAME DESK */}
                
+            // <button className ='room active' value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder}>
+            <div className={`room ${(roomInfo.roomID == roomRef.current || roomInfo.roomID==roomRef.current.value) ? 'active' : ""}`}>
+                <button className='handler-surface' value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder}></button>
+        
+                {/* IF PRIVATE THAT SHOW PROFILE PICTURE WITH NAME DESK */}       
                 <div className='room-info'>
                     <div className="photo" style={{backgroundImage: "url(https://images.unsplash.com/photo-1497551060073-4c5ab6435f12?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=667&q=80)"}}>
                     {/* <div className="photo" src={`assets/userImages/${houseworkerProps.picturePath}`}> */}
@@ -83,7 +85,7 @@ const Room = ({roomInfo, user, houseworkers, roomRef, onRoomClickHanlder, onAddU
                 </div>
                 {/* timer for the last received message */}
                 <div className="timer">12 sec</div>
-            </button>
+            </div>
 
         }
         </>
