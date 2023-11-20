@@ -41,7 +41,7 @@ const Room = ({roomInfo, user, houseworkers, roomRef, onRoomClickHanlder, onAddU
             
             <div className={`room group ${(roomInfo.roomID == roomRef.current || roomInfo.roomID==roomRef.current.value) ? 'active' : ""}`} >
             {console.log("USER: aaaaa " , roomInfo)}
-            <button className='handler-surface' value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder}></button>
+            <button className='handler-surface' value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder} />
             {/* </button><button className={`room group ${roomInfo.roomID === roomInfo.roomID == roomRef.current && 'active'}`} value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder}> */}
                 {roomInfo.users.map((user) => 
                 {
@@ -67,7 +67,7 @@ const Room = ({roomInfo, user, houseworkers, roomRef, onRoomClickHanlder, onAddU
                
             // <button className ='room active' value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder}>
             <div className={`room ${(roomInfo.roomID == roomRef.current || roomInfo.roomID==roomRef.current.value) ? 'active' : ""}`}>
-                <button className='handler-surface' value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder}></button>
+                <button className='handler-surface' value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder} />
         
                 {/* IF PRIVATE THAT SHOW PROFILE PICTURE WITH NAME DESK */}       
                 <div className='room-info'>
