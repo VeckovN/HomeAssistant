@@ -94,31 +94,11 @@ const getMessages = async(roomID, offset=0, size=50) =>{
         const ReMessages = await zrevrange(roomKey, offset, size);
         const messages = ReMessages.reverse();
 
-        // console.log("MESSAGES: " + messages + "TP: " + typeof(messages));
-        //username of sender
-        // const mess = messages)
-
-        let messagesObj = [];
-        for(const mes of messages){
-            // console.log("EL :" + mes);
-            const mesObj = JSON.parse(mes);
-            //for each user return their username
-            const username = await usernameByUserID(mesObj.from);
-            //console.log("username: " + username + "TP: " + JSON.stringify(username))
-            mesObj.fromUsername = username[0];
-            // console.log('MESOBJ ' + JSON.stringify(mesObj));
-            messagesObj.push(mesObj);
-        }
-        // const from = mess.from;
-        // console.log("FROM: " + from);
-        // const fromUsername = await usernameByUserID(from);
-
-        // console.log("USERNAME: " + fromUsername);
-        // messages.fromUsername = fromUsername;
+        //Parsing JSON to obj
+        const messagesObj = messages.map((mes) => JSON.parse(mes));
         console.log("MESSAGESSS : " + JSON.stringify(messagesObj) + "TP: " + typeof(messagesObj));
 
         return messagesObj;
-        // //return message by message
     }
 }
 
