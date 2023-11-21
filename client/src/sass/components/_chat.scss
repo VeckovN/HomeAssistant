@@ -1,4 +1,5 @@
 @use '../abstracts/fonts' as *;
+@use '../abstracts/placeholders' as *;
 
 .header-chat{
     background-color: #FFF;
@@ -33,6 +34,8 @@
     padding: 25px 35px;
     height: 100%;
     overflow:auto;
+
+    @extend %scrollbar-chat-style;
 
     .message{
         display:flex;

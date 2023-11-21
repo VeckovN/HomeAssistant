@@ -1,3 +1,5 @@
+@use '../abstracts/placeholders' as *;
+
 
 .container{
     display: flex;
@@ -56,13 +58,14 @@
     // ROOMS 
     .rooms-container{
         height: 100%;
-        // width: 400px;
         width:400px;
-        // min-width: 250px;
         box-shadow: 0px 8px 10px rgba(0,0,0,0.20);
-        overflow: scroll;
+        //x:hidden
+        overflow:hidden scroll;
         // background-color: #87a3ec;
-        // float: left;
+
+        @extend %scrollbar-chat-style;
+        
 
         .search{
             display:flex;
