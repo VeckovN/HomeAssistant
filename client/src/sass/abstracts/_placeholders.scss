@@ -118,6 +118,35 @@
     font-weight: 600;
 }
 
+%scrollbar-chat-style{
+    &::-webkit-scrollbar{
+        width: 10px;
+        height: 10px;
+        cursor: pointer;
+    }
+
+    &::-webkit-scrollbar-track{
+        border-radius: 10px;
+        background: rgba(20, 20, 20, 0.13);
+        border: 1px solid #ccc;
+    }
+
+    &::-webkit-scrollbar-thumb{
+        border-radius: 10px;
+        background: linear-gradient(left, #fff, #e4e4e4);
+        background-color: #a5a4a4;
+        border: 1px solid #8d8d8d73;
+    }
+
+    &::-webkit-scrollbar-thumb:hover{
+        background: rgb(122, 122, 122)
+    }
+
+    &::-webkit-scrollbar-thumb:active{
+        background: linear-gradient(left, #22ADD4, #1E98BA);
+    }
+}
+
 
 
 
