@@ -1,4 +1,4 @@
-import {useEffect, useRef, useReducer, useState} from 'react'; 
+import {useEffect, useRef, useReducer, useState, useCallback} from 'react'; 
 import { useSelector } from 'react-redux';
 import Chat from './Chat/Chat.js';
 import Rooms from './Rooms/Rooms.js';
@@ -23,14 +23,18 @@ const Messages = ({socket,connected}) =>{
     const initialState = {
         loading:true,
         rooms:[],
-        roomMessages: [],
+        roomMessages: [], //current room messages
+        roomInfo:{}, //current room Info (roomID, users)
         houseworkers:'',
         enteredRoomID:''
     }
-
-
+    console.log("Messages");
     const roomRef = useRef(); //value(roomID) of showned room
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
+    const [showMenu, setShowMenu] = useState(false);
+
+    console.log("ROOM INFO", state.roomInfo);
+    console.log("enterdRoomID: " + state.enteredRoomID);
 
     useEffect(() => {
             if(connected && user){
@@ -46,36 +50,51 @@ const Messages = ({socket,connected}) =>{
             }
         },[socket]) //on socket change (SOCKET WILL CHANGE WHEN IS MESSAGE SEND --- socket.emit)
     
-        const fetchAllRooms = async () =>{   
+
+        const onShowMenuToggleHandler = () =>{
+            setShowMenu(prev => !prev);
+        }
+
+        const fetchAllRooms = ( async () =>{   
+            console.log("fetchAllRooms");
             const data = await getUserRooms(user.username);
             dispatch({type:"SET_ROOMS", data:data})
             console.log('DATA ROOMS : \n' + JSON.stringify(data));
 
             //show message of first fetched room
             const roomID = data[0].roomID;
+            // alert("roo: " + roomID);
             dispatch({type:"SET_ENTERED_ROOM_ID", data:roomID})
-            //Also put room id in ref
+            const users = data[0].users;
+            //insted setting only enterdRoomID set whole object (roomID, users[])
+            dispatch({type:"SET_ROOM_INFO", ID:roomID, usersArray:users});
 
             roomRef.current = roomID;
+
+            // alert("roomRef, : "+ roomRef.current)
+            console.log("roomREFFFFF: ", roomRef.current);
             //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
             const messages = await getMessagesByRoomID(roomID)
             dispatch({type:"SET_ROOM_MESSAGES", data:messages})
-
             dispatch({type:"SET_LOADING", payload:false})
-        }
+        });
 
         const getAllHouseworkers = async() =>{
+            console.log("getAllhouseworekres")
             const houseworkerResult = await getHouseworkers();
             dispatch({type:"SET_HOUSEWORKERS", data:houseworkerResult});
         }
     
         //onClick username read messages from him(from roomID where is it )
-        const onRoomClickHanlder = async e =>{
+
+        const onRoomClickHanlder = useCallback( async e =>{
             console.log("E VALUE: " ,e.target );
             console.log("e target value:" + e .target.value);
             const roomID = e.target.value;
             //Assing clicked roomID to roomRef (read roomID valuewiht roomRef.current.value)
             roomRef.current = e.target;
+            dispatch({type:"SET_ROOM_INFO_BY_ID", ID:roomID});
+
             if(state.enteredRoomID !='' && state.enteredRoomID != roomID){
                 //socket.emit('leave.room', state.enteredRoomID);
                 emitLeaveRoom(socket, state.enteredRoomID);
@@ -90,15 +109,23 @@ const Messages = ({socket,connected}) =>{
             //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
             const messages = await getMessagesByRoomID(roomID)
             dispatch({type:"SET_ROOM_MESSAGES", data:messages})
-        }
+
+            // if(showMenu) //useCallback is used and this doesn't make sense to be wrttien
+            //useCallback will memoize it as false value(initial) and never changed due to dependecies being empty
+            //if(showMenu)    
+                setShowMenu(false);
+        },[])
     
-        const onDeleteRoomHandler = async(e)=>{ 
+        const onDeleteRoomHandler = useCallback( async(e)=>{ 
+            console.log("onDeleteRoomHandler")
             const roomID = e.target.value;
+            console.log("ROOMIOD DELETE " + roomID);
 
             try{
                 await deleteRoom(roomID);
                 dispatch({type:"DELETE_ROOM", data:roomID});
-    
+                // setShowMenu(false);
+                
                 toast.success("You have successfully deleted the room",{
                     className:"toast-contact-message"
                 });
@@ -110,14 +137,37 @@ const Messages = ({socket,connected}) =>{
                     className:"toast-contact-message"
                 });
             }
-        }
+        },[])
 
         useEffect(() =>{
             fetchAllRooms()
             getAllHouseworkers();
         },[])
+
+        //This is bit complex async logic(taking rooms after deleting room from it(async call))
+        //Maybe use redux for this purpose.
+
+        const MessageFetching = async(roomID) =>{
+            alert("MESSAGE FETCH")
+            const messages = await getMessagesByRoomID(roomID)
+            dispatch({type:"SET_ROOM_MESSAGES", data:messages})
+            dispatch({type:"SET_ROOM_INFO_BY_ID", ID:roomID});
+            setShowMenu(false);
+        }
+        useEffect(()=>{
+            alert("state>room>useEffect")
+
+            if (state.rooms.length > 0) {
+                const firstRoomID = state.rooms[0].roomID;
+                MessageFetching(firstRoomID);
+                
+                // console.log("RoomID of the first room:", firstRoomID);
+              }
+
+        },[state.rooms]) //when is room changed ()
     
-        const onAddUserToGroupHanlder = async(roomID, username)=>{
+        const onAddUserToGroupHanlder = useCallback(async(roomID, username)=>{
+            console.log("onAddUserTo");
             if(username == ""){
                 toast.info("Select user that you want to add in room",{
                     className:"toast-contact-message"
@@ -152,13 +202,12 @@ const Messages = ({socket,connected}) =>{
             }
 
             toast.info("User is added to the room: "+ roomID );
-        }
+        }, [])
     
     return (
         <div className='container'> 
+            {state.loading ? <Spinner className='spinner'/> :
             <div className='messages-container'>
-                {state.loading ? <Spinner/> :
-                <>
                 {/* <nav className='menu'>
                     <ul>
                         <li className="item">
@@ -194,6 +243,7 @@ const Messages = ({socket,connected}) =>{
                         rooms={state.rooms}
                         houseworkers={state.houseworkers}
                         roomRef={roomRef}
+                        roomInfo={state.roomInfo}
                         user={user}
                         onAddUserToGroupHanlder={onAddUserToGroupHanlder}
                         onDeleteRoomHandler={onDeleteRoomHandler}
@@ -205,13 +255,19 @@ const Messages = ({socket,connected}) =>{
                     <Chat 
                         socket={socket} 
                         roomRef={roomRef}
+                        rooms={state.rooms}
                         roomMessages={state.roomMessages}
+                        roomInfo={state.roomInfo}
                         user={user}
+                        showMenu={showMenu}
+                        houseworkers={state.houseworkers}
+                        onAddUserToGroupHanlder={onAddUserToGroupHanlder}
+                        onDeleteRoomHandler={onDeleteRoomHandler}
+                        onShowMenuToggleHandler={onShowMenuToggleHandler}
                     />
                 </section>
-                </>
-                }
             </div>
+            }
         </div>
     )
 }

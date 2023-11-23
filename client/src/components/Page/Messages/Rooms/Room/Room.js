@@ -1,49 +1,51 @@
-import {useState} from 'react';
+import {useState, memo} from 'react';
 
 import '../../../../../sass/components/_room.scss';
 import PhotoWithHover from '../../../../../utils/PhotoWithHover';
 
-const Room = ({roomInfo, user, houseworkers, roomRef, onRoomClickHanlder, onAddUserToGroupHanlder, onDeleteRoomHandler}) =>{
+const Room = ({info, user, roomInfo, houseworkers, roomRef, onRoomClickHanlder, onAddUserToGroupHanlder, onDeleteRoomHandler}) =>{
 
     // console.log("searchTerm : " )
 
     //Every room has our own selectedUsername - we cann add user to group in multiple room
-    const [selectedUsername, setSelectedUsernam] = useState('');
-    const [searchTerm, setSearchTerm] = useState(''); 
+    // const [selectedUsername, setSelectedUsernam] = useState('');
+    // const [searchTerm, setSearchTerm] = useState(''); 
 
-    const onSelectedHandler = (username) =>{
-        setSelectedUsernam(username);
-        console.log("ROOM_ID: " + roomInfo.roomID + " SELECTED_USERNAME: " + username)    
-    }
+    // const onSelectedHandler = (username) =>{
+    //     setSelectedUsernam(username);
+    //     console.log("ROOM_ID: " + info.roomID + " SELECTED_USERNAME: " + username)    
+    // }
 
-    const ChangeSearchInputHandler = (e, roomID) =>{
-        if(selectedUsername!='')
-            setSelectedUsernam('')
-        roomRef.current = roomID; 
-        setSearchTerm(e.target.value);
-    }
+    // const ChangeSearchInputHandler = (e, roomID) =>{
+    //     if(selectedUsername!='')
+    //         setSelectedUsernam('')
+    //     roomRef.current = roomID; 
+    //     setSearchTerm(e.target.value);
+    // }
 
-    const AddUserToGroupHandler = (roomID, selectedUsername) =>{
-        setSelectedUsernam('');
-        setSearchTerm('');
-        onAddUserToGroupHanlder(roomID, selectedUsername)
-    }
+    // const AddUserToGroupHandler = (roomID, selectedUsername) =>{
+    //     setSelectedUsernam('');
+    //     setSearchTerm('');
+    //     onAddUserToGroupHanlder(roomID, selectedUsername)
+    // }
 
 
-    // console.log("ROOM INFO . USERS LENGTH: " + roomInfo.users.length);
-    //console.log("RommINfo", roomInfo);
+    // console.log("ROOM INFO . USERS LENGTH: " + info.users.length);
+    //console.log("RommINfo", info);
+
 
     return(
         <>
-            {roomInfo.users.length > 1 
+            {info.users.length > 1 
             ?
             // Group Room
             
-            <div className={`room group ${(roomInfo.roomID == roomRef.current || roomInfo.roomID==roomRef.current.value) ? 'active' : ""}`} >
-            {console.log("USER: aaaaa " , roomInfo)}
-            <button className='handler-surface' value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder} />
-            {/* </button><button className={`room group ${roomInfo.roomID === roomInfo.roomID == roomRef.current && 'active'}`} value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder}> */}
-                {roomInfo.users.map((user) => 
+            // <div className={`room group ${(info.roomID == roomRef.current || info.roomID==roomRef.current.value) ? 'active' : ""}`} >
+            <div className={`room group ${(info.roomID == roomInfo.roomID) ? 'active' : ""}`} >
+            {console.log("USER: aaaaa " , info)}
+            <button className='handler-surface' value={info.roomID} ref={roomRef} onClick={onRoomClickHanlder} />
+            {/* </button><button className={`room group ${info.roomID === info.roomID == roomRef.current && 'active'}`} value={info.roomID} ref={roomRef} onClick={onRoomClickHanlder}> */}
+                {info.users.map((user) => 
                 {
                     return(
                     <>
@@ -56,18 +58,18 @@ const Room = ({roomInfo, user, houseworkers, roomRef, onRoomClickHanlder, onAddU
                     )
                 })}
                 <div className="timer">3 min </div>
-                {/* <div className="timer">3 min {roomInfo.lastMessageTime}</div> */}
+                {/* <div className="timer">3 min {info.lastMessageTime}</div> */}
             </div>
 
             :
                 //For Private
                 // only active room
-               // roomInfo.roomID == roomRef.current -> then set active className
-
+               // info.roomID == roomRef.current -> then set active className
                
-            // <button className ='room active' value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder}>
-            <div className={`room ${(roomInfo.roomID == roomRef.current || roomInfo.roomID==roomRef.current.value) ? 'active' : ""}`}>
-                <button className='handler-surface' value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder} />
+            // <button className ='room active' value={info.roomID} ref={roomRef} onClick={onRoomClickHanlder}>
+            // <div className={`room ${(info.roomID == roomRef.current || info.roomID==roomRef.current.value) ? 'active' : ""}`}>
+            <div className={`room ${(info.roomID == roomInfo.roomID) ? 'active' : ""}`}>
+                <button className='handler-surface' value={info.roomID} ref={roomRef} onClick={onRoomClickHanlder} />
         
                 {/* IF PRIVATE THAT SHOW PROFILE PICTURE WITH NAME DESK */}       
                 <div className='room-info'>
@@ -77,7 +79,7 @@ const Room = ({roomInfo, user, houseworkers, roomRef, onRoomClickHanlder, onAddU
                         <div className="online"></div> 
                     </div>
                     <div className="room-contact">
-                        <p className="name">Name: {roomInfo.users[0]}</p>
+                        <p className="name">Name: {info.users[0]}</p>
                         {/* last message */}
                         {/* <p className="message">9 pm at the bar if possible 😳</p> */}
                         <p className="message">Last message</p>
@@ -92,19 +94,19 @@ const Room = ({roomInfo, user, houseworkers, roomRef, onRoomClickHanlder, onAddU
 
 
         // <>
-        //     <div className='users'>{roomInfo.users.map((user)=>  (<div className='roomUsers'> -{user}:{}- <span/></div>))}</div>
+        //     <div className='users'>{info.users.map((user)=>  (<div className='roomUsers'> -{user}:{}- <span/></div>))}</div>
         //     <div className='room-buttons'>
-        //         <button className='show-room-btn' value={roomInfo.roomID} ref={roomRef} onClick={onRoomClickHanlder}>Show messages</button>
+        //         <button className='show-room-btn' value={info.roomID} ref={roomRef} onClick={onRoomClickHanlder}>Show messages</button>
         //         {/* client can delete The chat room, add houseworker to group */}
         //         {user.type=="Client" &&
         //             <>                        
         //                 <div className='search-container'> 
-        //                         {roomInfo.roomID == roomRef.current ?
+        //                         {info.roomID == roomRef.current ?
         //                         <>
         //                             <input  
         //                                 placeholder='Enter houseworker username'
         //                                 type='text' 
-        //                                 onChange={(e)=> ChangeSearchInputHandler(e, roomInfo.roomID)}
+        //                                 onChange={(e)=> ChangeSearchInputHandler(e, info.roomID)}
         //                                 value={selectedUsername!='' ? selectedUsername : searchTerm} 
         //                             />
 
@@ -115,7 +117,7 @@ const Room = ({roomInfo, user, houseworkers, roomRef, onRoomClickHanlder, onAddU
         //                                     const usernameMatch = item.username.toLowerCase();
 
         //                                     const usernameStartsWithSerachInput = searchInput && usernameMatch.startsWith(searchInput);
-        //                                     const isNotInRoomUsers =!roomInfo.users.includes(item.username)
+        //                                     const isNotInRoomUsers =!info.users.includes(item.username)
 
         //                                     return usernameStartsWithSerachInput && isNotInRoomUsers && selectedUsername==''
         //                                 })
@@ -134,18 +136,18 @@ const Room = ({roomInfo, user, houseworkers, roomRef, onRoomClickHanlder, onAddU
         //                             <input  
         //                                 placeholder='Enter houseworker username'
         //                                 type='text'
-        //                                 onChange={(e)=> ChangeSearchInputHandler(e, roomInfo.roomID)}  
+        //                                 onChange={(e)=> ChangeSearchInputHandler(e, info.roomID)}  
         //                                 value={searchTerm}                    
         //                             />
         //                         }
         //                 </div>
         //                 <button 
         //                     onClass='add-user-to-group-btn'
-        //                     onClick={()=> AddUserToGroupHandler(roomInfo.roomID, selectedUsername)}
+        //                     onClick={()=> AddUserToGroupHandler(info.roomID, selectedUsername)}
         //                     disabled={!selectedUsername}
         //                     >Add user
         //                 </button>
-        //                 <button onClass='delete-room-btn' onClick={onDeleteRoomHandler} value={roomInfo.roomID}>Delete room</button>
+        //                 <button onClass='delete-room-btn' onClick={onDeleteRoomHandler} value={info.roomID}>Delete room</button>
         //             </>
         //         }
         //     </div>
@@ -153,4 +155,5 @@ const Room = ({roomInfo, user, houseworkers, roomRef, onRoomClickHanlder, onAddU
     )
 }
 
+//memo with combination with useCallback for passed function ensure that same compoennt won't re-render if the component has same value as perveous(not changed)
 export default Room;
