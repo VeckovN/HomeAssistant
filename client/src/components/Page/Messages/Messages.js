@@ -26,7 +26,8 @@ const Messages = ({socket,connected}) =>{
         roomMessages: [], //current room messages
         roomInfo:{}, //current room Info (roomID, users)
         houseworkers:'',
-        enteredRoomID:''
+        enteredRoomID:'',
+        roomsAction:'' //for handling different state.rooms update actions
     }
     console.log("Messages");
     const roomRef = useRef(); //value(roomID) of showned room
