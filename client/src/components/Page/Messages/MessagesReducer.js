@@ -22,9 +22,27 @@ export const MessagesReducer = (state, action) =>{
                 ...state,
                 roomMessages:[],
                 //find room with added (houseworker user (action.user, ) new added houseworker (state.selectedUsername))
-                rooms: [...state.rooms, {roomID:action.newRoomID, users:[action.user, action.newUsername]}]
+                rooms: [...state.rooms, {roomID:action.newRoomID, users:[action.user, action.newUsername]}],
+                roomsAction:"CREATE_NEW_GRUOP"
             }
-
+        case "SET_ROOM_INFO": //RoomInfo
+            return{
+                ...state,
+                roomInfo:{
+                    roomID: action.ID,
+                    users: [...action.usersArray]
+                }
+            }
+        case "SET_ROOM_INFO_BY_ID":
+            return{
+                ...state,
+                roomInfo:{
+                    roomID: action.ID,
+                    // users: [...action.usersArray]
+                    users: [state.rooms.find(el => el.roomID === action.ID)]
+                }
+                
+            }
         case "ADD_USER_TO_GROUP":
             return{
                 ...state,
@@ -35,7 +53,8 @@ export const MessagesReducer = (state, action) =>{
                         return{
                             ...room,
                             roomID:action.newRoomID,
-                            users: [...room.users, action.newUsername]
+                            users: [...room.users, action.newUsername],
+                            roomsAction:"ADD_USER_TO_GROUP"
                         }
                     }
                     return room;
@@ -55,10 +74,13 @@ export const MessagesReducer = (state, action) =>{
                 ] 
             }
         case "DELETE_ROOM":
+            console.log(" \n RoomsSSSSSS : ", state.rooms);
             return{
                 ...state, ///other states
-                rooms: state.rooms.filter(el => el.roomID != action.data), //action.data = roomID
-                roomMessages:[]
+                rooms: state.rooms.filter(el => el.roomID !== action.data), //action.data = roomID
+                roomsAction:'DELETE_ROOM'
+                //Set room Messages from other room
+                // roomMessages:[]
             }
         case "SET_LOADING":
             return{
