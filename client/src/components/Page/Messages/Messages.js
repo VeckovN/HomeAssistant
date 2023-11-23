@@ -88,25 +88,22 @@ const Messages = ({socket,connected}) =>{
     
         //onClick username read messages from him(from roomID where is it )
 
-        const onRoomClickHanlder = useCallback( async e =>{
-            console.log("E VALUE: " ,e.target );
-            console.log("e target value:" + e .target.value);
+        const onRoomClickHanlder = ( async e =>{
             const roomID = e.target.value;
             //Assing clicked roomID to roomRef (read roomID valuewiht roomRef.current.value)
             roomRef.current = e.target;
+            
+            dispatch({type:"SET_ENTERED_ROOM_ID", data:roomID})
             dispatch({type:"SET_ROOM_INFO_BY_ID", ID:roomID});
-
-            if(state.enteredRoomID !='' && state.enteredRoomID != roomID){
-                //socket.emit('leave.room', state.enteredRoomID);
-                emitLeaveRoom(socket, state.enteredRoomID);
-                console.log("leave.room : " + state.enteredRoomID);
+    
+            if(state.roomInfo.roomID !='' && state.roomInfo.roomID != roomID){
+                emitLeaveRoom(socket, state.roomInfo.roomID);
+                console.log("leave.room : " + state.roomInfo.roomID);
             }
 
             emitRoomJoin(socket, roomID);
             console.log("JOIN ROOM: " + roomRef.current.value + "    ROOM ID " + roomID);
 
-            dispatch({type:"SET_ENTERED_ROOM_ID", data:roomID})
-            
             //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
             const messages = await getMessagesByRoomID(roomID)
             dispatch({type:"SET_ROOM_MESSAGES", data:messages})
@@ -115,17 +112,13 @@ const Messages = ({socket,connected}) =>{
             //useCallback will memoize it as false value(initial) and never changed due to dependecies being empty
             //if(showMenu)    
                 setShowMenu(false);
-        },[])
+        })
     
         const onDeleteRoomHandler = useCallback( async(e)=>{ 
-            console.log("onDeleteRoomHandler")
             const roomID = e.target.value;
-            console.log("ROOMIOD DELETE " + roomID);
-
             try{
                 await deleteRoom(roomID);
                 dispatch({type:"DELETE_ROOM", data:roomID});
-                // setShowMenu(false);
                 
                 toast.success("You have successfully deleted the room",{
                     className:"toast-contact-message"
@@ -148,7 +141,7 @@ const Messages = ({socket,connected}) =>{
         //This is bit complex async logic(taking rooms after deleting room from it(async call))
         //Maybe use redux for this purpose.
 
-        const MessageFetching = async(roomID) =>{
+        const MessagesAfterDeletingRoom = async(roomID) =>{
             alert("MESSAGE FETCH")
             const messages = await getMessagesByRoomID(roomID)
             dispatch({type:"SET_ROOM_MESSAGES", data:messages})
@@ -158,12 +151,14 @@ const Messages = ({socket,connected}) =>{
         useEffect(()=>{
             alert("state>room>useEffect")
 
-            if (state.rooms.length > 0) {
-                const firstRoomID = state.rooms[0].roomID;
-                MessageFetching(firstRoomID);
-                
-                // console.log("RoomID of the first room:", firstRoomID);
-              }
+            if(state.roomsAction == "DELETE_ROOM")
+            {
+
+                if (state.rooms.length > 0) {
+                    const firstRoomID = state.rooms[0].roomID;
+                    MessagesAfterDeletingRoom(firstRoomID);
+                  }
+            }
 
         },[state.rooms]) //when is room changed ()
     
