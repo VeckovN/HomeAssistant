@@ -26,7 +26,6 @@ const Messages = ({socket,connected}) =>{
         roomMessages: [], //current room messages
         roomInfo:{}, //current room Info (roomID, users)
         houseworkers:'',
-        enteredRoomID:'',
         roomsAction:'' //for handling different state.rooms update actions
     }
     console.log("Messages");
@@ -35,7 +34,6 @@ const Messages = ({socket,connected}) =>{
     const [showMenu, setShowMenu] = useState(false);
 
     console.log("ROOM INFO", state.roomInfo);
-    console.log("enterdRoomID: " + state.enteredRoomID);
 
     useEffect(() => {
             if(connected && user){
@@ -64,16 +62,11 @@ const Messages = ({socket,connected}) =>{
 
             //show message of first fetched room
             const roomID = data[0].roomID;
-            // alert("roo: " + roomID);
-            dispatch({type:"SET_ENTERED_ROOM_ID", data:roomID})
             const users = data[0].users;
             //insted setting only enterdRoomID set whole object (roomID, users[])
             dispatch({type:"SET_ROOM_INFO", ID:roomID, usersArray:users});
-
             roomRef.current = roomID;
 
-            // alert("roomRef, : "+ roomRef.current)
-            console.log("roomREFFFFF: ", roomRef.current);
             //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
             const messages = await getMessagesByRoomID(roomID)
             dispatch({type:"SET_ROOM_MESSAGES", data:messages})
@@ -92,6 +85,14 @@ const Messages = ({socket,connected}) =>{
             const roomID = e.target.value;
             //Assing clicked roomID to roomRef (read roomID valuewiht roomRef.current.value)
             roomRef.current = e.target;
+
+            //don't applie logic if is clicked on same room
+            if(roomID === state.roomInfo.roomID)
+                return;
+            
+
+            console.log("\n roomID " + roomID);
+            console.log("State RoomID \n" + state.roomInfo.roomID);
             
             dispatch({type:"SET_ENTERED_ROOM_ID", data:roomID})
             dispatch({type:"SET_ROOM_INFO_BY_ID", ID:roomID});
