@@ -1,13 +1,21 @@
-import {useRef} from 'react';
+import {useRef, useState, useCallback, memo} from 'react';
 import { emitMessage } from '../../../../sockets/socketEmit';
 import { toast } from 'react-toastify';
+import ChatMenu from './ChatMenu';
 
 import '../../../../sass/components/_chat.scss';
 
-const Chat = ({socket, roomMessages, roomRef, user}) =>{
+const Chat = ({socket, roomMessages, roomRef, rooms, roomInfo, user, showMenu, houseworkers, onAddUserToGroupHanlder, onDeleteRoomHandler, onShowMenuToggleHandler }) =>{
     const messageRef = useRef(); //taken message from input
+    // const [showMenu, setShowMenu] = useState(false);
+
+    console.log("roomREFFFFF: MESSAGES", roomRef.current);
+
+    console.log("Chat");
+    alert("RoomID: " + roomInfo.roomID);
 
     const onSendMessageHandler = () =>{
+        console.log("onSendMEssageHandler")
         const message = messageRef.current.value;
         const fromRoomID = roomRef.current.value;
 
@@ -34,16 +42,35 @@ const Chat = ({socket, roomMessages, roomRef, user}) =>{
             })
     }
 
+    //use useCallback
+    // const onMenuToggleHandler = () =>{
+    //     console.log("onMenyHandler")
+    //     setShowMenu((prev) => !prev)
+    // }
+
     let messageContext;
     return(     
         <>
             <div className="header-chat">
                 <i className="icon fa fa-user-o" aria-hidden="true"></i>
                 <p className="name">{user.username}</p>
-                <i className="icon right clickable fa fa-ellipsis-h" aria-hidden="true"></i>
+                {user.type=="Client" && <i className="icon right fa fa-ellipsis-h" onClick={onShowMenuToggleHandler} aria-hidden="true"></i>}
             </div>
             
             <div className='messages-chat'>
+            {showMenu && 
+            <div className='chat-menu-container'>
+                <ChatMenu 
+                    houseworkers={houseworkers}
+                    roomRef={roomRef}
+                    rooms={rooms}
+                    roomInfo={roomInfo}
+                    onAddUserToGroupHanlder={onAddUserToGroupHanlder}
+                    onDeleteRoomHandler={onDeleteRoomHandler}
+                />
+            </div>    
+            }
+
             {roomMessages?.length >0 &&    
             <>
                 {roomMessages.map(el =>{
