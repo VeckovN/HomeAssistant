@@ -12,7 +12,7 @@ const Chat = ({socket, roomMessages, roomRef, rooms, roomInfo, user, showMenu, h
     console.log("roomREFFFFF: MESSAGES", roomRef.current);
 
     console.log("Chat");
-    alert("RoomID: " + roomInfo.roomID);
+    // alert("RoomID: " + roomInfo.roomID);
 
     const onSendMessageHandler = () =>{
         console.log("onSendMEssageHandler")
@@ -51,25 +51,44 @@ const Chat = ({socket, roomMessages, roomRef, rooms, roomInfo, user, showMenu, h
     let messageContext;
     return(     
         <>
-            <div className="header-chat">
-                <i className="icon fa fa-user-o" aria-hidden="true"></i>
-                <p className="name">{user.username}</p>
+            <div className="header-chat">                  
+                <p className="names">
+                    {roomInfo?.users?.map((room) =>(
+                        <div className='user'>
+                            <i className="fa fa-user-o" aria-hidden="true"><span>{room}</span></i>
+                        </div>
+                    ))}
+                </p>
                 {user.type=="Client" && <i className="icon right fa fa-ellipsis-h" onClick={onShowMenuToggleHandler} aria-hidden="true"></i>}
+            
+                {showMenu && 
+                <div className='chat-menu-container'>
+                    <ChatMenu 
+                        houseworkers={houseworkers}
+                        roomRef={roomRef}
+                        rooms={rooms}
+                        roomInfo={roomInfo}
+                        onAddUserToGroupHanlder={onAddUserToGroupHanlder}
+                        onDeleteRoomHandler={onDeleteRoomHandler}
+                    />
+                </div>    
+                }
             </div>
             
             <div className='messages-chat'>
-            {showMenu && 
-            <div className='chat-menu-container'>
-                <ChatMenu 
-                    houseworkers={houseworkers}
-                    roomRef={roomRef}
-                    rooms={rooms}
-                    roomInfo={roomInfo}
-                    onAddUserToGroupHanlder={onAddUserToGroupHanlder}
-                    onDeleteRoomHandler={onDeleteRoomHandler}
-                />
-            </div>    
-            }
+
+            {/* {showMenu && 
+                <div className='chat-menu-container'>
+                    <ChatMenu 
+                        houseworkers={houseworkers}
+                        roomRef={roomRef}
+                        rooms={rooms}
+                        roomInfo={roomInfo}
+                        onAddUserToGroupHanlder={onAddUserToGroupHanlder}
+                        onDeleteRoomHandler={onDeleteRoomHandler}
+                    />
+                </div>    
+            } */}
 
             {roomMessages?.length >0 &&    
             <>
@@ -117,7 +136,7 @@ const Chat = ({socket, roomMessages, roomRef, rooms, roomInfo, user, showMenu, h
                     name='message-text'
                     ref={messageRef}
                 />
-                <i className="icon send fa fa-paper-plane-o clickable" onClick={onSendMessageHandler} aria-hidden="true"></i>
+                <i className="icon send fa fa-paper-plane-o clickable" onClick={onSendMessageHandler} ></i>
             </div>
             
         </>
