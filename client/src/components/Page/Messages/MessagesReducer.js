@@ -18,7 +18,6 @@ export const MessagesReducer = (state, action) =>{
                 roomMessages:[],
                 //find room with added (houseworker user (action.user, ) new added houseworker (state.selectedUsername))
                 rooms: [...state.rooms, {roomID:action.newRoomID, users:[action.user, action.newUsername]}],
-                roomsAction:"CREATE_NEW_GRUOP"
             }
         case "SET_ROOM_INFO": //RoomInfo
             return{
@@ -49,7 +48,6 @@ export const MessagesReducer = (state, action) =>{
                             ...room,
                             roomID:action.newRoomID,
                             users: [...room.users, action.newUsername],
-                            roomsAction:"ADD_USER_TO_GROUP"
                         }
                     }
                     return room;
@@ -71,11 +69,9 @@ export const MessagesReducer = (state, action) =>{
         case "DELETE_ROOM":
             console.log(" \n RoomsSSSSSS : ", state.rooms);
             return{
-                ...state, ///other states
+                ...state, 
                 rooms: state.rooms.filter(el => el.roomID !== action.data), //action.data = roomID
                 roomsAction:'DELETE_ROOM'
-                //Set room Messages from other room
-                // roomMessages:[]
             }
         case "SET_LOADING":
             return{
