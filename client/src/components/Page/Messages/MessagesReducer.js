@@ -34,7 +34,7 @@ export const MessagesReducer = (state, action) =>{
                 roomInfo:{
                     roomID: action.ID,
                     // users: [...action.usersArray]
-                    users: [state.rooms.find(el => el.roomID === action.ID)]
+                    users: state.rooms.find(el => el.roomID === action.ID)?.users || []
                 }
                 
             }
