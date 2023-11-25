@@ -2,12 +2,10 @@ import {memo, useState, useEffect } from 'react';
 
 const ChatMenu = ({houseworkers, roomRef, rooms, roomInfo, onAddUserToGroupHanlder, onDeleteRoomHandler}) =>{
     
-    const [selectedUsername, setSelectedUsernam] = useState('');
-    const [searchTerm, setSearchTerm] = useState(''); 
-    // const [roomInfo ,setRoomInfo] =  useState({}); 
+    const [selectedUsername, setSelectedUsernam] = useState(''); //clicked username form list
+    const [searchTerm, setSearchTerm] = useState(''); // entered houseworker username(not selected)
 
     console.log("roomREFFFFF: CHATMESSAGE ", roomRef.current);
-
     console.log("ROOM INFO Chat MENU", roomInfo);
 
     const SelectedHandler = (username) =>{
@@ -23,6 +21,7 @@ const ChatMenu = ({houseworkers, roomRef, rooms, roomInfo, onAddUserToGroupHanld
     }
 
     const AddUserToGroupHandler = (roomID, selectedUsername) =>{
+        alert("AddUserToGroupHandler");
         setSelectedUsernam('');
         setSearchTerm('');
         onAddUserToGroupHanlder(roomID, selectedUsername)
@@ -36,22 +35,8 @@ const ChatMenu = ({houseworkers, roomRef, rooms, roomInfo, onAddUserToGroupHanld
     // },[roomRef]); 
     
     return (
-        
     <>
-        {console.log("roomRef: ", roomRef) }
-        {console.log("rooms: " , roomInfo.roomID)}
         <div className='search-container'> 
-            <div>roomRef.current: {roomRef.current.value}</div>
-            <div>roomInfo.roomID: {roomInfo.roomID}</div>
-            {roomInfo.roomID == roomRef.current ?
-            <>
-                <input  
-                    placeholder='Enter houseworker username'
-                    type='text' 
-                    onChange={(e)=> ChangeSearchInputHandler(e, roomInfo.roomID)}
-                    value={selectedUsername!='' ? selectedUsername : searchTerm} 
-                />
-
                 <div className='dropdown-list'>
                     {
                     houseworkers.filter(item => {
@@ -73,23 +58,21 @@ const ChatMenu = ({houseworkers, roomRef, rooms, roomInfo, onAddUserToGroupHanld
                     .slice(0,10)//render 10 items in list
                     }
                 </div>
-            </>
-            :
+
                 <input  
                     placeholder='Enter houseworker username'
                     type='text'
                     onChange={(e)=> ChangeSearchInputHandler(e, roomInfo.roomID)}  
-                    value={searchTerm}                    
+                    value={selectedUsername!='' ? selectedUsername : searchTerm}                  
                 />
-            }
         </div>
         <button 
-            onClass='add-user-to-group-btn'
+            className='add-user-to-group-btn'
             onClick={()=> AddUserToGroupHandler(roomInfo.roomID, selectedUsername)}
             disabled={!selectedUsername}
             >Add user
         </button>
-        <button onClass='delete-room-btn' onClick={onDeleteRoomHandler} value={roomInfo.roomID}>Delete room</button>
+        <button className='delete-room-btn' onClick={onDeleteRoomHandler} value={roomInfo.roomID}>Delete room</button>
     </>
     )
 }
