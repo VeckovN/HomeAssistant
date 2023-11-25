@@ -34,6 +34,7 @@ const Messages = ({socket,connected}) =>{
     const [showMenu, setShowMenu] = useState(false);
 
     console.log("ROOM INFO", state.roomInfo);
+    console.log("ROOMSMSMMSS", state.rooms);
 
     useEffect(() => {
             if(connected && user){
@@ -55,6 +56,7 @@ const Messages = ({socket,connected}) =>{
         }
 
         const fetchAllRooms = ( async () =>{   
+            // alert("FetchAlLRooms");
             console.log("fetchAllRooms");
             const data = await getUserRooms(user.username);
             dispatch({type:"SET_ROOMS", data:data})
@@ -63,7 +65,6 @@ const Messages = ({socket,connected}) =>{
             //show message of first fetched room
             const roomID = data[0].roomID;
             const users = data[0].users;
-            //insted setting only enterdRoomID set whole object (roomID, users[])
             dispatch({type:"SET_ROOM_INFO", ID:roomID, usersArray:users});
             roomRef.current = roomID;
 
@@ -89,11 +90,7 @@ const Messages = ({socket,connected}) =>{
             //don't applie logic if is clicked on same room
             if(roomID === state.roomInfo.roomID)
                 return;
-            
-
-            console.log("\n roomID " + roomID);
-            console.log("State RoomID \n" + state.roomInfo.roomID);
-            
+                        
             dispatch({type:"SET_ENTERED_ROOM_ID", data:roomID})
             dispatch({type:"SET_ROOM_INFO_BY_ID", ID:roomID});
     
@@ -103,7 +100,6 @@ const Messages = ({socket,connected}) =>{
             }
 
             emitRoomJoin(socket, roomID);
-            console.log("JOIN ROOM: " + roomRef.current.value + "    ROOM ID " + roomID);
 
             //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
             const messages = await getMessagesByRoomID(roomID)
@@ -141,9 +137,7 @@ const Messages = ({socket,connected}) =>{
 
         //This is bit complex async logic(taking rooms after deleting room from it(async call))
         //Maybe use redux for this purpose.
-
-        const MessagesAfterDeletingRoom = async(roomID) =>{
-            alert("MESSAGE FETCH")
+        const MessagesAfterRoomsAction = async(roomID)=>{
             const messages = await getMessagesByRoomID(roomID)
             dispatch({type:"SET_ROOM_MESSAGES", data:messages})
             dispatch({type:"SET_ROOM_INFO_BY_ID", ID:roomID});
@@ -152,18 +146,26 @@ const Messages = ({socket,connected}) =>{
         useEffect(()=>{
             alert("state>room>useEffect")
 
+            //onDelete function for deleting room from state.rooms (is Async)
+            //deletion must be awaited before obtaining a new roomID
             if(state.roomsAction == "DELETE_ROOM")
             {
-
                 if (state.rooms.length > 0) {
                     const firstRoomID = state.rooms[0].roomID;
-                    MessagesAfterDeletingRoom(firstRoomID);
+                    MessagesAfterRoomsAction(firstRoomID);
                   }
             }
+            if(state.roomsAction == "CREATE_NEW_GRUOP"){
+                // alert("RoomID: " + state.roomInfo.roomID);
+                // MessagesAfterRoomsAction(state.roomInfo.roomID);
+            }
+            if(state.roomsAction == ""){
+
+            } 
 
         },[state.rooms]) //when is room changed ()
     
-        const onAddUserToGroupHanlder = useCallback(async(roomID, username)=>{
+        const onAddUserToGroupHanlder = (async(roomID, username)=>{
             console.log("onAddUserTo");
             if(username == ""){
                 toast.info("Select user that you want to add in room",{
@@ -193,13 +195,22 @@ const Messages = ({socket,connected}) =>{
                 console.log("RPPM :  " + roomUsers[0].users);
                 //create new group (add user to new gruop)   
                 dispatch({type:"CREATE_NEW_GRUOP" , roomID:roomID, newRoomID:newRoomID, user:houseworker, newUsername:username})
+                toast.info("A Group with "+ houseworker + " has been created");
             }
             else{ //add user to existed group
-                dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username});
+                dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username});    
+                toast.info("User is added to the room: "+  newRoomID);
             }
 
-            toast.info("User is added to the room: "+ roomID );
-        }, [])
+            //show messages of new created group
+            MessagesAfterRoomsAction(newRoomID);
+            roomRef.current.value = newRoomID;
+
+            //joining a room to se new incoming messages
+            emitRoomJoin(socket, newRoomID);
+
+            // setShowMenu(false);
+        });
     
     return (
         <div className='container'> 
