@@ -144,26 +144,15 @@ const Messages = ({socket,connected}) =>{
             setShowMenu(false);
         }
         useEffect(()=>{
-            alert("state>room>useEffect")
-
+            alert("state>room action >useEffect")
             //onDelete function for deleting room from state.rooms (is Async)
             //deletion must be awaited before obtaining a new roomID
             if(state.roomsAction == "DELETE_ROOM")
-            {
                 if (state.rooms.length > 0) {
                     const firstRoomID = state.rooms[0].roomID;
                     MessagesAfterRoomsAction(firstRoomID);
                   }
-            }
-            if(state.roomsAction == "CREATE_NEW_GRUOP"){
-                // alert("RoomID: " + state.roomInfo.roomID);
-                // MessagesAfterRoomsAction(state.roomInfo.roomID);
-            }
-            if(state.roomsAction == ""){
-
-            } 
-
-        },[state.rooms]) //when is room changed ()
+        },[state.rooms])
     
         const onAddUserToGroupHanlder = (async(roomID, username)=>{
             console.log("onAddUserTo");
