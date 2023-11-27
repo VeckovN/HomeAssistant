@@ -261,7 +261,7 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: left;
-                margin-bottom: 1rem;
+                margin-bottom: .5em;
 
                 // button input{
                 //     /* width:4.5rem;
@@ -352,7 +352,8 @@
 
             .comment-box{
                 display: flex;
-                padding:1rem .3rem;
+                justify-content: center;
+                padding:.7em .3em;
 
                 .comment-btn{
                     width: 6rem;

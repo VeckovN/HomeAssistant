@@ -142,6 +142,10 @@ const HouseworkerCardContent = ({
                                 </div>
                             </div>
 
+                            <div className='div-text'><label className='label-text'>Commnets</label>
+                                <div className='line'> </div>   
+                            </div>
+
                             <div className='comment-box'>
                                 <button className='comment-btn' onClick={onCommentHandler} id={houseworkerProps.id} value={houseworkerProps.username}>Comment</button>
                             </div>
