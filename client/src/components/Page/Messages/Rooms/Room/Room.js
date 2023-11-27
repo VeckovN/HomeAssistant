@@ -3,48 +3,15 @@ import {useState, memo} from 'react';
 import '../../../../../sass/components/_room.scss';
 import PhotoWithHover from '../../../../../utils/PhotoWithHover';
 
-const Room = ({info, user, roomInfo, houseworkers, roomRef, onRoomClickHanlder, onAddUserToGroupHanlder, onDeleteRoomHandler}) =>{
-
-    // console.log("searchTerm : " )
-
-    //Every room has our own selectedUsername - we cann add user to group in multiple room
-    // const [selectedUsername, setSelectedUsernam] = useState('');
-    // const [searchTerm, setSearchTerm] = useState(''); 
-
-    // const onSelectedHandler = (username) =>{
-    //     setSelectedUsernam(username);
-    //     console.log("ROOM_ID: " + info.roomID + " SELECTED_USERNAME: " + username)    
-    // }
-
-    // const ChangeSearchInputHandler = (e, roomID) =>{
-    //     if(selectedUsername!='')
-    //         setSelectedUsernam('')
-    //     roomRef.current = roomID; 
-    //     setSearchTerm(e.target.value);
-    // }
-
-    // const AddUserToGroupHandler = (roomID, selectedUsername) =>{
-    //     setSelectedUsernam('');
-    //     setSearchTerm('');
-    //     onAddUserToGroupHanlder(roomID, selectedUsername)
-    // }
-
-
-    // console.log("ROOM INFO . USERS LENGTH: " + info.users.length);
-    //console.log("RommINfo", info);
-
-
+const Room = ({info, roomInfo, onRoomClickHanlder}) =>{
     return(
         <>
             {info.users.length > 1 
             ?
             // Group Room
-            
-            // <div className={`room group ${(info.roomID == roomRef.current || info.roomID==roomRef.current.value) ? 'active' : ""}`} >
             <div className={`room group ${(info.roomID == roomInfo.roomID) ? 'active' : ""}`} >
             {console.log("USER: aaaaa " , info)}
-            <button className='handler-surface' value={info.roomID} ref={roomRef} onClick={onRoomClickHanlder} />
-            {/* </button><button className={`room group ${info.roomID === info.roomID == roomRef.current && 'active'}`} value={info.roomID} ref={roomRef} onClick={onRoomClickHanlder}> */}
+            <button className='handler-surface' value={info.roomID} onClick={onRoomClickHanlder} />
                 {info.users.map((user) => 
                 {
                     return(
@@ -61,15 +28,10 @@ const Room = ({info, user, roomInfo, houseworkers, roomRef, onRoomClickHanlder, 
                 {/* <div className="timer">3 min {info.lastMessageTime}</div> */}
             </div>
 
-            :
-                //For Private
-                // only active room
-               // info.roomID == roomRef.current -> then set active className
-               
-            // <button className ='room active' value={info.roomID} ref={roomRef} onClick={onRoomClickHanlder}>
-            // <div className={`room ${(info.roomID == roomRef.current || info.roomID==roomRef.current.value) ? 'active' : ""}`}>
-            <div className={`room ${(info.roomID == roomInfo.roomID) ? 'active' : ""}`}>
-                <button className='handler-surface' value={info.roomID} ref={roomRef} onClick={onRoomClickHanlder} />
+            :  
+    
+            <div className={`room ${(info.roomID == roomInfo.roomID) ? 'active' : ""}`}>   
+                <button className='handler-surface' value={info.roomID} onClick={onRoomClickHanlder} />
         
                 {/* IF PRIVATE THAT SHOW PROFILE PICTURE WITH NAME DESK */}       
                 <div className='room-info'>
@@ -91,69 +53,8 @@ const Room = ({info, user, roomInfo, houseworkers, roomRef, onRoomClickHanlder, 
 
         }
         </>
-
-
-        // <>
-        //     <div className='users'>{info.users.map((user)=>  (<div className='roomUsers'> -{user}:{}- <span/></div>))}</div>
-        //     <div className='room-buttons'>
-        //         <button className='show-room-btn' value={info.roomID} ref={roomRef} onClick={onRoomClickHanlder}>Show messages</button>
-        //         {/* client can delete The chat room, add houseworker to group */}
-        //         {user.type=="Client" &&
-        //             <>                        
-        //                 <div className='search-container'> 
-        //                         {info.roomID == roomRef.current ?
-        //                         <>
-        //                             <input  
-        //                                 placeholder='Enter houseworker username'
-        //                                 type='text' 
-        //                                 onChange={(e)=> ChangeSearchInputHandler(e, info.roomID)}
-        //                                 value={selectedUsername!='' ? selectedUsername : searchTerm} 
-        //                             />
-
-        //                             <div className='dropdown-list'>
-        //                                 {
-        //                                 houseworkers.filter(item => {
-        //                                     const searchInput = searchTerm.toLowerCase();
-        //                                     const usernameMatch = item.username.toLowerCase();
-
-        //                                     const usernameStartsWithSerachInput = searchInput && usernameMatch.startsWith(searchInput);
-        //                                     const isNotInRoomUsers =!info.users.includes(item.username)
-
-        //                                     return usernameStartsWithSerachInput && isNotInRoomUsers && selectedUsername==''
-        //                                 })
-        //                                 .map((item) =>(
-        //                                     <div
-        //                                         key={item.id} 
-        //                                         onClick={() => onSelectedHandler(item.username)}
-        //                                         className='dropdown-row'>{item.username}
-        //                                     </div>
-        //                                 ))
-        //                                 .slice(0,10)//render 10 items in list
-        //                                 }
-        //                             </div>
-        //                         </>
-        //                         :
-        //                             <input  
-        //                                 placeholder='Enter houseworker username'
-        //                                 type='text'
-        //                                 onChange={(e)=> ChangeSearchInputHandler(e, info.roomID)}  
-        //                                 value={searchTerm}                    
-        //                             />
-        //                         }
-        //                 </div>
-        //                 <button 
-        //                     onClass='add-user-to-group-btn'
-        //                     onClick={()=> AddUserToGroupHandler(info.roomID, selectedUsername)}
-        //                     disabled={!selectedUsername}
-        //                     >Add user
-        //                 </button>
-        //                 <button onClass='delete-room-btn' onClick={onDeleteRoomHandler} value={info.roomID}>Delete room</button>
-        //             </>
-        //         }
-        //     </div>
-        // </>
     )
 }
 
-//memo with combination with useCallback for passed function ensure that same compoennt won't re-render if the component has same value as perveous(not changed)
+
 export default Room;

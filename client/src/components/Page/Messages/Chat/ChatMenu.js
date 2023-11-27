@@ -1,12 +1,9 @@
 import {memo, useState, useEffect } from 'react';
 
-const ChatMenu = ({houseworkers, roomRef, rooms, roomInfo, onAddUserToGroupHanlder, onDeleteRoomHandler}) =>{
+const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onDeleteRoomHandler}) =>{
     
     const [selectedUsername, setSelectedUsernam] = useState(''); //clicked username form list
     const [searchTerm, setSearchTerm] = useState(''); // entered houseworker username(not selected)
-
-    console.log("roomREFFFFF: CHATMESSAGE ", roomRef.current);
-    console.log("ROOM INFO Chat MENU", roomInfo);
 
     const SelectedHandler = (username) =>{
         setSelectedUsernam(username);
@@ -16,7 +13,6 @@ const ChatMenu = ({houseworkers, roomRef, rooms, roomInfo, onAddUserToGroupHanld
     const ChangeSearchInputHandler = (e, roomID) =>{
         if(selectedUsername!='')
             setSelectedUsernam('')
-        // roomRef.current = roomID; 
         setSearchTerm(e.target.value);
     }
 

@@ -28,13 +28,8 @@ const Messages = ({socket,connected}) =>{
         houseworkers:'',
         roomsAction:'' //for handling different state.rooms update actions
     }
-    console.log("Messages");
-    const roomRef = useRef(); //value(roomID) of showned room
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
     const [showMenu, setShowMenu] = useState(false);
-
-    console.log("ROOM INFO", state.roomInfo);
-    console.log("ROOMSMSMMSS", state.rooms);
 
     useEffect(() => {
             if(connected && user){
@@ -66,7 +61,6 @@ const Messages = ({socket,connected}) =>{
             const roomID = data[0].roomID;
             const users = data[0].users;
             dispatch({type:"SET_ROOM_INFO", ID:roomID, usersArray:users});
-            roomRef.current = roomID;
 
             //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
             const messages = await getMessagesByRoomID(roomID)
@@ -84,8 +78,6 @@ const Messages = ({socket,connected}) =>{
 
         const onRoomClickHanlder = ( async e =>{
             const roomID = e.target.value;
-            //Assing clicked roomID to roomRef (read roomID valuewiht roomRef.current.value)
-            roomRef.current = e.target;
 
             //don't applie logic if is clicked on same room
             if(roomID === state.roomInfo.roomID)
@@ -193,12 +185,9 @@ const Messages = ({socket,connected}) =>{
 
             //show messages of new created group
             MessagesAfterRoomsAction(newRoomID);
-            roomRef.current.value = newRoomID;
 
             //joining a room to se new incoming messages
             emitRoomJoin(socket, newRoomID);
-
-            // setShowMenu(false);
         });
     
     return (
@@ -239,7 +228,6 @@ const Messages = ({socket,connected}) =>{
                     <Rooms 
                         rooms={state.rooms}
                         houseworkers={state.houseworkers}
-                        roomRef={roomRef}
                         roomInfo={state.roomInfo}
                         user={user}
                         onAddUserToGroupHanlder={onAddUserToGroupHanlder}
@@ -251,7 +239,6 @@ const Messages = ({socket,connected}) =>{
                 <section className='chat-container'>
                     <Chat 
                         socket={socket} 
-                        roomRef={roomRef}
                         rooms={state.rooms}
                         roomMessages={state.roomMessages}
                         roomInfo={state.roomInfo}

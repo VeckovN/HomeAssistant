@@ -2,9 +2,8 @@ import Spinner from "../../../UI/Spinner";
 import Room from "./Room/Room.js";
 import {memo} from 'react'
 
-const Rooms = ({rooms, roomInfo, roomRef, user, houseworkers, onAddUserToGroupHanlder, onDeleteRoomHandler, onRoomClickHanlder}) =>{
+const Rooms = ({rooms, roomInfo, user, houseworkers, onAddUserToGroupHanlder, onDeleteRoomHandler, onRoomClickHanlder}) =>{
 
-    console.log("roomREFFFFF ROOMS: ", roomRef.current);
     return (
             <>
             {console.log("Roomsss")}
@@ -13,7 +12,6 @@ const Rooms = ({rooms, roomInfo, roomRef, user, houseworkers, onAddUserToGroupHa
                         <Room
                             info={el}
                             user={user}
-                            roomRef={roomRef}
                             roomInfo={roomInfo}
                             houseworkers={houseworkers}
                             onAddUserToGroupHanlder={onAddUserToGroupHanlder}

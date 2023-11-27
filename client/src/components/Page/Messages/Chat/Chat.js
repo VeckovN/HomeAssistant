@@ -5,19 +5,12 @@ import ChatMenu from './ChatMenu';
 
 import '../../../../sass/components/_chat.scss';
 
-const Chat = ({socket, roomMessages, roomRef, rooms, roomInfo, user, showMenu, houseworkers, onAddUserToGroupHanlder, onDeleteRoomHandler, onShowMenuToggleHandler }) =>{
+const Chat = ({socket, roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onAddUserToGroupHanlder, onDeleteRoomHandler, onShowMenuToggleHandler }) =>{
     const messageRef = useRef(); //taken message from input
-    // const [showMenu, setShowMenu] = useState(false);
-
-    console.log("roomREFFFFF: MESSAGES", roomRef.current);
-
-    console.log("Chat");
-    // alert("RoomID: " + roomInfo.roomID);
 
     const onSendMessageHandler = () =>{
-        console.log("onSendMEssageHandler")
         const message = messageRef.current.value;
-        const fromRoomID = roomRef.current.value;
+        const fromRoomID = roomInfo.roomID;
 
         if(message != ''){
             messageRef.current.value = ''
@@ -42,13 +35,6 @@ const Chat = ({socket, roomMessages, roomRef, rooms, roomInfo, user, showMenu, h
             })
     }
 
-    //use useCallback
-    // const onMenuToggleHandler = () =>{
-    //     console.log("onMenyHandler")
-    //     setShowMenu((prev) => !prev)
-    // }
-
-    let messageContext;
     return(     
         <>
             <div className="header-chat">                  
@@ -65,7 +51,6 @@ const Chat = ({socket, roomMessages, roomRef, rooms, roomInfo, user, showMenu, h
                 <div className='chat-menu-container'>
                     <ChatMenu 
                         houseworkers={houseworkers}
-                        roomRef={roomRef}
                         rooms={rooms}
                         roomInfo={roomInfo}
                         onAddUserToGroupHanlder={onAddUserToGroupHanlder}
@@ -76,20 +61,6 @@ const Chat = ({socket, roomMessages, roomRef, rooms, roomInfo, user, showMenu, h
             </div>
             
             <div className='messages-chat'>
-
-            {/* {showMenu && 
-                <div className='chat-menu-container'>
-                    <ChatMenu 
-                        houseworkers={houseworkers}
-                        roomRef={roomRef}
-                        rooms={rooms}
-                        roomInfo={roomInfo}
-                        onAddUserToGroupHanlder={onAddUserToGroupHanlder}
-                        onDeleteRoomHandler={onDeleteRoomHandler}
-                    />
-                </div>    
-            } */}
-
             {roomMessages?.length >0 &&    
             <>
                 {roomMessages.map(el =>{
