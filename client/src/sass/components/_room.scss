@@ -13,8 +13,11 @@
     cursor: pointer;
     position:relative;
 
+    &:hover{
+        background-color: #b1b1b12d ; 
+    }
+
     .handler-surface{
-        background-color: #515151;
         background-color: transparent;
         border:none;
         width: 100%;
@@ -22,6 +25,7 @@
         position:absolute;
         z-index: 10;
         cursor: pointer;
+        
     }
 
     .room-info{
@@ -46,6 +50,8 @@
             position:absolute;
             bottom:-1.1em;
             font-weight: 600;
+            font-size:$fs7;
+            font-family: $message-font-family;
             z-index: 12;
         }
     }
