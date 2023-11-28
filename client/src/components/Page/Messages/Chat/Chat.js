@@ -46,21 +46,22 @@ const Chat = ({socket, roomMessages, rooms, roomInfo, user, showMenu, houseworke
                     ))}
                 </p>
                 {user.type=="Client" && <i className="icon right fa fa-ellipsis-h" onClick={onShowMenuToggleHandler} aria-hidden="true"></i>}
-            
-                {showMenu && 
-                <div className='chat-menu-container'>
+            </div>
+
+            {showMenu && 
+                <div className='chat-menu'>
                     <ChatMenu 
                         houseworkers={houseworkers}
                         rooms={rooms}
                         roomInfo={roomInfo}
                         onAddUserToGroupHanlder={onAddUserToGroupHanlder}
                         onDeleteRoomHandler={onDeleteRoomHandler}
-                    />
-                </div>    
+                    /> 
+                </div>
                 }
-            </div>
             
-            <div className='messages-chat'>
+            {/* <div className='messages-chat'> */}
+            <div className={`messages-chat ${showMenu && 'showMenu'}`}>
             {roomMessages?.length >0 &&    
             <>
                 {roomMessages.map(el =>{
@@ -97,17 +98,18 @@ const Chat = ({socket, roomMessages, rooms, roomInfo, user, showMenu, houseworke
             </>
             }
             </div>
-            <div className="footer-chat">
+            <div className="footer-chat" >
                 {/* <i className="icon fa fa-smile-o clickable" style={{fontSize:"25pt"}} aria-hidden="true"></i> */}
                 {/* <input type="text" className="write-message" placeholder="Type your message here"></input> */}
                 <input
                     type='text'
-                    className="write-message"
+                    className={`write-message ${showMenu && 'showMenu'} `}
                     placeholder="Type your message here"
                     name='message-text'
                     ref={messageRef}
+                    disabled={showMenu}
                 />
-                <i className="icon send fa fa-paper-plane-o clickable" onClick={onSendMessageHandler} ></i>
+                <button className={`icon send fa fa-paper-plane-o clickable ${showMenu && 'showMenu'}` } onClick={onSendMessageHandler} disabled={showMenu} ></button>
             </div>
             
         </>
