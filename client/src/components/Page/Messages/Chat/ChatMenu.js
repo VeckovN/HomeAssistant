@@ -1,5 +1,7 @@
 import {memo, useState, useEffect } from 'react';
 
+import '../../../../sass/components/_chatMenu.scss';
+
 const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onDeleteRoomHandler}) =>{
     
     const [selectedUsername, setSelectedUsernam] = useState(''); //clicked username form list
@@ -17,7 +19,7 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onDel
     }
 
     const AddUserToGroupHandler = (roomID, selectedUsername) =>{
-        alert("AddUserToGroupHandler");
+        // alert("AddUserToGroupHandler");
         setSelectedUsernam('');
         setSearchTerm('');
         onAddUserToGroupHanlder(roomID, selectedUsername)
@@ -31,8 +33,20 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onDel
     // },[roomRef]); 
     
     return (
-    <>
-        <div className='search-container'> 
+    <div className='chat-menu-container'>
+        <div className='menu-option'> 
+            <div className='add-user-container'> 
+                <p>Add User </p>
+                <div className="searchbar">
+                    <i className="fa fa-search" aria-hidden="true"></i>
+                    <input  
+                        className='menu-search-input'
+                        placeholder='Enter houseworker username'
+                        type='text'
+                        onChange={(e)=> ChangeSearchInputHandler(e, roomInfo.roomID)}  
+                        value={selectedUsername!='' ? selectedUsername : searchTerm}                  
+                    />
+                </div>
                 <div className='dropdown-list'>
                     {
                     houseworkers.filter(item => {
@@ -54,22 +68,63 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onDel
                     .slice(0,10)//render 10 items in list
                     }
                 </div>
-
-                <input  
-                    placeholder='Enter houseworker username'
-                    type='text'
-                    onChange={(e)=> ChangeSearchInputHandler(e, roomInfo.roomID)}  
-                    value={selectedUsername!='' ? selectedUsername : searchTerm}                  
-                />
+                <div className='user-button'>
+                    <button 
+                        className='add-user-to-group-btn'
+                        onClick={()=> AddUserToGroupHandler(roomInfo.roomID, selectedUsername)}
+                        disabled={!selectedUsername}
+                        >Add user
+                    </button>
+                </div>
+            </div>
         </div>
-        <button 
-            className='add-user-to-group-btn'
-            onClick={()=> AddUserToGroupHandler(roomInfo.roomID, selectedUsername)}
-            disabled={!selectedUsername}
-            >Add user
-        </button>
-        <button className='delete-room-btn' onClick={onDeleteRoomHandler} value={roomInfo.roomID}>Delete room</button>
-    </>
+
+        {roomInfo.users.length > 1 &&
+            <div className='menu-option'> 
+                <div className='kick-user-container'>
+                    <p>Kick User </p>
+                    <input  
+                            placeholder='Enter houseworker username'
+                            type='text'
+                            onChange={(e)=> ChangeSearchInputHandler(e, roomInfo.roomID)}  
+                            value={selectedUsername!='' ? selectedUsername : searchTerm}                  
+                        />
+                    <div className='dropdown-list'>
+                        {
+                        houseworkers.filter(item => {
+                            const searchInput = searchTerm.toLowerCase();
+                            const usernameMatch = item.username.toLowerCase();
+
+                            const usernameStartsWithSerachInput = searchInput && usernameMatch.startsWith(searchInput);
+                            const isNotInRoomUsers =!roomInfo.users.includes(item.username)
+
+                            return usernameStartsWithSerachInput && isNotInRoomUsers && selectedUsername==''
+                        })
+                        .map((item) =>(
+                            <div
+                                key={item.id} 
+                                onClick={() => SelectedHandler(item.username)}
+                                className='dropdown-row'>{item.username}
+                            </div>
+                        ))
+                        .slice(0,5)//render 5 items in list
+                        }
+                    </div>
+                    <div className='user-button'>
+                        <button 
+                            className='kick-user-from-group-btn'
+                            onClick={()=> AddUserToGroupHandler(roomInfo.roomID, selectedUsername)}
+                            disabled={!selectedUsername}
+                            >Kick user
+                        </button>
+                </div>
+            </div>
+        </div>
+        }
+        {/* <div className='delete-container'>
+            <button className='delete-room-btn' onClick={onDeleteRoomHandler} value={roomInfo.roomID}>Delete room</button>
+        </div> */}
+    </div>
     )
 }
 export default ChatMenu;
