@@ -12,10 +12,6 @@ import Spinner from '../../UI/Spinner.js';
 
 import '../../../sass/pages/_messages.scss';
 
-//@TODO = ADD button on Houseworker Card for addding this user in some chat
-//@TODO = Add Search form for searching for houseworker which you want to add in chat 
-//instead fetching all houseworkers and list them
-
 const Messages = ({socket,connected}) =>{
 
     const {user} = useSelector((state) => state.auth)
@@ -51,7 +47,6 @@ const Messages = ({socket,connected}) =>{
         }
 
         const fetchAllRooms = ( async () =>{   
-            // alert("FetchAlLRooms");
             console.log("fetchAllRooms");
             const data = await getUserRooms(user.username);
             dispatch({type:"SET_ROOMS", data:data})
@@ -136,7 +131,7 @@ const Messages = ({socket,connected}) =>{
             setShowMenu(false);
         }
         useEffect(()=>{
-            alert("state>room action >useEffect")
+            // alert("state>room action >useEffect")
             //onDelete function for deleting room from state.rooms (is Async)
             //deletion must be awaited before obtaining a new roomID
             if(state.roomsAction == "DELETE_ROOM")
