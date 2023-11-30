@@ -15,7 +15,6 @@ const PhotoWithHover = ({url, user}) => {
         <div className="photo" onMouseOver={handlerMouseOver} onMouseOut={handleMouseOut} style={{backgroundImage: url}}>
             <div className="online"></div>
             {isHovering && <div className='user-label'>{user}</div>}
-            {/* <div className="online"></div> */}
         </div>
     )
 }
