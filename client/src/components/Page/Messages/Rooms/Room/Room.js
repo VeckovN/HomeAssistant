@@ -2,6 +2,7 @@ import {useState, memo} from 'react';
 
 import '../../../../../sass/components/_room.scss';
 import PhotoWithHover from '../../../../../utils/PhotoWithHover';
+import Photo from '../../../../../utils/Photo';
 
 const Room = ({info, roomInfo, onRoomClickHanlder}) =>{
     return(
@@ -17,7 +18,7 @@ const Room = ({info, roomInfo, onRoomClickHanlder}) =>{
                     return(
                     <>
                         <div className='group-sign'>Group</div>
-                        <PhotoWithHover
+                        <Photo
                             url="url(https://i.pinimg.com/originals/a9/26/52/a926525d966c9479c18d3b4f8e64b434.jpg)"
                             user={user}
                         />
