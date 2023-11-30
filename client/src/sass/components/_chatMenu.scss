@@ -1,82 +1,88 @@
 @use '../base/typography' as *;
+@use '../abstracts/colors' as *;
+@use '../abstracts/fonts' as *;
 
 .chat-menu-container{
-    position: absolute;
+    // position: relative;
     display: flex;
     flex-wrap: wrap;
-    // flex-direction: column;
-    // justify-content: center;
+    font-family: $root-font-family-3;
 
-    // top:0;
-    // left:0em;
     width: 100%;
     height: 10em;
-    // width: 60%;
-    // height: 100%;
-    background-color: aqua;
-    z-index: 10;
+    
+    margin:.5em 0;
 
     .menu-option{
         display: flex;
-        // justify-content: center;
         flex-direction: column;
-        // align-items: center;
-
-        //flex-grow, flex-shrink, flex-basis.
-        // flex: 1 2 20%;
 
         //After items wrap its take width to max (without that it will be only 50% of width )
         flex-grow: 1; 
-        // flex-shrink: 1;
-        flex-basis: 50%;
-        background-color: saddlebrown;
-        padding:0em .2em;
+        // // flex-shrink: 1;
+        // flex-basis: 50%;
+        // flex: 1 2 20%;
 
-        border:1px solid black;
+        padding:0 .2em;
 
-        p{
+        border-radius:$border-radisu-xsm;
+    
+        .menu-option-title{
+            font-family: $message-font-family;
+            font-family: $root-font-family-3;
             font-size: $fs3;
+            font-weight: 500;
             text-align: center;
-            margin:.5em 0;
+            margin:.8em 0;
+            color:$black;
         }
+
 
         .searchbar{
             height: 2em;
             background-color: #FFF;
-            // width: 70%;
             padding: 0 20px;
             border-radius: 50px;
             border: 1px solid #EEEEEE;
             display:flex;
             align-items: center;
             cursor: pointer;
-
-            input{
+            position: relative;
+            
+            .menu-search-input{
                 margin-left: 15px;
                 height:2.2em;
-                width:100%;
+                width: 100%;
                 border:none;
-                font-family: 'Montserrat', sans-serif;;
             }
         }
 
-        .menu-search-input{
-            
-        }
 
         .dropdown-list{
-            // border:1px solid black;
             text-align: center;
             margin:.3em;
+            color:$grey-9;
 
             .dropdown-row{
                 font-size: $fs3;
-                font-weight: 600;
+                font-weight: 500;
                 cursor: pointer;
+                
 
-                &:hover{
-                    color:#EEEEEE;
+                //dropdown-row-item
+
+                &-item{
+                    display:inline-block;
+                    text-align: start;
+                    // color:red;
+                    // border-bottom: 2px solid black;
+
+                    &:hover{
+                        font-weight: 700;
+                        border-bottom: 2px solid black;
+                    }
                 }
+
             }
         }
     }
@@ -84,24 +90,55 @@
     .add-user-container{
         display: flex;
         flex-direction: column;
-        // align-items: center;
-        height: 100%;
-        background-color: rgb(99, 70, 49);
-        // width: 80%;
+
+        background-color: $grey-1;
+        padding:0 .2em;
+        margin:.2em 0;
         
+        border-radius:$border-radisu-xsm;
+
+        button{
+            width: 8em;
+            height: 2em;
+            margin: .5em .5em;
+        }
+
     }
 
     .kick-user-container{
         display: flex;
         flex-direction: column;
-        background-color: salmon;
-        // width: 100%;
-        height: 100%;
+        background-color: $grey-1;
+
+        border-radius:$border-radisu-xsm;
+        // height: 100%;
+        padding:0 .2em;
+        margin:.2em 0;
+
+        button{
+            width: 8em;
+            height: 2em;
+
+            margin: .5em .5em;
+        }
     }
 
     .delete-container{
-        // position: relative;
-        // left: 50%;
-        // transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        background-color: $grey-1;
+
+        border-radius:$border-radisu-xsm;
+        // width: 100%;
+        // height: 100%;
+        padding:0 .2em;
+        margin:.2em 0;
+
+        button{
+            width: 8em;
+            height: 2em;
+
+            margin: 0 auto 1em auto ;
+        }
     }
 }

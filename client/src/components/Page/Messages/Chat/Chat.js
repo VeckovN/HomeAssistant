@@ -58,7 +58,7 @@ const Chat = ({socket, roomMessages, rooms, roomInfo, user, showMenu, houseworke
                         onDeleteRoomHandler={onDeleteRoomHandler}
                     /> 
                 </div>
-                }
+            }
             
             {/* <div className='messages-chat'> */}
             <div className={`messages-chat ${showMenu && 'showMenu'}`}>
