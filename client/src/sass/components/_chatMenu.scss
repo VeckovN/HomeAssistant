@@ -1,13 +1,12 @@
 @use '../base/typography' as *;
+@use '../abstracts/placeholders' as *;
 @use '../abstracts/colors' as *;
 @use '../abstracts/fonts' as *;
 
 .chat-menu-container{
-    // position: relative;
     display: flex;
     flex-wrap: wrap;
     font-family: $root-font-family-3;
-
     width: 100%;
     height: 10em;
     
@@ -28,10 +27,9 @@
         border-radius:$border-radisu-xsm;
     
         .menu-option-title{
-            font-family: $message-font-family;
             font-family: $root-font-family-3;
             font-size: $fs3;
-            font-weight: 500;
+            font-weight: 600;
             text-align: center;
             margin:.8em 0;
             color:$black;
@@ -54,6 +52,14 @@
                 height:2.2em;
                 width: 100%;
                 border:none;
+
+                font-family: $root-font-family-2;
+                font-weight: 700;
+
+                &::placeholder{
+                    font-weight: 500;
+                }
+               
             }
         }
 
@@ -63,8 +69,9 @@
             margin:.3em;
             color:$grey-9;
 
+
             .dropdown-row{
-                font-size: $fs3;
+                font-size: $fs5;
                 font-weight: 500;
                 cursor: pointer;
                 
@@ -88,56 +95,25 @@
     }
 
     .add-user-container{
-        display: flex;
-        flex-direction: column;
-
-        background-color: $grey-1;
-        padding:0 .2em;
-        margin:.2em 0;
-        
-        border-radius:$border-radisu-xsm;
+        @extend %chat-menu-item;
 
         button{
-            width: 8em;
-            height: 2em;
             margin: .5em .5em;
         }
 
     }
 
     .kick-user-container{
-        display: flex;
-        flex-direction: column;
-        background-color: $grey-1;
-
-        border-radius:$border-radisu-xsm;
-        // height: 100%;
-        padding:0 .2em;
-        margin:.2em 0;
-
+        @extend %chat-menu-item;
         button{
-            width: 8em;
-            height: 2em;
-
             margin: .5em .5em;
         }
     }
 
     .delete-container{
-        display: flex;
-        flex-direction: column;
-        background-color: $grey-1;
-
-        border-radius:$border-radisu-xsm;
-        // width: 100%;
-        // height: 100%;
-        padding:0 .2em;
-        margin:.2em 0;
+        @extend %chat-menu-item;
 
         button{
-            width: 8em;
-            height: 2em;
-
             margin: 0 auto 1em auto ;
         }
     }
