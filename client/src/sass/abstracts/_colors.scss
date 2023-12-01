@@ -30,19 +30,19 @@ $color-hs-1:#babdde;
 //#C2D9FF
 
 //Gray
-$black:#080808;
-$grey-10: #202020; //rgb(32,32,32)
-$grey-9: #383838;
-$grey-8:#505050;
-$grey-7:#686868;
-$grey-6:#787878;
-$grey-5:#989898;
-$grey-4:#B0B0B0;
-$grey-3:#C8C8C8;
-$grey-2:#D8D8D8;
-$grey-1:#E0E0E0;
-$white-smoke:#F5F5F5;
 $white:#F8F8F8;
+$white-smoke:#F5F5F5;
+$grey-1:#E0E0E0;
+$grey-2:#D8D8D8;
+$grey-3:#C8C8C8;
+$grey-4:#B0B0B0;
+$grey-5:#989898;
+$grey-6:#787878;
+$grey-7:#686868;
+$grey-8:#505050;
+$grey-9: #383838;
+$grey-10: #202020; //rgb(32,32,32)
+$black:#080808;
 
 
 
@@ -54,3 +54,6 @@ $nav-hover-color: #13a7ec;
 // $color-hs-label:rgb(110,116,185);
 $color-hs-label: $color-hs-4;
 $color-hs-background:rgba(0,0,0,0.75);
+
+//error
+$color-error: rgb(206, 33, 33, 1);
