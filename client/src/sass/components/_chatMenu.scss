@@ -112,9 +112,10 @@
 
     .delete-container{
         @extend %chat-menu-item;
+        height: 8.1em;
 
         button{
-            margin: 0 auto 1em auto ;
+            margin: .3em auto 1em auto ;
         }
     }
 }
