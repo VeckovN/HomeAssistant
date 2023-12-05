@@ -319,7 +319,7 @@
                     .close-rate-button{
                         background-color: rgb(182, 69, 69);
                         cursor: pointer;
-                        color:$grey-3;
+                        color:$white;
 
                         &:hover{
                             background-color: rgb(177, 46, 46);
@@ -339,7 +339,7 @@
                     .accept-rate-button{
                         background-color: rgb(63, 185, 63);
                         cursor: pointer;
-                        color:$grey-3;
+                        color:$white;
 
                         &:hover{
                             background-color: rgb(42, 158, 42);
@@ -384,9 +384,10 @@
 
         input{
             width:50%;
-            height: 1.8rem;
+            height: 2rem;
             left:50%;
             transform:translate(50%, -50%);
+            padding:0em .4em;
         
             border-radius: .5rem;
         }
@@ -409,6 +410,8 @@
     
             position:relative;
             right:10%;
+
+            cursor: pointer;
 
             &:hover{
                 background-color: rgb(22, 75, 22) ;
