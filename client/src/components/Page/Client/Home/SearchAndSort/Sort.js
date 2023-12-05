@@ -37,7 +37,7 @@ const Sort = (prop) =>{
         <div className='sort'>
             <div className="sort-box">
                 <SortButton
-                    label="Age 🠑"
+                    label="Age"
                     value="AgeUp" 
                     selectSortHandler={selectSortHandler}
                     selectedOption={selectedOption}
@@ -45,21 +45,21 @@ const Sort = (prop) =>{
 
                 <SortButton
                     id='sort-2' 
-                    label="Age 🠓"
+                    label="Age"
                     value="AgeDown" 
                     selectSortHandler={selectSortHandler}
                     selectedOption={selectedOption}
                 />
 
                 <SortButton
-                    label="Rating 🠑"
+                    label="Rating"
                     value="RatingUp" 
                     selectSortHandler={selectSortHandler}
                     selectedOption={selectedOption}
                 />
 
                 <SortButton
-                    label="Rating 🠓"
+                    label="Rating"
                     value="RatingDown" 
                     selectSortHandler={selectSortHandler}
                     selectedOption={selectedOption}
