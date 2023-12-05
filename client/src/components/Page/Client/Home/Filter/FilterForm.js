@@ -5,8 +5,8 @@ const FilterForm = ({city_options, profession_options, onChange, onChangeCity, o
         <div className='filter-box'>
 
             <div className='filter-box-item'>
-                <label className='filter-lb'>Professions:</label>
-                <div className='select-filter-box'>
+                <label className='filter-lb'>Professions</label>
+                <div className='filter-card'>   
                     <Select 
                         className='filter-select'
                         placeholder="Select profession"
@@ -19,7 +19,7 @@ const FilterForm = ({city_options, profession_options, onChange, onChangeCity, o
             </div>
 
             <div className='filter-box-item'>
-                <label className='filter-lb'>City:</label>
+                <label className='filter-lb'>City</label>
                 <div className='filter-card'>   
                     <Select 
                         className='filter-select'
@@ -32,7 +32,7 @@ const FilterForm = ({city_options, profession_options, onChange, onChangeCity, o
             </div>
 
             <div className='filter-box-item'>
-                <label className='filter-lb'>Gender:</label>
+                <label className='filter-lb'>Gender</label>
                 <div className='filter-card'>
                     <div className='filter-item'>
                         <input type="radio"  onChange={onChange} name="gender" value="Male"/>
@@ -46,7 +46,7 @@ const FilterForm = ({city_options, profession_options, onChange, onChangeCity, o
             </div>
 
             <div className='filter-box-item'>
-                <label className='filter-lb'>Age:</label>
+                <label className='filter-lb'>Age</label>
                 <div className='filter-card'>
                     <div className='filter-item'>
                         <label>From</label>
