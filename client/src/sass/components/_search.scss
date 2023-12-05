@@ -1,11 +1,11 @@
+@use '../abstracts/colors' as *;
+@use '../abstracts/fonts' as *;
+@use '../base/typography' as *;
 
     .input-search{
         position:absolute;
-        /* background-color: wheat; */
-        /* opacity: .9; */
         height: 80%;
         width:70%;
-        /* max-width: 20rem; */
         left:26%;
         top: .5em;
 
@@ -14,34 +14,46 @@
             justify-content: center;
             align-items: center;
             position:relative;
-            /* background-color: turquoise; */
             height: 50%;
             width: 80%;
-            max-width: 77rem;
+            max-width: 77em;
             top:25%;
             left:10%;
 
             .search{
                 position:relative;
                 width: 100%;
-                height: 2.2em;
-                opacity: .7;
+                height: 2.5em;
                 border-radius: .4rem;
+
+                background-color: rgb(0,0,0,0.70);
+                color:#ffff;
+                box-shadow: 0 5px 15px rgba(0,0,0,.7);
+                border:none;
+                font-family: $root-font-family-2;
+                font-size: .85em;
+                font-weight: 600;
+                padding-left:1em;
+
+                &::placeholder{
+                    color:$grey-2;
+                }
             }
 
             button{
                 position: absolute;
-                right: .1rem;
-                width:3.4rem;
-                height: 1.6rem;
+                right: .01rem;
+                width:4.5em;
+                height: 100%;
+                
                 border-radius: 0em .5em .5em 0em;
                 border:none;
                 font-weight: 600;
 
                 &:hover{
-                    background-color: rgb(192, 192, 192);
+                    background-color: white;
                     /* border:none; */
-                    border:1px solid  black;
+                    // border:1px solid  black;
                     cursor: pointer;
                 }
             }
