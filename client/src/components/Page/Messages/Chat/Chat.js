@@ -2,6 +2,9 @@ import {useRef, useState, useCallback, memo} from 'react';
 import { emitMessage } from '../../../../sockets/socketEmit';
 import { toast } from 'react-toastify';
 import ChatMenu from './ChatMenu';
+import PersonIcon from '@mui/icons-material/Person';
+import SendIcon from '@mui/icons-material/Send';
+import MenuIcon from '@mui/icons-material/Menu';
 
 import '../../../../sass/components/_chat.scss';
 
@@ -41,11 +44,12 @@ const Chat = ({socket, roomMessages, rooms, roomInfo, user, showMenu, houseworke
                 <p className="names">
                     {roomInfo?.users?.map((room) =>(
                         <div className='user'>
-                            <i className="fa fa-user-o" aria-hidden="true"><span>{room}</span></i>
+                            <PersonIcon fontSize='small'/><span>{room}</span>
                         </div>
                     ))}
                 </p>
-                {user.type=="Client" && <i className="icon right fa fa-ellipsis-h" onClick={onShowMenuToggleHandler} aria-hidden="true"></i>}
+                {user.type=="Client" && <div className='menu-icon' onClick={onShowMenuToggleHandler} aria-hidden="true"><MenuIcon/></div>}
+                
             </div>
 
             {showMenu && 
@@ -109,7 +113,7 @@ const Chat = ({socket, roomMessages, rooms, roomInfo, user, showMenu, houseworke
                     ref={messageRef}
                     disabled={showMenu}
                 />
-                <button className={`icon send fa fa-paper-plane-o clickable ${showMenu && 'showMenu'}` } onClick={onSendMessageHandler} disabled={showMenu} ></button>
+                <button className={`send-icon ${showMenu && 'showMenu'}` } onClick={onSendMessageHandler} disabled={showMenu}><SendIcon/></button>
             </div>
             
         </>

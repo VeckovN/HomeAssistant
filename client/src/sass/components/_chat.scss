@@ -1,19 +1,29 @@
 @use '../abstracts/fonts' as *;
 @use '../abstracts/placeholders' as *;
+@use '../abstracts/colors' as *;
 
 .header-chat{
     background-color: #FFF;
+    background-color: $black-4;
+    border-bottom: 1px solid $white;
     height: 7em;
     box-shadow: 0px 3px 2px rgba(0,0,0,0.100);
     display:flex;
     align-items: center;
     position:relative;
 
-    .icon {
-        margin-left: 30px;
-        color:#515151;
+
+    .menu-icon{
+        margin-left: auto;
+        margin-right:1em;
+        color:$white;
         font-size: 14pt;
         cursor: pointer;
+        // background-color: red;
+
+        &:hover{
+            color:$grey-3;
+        }
     }
 
     .names {
@@ -23,9 +33,10 @@
         text-transform: uppercase;
         font-family:'Montserrat', sans-serif;
         font-size: 13pt;
-        color:#515151;
+        color:$white;
 
         .user{  
+            display: flex;
             
             span{   
                 padding-left:.2em;
@@ -127,29 +138,30 @@
         font-size: 14pt;
     }
 
-    .send {
+    .send-icon{
         color:#fff;
-        background-color: #4f6ebd;
+        background-color: $color-hs-5;
         border:none;
-        // position: absolute;
-        // right: 50px;
         margin-right: 30px;
-        padding: 12px 12px 12px 12px;
-        border-radius: 50px;
-        font-size: 14pt;
+        padding: 9px 9px 9px 9px;
+        border-radius: 50%;
+        cursor: pointer;
 
         &:hover{
-            background-color: #3f64c0;
+            background-color: $color-hs-6;
         }
     }
 
     .write-message {
-        // border:none !important;
-        border:none;
         width:80%;
         height: 40px;
+
         margin-left: 20px;
         padding: 10px;
+
+        font-family: $root-font-family-2;
+        border:none;
+        border-radius: .5em;
 
         &:hover{
             border: 2px solid black;
