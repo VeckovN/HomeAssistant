@@ -1,49 +1,21 @@
 @use '../abstracts/colors' as *;
-@use '../abstracts//colors' as *;
+@use '../abstracts/fonts' as *;
 @use '../abstracts/placeholders' as *;
-
-/* .profile_container{
-    display: flex;
-    flex-direction: column;
-    padding:6rem 0;
-    width: 100%;
-    height: 100%;
-} */
 
 .profile-container{
     @extend %profile-container;
-    // display: flex;
-    // flex-direction: column;
-    // padding:8rem 0;
-    // width: 100%;
-    // height: 100%;
-    // align-items: center;
+   
+    h1{
+        margin-top: 2em;
+        font-family: $root-font-family-3;
+        letter-spacing: .02em;
+        color:$white;
+    }
 
     .cl-profile-form{
         @extend %profile-form-style;
-        // position:relative;
-        // margin:3rem 0rem 0rem 0rem;
-        // padding:1.4rem 1rem;
-        
-        // width: 40%;
-        // max-width: 450px;
-        // min-width:300px;
-
-        // display: flex;
-        // flex-direction: column;
-        // justify-content: center;
-        // align-items: center;
-        // border-radius: 1rem;
-
-        // background-color: rgba(218, 228, 238, 0.8);
-
-        // display: flex;
-        // flex-direction: column;
-        // z-index: 100;
     
-
         .input-label-form{
-            //
 
             .profile-input-container{
                 padding:.6rem 1rem;
@@ -54,30 +26,36 @@
 
                 input{
                     @extend %input-style;
-                    // margin:.1rem 0;
-                    // border:none;
-                    // background-color: transparent;
-                    // border-bottom: 2px solid rgba(19, 16, 16, 0.466);
-                    // outline: none;
-                    // color:black;
-
-                    // &::placeholder{
-                    //     color:black;
-                    // }
                 }
 
                 //select
                 .dropdown{
-                    color:$nav-hover-color;
+                    color:$black;
+                }
+
+                .input-errors{
+                    @extend %form-input-error;
                 }
 
             }
 
             .profile-submit{
                 width: 8rem;
-                height: 1.7rem;
-                align-self: center;
-                margin-left: 4rem;
+                height: 2rem;
+                // align-self: center;
+                margin: 0 6em;
+                border:none;
+                border-radius: $border-radisu-xsm;
+                font-family: $root-font-family-3;
+                background-color: $white;
+                cursor: pointer;
+
+                font-weight: 500;
+
+                &:hover{
+                    background-color: $grey-2;
+                    font-weight: 550;
+                }
             }
         }
 
