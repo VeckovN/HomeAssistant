@@ -207,7 +207,6 @@ const useClient = (user) =>{
     const searchDataHanlder = useCallback((searchDataObj) =>{
         //searchData is data from SearchAndSort(Child) component
         console.log("SEARCH: " + JSON.stringify(searchDataObj));
-        alert("searchDataHanlder = useCallback((searchDataObj)");
 ; 
         //This will ensure that the old key is overide with new value and new key added to this object
         setSearchData(prev=>{
