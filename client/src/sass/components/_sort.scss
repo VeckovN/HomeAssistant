@@ -1,6 +1,7 @@
 @use '../abstracts/fonts' as *;
 @use '../base/typography' as *;
 @use '../abstracts/mixins' as *;
+@use '../abstracts/colors' as *;
 
 .sort {
     position: relative;
@@ -35,9 +36,13 @@
         
         }
         .selected{
-            background-color: rgb(240, 171, 68);
+            background-color: $grey-3;
             color:black;
-            font-weight: 600;
+            font-weight: 500;
+
+            &:hover{
+                background-color: $grey-4;
+            }
         }
 
         #sort-2{
