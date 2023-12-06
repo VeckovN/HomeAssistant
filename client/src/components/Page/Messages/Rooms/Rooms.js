@@ -5,7 +5,7 @@ import {memo} from 'react'
 const Rooms = ({rooms, roomInfo, user, houseworkers, onAddUserToGroupHanlder, onDeleteRoomHandler, onRoomClickHanlder}) =>{
 
     return (
-            <>
+            <div className='rooms'>
             {console.log("Roomsss")}
                 {rooms ?
                     rooms.map((el, index)=>(      
@@ -22,7 +22,7 @@ const Rooms = ({rooms, roomInfo, user, houseworkers, onAddUserToGroupHanlder, on
                 : <Spinner></Spinner>
                 }
                 {rooms.length==0 && <div className='no_rooms'>You have no conversation</div>}
-            </>
+            </div>
     )
 }
 

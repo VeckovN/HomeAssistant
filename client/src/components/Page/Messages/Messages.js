@@ -213,11 +213,8 @@ const Messages = ({socket,connected}) =>{
                 </nav> */}
 
                 <section className='rooms-container'>
-                    <div className='room search'>
-                        <div className="searchbar">
-                            <i className="fa fa-search" aria-hidden="true"></i>
-                            <input type="text" placeholder="Search..."></input>
-                        </div>
+                    <div className='room-chat-header'>
+                        <div className='header-label'>Chat Rooms</div>
                     </div>
 
                     <Rooms 
