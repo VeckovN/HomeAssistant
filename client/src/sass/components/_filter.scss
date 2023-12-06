@@ -4,16 +4,15 @@
 
 .filter-box{
     @include flex-with-direction-center($direction:column);
-
     width:17em;
-    background-color: rgb(0,0,0,0.70);
-    color:#ffff;
 
+    // font-family: $root-font-family-1;
 
-    // opacity: 0.8;
     margin:1rem 0 0rem 2rem;
     padding:2rem 1rem;
 
+    background-color: rgb(0,0,0,0.70);
+    color:#ffff;
     box-shadow: 0 5px 15px rgba(0,0,0,.7);
     border-radius: .5rem;
 
@@ -24,6 +23,8 @@
 
     .filter-select{
         width:14rem;
+        // font-family: $root-font-family-1;
+        
     }
 
     .select-filter-box{
@@ -33,23 +34,18 @@
         width: 100%;
         margin:.2rem .2rem .2rem .2rem;
 
-        .filter-select{
-            background-color: red;
-        }
     }
 
     .filter-lb{
         margin:.3em 0 .2em 0;
         padding-bottom:.2em;
         
-        font-size:1.2rem;
         font-size: $fs3;
         font-weight: 500;
     }
 
     .filter-card{
         @include flex-with-direction();
-        font-size:1.1rem;
         font-size: $fs4;
         font-weight: 500;
 
