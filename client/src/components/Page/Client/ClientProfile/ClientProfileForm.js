@@ -26,7 +26,7 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                                     }
                                 })}
                             />
-                            <div className='input_errors'>{errors.first_name?.message}</div>
+                            <div className='input-errors'>{errors.first_name?.message}</div>
                         </div>
 
                         <div className='profile-input-container'>
@@ -44,7 +44,7 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                                     }
                                 })}
                             />
-                            <div className='input_errors'>{errors.last_name?.message}</div>
+                            <div className='input-errors'>{errors.last_name?.message}</div>
                         </div>
 
                         <div className='profile-input-container'>
@@ -63,7 +63,7 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                                     }
                                 })}
                             />
-                            <div className='input_errors'>{errors.email?.message}</div>
+                            <div className='input-errors'>{errors.email?.message}</div>
                         </div>
 
                         <div className='profile-input-container'>
@@ -76,7 +76,7 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                                 autoComplete="new-password"
                                 {...register('password')}
                                 />
-                            <div className='input_errors'>{errors.password?.message}</div>
+                            <div className='input-errors'>{errors.password?.message}</div>
                         </div>
 
                         {watch('password') &&  //only if is password entered
@@ -97,7 +97,7 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                                     }
                                 })}
                             />
-                            <div className='input_errors'>{errors.confirmPassword?.message}</div>
+                            <div className='input-errors'>{errors.confirmPassword?.message}</div>
                         </div>
                         }
 
@@ -111,7 +111,7 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                                 onChange={onCityChangeHandler}
                                 isClearable
                             />
-                            <div className='input_errors'>{errors.city?.message}</div>
+                            <div className='input-errors'>{errors.city?.message}</div>
                         </div>
                         <br></br>
 
