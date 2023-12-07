@@ -124,7 +124,6 @@ const Messages = ({socket,connected}) =>{
             setShowMenu(false);
         }
         useEffect(()=>{
-            // alert("state>room action >useEffect")
             //onDelete function for deleting room from state.rooms (is Async)
             //deletion must be awaited before obtaining a new roomID
             if(state.roomsAction == "DELETE_ROOM")
