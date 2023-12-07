@@ -3,14 +3,16 @@
 @use '../abstracts/colors' as *;
 
 .room{
-    width: 100%;
-    height: 90px;
-    background-color: $black-5;
-    border:none;
-    border-bottom: solid 3px $black-1;
     display:flex;
     align-items: center;
     justify-content: space-between;
+
+    width: 100%;
+    height: 5.5em;
+
+    background-color: $black-5;
+    border:none;
+    border-bottom: solid 3px $black-1;
     cursor: pointer;
     position:relative;
 
@@ -35,9 +37,6 @@
 
     .photo{
         margin-left:20px;
-        // display: block;
-        // width: 45px;
-        // height: 45px;
         width:3em;
         height: 3em;
         border: 2px solid black;
@@ -97,6 +96,7 @@
         margin-left: 10%;
         font-family:'Open Sans', sans-serif;
         font-size: 11px;
+        white-space: nowrap;
         padding: 3px 8px;
         color:white;
         background-color: #515151 ;
@@ -106,14 +106,10 @@
 }
 
 .group{
-    // display: flex;;
     position: relative;
-    // display:inline-block;
     justify-content: flex-start;
     color:$white;
     
-    // justify-content: space-around;
-
     .group-sign{
         position: absolute;
         top:.2em;
@@ -124,19 +120,35 @@
     }
 
     .timer{
-        // float:right;
         position:absolute;
         right:.5em;
         margin-left: 15%;
     }
 }
 
-//not used
-.active{
+.active {
     width: 98.5%;
-    height: 90px;
-    background-color: rgb(17, 17, 17);
-    border-bottom: solid 1px #E0E0E0;
+    height: 5.5em;
+    background-color: $black-2;
+    border-bottom: solid 2px $black;
+    position:relative;
+
+    // &::before{
+    //     content: '';
+    //     // position:absolute;
+    //     width:.4em;
+    //     height: 100%;
+    //     background-color: #87a3ec;
+    // }
+
+    &::after{
+        content: '';
+        position:absolute;
+        right:-.4em;
+        width:.4em;
+        height: 100%;
+        background-color: $color-hs-5;
+    }
 }
 
 
