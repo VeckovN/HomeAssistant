@@ -69,17 +69,13 @@ const Messages = ({socket,connected}) =>{
             dispatch({type:"SET_HOUSEWORKERS", data:houseworkerResult});
         }
     
-        //onClick username read messages from him(from roomID where is it )
-
         const onRoomClickHanlder = ( async e =>{
             const roomID = e.target.value;
-
-            //don't applie logic if is clicked on same room
+            //don't applie logic if is clicked on the same room
             if(roomID === state.roomInfo.roomID)
                 return;
-                        
-            dispatch({type:"SET_ENTERED_ROOM_ID", data:roomID})
-            dispatch({type:"SET_ROOM_INFO_BY_ID", ID:roomID});
+
+            setShowMenu(false);
     
             if(state.roomInfo.roomID !='' && state.roomInfo.roomID != roomID){
                 emitLeaveRoom(socket, state.roomInfo.roomID);
@@ -87,15 +83,13 @@ const Messages = ({socket,connected}) =>{
             }
 
             emitRoomJoin(socket, roomID);
-
-            //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
             const messages = await getMessagesByRoomID(roomID)
-            dispatch({type:"SET_ROOM_MESSAGES", data:messages})
+            dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
 
             // if(showMenu) //useCallback is used and this doesn't make sense to be wrttien
             //useCallback will memoize it as false value(initial) and never changed due to dependecies being empty
             //if(showMenu)    
-                setShowMenu(false);
+            
         })
     
         const onDeleteRoomHandler = useCallback( async(e)=>{ 
@@ -126,8 +120,7 @@ const Messages = ({socket,connected}) =>{
         //Maybe use redux for this purpose.
         const MessagesAfterRoomsAction = async(roomID)=>{
             const messages = await getMessagesByRoomID(roomID)
-            dispatch({type:"SET_ROOM_MESSAGES", data:messages})
-            dispatch({type:"SET_ROOM_INFO_BY_ID", ID:roomID});
+            dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID});
             setShowMenu(false);
         }
         useEffect(()=>{
@@ -161,14 +154,9 @@ const Messages = ({socket,connected}) =>{
             const isPrivate = data.isPrivate;
             
             console.log("NEW ROOM ID: " + newRoomID );
-            if(isPrivate){
-                //users of the new rooms:
-                console.log("ROOMS ssss: " + state.rooms);
-                    
+            if(isPrivate){                    
                 const roomUsers = state.rooms.filter(room => room.roomID == roomID);
-
                 const houseworker = roomUsers[0].users;
-                console.log("RPPM :  " + roomUsers[0].users);
                 //create new group (add user to new gruop)   
                 dispatch({type:"CREATE_NEW_GRUOP" , roomID:roomID, newRoomID:newRoomID, user:houseworker, newUsername:username})
                 toast.info("A Group with "+ houseworker + " has been created");
@@ -180,7 +168,6 @@ const Messages = ({socket,connected}) =>{
 
             //show messages of new created group
             MessagesAfterRoomsAction(newRoomID);
-
             //joining a room to se new incoming messages
             emitRoomJoin(socket, newRoomID);
         });
@@ -189,29 +176,6 @@ const Messages = ({socket,connected}) =>{
         <div className='container'> 
             {state.loading ? <Spinner className='spinner'/> :
             <div className='messages-container'>
-                {/* <nav className='menu'>
-                    <ul>
-                        <li className="item">
-                            <i className="fa fa-home" aria-hidden="true">Ho</i>
-                        </li>
-                        <li className="item">
-                            <i className="fa fa-user" aria-hidden="true">Us</i>
-                        </li>
-                        <li className="item">
-                            <i className="fa fa-pencil" aria-hidden="true">Pe</i>
-                        </li>
-                        <li className="item item-active">
-                            <i className="fa fa-commenting" aria-hidden="true">Co</i>
-                        </li>
-                        <li className="item">
-                            <i className="fa fa-file" aria-hidden="true">Fi</i>
-                        </li>
-                        <li className="item">
-                            <i className="fa fa-cog" aria-hidden="true">C</i>
-                        </li>
-                    </ul>
-                </nav> */}
-
                 <section className='rooms-container'>
                     <div className='room-chat-header'>
                         <div className='header-label'>Chat Rooms</div>
