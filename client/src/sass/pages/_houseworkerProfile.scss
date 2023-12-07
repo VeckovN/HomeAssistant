@@ -1,5 +1,5 @@
 @use '../abstracts/mixins' as *;
-@use '../abstracts//colors' as *;
+@use '../abstracts/colors' as *;
 @use '../abstracts/placeholders' as *;
 @use '../abstracts/fonts' as *;
 @use '../base/typography' as *;
@@ -22,7 +22,7 @@
         .dropdown{
             width: 90%;
             font-size:$fs5;
-            
+            color:black;
         }
     
         .professions{
@@ -51,6 +51,7 @@
                 margin-left:1em;
 
                 .profession-input-container{
+                    margin:.2em 0em;
                     input{
                         //
                         // background-color:rebeccapurple;
@@ -60,16 +61,27 @@
                     .action-buttons{
                         display: flex;
                     
+                        // background-color: $color-hs-2;
+                        // color:white;
                         .change-profession{
                             button{
-                                @include profession-button-styles(blue);
+                                //@include profession-button-styles(rgb(121, 119, 247));
+                                @include profession-button-styles(black, $color-hs-5);
+                                
+                                &:disabled{
+                                    background-color: rgba(0,0,0,.2);
+                                    border: 1px solid black;
+                                    color:white;
+                                    font-weight: 600;
+                                    cursor:unset;
+                                }
                             }
                         
                         }
         
                         .delete-profession{
                             button{
-                                @include profession-button-styles(red);
+                                @include profession-button-styles(black,$color-hs-5);
                             }
                         }
                     }
@@ -80,22 +92,37 @@
             .profession-adding{
                 margin:.2em 0 0 1em;
 
+                .dropdown{
+                    margin-bottom: .5em;
+                }
+
+                #enter-hs-wr{
+                    color:$color-hs-5;
+                    margin:3em 0em;
+                    font-family: $root-font-family-2;
+                    font-size: $fs4;
+                }
+
                 .working-hours{
-                    margin:0em 0 .2em 0;
+                    margin:.2em 0 .2em 0;
                     
                     label{
                         margin-right: .5rem;
+                        font-size: $fs5;
                     }
                     
                     input{
                         @extend %input-style;
+                        text-align: center;
                         width: 4em;
                     }
                 }
 
                 .profession-add{
                     button{
-                        @include profession-button-styles($color-hs-5);
+                        @include profession-button-styles(black,$color-hs-5);
+                        width: 5em;
+                        height: 1.9em;
                     }
                 }
             }

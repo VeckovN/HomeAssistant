@@ -15,6 +15,8 @@ const Chat = ({socket, roomMessages, rooms, roomInfo, user, showMenu, houseworke
         const message = messageRef.current.value;
         const fromRoomID = roomInfo.roomID;
 
+        console.log("FORM ROOM ID: " + fromRoomID + "FROM: " + user.userID)
+
         if(message != ''){
             messageRef.current.value = ''
             //emit io.socket event for sending mesasge

@@ -169,9 +169,9 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
                         
                         <div className='action-buttons'>
                             {
-                            updatedData.working_hour != "" &&
+                            // updatedData.working_hour != "" &&
                             <div className="change-profession">
-                                <button onClick={onChangeProfessionHandler}>Change</button>
+                                <button onClick={onChangeProfessionHandler} disabled={!updatedData.working_hour}>Change</button>
                             </div>
                             }
                             
@@ -207,7 +207,6 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
                             className='input_field'
                             type='number'
                             name={el} //selected profession
-                            placeholder={`Enter ${el} working hour`} 
                             onChange={onChangeHouseworkerProfessions}
                         />
                     </div>    
