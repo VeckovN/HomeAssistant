@@ -1,23 +1,25 @@
-import {useState, memo} from 'react';
 
 import '../../../../../sass/components/_room.scss';
-import PhotoWithHover from '../../../../../utils/PhotoWithHover';
 import Photo from '../../../../../utils/Photo';
+import GroupsIcon from '@mui/icons-material/Groups';
 
 const Room = ({info, roomInfo, onRoomClickHanlder}) =>{
+
+    const isActive = info.roomID == roomInfo.roomID ? 'active' : "";
+
     return(
         <>
             {info.users.length > 1 
             ?
             // Group Room
-            <div className={`room group ${(info.roomID == roomInfo.roomID) ? 'active' : ""}`} >
+            <div className={`room group ${isActive}`} >
             {console.log("USER: aaaaa " , info)}
             <button className='handler-surface' value={info.roomID} onClick={onRoomClickHanlder} />
                 {info.users.map((user) => 
                 {
                     return(
                     <>
-                        <div className='group-sign'>Group</div>
+                        <div className={`group-sign ${isActive}-icon`}><GroupsIcon/></div>
                         <Photo
                             url="url(https://i.pinimg.com/originals/a9/26/52/a926525d966c9479c18d3b4f8e64b434.jpg)"
                             user={user}

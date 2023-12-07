@@ -57,6 +57,9 @@ const Messages = ({socket,connected}) =>{
             const users = data[0].users;
             dispatch({type:"SET_ROOM_INFO", ID:roomID, usersArray:users});
 
+            //join displayed room
+            emitRoomJoin(socket, roomID);
+
             //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
             const messages = await getMessagesByRoomID(roomID)
             dispatch({type:"SET_ROOM_MESSAGES", data:messages})
