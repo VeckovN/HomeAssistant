@@ -162,102 +162,61 @@ const getAllRooms = async(username)=>{
     return roomsArr;
 }
 
-//this will be exected on socket event socket.on('message') event
-//-Who send Message --- message.from (user:1)
-//-Where is message sent ---message.roomID, (room:1:3)
-//-What is sent --- message.message, (hello)
-//message = {from, message, roomID, }
-// const sendMessage = async(messageObj) =>{
-// }
 
-//add user to create group chat
 const addUserToRoom = async(newUsername, currentRoomID)=>{
-
     const newUser = await get(`username:${newUsername}`);
     const newUserID = newUser.split(":")[1] ; //user:ID 
 
-    //this will change(extend) existing user room 
-    //and create that updated room to new user
     const currentRoomKey = `room:${currentRoomID}` //room:1:2
     const currentUserIDS = currentRoomID.split(':');
 
-    console.log("CURRENT US: " + currentUserIDS);
-    console.log("TYPE: " + typeof(currentUserIDS));
-
     const isPrivateChat = currentUserIDS.length == 2 ? true :false 
 
-    currentUserIDS.push(newUserID)
+    currentUserIDS.push(newUserID);
+    currentUserIDS.sort((a, b) => a - b);
+
     let newRoomKey = "room";
     currentUserIDS.forEach(id =>{
         console.log("el: " + id);
         newRoomKey+=`:${id}`
     })
-
     //this is memeber of users Rooms -> user:{ID}:rooms
     const newRoomID = currentUserIDS.join(":"); 
 
-    //if a new user adding to existing chat with one user,
-    //then that chat is left, and new one is created with the newly added
-    if(isPrivateChat) //client and one houseworker
-    {
-        console.log("OLD !!!!!!!!!!");
-
-        console.log("NEW USERS ID VALUE: " + newRoomID);
-        //Put newUserID in order way   //allway order as room:1:5:9 not room:1:9:5
-        console.log("SADD: " + `user:${newUserID}:rooms` + "," +  newRoomID)  
-
-        //add new user to currentRoomID and create new one
-
-        //new user 29
-        //we want to create new room this user:4:rooms (4:49:29) =newRoomID
-        //for old members we create newRoomID (4:49)
-        const oldUsersIDS = currentRoomID.split(':');
-        oldUsersIDS.forEach(async(id) =>{ 
-            console.log("ID USER: ");
-            //add IDS of users seperated with : ----> 1:2:5
-            await sadd(`user:${id}:rooms`, newRoomID);
-        })
-
-        //for new user olso
-        await sadd(`user:${newUserID}:rooms`, newRoomID);
-
-        //create new sorted Room
-        //room:4:49:29 - empty
-        const roomKey = `room:${newRoomID}`;
-        const date = Date.now();
-        const messageObj = JSON.stringify({message:"Chat Created", from:'Server', roomID:newRoomID})
-        await zadd(roomKey, date, messageObj);
+    const newRoomKeyExists = await exists(newRoomKey);
+    if(newRoomKeyExists) {
+        console.log("return {roomID:null, isPrivate:isPrivateChat};")
+        return {roomID:null, isPrivate:isPrivateChat};
     }
     else{
-        //just add new user to existing chat 
-        console.log("NEW !!!!!!!!!!!!");
+        if(isPrivateChat) //client and one houseworker
+        {
+            //add newRoomID in their rooms(set collection)
+            currentUserIDS.forEach(async(id) =>{ 
+                await sadd(`user:${id}:rooms`, newRoomID);
+                console.log("ID NEWWWWWWWW: " + id);
+            })
 
-        //this is memeber of users Rooms -> user:{ID}:rooms
-        const newRoomID = currentUserIDS.join(":"); 
-        console.log("NEW USERS ID VALUE: " + newRoomID);
-        //Put newUserID in order way   //allway order as room:1:5:9 not room:1:9:5
-        console.log("SADD: " + `user:${newUserID}:rooms` + "," +  newRoomID); 
+            //create new roomKey and store first initial message
+            const roomKey = `room:${newRoomID}`;
+            const date = Date.now();
+            const messageObj = JSON.stringify({message:"Chat Created", from:'Server', roomID:newRoomID})
+            await zadd(roomKey, date, messageObj);
+        }
+        else{
+            //Reinaming Room:ROOMID - sorted set for storing messages
+            await rename(currentRoomKey, newRoomKey);
+            //for new added user add memeber in user:{newID}:rooms
+            await sadd(`user:${newUserID}:rooms`, newRoomID);
 
-        //REinaming Room:ROOMID - sorted set for storing messages
-        // //rename currentRoomKey room:1:2 to room:1:2:newUser  (sorted set which store messages)
-        await rename(currentRoomKey, newRoomKey);
-
-        //for new added user add memeber in user:{newID}:rooms
-        await sadd(`user:${newUserID}:rooms`, newRoomID);
-
-        //old memmbers (repacing)rooms with new roomsID.
-        const oldUsersIDS = currentRoomID.split(':');
-        const oldRoomID = currentRoomID;
-        oldUsersIDS.forEach(async(id) =>{ 
-            await srem(`user:${id}:rooms`, currentRoomID);
-            console.log("SREM : " + `user:${id}:rooms` + "," + oldRoomID )
-            //add IDS of users seperated with : ----> 1:2:5
-            await sadd(`user:${id}:rooms`, newRoomID);
-            console.log("AWAIT SADD: " + `user:${id}:rooms` + "," +  newRoomID)
-        })
+            //Replacing old roomIDs with new one.
+            currentUserIDS.forEach(async(id) =>{ 
+                await srem(`user:${id}:rooms`, currentRoomID);
+                await sadd(`user:${id}:rooms`, newRoomID);
+            })
+        }
+        return {roomID:newRoomID, isPrivate:isPrivateChat};
     }
-
-    return {roomID:newRoomID, isPrivate:isPrivateChat};
 }
 
 const sendMessage = async(messageObj) =>{

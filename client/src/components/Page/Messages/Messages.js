@@ -154,6 +154,11 @@ const Messages = ({socket,connected}) =>{
             const data = result.data;
             const newRoomID = data.roomID;
             const isPrivate = data.isPrivate;
+
+            if(newRoomID === null){
+                toast.error("The group already exists");
+                return;
+            }
             
             console.log("NEW ROOM ID: " + newRoomID );
             if(isPrivate){                    
@@ -163,11 +168,11 @@ const Messages = ({socket,connected}) =>{
                 dispatch({type:"CREATE_NEW_GRUOP" , roomID:roomID, newRoomID:newRoomID, user:houseworker, newUsername:username})
                 toast.info("A Group with "+ houseworker + " has been created");
             }
-            else{ //add user to existed group
+            else{ 
                 dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username});    
                 toast.info("User is added to the room: "+  newRoomID);
             }
-
+            
             //show messages of new created group
             MessagesAfterRoomsAction(newRoomID);
             //joining a room to se new incoming messages
