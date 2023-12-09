@@ -4,14 +4,9 @@ import Photo from '../../../../../utils/Photo';
 import GroupsIcon from '@mui/icons-material/Groups';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
-const Room = ({info, roomInfo,moreChatUsers, onRoomClickHanlder, onShowMoreUsersFromChatHandler, onUsersFromChatOutHanlder}) =>{
+const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUsersFromChatHandler, onUsersFromChatOutHanlder}) =>{
 
     const isActive = info.roomID == roomInfo.roomID ? 'active' : "";
-
-    const onShowMoreUsersFromChatHandlerr = (users) =>{
-        console.log("USERSSS : ");
-        users.forEach(el => console.log("user: " + el));
-    }
 
     return(
         <>
@@ -23,9 +18,9 @@ const Room = ({info, roomInfo,moreChatUsers, onRoomClickHanlder, onShowMoreUsers
             {console.log("USER: aaaaa " , info)}
             <button className='handler-surface' value={info.roomID} onClick={onRoomClickHanlder} />
                 <div className ='user-photo-container'>
-                    {moreChatUsers.users && moreChatUsers.roomID == info.roomID &&
+                    {moreRoomUsers.users && moreRoomUsers.roomID == info.roomID &&
                         <div className='more-user-chat-container'>
-                            {moreChatUsers.users.map(el =>{
+                            {moreRoomUsers.users.map(el =>{
                                 return(
                                     <div className='user-chat-label'>
                                         {el}

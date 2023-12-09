@@ -26,7 +26,7 @@ const Messages = ({socket,connected}) =>{
     }
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
     const [showMenu, setShowMenu] = useState(false);
-    const [showMoreChatUsers, setShowMoreChatUsers] = useState({});
+    const [showMoreRoomUsers, setShowMoreRoomUsers] = useState({});
 
     useEffect(() => {
             if(connected && user){
@@ -182,11 +182,11 @@ const Messages = ({socket,connected}) =>{
         });
 
         const onShowMoreUsersFromChatHandler = ({users, roomID}) => {
-            setShowMoreChatUsers({users, roomID});
+            setShowMoreRoomUsers({users, roomID});
         }
 
         const onUsersFromChatOutHanlder = () =>{
-            setShowMoreChatUsers({});
+            setShowMoreRoomUsers({});
         }
     
     return (
@@ -201,7 +201,7 @@ const Messages = ({socket,connected}) =>{
                     <Rooms 
                         rooms={state.rooms}
                         roomInfo={state.roomInfo}
-                        moreChatUsers={showMoreChatUsers}
+                        showMoreRoomUsers={showMoreRoomUsers}
                         onRoomClickHanlder={onRoomClickHanlder}
                         onShowMoreUsersFromChatHandler={onShowMoreUsersFromChatHandler}
                         onUsersFromChatOutHanlder={onUsersFromChatOutHanlder}

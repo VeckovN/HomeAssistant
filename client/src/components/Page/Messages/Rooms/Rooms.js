@@ -2,7 +2,7 @@ import Spinner from "../../../UI/Spinner";
 import Room from "./Room/Room.js";
 import {memo} from 'react'
 
-const Rooms = ({rooms, roomInfo, moreChatUsers, onRoomClickHanlder, onShowMoreUsersFromChatHandler, onUsersFromChatOutHanlder}) =>{
+const Rooms = ({rooms, roomInfo, showMoreRoomUsers, onRoomClickHanlder, onShowMoreUsersFromChatHandler, onUsersFromChatOutHanlder}) =>{
 
     return (
             <div className='rooms'>
@@ -12,7 +12,7 @@ const Rooms = ({rooms, roomInfo, moreChatUsers, onRoomClickHanlder, onShowMoreUs
                         <Room
                             info={el}
                             roomInfo={roomInfo}
-                            moreChatUsers={moreChatUsers}
+                            moreRoomUsers={showMoreRoomUsers}
                             onRoomClickHanlder={onRoomClickHanlder}
                             onShowMoreUsersFromChatHandler={onShowMoreUsersFromChatHandler}
                             onUsersFromChatOutHanlder={onUsersFromChatOutHanlder}
