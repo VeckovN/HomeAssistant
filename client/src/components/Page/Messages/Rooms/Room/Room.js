@@ -13,13 +13,14 @@ const Room = ({info, roomInfo, onRoomClickHanlder}) =>{
             ?
             // Group Room
             <div className={`room group ${isActive}`} >
+            <div className={`group-sign ${isActive}-icon`}><GroupsIcon/></div>
             {console.log("USER: aaaaa " , info)}
             <button className='handler-surface' value={info.roomID} onClick={onRoomClickHanlder} />
+                <div className ='user-photo-container'>
                 {info.users.map((user) => 
                 {
                     return(
                     <>
-                        <div className={`group-sign ${isActive}-icon`}><GroupsIcon/></div>
                         <Photo
                             url="url(https://i.pinimg.com/originals/a9/26/52/a926525d966c9479c18d3b4f8e64b434.jpg)"
                             user={user}
@@ -27,6 +28,7 @@ const Room = ({info, roomInfo, onRoomClickHanlder}) =>{
                     </>
                     )
                 })}
+                </div>
                 <div className="timer">3 min </div>
                 {/* <div className="timer">3 min {info.lastMessageTime}</div> */}
             </div>
