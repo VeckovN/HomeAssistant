@@ -132,12 +132,6 @@
         cursor: pointer;
     }
 
-    &::-webkit-scrollbar-track{
-        border-radius: 10px;
-        background: rgba(20, 20, 20, 0.13);
-        border: 1px solid #ccc;
-    }
-
     &::-webkit-scrollbar-thumb{
         border-radius: 10px;
         background: linear-gradient(left, #fff, #e4e4e4);
@@ -146,7 +140,7 @@
     }
 
     &::-webkit-scrollbar-thumb:hover{
-        background: rgb(122, 122, 122)
+        background: rgb(235, 235, 235)
     }
 
     &::-webkit-scrollbar-thumb:active{
