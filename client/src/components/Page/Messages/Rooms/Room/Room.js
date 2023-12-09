@@ -2,10 +2,16 @@
 import '../../../../../sass/components/_room.scss';
 import Photo from '../../../../../utils/Photo';
 import GroupsIcon from '@mui/icons-material/Groups';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
-const Room = ({info, roomInfo, onRoomClickHanlder}) =>{
+const Room = ({info, roomInfo,moreChatUsers, onRoomClickHanlder, onShowMoreUsersFromChatHandler, onUsersFromChatOutHanlder}) =>{
 
     const isActive = info.roomID == roomInfo.roomID ? 'active' : "";
+
+    const onShowMoreUsersFromChatHandlerr = (users) =>{
+        console.log("USERSSS : ");
+        users.forEach(el => console.log("user: " + el));
+    }
 
     return(
         <>
@@ -17,17 +23,53 @@ const Room = ({info, roomInfo, onRoomClickHanlder}) =>{
             {console.log("USER: aaaaa " , info)}
             <button className='handler-surface' value={info.roomID} onClick={onRoomClickHanlder} />
                 <div className ='user-photo-container'>
-                {info.users.map((user) => 
-                {
-                    return(
+                    {moreChatUsers.users && moreChatUsers.roomID == info.roomID &&
+                        <div className='more-user-chat-container'>
+                            {moreChatUsers.users.map(el =>{
+                                return(
+                                    <div className='user-chat-label'>
+                                        {el}
+                                    </div>
+                                )
+                            })
+                            }
+                        </div>
+                    }
+                    {info.users.length > 3 ?
                     <>
-                        <Photo
-                            url="url(https://i.pinimg.com/originals/a9/26/52/a926525d966c9479c18d3b4f8e64b434.jpg)"
-                            user={user}
-                        />
+                        {info.users.slice(0,3).map((user) => 
+                            {
+                                return(
+                                <>
+                                    <Photo
+                                        url="url(https://i.pinimg.com/originals/a9/26/52/a926525d966c9479c18d3b4f8e64b434.jpg)"
+                                        user={user}
+                                    />
+                                </>
+                                )
+                            })}
+                        <div className="more-user">
+                            <div className ='more-user-icon' onMouseEnter={() => onShowMoreUsersFromChatHandler({users:info.users.slice(3), roomID:info.roomID})} onMouseLeave={() => onUsersFromChatOutHanlder()}> 
+                                <MoreHorizIcon/>    
+                            </div>
+                        </div>
                     </>
-                    )
-                })}
+                    :
+                    <>
+                        {info.users.map((user) => 
+                            {
+                                return(
+                                <>
+                                    <Photo
+                                        url="url(https://i.pinimg.com/originals/a9/26/52/a926525d966c9479c18d3b4f8e64b434.jpg)"
+                                        user={user}
+                                    />
+                                </>
+                                )
+                            })}
+                    </>
+                    }
+                    
                 </div>
                 <div className="timer">3 min </div>
                 {/* <div className="timer">3 min {info.lastMessageTime}</div> */}

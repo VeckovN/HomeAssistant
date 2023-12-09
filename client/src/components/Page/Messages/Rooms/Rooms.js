@@ -2,7 +2,7 @@ import Spinner from "../../../UI/Spinner";
 import Room from "./Room/Room.js";
 import {memo} from 'react'
 
-const Rooms = ({rooms, roomInfo, user, houseworkers, onAddUserToGroupHanlder, onDeleteRoomHandler, onRoomClickHanlder}) =>{
+const Rooms = ({rooms, roomInfo, moreChatUsers, onRoomClickHanlder, onShowMoreUsersFromChatHandler, onUsersFromChatOutHanlder}) =>{
 
     return (
             <div className='rooms'>
@@ -11,12 +11,11 @@ const Rooms = ({rooms, roomInfo, user, houseworkers, onAddUserToGroupHanlder, on
                     rooms.map((el, index)=>(      
                         <Room
                             info={el}
-                            user={user}
                             roomInfo={roomInfo}
-                            houseworkers={houseworkers}
-                            onAddUserToGroupHanlder={onAddUserToGroupHanlder}
-                            onDeleteRoomHandler={onDeleteRoomHandler}
+                            moreChatUsers={moreChatUsers}
                             onRoomClickHanlder={onRoomClickHanlder}
+                            onShowMoreUsersFromChatHandler={onShowMoreUsersFromChatHandler}
+                            onUsersFromChatOutHanlder={onUsersFromChatOutHanlder}
                         />
                     ))
                 : <Spinner></Spinner>

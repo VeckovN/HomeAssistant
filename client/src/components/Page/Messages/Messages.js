@@ -20,12 +20,13 @@ const Messages = ({socket,connected}) =>{
         loading:true,
         rooms:[],
         roomMessages: [], //current room messages
-        roomInfo:{}, //current room Info (roomID, users)
+        roomInfo:{}, //current room Info (roomID, users) AND ictureURL
         houseworkers:'',
         roomsAction:'' //for handling different state.rooms update actions
     }
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
     const [showMenu, setShowMenu] = useState(false);
+    const [showMoreChatUsers, setShowMoreChatUsers] = useState({});
 
     useEffect(() => {
             if(connected && user){
@@ -45,6 +46,7 @@ const Messages = ({socket,connected}) =>{
         const onShowMenuToggleHandler = () =>{
             setShowMenu(prev => !prev);
         }
+
 
         const fetchAllRooms = ( async () =>{   
             console.log("fetchAllRooms");
@@ -178,6 +180,14 @@ const Messages = ({socket,connected}) =>{
             //joining a room to se new incoming messages
             emitRoomJoin(socket, newRoomID);
         });
+
+        const onShowMoreUsersFromChatHandler = ({users, roomID}) => {
+            setShowMoreChatUsers({users, roomID});
+        }
+
+        const onUsersFromChatOutHanlder = () =>{
+            setShowMoreChatUsers({});
+        }
     
     return (
         <div className='container'> 
@@ -190,12 +200,11 @@ const Messages = ({socket,connected}) =>{
 
                     <Rooms 
                         rooms={state.rooms}
-                        houseworkers={state.houseworkers}
                         roomInfo={state.roomInfo}
-                        user={user}
-                        onAddUserToGroupHanlder={onAddUserToGroupHanlder}
-                        onDeleteRoomHandler={onDeleteRoomHandler}
+                        moreChatUsers={showMoreChatUsers}
                         onRoomClickHanlder={onRoomClickHanlder}
+                        onShowMoreUsersFromChatHandler={onShowMoreUsersFromChatHandler}
+                        onUsersFromChatOutHanlder={onUsersFromChatOutHanlder}
                     />
                 </section>
 

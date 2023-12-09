@@ -7,8 +7,10 @@
     align-items: center;
     justify-content: space-between;
 
+
     width: 100%;
-    height: 5.5em;
+    // height: 5.5em;
+    height: 5.5em; /* Set a default height */
 
     background-color: $black-5;
     border:none;
@@ -28,7 +30,57 @@
         position:absolute;
         z-index: 10;
         cursor: pointer;
+
         
+    }
+
+    .more-user{
+        display: flex;
+        margin-left:20px;
+        width:3em;
+        height: 3em;
+        align-items: center;
+        justify-content: center;
+        z-index: 11;
+
+        &-icon{
+            color: white;
+            z-index: 20;
+
+            &:hover{
+                color:$color-hs-6;
+            }
+        }
+    }
+
+    .user-photo-container{
+        // height: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        min-width: 5.5em;
+
+        .more-user-chat-container{
+            position:absolute;
+            top:0em;
+
+            display:flex;            
+            padding:.5em 1em;
+
+            background-color: rgb(255,255,255);
+            color:black;
+
+            font-family: $root-font-family-3;
+            font-weight: 500;
+
+            border-radius: .5em;
+            z-index: 12;
+
+            .user-chat-label{
+                margin:0em .3em;
+                
+            }
+        }
+
     }
 
     .room-info{

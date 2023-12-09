@@ -38,6 +38,7 @@
     .rooms-container{
         display: flex;
         flex-direction:column;
+
         
         height: 100%;
         min-width: 300px;
@@ -61,11 +62,14 @@
         }
 
         .rooms{
+            position: relative;
             height: 90%;
             // width:23em;
             max-width: 30em;
             display: flex;
             flex-wrap: wrap;
+
+            justify-items: flex-start;
 
             box-shadow: 0px 8px 10px rgba(0,0,0,0.20);
             //x:hidden
