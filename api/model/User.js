@@ -104,6 +104,20 @@ const updateCityRelation = async(username,city)=>{
     return result.records[0].get(0);
 }
 
+const getAllUsersnameWithPicturePath = async() =>{
+    const session = driver.session();
+    const result = await session.run(`
+        MATCH (n:User) RETURN n.id, n.picturePath
+    `)
+
+    const userInfo = result.records.map(rec=>{
+        return {id:rec.get(0), picturePath:rec.get(1)}
+    });
+
+    session.close();
+    return userInfo;
+}
+ 
 
 
 // *****INITIAL CREATED
@@ -131,4 +145,4 @@ const updateCityRelation = async(username,city)=>{
 
 
 
-module.exports = {findByUsername, changePassword, checkUser, checkEmail, updateCityRelation};
+module.exports = {findByUsername, changePassword, checkUser, checkEmail, updateCityRelation, getAllUsersnameWithPicturePath};

@@ -11,12 +11,11 @@ const houseworkerModal = require('../model/HouseWorker');
 const userModal = require('../model/User');
 const chatModel = require('../model/Chat');
 
-const {get, set, sadd } = require('../db/redis');
+const {get, set, sadd, hset} = require('../db/redis');
 
 
 const register = async (req,res)=>{
-    //type='client' or 'houseworker'
-    const {username,password, type,email, ...otherData} = req.body;
+    const {username,password,type, ...otherData} = req.body;
     const hashedPassword = bcrypt.hashSync(password, 12);
     // const picturePath = req.files[0].filename;
     //if picturePath exists
@@ -31,17 +30,27 @@ const register = async (req,res)=>{
         return res.status(400).json({error:"User with this email exists"}) 
     
     try{
-        const redisUser = await chatModel.createUser(username, hashedPassword);
-        userData.id = Number(redisUser.id);
+        const redisUser = await chatModel.createUser(username, hashedPassword, picturePath);
 
-        if(type=='Client'){
-            await clientModal.create(userData);
-            //assign user to the session after creating the user /request from client(set the sesson to client)
-            res.status(200).send({success:true, message:"Client Sucessfully created"});
-        }
-        else if(type=='Houseworker'){ //houseworker
-            await houseworkerModal.create(userData);
-            res.status(200).send({success:true, message:"Houseworker  Sucessfully created"});
+        if(redisUser.success){
+            userData.id = Number(redisUser.id);
+
+            try{
+                if(type=='Client'){
+                    await clientModal.create(userData);
+                    //assign user to the session after creating the user /request from client(set the sesson to client)
+                    res.status(200).send({success:true, message:"Client Sucessfully created"});
+                }
+                else if(type=='Houseworker'){ //houseworker
+                    await houseworkerModal.create(userData);
+                    res.status(200).send({success:true, message:"Houseworker  Sucessfully created"});
+                }
+            }
+            catch(neo4jError){
+                console.error("Neo4j error: " + neo4jError);
+                await chatModel.deleteUserOnNeo4JFailure(username, redisUser.id);
+                return res.status(500).json({error:"Error creating user in Neo4j"})
+            }
         }
     }
     catch(error){
@@ -115,11 +124,32 @@ const logout = async(req,res)=>{
    
 }
 
+const putPicturePathToRedisUsers = async(req,res) =>{
+
+    const usersInfo = await userModal.getAllUsersnameWithPicturePath();
+    console.log("CONTROLLER USER INFO", usersInfo);
+
+    try{
+        await Promise.all(usersInfo.map(async (el) =>{
+            let userID = parseInt(el.id);
+            let hsetKey = `user:${userID}`
+            console.log(`${hsetKey} picturePath ${el.picturePath}`);
+            await hset(hsetKey, 'picturePath', el.picturePath);
+        }));
+
+        return res.send("SUCCESSFULLY PICTURE PUT TO REDIS");
+    }
+    catch(error){
+        console.error("Error with puting picturePath to Redis User hash")
+    }
+}
+
 
 
 
 module.exports ={
     register,
     login,
-    logout
+    logout,
+    putPicturePathToRedisUsers
 }

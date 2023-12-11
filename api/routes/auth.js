@@ -4,7 +4,8 @@ const UserModel = require('../model/User.js')
 const {
     register,
     login,
-    logout
+    logout,
+    putPicturePathToRedisUsers
 }
 = require('../controller/auth');
 
@@ -16,6 +17,7 @@ const router = express.Router();
 //router.post('/register', register);
 router.post('/login', login);
 router.get('/logout', logout)
+router.get('/redisUser', putPicturePathToRedisUsers);
 
 
 //authenticated user change password 
