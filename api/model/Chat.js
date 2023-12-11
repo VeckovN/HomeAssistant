@@ -1,29 +1,49 @@
 const { Socket } = require('socket.io');
 const {incr, set, hmset, sadd, hmget, exists, client, zrevrange, smembers, zadd, srem, del, get, rename, scard} = require('../db/redis');
 const { use } = require('../routes/clients');
+const {getUserPicturePath} = require('./User.js');
 
 
 //persist ChatApp data to Redis database
 
 //With username(same username as in Neo4j) we got userID(same user but in redis)
 //with userKey(user:{userID}) we can access to userINFO in Redis DB ()
-const createUser = async(username, hashedPassword) =>{
-    const usernameKey = `username:${username}`;
-    const freeID = await incr("total_users"); //total_users is data in Redis(number of users)
-   
-    console.log("FERTEEE IUD: " + freeID);
-    const userKey = `user:${freeID}`;
-
-    await set(usernameKey, userKey) //username:Novak user:1
-    await hmset(userKey, ["username", username, "password", hashedPassword]);
-    //intialise his rooms on empty
-    // await sadd(`user:${freeID}:rooms`, ``)
-
-
-    // //With username we got userID
-    // //with userKey(user:{userID}) we can access to userINFO in Redis DB ()
-    return {id:freeID, username};
+const createUser = async(username, hashedPassword, picturePath) =>{
+    try{
+        const usernameKey = `username:${username}`;
+        const freeID = await incr("total_users"); //total_users is data in Redis(number of users)
+       
+        console.log("FERTEEE IUD: " + freeID);
+        const userKey = `user:${freeID}`;
+    
+        await set(usernameKey, userKey) //username:Novak user:1
+        await hmset(userKey, ["username", username, "password", hashedPassword, "picturePath", picturePath]);
+        
+        return {success:true, id:freeID, username};
+    }
+    catch(err){
+        console.log("Redis Create user Errror: " + err);
+        return {success:false, message:"Error with Creating Redis User"}
+    }
+    
 }
+
+//Deleting a freshly created user on neo4j failed to craete the same
+const deleteUserOnNeo4JFailure = async(username, userID) =>{
+    try{
+        const usernameKey = `username:${username}`;
+        await del(usernameKey); //set delete
+        const userKey = `user:${userID}`;
+        await del(userKey); //hmset delete
+        return {success:true, message:"User's set and hmset successfully deleted"}
+    }
+    catch(error){
+        console.error("Redis deleting user Failed");
+        return {success:false}
+    }
+
+}
+
 
 const UserIdByUsername = async (username)=>{
     //for test
@@ -33,9 +53,10 @@ const UserIdByUsername = async (username)=>{
     return userID
 }
 
+//RETURN PICTUREPATH
 const usernameByUserID = async (userID)=>{
-    const username = await hmget(`user:${userID}`, "username")
-    console.log("USERNAME " + username);
+    //by default hmget returns array , but with [] descruction string will be retunred
+    const [username] = await hmget(`user:${userID}`, "username")
     return username;
 }
 
@@ -110,7 +131,7 @@ const getAllRooms = async(username)=>{
 
     //through every room read another userID -> 1:7 , 1:3 in this situatin 7 and 3
     var roomsArr = []
-    let roomUsernames =[];
+    let roomObjectArray =[];
     for(const room of rooms){
         const roomID = room;
         const userIDS = roomID.split(":");
@@ -128,19 +149,25 @@ const getAllRooms = async(username)=>{
         for(const id of otherUsers){
             console.log("EL :" + id);
             //for each user return their username
-            const user = await usernameByUserID(id);
+
+            //TAKE PICTUREIMG AS WELL 
+            const user = await usernameByUserID(id); 
+
+            console.log("USER TYPEOF " + typeof(user));
             console.log("USERTTTTTTTTT: "+ user);
-            roomUsernames.push(user);
+
+            //returned username and picturePATH
+            roomObjectArray.push({username:user.username, picturePath:user.picturePath});
         }
 
+        console.log("USERSS OBJ : " + JSON.stringify(roomObjectArray));
         // console.log("USERNAME ARRAYS : " + usernames);
-        console.log("USERNAME ARRAYS : " + roomUsernames);
+        console.log("USERNAME ARRAYS : ", roomObjectArray);
 
         //without flat - users:[ ['user1'] ,['user'2']]
-        roomsArr.push({roomID, users:roomUsernames.flat()});
-        roomUsernames =[]; //reset -for other rooms
-
-        console.log(" ROOMS ARRAY : " + roomsArr[0].users);
+        // roomsArr.push({roomID, users:roomUsernames.flat()});
+        roomsArr.push({roomID, users:roomObjectArray})
+        roomObjectArray =[]; //reset -for other rooms
     }
 
     // const roomsArr = rooms.map( async el =>{
@@ -158,7 +185,6 @@ const getAllRooms = async(username)=>{
     // })
 
 
-    console.log("OTH" + JSON.stringify(roomsArr));
     return roomsArr;
 }
 
@@ -310,6 +336,7 @@ module.exports ={
     deleteRoomByRoomID,
     addUserToRoom,
     getRoomCount,
-    sendMessage
+    sendMessage,
+    deleteUserOnNeo4JFailure
 }
 
