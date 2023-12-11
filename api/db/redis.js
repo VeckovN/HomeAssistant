@@ -62,6 +62,9 @@ const sadd = (key = "key", value) =>
 const hmset = (key = "key", values = []) =>
     new Promise((resolve, reject) => client.hmset(key, values, resolvePromise(resolve, reject)))
 
+const hset = (key, field, value ) => 
+    new Promise((resolve, reject) => client.hset(key, field, value, resolvePromise(resolve, reject)))
+
 const hmget = (key = "key", key2 = "") =>
     new Promise((resolve, reject) => client.hmget(key, key2, resolvePromise(resolve, reject)))
 
@@ -115,6 +118,7 @@ module.exports ={
     sadd,
     hmset,
     hmget,
+    hset,
     sismember,
     smembers,
     srem,
