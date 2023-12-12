@@ -43,14 +43,14 @@ const Chat = ({socket, roomMessages, rooms, roomInfo, user, showMenu, houseworke
     return(     
         <>
             <div className="header-chat">                  
-                <p className="names">
+                <div className="names">
                     {roomInfo?.users?.map((room) =>(
                         <div className='user'>
                             {/* <PersonIcon fontSize='small'/><span>{room}</span> */}
                             <PersonIcon fontSize='small'/><span>{room.username}</span>
                         </div>
                     ))}
-                </p>
+                </div>
                 {user.type=="Client" && <div className='menu-icon' onClick={onShowMenuToggleHandler} aria-hidden="true"><MenuIcon/></div>}
                 
             </div>

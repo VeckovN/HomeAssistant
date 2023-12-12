@@ -9,6 +9,8 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onDel
 
     const SelectedHandler = (username) =>{
         setSelectedUsernam(username);
+        console.log("houseworeks", houseworkers);
+        console.log("ROOM INFO: ", roomInfo);
         console.log("ROOM_ID: " + roomInfo.roomID + " SELECTED_USERNAME: " + username)    
     }
 
@@ -19,10 +21,9 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onDel
     }
 
     const AddUserToGroupHandler = (roomID, selectedUsername) =>{
-        // alert("AddUserToGroupHandler");
         setSelectedUsernam('');
         setSearchTerm('');
-        onAddUserToGroupHanlder(roomID, selectedUsername)
+        onAddUserToGroupHanlder(roomID, selectedUsername);
     }
     
     // useEffect(()=>{

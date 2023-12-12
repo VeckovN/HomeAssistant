@@ -139,10 +139,8 @@ const Messages = ({socket,connected}) =>{
                   }
         },[state.rooms])
     
-        const onAddUserToGroupHanlder = (async(roomID, username, picturePath)=>{
+        const onAddUserToGroupHanlder = (async(roomID, username)=>{
         // const onAddUserToGroupHanlder = (async(roomID, newUserInfo)=>{
-            //newUserInfo = {username, picturePath}
-
             if(username == ""){
                 toast.info("Select user that you want to add in room",{
                     className:"toast-contact-message"
@@ -154,27 +152,23 @@ const Messages = ({socket,connected}) =>{
                 roomID:roomID,
                 newUsername: username
             }
-            const result = await addUserToRoom(roomInfo);
-            const {roomID:newRoomID, isPrivate} = result.data;
 
-            console.log("Room INFO123 :", result.data);
-            console.log("newROOM ID: " + newRoomID +" IS PRivate : " + isPrivate);
+            const result = await addUserToRoom(roomInfo);
+            const {roomID:newRoomID, isPrivate, newUserPicturePath} = result.data;
 
             if(newRoomID === null){
                 toast.error("The group already exists");
                 return;
             }
             
-            console.log("NEW ROOM ID: " + newRoomID);
             if(isPrivate){                    
                 const roomUsers = state.rooms.filter(room => room.roomID == roomID);
                 const currentUser = roomUsers[0].users; //users of room that we add new user
-                //create new group (add user to new gruop)   
-                dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, user:currentUser, newUsername:username, picturePath:picturePath})
-                toast.info("A Group with "+ currentUser.username + " has been created");
+                dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, user:currentUser, newUsername:username, picturePath:newUserPicturePath})
+                toast.info("A Group with "+ username + " has been created");
             }
             else{ 
-                dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username});    
+                dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});    
                 toast.info("User is added to the room: "+  newRoomID);
             }
             

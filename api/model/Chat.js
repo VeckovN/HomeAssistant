@@ -1,7 +1,6 @@
 const { Socket } = require('socket.io');
 const {incr, set, hmset, sadd, hmget, exists, client, zrevrange, smembers, zadd, srem, del, get, rename, scard} = require('../db/redis');
 const { use } = require('../routes/clients');
-const {getUserPicturePath} = require('./User.js');
 
 
 //persist ChatApp data to Redis database
@@ -46,7 +45,6 @@ const deleteUserOnNeo4JFailure = async(username, userID) =>{
 
 
 const UserIdByUsername = async (username)=>{
-    //for test
     const user = await get(`username:${username}`); //user:{userID}
     console.log("USERRRRR : "  + user);
     let userID = user.split(':')[1]; //[user, {userID}]
@@ -63,6 +61,12 @@ const userInfoByUserID = async(userID) =>{
     const userInfo = await hmget(`user:${userID}`, ["username","picturePath"]);
     console.log("USERRRRR INFGOOOOOOOOOO" , userInfo);
     return {username:userInfo[0], picturePath:userInfo[1]};
+}
+
+const getUserPicturePath = async(username) =>{
+    const userID = await UserIdByUsername(username);
+    const [picturePath] = await hmget(`user:${userID}`, "picturePath");
+    return picturePath;
 }
 
 //get roomIDbyUsername
@@ -189,6 +193,7 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
     const currentRoomKey = `room:${currentRoomID}` //room:1:2
     const currentUserIDS = currentRoomID.split(':');
 
+    const userPicturePath = await getUserPicturePath(newUsername);
     const isPrivateChat = currentUserIDS.length == 2 ? true :false 
 
     currentUserIDS.push(newUserID);
@@ -204,7 +209,6 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
 
     const newRoomKeyExists = await exists(newRoomKey);
     if(newRoomKeyExists) {
-        console.log("return {roomID:null, isPrivate:isPrivateChat};")
         return {roomID:null, isPrivate:isPrivateChat};
     }
     else{
@@ -234,7 +238,7 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
                 await sadd(`user:${id}:rooms`, newRoomID);
             })
         }
-        return {roomID:newRoomID, isPrivate:isPrivateChat};
+        return {roomID:newRoomID, isPrivate:isPrivateChat, newUserPicturePath:userPicturePath};
     }
 }
 
@@ -332,6 +336,7 @@ module.exports ={
     addUserToRoom,
     getRoomCount,
     sendMessage,
-    deleteUserOnNeo4JFailure
+    deleteUserOnNeo4JFailure,
+    getUserPicturePath
 }
 

@@ -20,8 +20,8 @@ export const MessagesReducer = (state, action) =>{
             return{
                 ...state,
                 roomMessages:[],
-                //find room with added (houseworker user (action.user, ) new added houseworker (state.selectedUsername))
-                rooms: [...state.rooms, {roomID:action.newRoomID, users:[action.user, {username:action.newUsername, picturePath:action.picturePath}]}],
+                // rooms: [...state.rooms, {roomID:action.newRoomID, users:[...action.user, {username:action.newUsername, picturePath:action.picturePath}]}],
+                rooms: [...state.rooms, {roomID:action.newRoomID, users:[...action.user, ...newUserInfo]}],
             }
         case "SET_ROOM_INFO": //RoomInfo
             return{
@@ -36,10 +36,8 @@ export const MessagesReducer = (state, action) =>{
                 ...state,
                 roomInfo:{
                     roomID: action.ID,
-                    // users: [...action.usersArray]
                     users: state.rooms.find(el => el.roomID === action.ID)?.users || []
                 }
-                
             }
         case "SET_ROOM_MESSAGE_WITH_ROOM_INFO":
             return{
@@ -47,22 +45,19 @@ export const MessagesReducer = (state, action) =>{
                 roomMessages: action.messages,
                 roomInfo:{
                     roomID: action.ID,
-                    // users: [...action.usersArray]
                     users: state.rooms.find(el => el.roomID === action.ID)?.users || []
                 }
             }
-        
         case "ADD_USER_TO_GROUP":
             return{
                 ...state,
                 roomMessages:[],
                 rooms: state.rooms.map(room =>{
                     if(room.roomID === action.roomID){ //action-data = roomID
-                        console.log("ROOM " + room);
                         return{
                             ...room,
                             roomID:action.newRoomID,
-                            users: [...room.users, action.newUsername],
+                            users: [...room.users, {username:action.newUsername, picturePath:action.picturePath}],
                         }
                     }
                     return room;
@@ -82,7 +77,6 @@ export const MessagesReducer = (state, action) =>{
                 ] 
             }
         case "DELETE_ROOM":
-            console.log(" \n RoomsSSSSSS : ", state.rooms);
             return{
                 ...state, 
                 rooms: state.rooms.filter(el => el.roomID !== action.data), //action.data = roomID

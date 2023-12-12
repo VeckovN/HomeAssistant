@@ -10,6 +10,7 @@ const Rooms = ({rooms, roomInfo, showMoreRoomUsers, onRoomClickHanlder, onShowMo
                 {rooms ?
                     rooms.map((el, index)=>(      
                         <Room
+                            key={el.roomID}
                             info={el}
                             roomInfo={roomInfo}
                             moreRoomUsers={showMoreRoomUsers}
