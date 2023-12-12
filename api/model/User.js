@@ -104,6 +104,7 @@ const updateCityRelation = async(username,city)=>{
     return result.records[0].get(0);
 }
 
+//only for moving from Neo4j to Redis after adding(change code) picturePath in Redis users hash
 const getAllUsersnameWithPicturePath = async() =>{
     const session = driver.session();
     const result = await session.run(`
