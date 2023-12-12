@@ -12,12 +12,16 @@ export const MessagesReducer = (state, action) =>{
                 ...state,
                 roomMessages: action.data
             };
-        case "CREATE_NEW_GRUOP":
+        case "CREATE_NEW_GROUP":
+            const newUserInfo ={
+                username:action.newUsername,
+                picturePath:action.picturePath
+            }
             return{
                 ...state,
                 roomMessages:[],
                 //find room with added (houseworker user (action.user, ) new added houseworker (state.selectedUsername))
-                rooms: [...state.rooms, {roomID:action.newRoomID, users:[action.user, action.newUsername]}],
+                rooms: [...state.rooms, {roomID:action.newRoomID, users:[action.user, {username:action.newUsername, picturePath:action.picturePath}]}],
             }
         case "SET_ROOM_INFO": //RoomInfo
             return{

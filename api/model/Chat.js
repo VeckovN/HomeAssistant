@@ -53,11 +53,16 @@ const UserIdByUsername = async (username)=>{
     return userID
 }
 
-//RETURN PICTUREPATH
 const usernameByUserID = async (userID)=>{
     //by default hmget returns array , but with [] descruction string will be retunred
     const [username] = await hmget(`user:${userID}`, "username")
     return username;
+}
+
+const userInfoByUserID = async(userID) =>{
+    const userInfo = await hmget(`user:${userID}`, ["username","picturePath"]);
+    console.log("USERRRRR INFGOOOOOOOOOO" , userInfo);
+    return {username:userInfo[0], picturePath:userInfo[1]};
 }
 
 //get roomIDbyUsername
@@ -151,10 +156,11 @@ const getAllRooms = async(username)=>{
             //for each user return their username
 
             //TAKE PICTUREIMG AS WELL 
-            const user = await usernameByUserID(id); 
-
+            const user = await userInfoByUserID(id); 
             console.log("USER TYPEOF " + typeof(user));
-            console.log("USERTTTTTTTTT: "+ user);
+            console.log("USERTTTTTTTTT: ", user);
+
+            console.log("ID: " + id + " username: " + user.username + " picturePath: " + user.picturePath);
 
             //returned username and picturePATH
             roomObjectArray.push({username:user.username, picturePath:user.picturePath});
@@ -167,24 +173,11 @@ const getAllRooms = async(username)=>{
         //without flat - users:[ ['user1'] ,['user'2']]
         // roomsArr.push({roomID, users:roomUsernames.flat()});
         roomsArr.push({roomID, users:roomObjectArray})
+
+        console.log("ROOMS ARR: " , JSON.stringify(roomsArr));
+
         roomObjectArray =[]; //reset -for other rooms
     }
-
-    // const roomsArr = rooms.map( async el =>{
-    //     const roomID = el;
-    //     const userIDS = roomID.split(":");
-    //     console.log("ROOM ID" + roomID);
-    //     //ourID = userID;
-    //     //return diferent userID 
-    //     const otherUser = userIDS[0] == userID ? userIDS[1] : userIDS[0];
-    //     console.log("\n OHTER: " + otherUser); 
-    //     // //get username by userID in Redis
-    //     const user = await usernameByUserID(otherUser);
-    //     console.log("USERRNAMEEE : " + user);
-    //     return {roomID, user}
-    // })
-
-
     return roomsArr;
 }
 
@@ -328,6 +321,8 @@ const deleteRoomByRoomID = async(roomID) =>{
 
 module.exports ={
     UserIdByUsername,
+    userInfoByUserID,
+    usernameByUserID,
     RoomId,
     createUser,
     createRoom,

@@ -46,7 +46,8 @@ const Chat = ({socket, roomMessages, rooms, roomInfo, user, showMenu, houseworke
                 <p className="names">
                     {roomInfo?.users?.map((room) =>(
                         <div className='user'>
-                            <PersonIcon fontSize='small'/><span>{room}</span>
+                            {/* <PersonIcon fontSize='small'/><span>{room}</span> */}
+                            <PersonIcon fontSize='small'/><span>{room.username}</span>
                         </div>
                     ))}
                 </p>

@@ -128,6 +128,7 @@ const Messages = ({socket,connected}) =>{
             dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID});
             setShowMenu(false);
         }
+
         useEffect(()=>{
             //onDelete function for deleting room from state.rooms (is Async)
             //deletion must be awaited before obtaining a new roomID
@@ -138,8 +139,10 @@ const Messages = ({socket,connected}) =>{
                   }
         },[state.rooms])
     
-        const onAddUserToGroupHanlder = (async(roomID, username)=>{
-            console.log("onAddUserTo");
+        const onAddUserToGroupHanlder = (async(roomID, username, picturePath)=>{
+        // const onAddUserToGroupHanlder = (async(roomID, newUserInfo)=>{
+            //newUserInfo = {username, picturePath}
+
             if(username == ""){
                 toast.info("Select user that you want to add in room",{
                     className:"toast-contact-message"
@@ -151,24 +154,24 @@ const Messages = ({socket,connected}) =>{
                 roomID:roomID,
                 newUsername: username
             }
-
             const result = await addUserToRoom(roomInfo);
-            const data = result.data;
-            const newRoomID = data.roomID;
-            const isPrivate = data.isPrivate;
+            const {roomID:newRoomID, isPrivate} = result.data;
+
+            console.log("Room INFO123 :", result.data);
+            console.log("newROOM ID: " + newRoomID +" IS PRivate : " + isPrivate);
 
             if(newRoomID === null){
                 toast.error("The group already exists");
                 return;
             }
             
-            console.log("NEW ROOM ID: " + newRoomID );
+            console.log("NEW ROOM ID: " + newRoomID);
             if(isPrivate){                    
                 const roomUsers = state.rooms.filter(room => room.roomID == roomID);
-                const houseworker = roomUsers[0].users;
+                const currentUser = roomUsers[0].users; //users of room that we add new user
                 //create new group (add user to new gruop)   
-                dispatch({type:"CREATE_NEW_GRUOP" , roomID:roomID, newRoomID:newRoomID, user:houseworker, newUsername:username})
-                toast.info("A Group with "+ houseworker + " has been created");
+                dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, user:currentUser, newUsername:username, picturePath:picturePath})
+                toast.info("A Group with "+ currentUser.username + " has been created");
             }
             else{ 
                 dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username});    
@@ -181,8 +184,8 @@ const Messages = ({socket,connected}) =>{
             emitRoomJoin(socket, newRoomID);
         });
 
-        const onShowMoreUsersFromChatHandler = ({users, roomID}) => {
-            setShowMoreRoomUsers({users, roomID});
+        const onShowMoreUsersFromChatHandler = ({roomID, users}) => {
+            setShowMoreRoomUsers({roomID, users});
         }
 
         const onUsersFromChatOutHanlder = () =>{

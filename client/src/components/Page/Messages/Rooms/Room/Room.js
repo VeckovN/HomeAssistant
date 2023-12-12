@@ -8,6 +8,8 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
 
     const isActive = info.roomID == roomInfo.roomID ? 'active' : "";
 
+    console.log("USER INFOOOO : " ,info);
+
     return(
         <>
             {info.users.length > 1 
@@ -18,12 +20,13 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
             {console.log("USER: aaaaa " , info)}
             <button className='handler-surface' value={info.roomID} onClick={onRoomClickHanlder} />
                 <div className ='user-photo-container'>
-                    {moreRoomUsers.users && moreRoomUsers.roomID == info.roomID &&
+                    {moreRoomUsers?.users && moreRoomUsers.roomID == info.roomID &&
                         <div className='more-user-chat-container'>
                             {moreRoomUsers.users.map(el =>{
+                                console.log("elLELEL :" , el);
                                 return(
                                     <div className='user-chat-label'>
-                                        {el}
+                                        {el.username}
                                     </div>
                                 )
                             })
@@ -37,14 +40,14 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
                                 return(
                                 <>
                                     <Photo
-                                        url="url(https://i.pinimg.com/originals/a9/26/52/a926525d966c9479c18d3b4f8e64b434.jpg)"
-                                        user={user}
+                                        username={user.username}
+                                        picturePath={user.picturePath}
                                     />
                                 </>
                                 )
                             })}
                         <div className="more-user">
-                            <div className ='more-user-icon' onMouseEnter={() => onShowMoreUsersFromChatHandler({users:info.users.slice(3), roomID:info.roomID})} onMouseLeave={() => onUsersFromChatOutHanlder()}> 
+                            <div className ='more-user-icon' onMouseEnter={() => onShowMoreUsersFromChatHandler({roomID:info.roomID, users:info.users.slice(3)})} onMouseLeave={() => onUsersFromChatOutHanlder()}> 
                                 <MoreHorizIcon/>    
                             </div>
                         </div>
@@ -56,8 +59,8 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
                                 return(
                                 <>
                                     <Photo
-                                        url="url(https://i.pinimg.com/originals/a9/26/52/a926525d966c9479c18d3b4f8e64b434.jpg)"
-                                        user={user}
+                                        username={user.username}
+                                        picturePath={user.picturePath}
                                     />
                                 </>
                                 )
@@ -77,13 +80,14 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
         
                 {/* IF PRIVATE THAT SHOW PROFILE PICTURE WITH NAME DESK */}       
                 <div className='room-info'>
-                    <div className="photo" style={{backgroundImage: "url(https://images.unsplash.com/photo-1497551060073-4c5ab6435f12?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=667&q=80)"}}>
+                    <div className="photo" style={{backgroundImage: `url(assets/userImages/${info.users[0].picturePath})`}}>
                     {/* <div className="photo" src={`assets/userImages/${houseworkerProps.picturePath}`}> */}
                         {/* Green dot for online user */}
                         <div className="online"></div> 
                     </div>
                     <div className="room-contact">
-                        <p className="name">Name: {info.users[0]}</p>
+                        {/* <p className="name">Name: {info.users[0]}</p> */}
+                        <p className="name">Name: {info.users[0].username}</p>
                         {/* last message */}
                         {/* <p className="message">9 pm at the bar if possible 😳</p> */}
                         <p className="message">Last message</p>
