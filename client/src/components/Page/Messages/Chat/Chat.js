@@ -1,4 +1,4 @@
-import {useRef, useState, useCallback, memo} from 'react';
+import {useRef, useEffect, useState, useCallback, memo} from 'react';
 import { emitMessage } from '../../../../sockets/socketEmit';
 import { toast } from 'react-toastify';
 import ChatMenu from './ChatMenu';
@@ -39,6 +39,15 @@ const Chat = ({socket, roomMessages, rooms, roomInfo, user, showMenu, houseworke
                 className:'toast-contact-message'
             })
     }
+
+    //Scroll to bottom of chat
+    const endMessageRef = useRef(null);
+    const scrollToBottom = () =>{
+        endMessageRef.current?.scrollIntoView({ behavior: "instant" });
+    }
+    useEffect(() =>{
+        scrollToBottom();
+    },[roomMessages]);
 
     return(     
         <>
@@ -102,6 +111,7 @@ const Chat = ({socket, roomMessages, rooms, roomInfo, user, showMenu, houseworke
                         )
                     }
                 })}
+                <div className='endMessagerefDiv' ref={endMessageRef}></div>
             </>
             }
             </div>
