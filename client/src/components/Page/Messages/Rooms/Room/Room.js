@@ -3,11 +3,11 @@ import '../../../../../sass/components/_room.scss';
 import Photo from '../../../../../utils/Photo';
 import GroupsIcon from '@mui/icons-material/Groups';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import {useEffect, useRef} from 'react';
 
 const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUsersFromChatHandler, onUsersFromChatOutHanlder}) =>{
 
     const isActive = info.roomID == roomInfo.roomID ? 'active' : "";
-
     console.log("USER INFOOOO : " ,info);
 
     return(
@@ -17,7 +17,6 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
             // Group Room
             <div className={`room group ${isActive}`} >
             <div className={`group-sign ${isActive}-icon`}><GroupsIcon/></div>
-            {console.log("USER: aaaaa " , info)}
             <button className='handler-surface' value={info.roomID} onClick={onRoomClickHanlder} />
                 <div className ='user-photo-container'>
                     {moreRoomUsers?.users && moreRoomUsers.roomID == info.roomID &&
@@ -74,10 +73,8 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
             </div>
 
             :  
-    
-            <div className={`room ${(info.roomID == roomInfo.roomID) ? 'active' : ""}`}>   
+            <div className={`room ${isActive}`}>   
                 <button className='handler-surface' value={info.roomID} onClick={onRoomClickHanlder} />
-        
                 {/* IF PRIVATE THAT SHOW PROFILE PICTURE WITH NAME DESK */}       
                 <div className='room-info'>
                     <div className="photo" style={{backgroundImage: `url(assets/userImages/${info.users[0].picturePath})`}}>
