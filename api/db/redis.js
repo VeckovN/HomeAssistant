@@ -93,6 +93,10 @@ const zrevrange = (key, value, value2) => {
     // const limit = value+value2;
     // new Promise((resolve, reject)=> client.zRange(key, value, value+value2, resolvePromise(resolve, reject)))
 
+const zrange = (key, value, value2) => {
+    return new Promise((resolve, reject)=> client.zrange(key, value, value2, resolvePromise(resolve, reject)))
+}
+
 const zrem = (key, value) =>
     new Promise((resolve, reject) =>client.zrem(key,value, resolvePromise(resolve, reject)))
 
@@ -123,6 +127,7 @@ module.exports ={
     smembers,
     srem,
     zrevrange,
+    zrange,
     zrem,
     del,
     expire,
