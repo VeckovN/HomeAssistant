@@ -3,7 +3,6 @@ import '../../../../../sass/components/_room.scss';
 import Photo from '../../../../../utils/Photo';
 import GroupsIcon from '@mui/icons-material/Groups';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import {useEffect, useRef} from 'react';
 
 const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUsersFromChatHandler, onUsersFromChatOutHanlder}) =>{
 
@@ -85,9 +84,7 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
                     <div className="room-contact">
                         {/* <p className="name">Name: {info.users[0]}</p> */}
                         <p className="name">Name: {info.users[0].username}</p>
-                        {/* last message */}
-                        {/* <p className="message">9 pm at the bar if possible 😳</p> */}
-                        <p className="message">Last message</p>
+                        <p className="message">{info.lastMessage}</p>
                     </div>
                 </div>
                 {/* timer for the last received message */}

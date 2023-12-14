@@ -1,12 +1,12 @@
-import {useEffect, useRef, useReducer, useState, useCallback} from 'react'; 
-import { useSelector } from 'react-redux';
+import {useEffect, useReducer, useState, useCallback} from 'react'; 
+import {useSelector} from 'react-redux';
 import Chat from './Chat/Chat.js';
 import Rooms from './Rooms/Rooms.js';
-import { toast } from 'react-toastify';
-import { MessagesReducer } from './MessagesReducer.js';
+import {toast} from 'react-toastify';
+import {MessagesReducer} from './MessagesReducer.js';
 import {getHouseworkers} from '../../../services/houseworker.js';
-import { listenOnMessageInRoom } from '../../../sockets/socketListen.js';
-import { emitRoomJoin, emitLeaveRoom } from '../../../sockets/socketEmit.js';
+import {listenOnMessageInRoom} from '../../../sockets/socketListen.js';
+import {emitRoomJoin, emitLeaveRoom, emitMessage} from '../../../sockets/socketEmit.js';
 import {getUserRooms, deleteRoom, addUserToRoom, getMessagesByRoomID} from '../../../services/chat.js';
 import Spinner from '../../UI/Spinner.js';
 
@@ -49,19 +49,17 @@ const Messages = ({socket,connected}) =>{
 
 
         const fetchAllRooms = ( async () =>{   
-            console.log("fetchAllRooms");
-            const data = await getUserRooms(user.username);
-            dispatch({type:"SET_ROOMS", data:data})
+            const data = await getUserRooms(user.username); //roomID, users{}
             console.log('DATA ROOMS : \n' + JSON.stringify(data));
+            dispatch({type:"SET_ROOMS", data:data}) 
 
-            //show message of first fetched room
+            //display first room as active
             const roomID = data[0].roomID;
             const users = data[0].users;
             dispatch({type:"SET_ROOM_INFO", ID:roomID, usersArray:users});
-
             //join displayed room
             emitRoomJoin(socket, roomID);
-
+            
             //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
             const messages = await getMessagesByRoomID(roomID)
             dispatch({type:"SET_ROOM_MESSAGES", data:messages})
@@ -140,7 +138,6 @@ const Messages = ({socket,connected}) =>{
         },[state.rooms])
     
         const onAddUserToGroupHanlder = (async(roomID, username)=>{
-        // const onAddUserToGroupHanlder = (async(roomID, newUserInfo)=>{
             if(username == ""){
                 toast.info("Select user that you want to add in room",{
                     className:"toast-contact-message"
@@ -178,6 +175,36 @@ const Messages = ({socket,connected}) =>{
             emitRoomJoin(socket, newRoomID);
         });
 
+        const onSendMessageHandler = ({message, fromRoomID}) =>{    
+            console.log("FORM ROOM ID: " + fromRoomID + "FROM: " + user.userID)
+    
+            if(message != ''){
+                // messageRef.current.value = ''
+                //emit io.socket event for sending mesasge
+                //this will trigger evento on server (in index.js) and send message to room
+                const messageObj = {
+                    message:message,
+                    //who send message()
+                    from:user.userID,
+                    roomID:fromRoomID,
+                    fromUsername:user.username
+                }
+                //emit message(server listen this for sending message to user(persist in db) )
+                //and also client listen this event to notify another user for receiving message
+                emitMessage(socket, {messageObj});
+                
+                //update last message of private room
+                if(fromRoomID.split(":").length <= 2)
+                    dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:fromRoomID, message:message})
+                
+                //SOUND NOTIFICATION WHEN ON MESSAGE SENDING
+            }
+            else
+                toast.error("Empty message cannot be sent",{
+                    className:'toast-contact-message'
+                })
+        }
+
         const onShowMoreUsersFromChatHandler = ({roomID, users}) => {
             setShowMoreRoomUsers({roomID, users});
         }
@@ -207,13 +234,13 @@ const Messages = ({socket,connected}) =>{
 
                 <section className='chat-container'>
                     <Chat 
-                        socket={socket} 
                         rooms={state.rooms}
                         roomMessages={state.roomMessages}
                         roomInfo={state.roomInfo}
                         user={user}
                         showMenu={showMenu}
                         houseworkers={state.houseworkers}
+                        onSendMessageHandler={onSendMessageHandler}
                         onAddUserToGroupHanlder={onAddUserToGroupHanlder}
                         onDeleteRoomHandler={onDeleteRoomHandler}
                         onShowMenuToggleHandler={onShowMenuToggleHandler}

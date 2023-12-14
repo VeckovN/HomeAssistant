@@ -1,6 +1,4 @@
 import {useRef, useEffect, useState, useCallback, memo} from 'react';
-import { emitMessage } from '../../../../sockets/socketEmit';
-import { toast } from 'react-toastify';
 import ChatMenu from './ChatMenu';
 import PersonIcon from '@mui/icons-material/Person';
 import SendIcon from '@mui/icons-material/Send';
@@ -8,38 +6,17 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 import '../../../../sass/components/_chat.scss';
 
-const Chat = ({socket, roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onAddUserToGroupHanlder, onDeleteRoomHandler, onShowMenuToggleHandler }) =>{
+const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSendMessageHandler, onAddUserToGroupHanlder, onDeleteRoomHandler, onShowMenuToggleHandler }) =>{
     const messageRef = useRef(); //taken message from input
-
-    const onSendMessageHandler = () =>{
+    
+    const onSendHandler = () =>{
         const message = messageRef.current.value;
         const fromRoomID = roomInfo.roomID;
-
-        console.log("FORM ROOM ID: " + fromRoomID + "FROM: " + user.userID)
-
-        if(message != ''){
+        if(message != '')
             messageRef.current.value = ''
-            //emit io.socket event for sending mesasge
-            //this will trigger evento on server (in index.js) and send message to room
-            const messageObj = {
-                message:message,
-                //who send message()
-                from:user.userID,
-                roomID:fromRoomID,
-                fromUsername:user.username
-            }
-            //emit message(server listen this for sending message to user(persist in db) )
-            //and also client listen this event to notify another user for receiving message
-            emitMessage(socket, {messageObj});
 
-            //SOUND NOTIFICATION WHEN ON MESSAGE SENDING
-        }
-        else
-            toast.error("Empty message cannot be sent",{
-                className:'toast-contact-message'
-            })
+        onSendMessageHandler({message, fromRoomID});
     }
-
     //Scroll to bottom of chat
     const endMessageRef = useRef(null);
     const scrollToBottom = () =>{
@@ -55,7 +32,6 @@ const Chat = ({socket, roomMessages, rooms, roomInfo, user, showMenu, houseworke
                 <div className="names">
                     {roomInfo?.users?.map((room) =>(
                         <div className='user'>
-                            {/* <PersonIcon fontSize='small'/><span>{room}</span> */}
                             <PersonIcon fontSize='small'/><span>{room.username}</span>
                         </div>
                     ))}
@@ -76,14 +52,11 @@ const Chat = ({socket, roomMessages, rooms, roomInfo, user, showMenu, houseworke
                 </div>
             }
             
-            {/* <div className='messages-chat'> */}
             <div className={`messages-chat ${showMenu && 'showMenu'}`}>
             {roomMessages?.length >0 &&    
             <>
                 {roomMessages.map(el =>{
                     if(user.userID==el.from){
-                        //messageContext=' my-message'
-                        //My message -
                         return(
                         <div className="message text-only">
                             <div className="response">
@@ -91,12 +64,8 @@ const Chat = ({socket, roomMessages, rooms, roomInfo, user, showMenu, houseworke
                             </div>
                         </div>
                         )
-                        // if there is more continious message of the same user then print next message
-                        //or print time of last message
                     }
                     else{
-                        // messageContext=' notMy-message'
-                        //set picture with message context
                         return(
                         <div className="message">
                             <div className="photo" style={{backgroundImage: "url(https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80)"}}>
@@ -116,8 +85,6 @@ const Chat = ({socket, roomMessages, rooms, roomInfo, user, showMenu, houseworke
             }
             </div>
             <div className="footer-chat" >
-                {/* <i className="icon fa fa-smile-o clickable" style={{fontSize:"25pt"}} aria-hidden="true"></i> */}
-                {/* <input type="text" className="write-message" placeholder="Type your message here"></input> */}
                 <input
                     type='text'
                     className={`write-message ${showMenu && 'showMenu'} `}
@@ -126,7 +93,7 @@ const Chat = ({socket, roomMessages, rooms, roomInfo, user, showMenu, houseworke
                     ref={messageRef}
                     disabled={showMenu}
                 />
-                <button className={`send-icon ${showMenu && 'showMenu'}` } onClick={onSendMessageHandler} disabled={showMenu}><SendIcon/></button>
+                <button className={`send-icon ${showMenu && 'showMenu'}` } onClick={onSendHandler} disabled={showMenu}><SendIcon/></button>
             </div>
             
         </>

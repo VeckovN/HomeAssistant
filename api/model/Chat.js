@@ -1,5 +1,5 @@
 const { Socket } = require('socket.io');
-const {incr, set, hmset, sadd, hmget, exists, client, zrevrange, smembers, zadd, srem, del, get, rename, scard} = require('../db/redis');
+const {incr, set, hmset, sadd, hmget, exists, client, zrevrange, zrange, smembers, zadd, srem, del, get, rename, scard} = require('../db/redis');
 const { use } = require('../routes/clients');
 
 
@@ -67,6 +67,13 @@ const getUserPicturePath = async(username) =>{
     const userID = await UserIdByUsername(username);
     const [picturePath] = await hmget(`user:${userID}`, "picturePath");
     return picturePath;
+}
+
+const getLastMessageFromRoom = async(roomID) =>{
+    const result = await zrange(`room:${roomID}`, -1, -1);
+    const parsedObj = JSON.parse(result);
+    const lastMessage = parsedObj.message;
+    return lastMessage;
 }
 
 //get roomIDbyUsername
@@ -144,43 +151,26 @@ const getAllRooms = async(username)=>{
     for(const room of rooms){
         const roomID = room;
         const userIDS = roomID.split(":");
-        console.log("ROOM ID" + roomID + '\n');
-        //ourID = userID;
-
         const otherUsers = userIDS.filter(el => el!= userID)
-        console.log("OTHER USERS: " + otherUsers);
 
-        //DONT USE FOREACH FOR ASYNC/AWAIT 
-        //USE for() because this will wait for async execution
+         //display only last messages for private rooms
+         let lastMessage;
+         if(otherUsers.length <= 2){
+             lastMessage = await getLastMessageFromRoom(roomID);
+             console.log("ROOM: " + roomID + " LastMessage: " + lastMessage);
+         } 
+
+        //DONT USE FOREACH FOR ASYNC/AWAIT ,USE for() because this will wait for async execution
 
         //Create promise to be ensure tha user is found and then this user push in array
         //without that this async function could be finished after pushing NOTFOUND user in array
         for(const id of otherUsers){
-            console.log("EL :" + id);
-            //for each user return their username
-
-            //TAKE PICTUREIMG AS WELL 
             const user = await userInfoByUserID(id); 
-            console.log("USER TYPEOF " + typeof(user));
-            console.log("USERTTTTTTTTT: ", user);
-
-            console.log("ID: " + id + " username: " + user.username + " picturePath: " + user.picturePath);
-
-            //returned username and picturePATH
             roomObjectArray.push({username:user.username, picturePath:user.picturePath});
         }
 
-        console.log("USERSS OBJ : " + JSON.stringify(roomObjectArray));
-        // console.log("USERNAME ARRAYS : " + usernames);
-        console.log("USERNAME ARRAYS : ", roomObjectArray);
-
-        //without flat - users:[ ['user1'] ,['user'2']]
-        // roomsArr.push({roomID, users:roomUsernames.flat()});
-        roomsArr.push({roomID, users:roomObjectArray})
-
-        console.log("ROOMS ARR: " , JSON.stringify(roomsArr));
-
-        roomObjectArray =[]; //reset -for other rooms
+        roomsArr.push({roomID, lastMessage, users:roomObjectArray}) //add last message
+        roomObjectArray =[];
     }
     return roomsArr;
 }
