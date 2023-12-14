@@ -35,6 +35,22 @@ export const MessagesReducer = (state, action) =>{
                     users: state.rooms.find(el => el.roomID === action.ID)?.users || []
                 }
             }
+        case "SET_LAST_ROOM_MESSAGE":
+            return{
+                ...state,
+                rooms: state.rooms.map(room =>{
+                    if(room.roomID === action.roomID){
+                        return { //return updated object in room
+                            ...room, //whole object
+                            //THIS NOT NEEDED
+                            // users:[...room.users],
+                            //roomID: ...roomID
+                            lastMessage: action.message
+                        }
+                    }
+                    return room; //return every room again(new state);
+                })
+            }
         case "SET_ROOM_MESSAGE_WITH_ROOM_INFO":
             return{
                 ...state,
