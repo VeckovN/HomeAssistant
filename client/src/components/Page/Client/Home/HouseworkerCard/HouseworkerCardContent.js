@@ -51,7 +51,7 @@ const HouseworkerCardContent = ({
                     </div>
 
                     {houseworkerProps.recommended && 
-                        <label id='recommended-lb'>Preporucen</label> 
+                        <label id='recommended-lb'>Recommended</label> 
                     }
 
                     <div className="box-text">
