@@ -14,10 +14,6 @@ const useClient = (user) =>{
 
     //fetched(houseworker) Data based on filtered and searched Data
     const [data, setData] = useState([]);
-    //data before removing recommended users in data useState
-    const [oldData,setOldData] = useState([]); 
-
-    const [recommended, setRecomended] = useState([]);
     const [showRecommended, setShowRecommended] = useState(false);
     const [loading, setLoading] = useState(true);
 
@@ -50,6 +46,10 @@ const useClient = (user) =>{
         //alert('fetchData(pageNumberRef.current);');
         fetchData(pageNumberRef.current);
     },[searchedData, filteredData]) 
+
+    // useEffect(()=>{
+    //     fetchRecommendedData;
+    // },[])
 
 
     //IT"S APPLIED ON FIRST (Mounted ) BUT AND CAUSED UNNECESSARY RE-rENDERING 
@@ -131,26 +131,34 @@ const useClient = (user) =>{
                 //if is new houseworkers fetched then contcatenate it with older houseworkers
                 
                 //if is recommended user showned - exclude it from other users
-                if(showRecommended){
-                    const updatedData = excludeRecommendedFromUserData(data, recommended);
-                    setData(updatedData);
-                    alert("setData(updatedData);");
-                }
+                // if(showRecommended){
+                //     const updatedData = excludeRecommendedFromUserData(data, recommended);
+                //     setData(updatedData);
+                //     alert("setData(updatedData);");
+                // }
+
+
                 if(pageNumberRef.current > 0){
+                    alert("page");
                     setData(prev =>([
                         ...prev,
                         ...houseworkers
                     ]))
-                    //alert(" setData(prev =>([...prev,...houseworkers]))")
                 }
                 else{
-                    setData(houseworkers);
-                    //alert("setData(houseworkers);")
+                    if(user!== null && !showRecommended){
+                        // alert("DATA FETCH Recommended");
+                        const recommendedData = await fetchRecommended(houseworkers);
+                        console.log("DATA RECOMMENDED: " + JSON.stringify(data));
+                        setData([...recommendedData, ...houseworkers]);
+                        setShowRecommended(true);
+                    }
+                    else{
+                        // alert("Not user setData(houseworker)")
+                        setData(houseworkers);
+                    }
+                    
                 }
-
-                
-                // setOldData(houseworkers);
-                // alert("setOldData(houseworkers);;")
             }
             else{
                 //if houseworekrs exist on page then delete scroll event(prevent to go on next page)
@@ -173,30 +181,21 @@ const useClient = (user) =>{
         }   
     }
 
-    const fetchRecommendedData = async() =>{
-        alert('const fetchRecommendedData = async() =>{');
+    const fetchRecommended = async(houseworkers) =>{
         try{
             const recommendedData = await getRecommended(user.username);
-            if(recommendedData.length >0){
-                setRecomended(recommendedData)
-                alert('setRecomended(recommendedData)');
-                const updatedData = excludeRecommendedFromUserData(data, recommendedData);
-                setData(updatedData);
-                alert("setData(updatedData);")
-            }
-            else{
-                setRecomended(null);
-                alert("setRecomended(null);")
-            }
-            
+            console.log("recommendedData ", recommendedData);
+            return recommendedData;
+            // const updatedData = excludeRecommendedFromUserData(houseworkers, recommendedData);
+            // console.log("recommended updatedData", updatedData);
+            // return updatedData;
         }
         catch(err){
-            console.log("ERR" + err);
+            console.error("Error wiht recommended fetch user " + err);
         }
     }
     
     const excludeRecommendedFromUserData = (user_data, recommended_data) =>{
-        alert("excludeRecommendedFromUserData = (user_data, recommended_data) =>{")
         const updatedData = user_data.filter(user =>{
             //return only different users
             return !recommended_data.some(prop => prop.username === user.username)
@@ -220,16 +219,19 @@ const useClient = (user) =>{
 
             //Ensure if we click on same Sort (example AgeUp) then replace this sort with default "ASC"
             if(currentKeys.includes('sort')){
-                //curent sort ecual as new click sort
-                //example obj[currentKey] = 'AgeUp' and newValue ='AgeUp'
+ 
+                //(reset)show again initial houseworkers (without filters)
                 if(search_obj['sort'] == newValue){
                     search_obj['sort'] = 'ASC';
                     localStorage.setItem('searchedData', JSON.stringify(search_obj));
+                    //allowe displaying recommended users 
+                    setShowRecommended(false);
                     return search_obj
                 }
             }
             if(newKey == 'name' & newValue == ''){
                 if(search_obj['name']){
+                    setShowRecommended(false);
                     delete search_obj.name;
                     // return search_obj;
                 } 
@@ -245,30 +247,19 @@ const useClient = (user) =>{
 
     //On every re-rendering this function will be differentand without using useCallback and Filter component will be re-rendered(unnecessary)
     const filterDataHandler = useCallback((filterData) =>{
+        alert("FFFFF");
         //filteredData is passed data from Children Component (Filter)
         console.log("FILTERS IN PARRANET" + JSON.stringify(filterData));
+        console.log("fiut", filterData);
+        
         pageNumberRef.current = 0;
-        setFilterData(filterData);
-        // alert(" setFilterData(filterData);");
 
+        //(show default)set recommended if is filter button clicked without filter options
+        setFilterData(filterData);        
         localStorage.setItem('filteredData', JSON.stringify(filterData));
     },[]);
 
-    const onShowRecommended = ()=>{
-        alert("const onShowRecommended = ()=>{");
-        console.log("USER: " + JSON.stringify(user));
-        if(user?.type === "Client") // ?. -if 'user' exist then user.type can be readed
-        {
-            setShowRecommended(!showRecommended);
-            alert("setShowRecommended(!showRecommended);")
-        }
-        else
-            toast.error("Log in to see recommendetion",{
-                className:"toast-contact-message"
-            })
-    }
-
-    return {data, loading, pageNumberRef, recommended, showRecommended, onShowRecommended, searchDataHanlder, filterDataHandler}
+    return {data, loading, pageNumberRef, searchDataHanlder, filterDataHandler}
 }
 
 export default useClient;

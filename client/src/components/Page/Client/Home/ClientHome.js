@@ -13,18 +13,14 @@ import '../../../../sass/pages/_clientHome.scss';
 
 const ClientHome = ({socket}) =>{
     console.log("clientHome Redner");
-    // alert("CL RP 1");
 
     //LIMIT IF IS GUEST 
     console.log("SOCKET " + socket);
 
     const [showButton ,setShowButton] = useState(false);
     const {user} = useSelector((state) => state.auth);
-    const {data, loading, recommended, showRecommended, onShowRecommended, searchDataHanlder, filterDataHandler } = useClient(user);
+    const {data, loading, searchDataHanlder, filterDataHandler } = useClient(user);
     const [houseworkerData, setHouseworkerData] = useState([]);
-
-    //alert("After; useClient")
-    // console.log("DATA: " , data);
 
     //event listener for showing button when is Y: +100px view
     const handleScroll = useCallback(() =>{
@@ -56,16 +52,15 @@ const ClientHome = ({socket}) =>{
 
     //THIS CAUSED RE_RENDERING ON EVERY DATA CHANGE ITS CHANGE  setHouseworkerData(houseworkerList); THAT AGAIN CAUSE RE_REDNERING
     useEffect(()=>{
-        //alert("useEffect(()=>{ let houseworkerList;")
         let houseworkerList;
         data  ? 
-        // data ? 
         houseworkerList = data.map(user =>
             <>
             {console.log("ID::: " + user.id)}
             {/* {console.log("DATA: \n " + JSON.stringify(data))} */}
             <HouseworkerCard
-                recommended={false}
+                recommended={user.recommended}
+                // recommended={user.recommended}
                 socket={socket}
                 key={user.id}
                 id={user.id}
@@ -91,64 +86,6 @@ const ClientHome = ({socket}) =>{
                 //alert("setHouseworkerData(houseworkerList);");
             }
     },[data]);
-
-    // //RECOMMENDED USERS
-    // let recommendedList;
-    // {recommended ? 
-    //     recommendedList = recommended.map(user =>
-    //         <>
-    //         {console.log("ID::: " + user.id)}
-    //         <HouseworkerCard
-    //             recommended={true}
-    //             socket={socket}
-    //             key={user.id}
-    //             id={user.id}
-    //             username={user.username}
-    //             email={user.email}
-    //             first_name={user.first_name}
-    //             last_name={user.last_name}
-    //             description={user.description}
-    //             picturePath={user.picturePath}
-    //             gender={user.gender}
-    //             city={user.city}
-    //             address={user.address}
-    //             age={user.age}
-    //             phone_number={user.phone_number}
-    //             professions={user.professions}
-    //         />
-    //         </>
-    //         )
-    //         : recommendedList =[]
-    // }
-
-    // //HOUSEWORKER USERS
-    // let houseworkerList;
-    // {data ? 
-    //     houseworkerList = data.map(user =>
-    //         <>
-    //         {console.log("ID::: " + user.id)}
-    //         <HouseworkerCard
-    //             recommended={false}
-    //             socket={socket}
-    //             key={user.id}
-    //             id={user.id}
-    //             username={user.username}
-    //             email={user.email}
-    //             first_name={user.first_name}
-    //             last_name={user.last_name}
-    //             description={user.description}
-    //             picturePath={user.picturePath}
-    //             gender={user.gender}
-    //             city={user.city}
-    //             address={user.address}
-    //             age={user.age}
-    //             phone_number={user.phone_number}
-    //             professions={user.professions}
-    //         />
-    //         </>
-    //         )
-    //         : houseworkerList =[]
-    // }
 
     return (
         <div className='home-container'>

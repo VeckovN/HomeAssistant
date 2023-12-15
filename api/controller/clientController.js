@@ -165,7 +165,7 @@ const getRecommendedHouseworkers = async(req,res)=>{
             const {password, ...houseworkerData} =el;
             return houseworkerData;
         })
-        res.json(houseworkers);
+        res.status(200).json(houseworkers);
 
         //const result = await houseworkerModel.findUserWithFilters();
     }catch(err){

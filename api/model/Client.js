@@ -429,7 +429,7 @@ const recomendedByCityAndInterest = async(username,city) =>{
             let userInfo = {};
             const userNode = el.get(0).properties;
             const housworkerNode = el.get(1).properties;
-            userInfo ={...userNode, ...housworkerNode}
+            userInfo ={...userNode, ...housworkerNode, recommended:true}
             //gotted id{"low":0,"high":0} it MUST parse to INT
             userInfo.city = el.get(2);
             userInfo.gender =el.get(3); 
@@ -440,13 +440,14 @@ const recomendedByCityAndInterest = async(username,city) =>{
         await set("recommended:" + username, JSON.stringify(houseworkers))
         await expire("recommended:" + username, 10*60);
 
+        session.close();
         return houseworkers;
     }
     else{
+        session.close();
         return catchedData;
     }
 
-    session.close();
 }
 
 module.exports ={
