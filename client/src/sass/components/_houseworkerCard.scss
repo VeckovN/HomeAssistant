@@ -54,11 +54,13 @@
     width: 40em;
     height: 34em; 
 
-    min-width: 25em;
-    max-width:46em;
+    min-width: 34em;
+    max-width:40em;
+
+    flex: 1 1 300px;
 
     //margin:35px 25px 35px 25px;
-    margin:1.5em 2em 4em 1em;
+    margin:1.5em 1em 4em 1em;
 
     position:relative;
     top:150px;
