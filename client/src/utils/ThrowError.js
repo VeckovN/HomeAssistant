@@ -18,7 +18,7 @@ export const ThrowErorr = (error) =>{
 //controllers send res.status(404).json({error:'Comments Count error'});
 //with error.response. we got this json object and send 
 
-export const getErorrMessage = () =>{
+export const getErorrMessage = (err) =>{
     const message = (err.response && err.response.data.error) || err.message || err
     return message;
 }

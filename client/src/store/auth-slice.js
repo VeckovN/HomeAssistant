@@ -66,7 +66,7 @@ export const register = createAsyncThunk(
             }
             return response.data;
 
-        }catch(error){
+        }catch(err){
             const message = (err.response && err.response.data.error) || err.message || err
             //using thinkApi (passed in this function)
             return thunkAPI.rejectWithValue(message); //that will actualy reject and send the message as payload:message
@@ -140,8 +140,8 @@ const authSlice = createSlice({
         //for other ASYNC function we will use TRUNK func
         reset:(state)=>{
             state.message=' '
-            state.success=false,
-            state.error=false,
+            state.success=false
+            state.error=false
             state.loading=false 
         }
     },
