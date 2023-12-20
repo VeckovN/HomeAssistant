@@ -26,6 +26,10 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
         scrollToBottom();
     },[roomMessages]);
 
+    const conversation = roomMessages?.length >0;
+
+    alert("SADAS: " + conversation);
+
     return(     
         <>
             <div className="header-chat">                  
@@ -36,11 +40,11 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
                         </div>
                     ))}
                 </div>
-                {user.type=="Client" && <div className='menu-icon' onClick={onShowMenuToggleHandler} aria-hidden="true"><MenuIcon/></div>}
+                {user.type=="Client" && roomInfo.roomID!=null && <div className='menu-icon' onClick={onShowMenuToggleHandler} aria-hidden="true"><MenuIcon/></div>}
                 
             </div>
 
-            {showMenu && 
+            {showMenu &&
                 <div className='chat-menu'>
                     <ChatMenu 
                         houseworkers={houseworkers}
@@ -53,7 +57,7 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
             }
             
             <div className={`messages-chat ${showMenu && 'showMenu'}`}>
-            {roomMessages?.length >0 &&    
+            {roomMessages?.length >0 ?   
             <>
                 {roomMessages.map(el =>{
                     if(user.userID==el.from){
@@ -82,6 +86,11 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
                 })}
                 <div className='endMessagerefDiv' ref={endMessageRef}></div>
             </>
+            :
+            <div className='no_conversation'>
+                You have no conversation. Contact a houseworker!
+            </div>
+            
             }
             </div>
             <div className="footer-chat" >
@@ -91,9 +100,9 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
                     placeholder="Type your message here"
                     name='message-text'
                     ref={messageRef}
-                    disabled={showMenu}
+                    disabled={showMenu || !conversation}
                 />
-                <button className={`send-icon ${showMenu && 'showMenu'}` } onClick={onSendHandler} disabled={showMenu}><SendIcon/></button>
+                <button className={`send-icon ${showMenu && 'showMenu'}` } onClick={onSendHandler} disabled={showMenu || !conversation}><SendIcon/></button>
             </div>
             
         </>

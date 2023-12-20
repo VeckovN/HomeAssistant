@@ -53,17 +53,25 @@ const Messages = ({socket,connected}) =>{
             console.log('DATA ROOMS : \n' + JSON.stringify(data));
             dispatch({type:"SET_ROOMS", data:data}) 
 
-            //display first room as active
-            const roomID = data[0].roomID;
-            const users = data[0].users;
-            dispatch({type:"SET_ROOM_INFO", ID:roomID, usersArray:users});
-            //join displayed room
-            emitRoomJoin(socket, roomID);
-            
-            //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
-            const messages = await getMessagesByRoomID(roomID)
-            dispatch({type:"SET_ROOM_MESSAGES", data:messages})
-            dispatch({type:"SET_LOADING", payload:false})
+            //When user has conversations
+            if(data.length > 0){
+                 //display first room as active
+                const roomID = data[0].roomID;
+                const users = data[0].users;
+                dispatch({type:"SET_ROOM_INFO", ID:roomID, usersArray:users});
+                //join displayed room
+                emitRoomJoin(socket, roomID);
+                
+                //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
+                const messages = await getMessagesByRoomID(roomID)
+                dispatch({type:"SET_ROOM_MESSAGES", data:messages})
+                dispatch({type:"SET_LOADING", payload:false})
+            }
+            else{
+                dispatch({type:"SET_ROOM_INFO", ID:null, usersArray:[]});
+                dispatch({type:"SET_ROOM_MESSAGES", data:[]})
+                dispatch({type:"SET_LOADING", payload:false})
+            }
         });
 
         const getAllHouseworkers = async() =>{

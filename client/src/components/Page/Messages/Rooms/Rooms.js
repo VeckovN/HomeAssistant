@@ -19,7 +19,6 @@ const Rooms = ({rooms, roomInfo, showMoreRoomUsers, onRoomClickHanlder, onShowMo
                     ))
                 : <Spinner></Spinner>
                 }
-                {rooms.length==0 && <div className='no_rooms'>You have no conversation</div>}
             </div>
     )
 }
