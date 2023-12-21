@@ -40,10 +40,12 @@ const Header = () =>{
   return (
     <nav className = "navbar">
         <div className = "logo" >
-            <a href="/" className="logo-a">
+            {/* <a href="/" className="logo-a"> */}
+            <Link to="/" className='logo-a'>
                 <span className='logo-span'>Home</span> 
                 <span className="logo-span">Assistant</span>
-            </a>
+            {/* </a> */}
+            </Link>
         </div>
         <div className="nav-list">
             {/* unAuthenticated users */}
