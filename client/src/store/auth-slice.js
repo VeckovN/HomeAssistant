@@ -7,34 +7,16 @@ import { Navigate } from 'react-router-dom';
 axios.defaults.withCredentials = true
 
 
-
-//with login we set user in localStorage
-// const user = JSON.parse(localStorage.getItem('user'));
-const cookie = Cookie.get('user');
-const expressCookie = Cookie.get("sessionLog"); //track sessoin expire ()
-console.log("EXP:  " + expressCookie);
-console.log("COOK" + cookie);
-
-//We can use Axios interceptors to delete Cookie("user") on "sessionLog" cookie expire
-let user;
-if(expressCookie && cookie!=undefined) {
-    //when session expire then user cookie will be deleted
-    user = JSON.parse(Cookie.get('user'));
-}
-else {
-    user = false;
-    Cookie.remove('user'); //also remove user
-}
-
-
+// // //We can use Axios interceptors to delete Cookie("user") on "sessionLog" cookie expire
+// ////alos in Axios interceptors i should call dispatch(logout)
 
 //console.log()
 //WITH LOGIN GET USER FROM COOKIE NOT FROM LOCALSTORAGE 
 //when is logged Express send cookie to client (cookieID -> 'sessionLog")
 
 const initialState ={
-    //user: user ? user : null,
-    user: user || null,
+    // user: user ? user : null,
+    user:null,
     message:'',
     success:false,
     error: false,
@@ -131,6 +113,7 @@ export const sessionExpired = createAsyncThunk(
         }
     }
 )
+
 
 const authSlice = createSlice({
     name:'auth',

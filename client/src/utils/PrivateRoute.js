@@ -3,26 +3,28 @@ import { Navigate} from 'react-router-dom';
 import Cookie from 'js-cookie';
 import { logout, sessionExpired } from '../store/auth-slice';
 
-
 const PrivateRoute = ({children, privacy}) =>{
-
-    const {user} = useSelector((state) => state.auth)  
-    const user_type = user?.type;
+    // const {user} = useSelector((state) => state.auth)  
+    // const user_type = user?.type;
     const dispatch = useDispatch();
 
-    //i can check this does session exist in REACT
-    const expressCookie = Cookie.get("sessionLog"); 
+    const userCookie = Cookie.get("user");
+    console.log("User Cookie: " , userCookie);
 
     const isAuthenticated = () =>{
-        if(!expressCookie){
+        if(!userCookie){
             dispatch(sessionExpired())
             return false;
         }
+        const user = JSON.parse(userCookie);
+        alert("USER TYPE" + user.type);
 
-        if(privacy === "houseworker" && user_type === "Houseworker"){
+        // if(privacy === "houseworker" && user_type === "Houseworker"){
+        if(privacy === "houseworker" && user.type === "Houseworker"){
             return true;
         }
-        else if (privacy === "client" && user_type === "Client"){
+        // else if (privacy === "client" && user_type === "Client"){
+        else if (privacy === "client" && user.type === "Client"){
             return true;
         }
         //without privacy (only logged user) 
