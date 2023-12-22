@@ -1,8 +1,7 @@
 import axios from 'axios'
 import { ThrowErorr } from '../utils/ThrowError';
-
+axios.defaults.withCredentials = true;
 const BASE_URL = 'http://localhost:5000/api/'
-
 
 //username is included in the request and taken from session
 export const getUserData = async() =>{

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { ThrowErorr } from '../utils/ThrowError'
-
+axios.defaults.withCredentials = true;
 const BASE_URL = 'http://localhost:5000/api/'
 
 export const getUserRooms = async(username) =>{
