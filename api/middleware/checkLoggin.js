@@ -9,7 +9,7 @@ const extendSessionCookieMaxAge = (req,res,maxAge) =>{
 //authentication check regardless of the type of user
 const isLogged = (req,res,next)=>{
     if(!req.session.user){
-        return res.json({
+        return res.status(401).json({
             error:"User isn't authenticated"
         })
     }
@@ -25,7 +25,7 @@ const checkClient = (req,res,next)=>{
     if(!req.session.user){
         //if is authoriazied just move to the other middleware()
         console.log("User isn't authenticated");
-        return res.json({error:"User isn't authenticated"});        
+        return res.status(401).json({error:"User isn't authenticated"});        
     }
         
     if(req.session.user.type === 'Client'){
@@ -36,7 +36,7 @@ const checkClient = (req,res,next)=>{
     }    
     else
     {
-        return res.json({error:"You're not authorized"})
+        return res.status(401).json({error:"You're not authorized"})
     }
         
 }
@@ -44,7 +44,7 @@ const checkClient = (req,res,next)=>{
 const checkHouseworker = (req,res,next)=>{
 
     if(!req.session.user)
-        return res.json({error:"User isn't authenticated"})
+        return res.status(401).json({error:"User isn't authenticated"})
         //return new Error({message:"Not Authenticated"});
 
     if(req.session.user.type === 'Houseworker'){
@@ -54,7 +54,7 @@ const checkHouseworker = (req,res,next)=>{
         next();
     }
     else
-        return res.json({error:"You're not authorized"})
+        return res.status(401).json({error:"You're not authorized"})
 }
 
 module.exports ={
