@@ -90,7 +90,9 @@ export const logout = createAsyncThunk(
             const response = await axios.get('http://localhost:5000/api/logout');
         //we want to set state.message and this will be seted in extraReducer case:fulfilled
             // localStorage.removeItem('user');
-            Cookie.remove('sessionLog');
+
+            //httpOnly:true , cookie cannot be manipulated through JS
+            Cookie.remove('sessionLog'); //
             Cookie.remove('user');
          }
          catch(error){
