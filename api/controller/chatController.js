@@ -18,8 +18,8 @@ const getMessages = async(req,res)=>{
 }
 
 const getAllRooms = async(req,res)=>{
-    const username = req.params.username;
     try{
+        const username = req.params.username;
         const result = await chatModal.getAllRooms(username);
         res.json(result);
     }catch(err){
