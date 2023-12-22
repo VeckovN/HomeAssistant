@@ -42,7 +42,7 @@ router.get('/rating/:username', getRatingUsername);
 //Client click on comment button
 router.get('/comments/:username',  getComments);
 router.get('/comments/count/:username', getHouseworkerCommentsCount)
-router.get('/ourcomments/', getOurComments)
+router.get('/ourcomments/', isLogged, getOurComments)
 // router.get('/professions/:username', getProfessions);
 router.get('/professions/', checkHouseworker, getProfessions)
 router.get('/professions/all', getAllProfessions)
