@@ -175,6 +175,42 @@ const getAllRooms = async(username)=>{
     return roomsArr;
 }
 
+//With PromiseAll usage
+// const getAllRooms = async (username) => {
+//   let userID = await UserIdByUsername(username);
+//   const userRoomKey = `user:${userID}:rooms`;
+//   let rooms = [];
+//   rooms = await smembers(userRoomKey);
+
+//   // Create an array of promises for roomObjectArray
+//   const roomObjectArrayPromises = rooms.map(async (room) => {
+//     const roomID = room;
+//     const userIDS = roomID.split(":");
+//     const otherUsers = userIDS.filter((el) => el != userID);
+
+//     // Display only last messages for private rooms
+//     let lastMessage;
+//     if (otherUsers.length <= 2) {
+//       lastMessage = await getLastMessageFromRoom(roomID);
+//       console.log("ROOM: " + roomID + " LastMessage: " + lastMessage);
+//     }
+
+//     // Use Promise.all to wait for all user info promises to resolve
+//     const usersPromises = otherUsers.map(async (id) => {
+//       const user = await userInfoByUserID(id);
+//       return { username: user.username, picturePath: user.picturePath };
+//     });
+
+//     const users = await Promise.all(usersPromises);
+
+//     return { roomID, lastMessage, users };
+//   });
+
+//   const roomObjectArray = await Promise.all(roomObjectArrayPromises);
+
+//   return roomObjectArray;
+// };
+
 
 const addUserToRoom = async(newUsername, currentRoomID)=>{
     const newUser = await get(`username:${newUsername}`);
