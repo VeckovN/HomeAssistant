@@ -46,7 +46,7 @@ const getClientInfo = async(req,res)=>{
     }
     catch(err){
         console.log("ERROR GetClientInfo: " + err);
-        res.status(400).json({error:'You cant add user to ROom'});
+        res.status(500).json({error:'You cant add user to ROom'});
     }
 }
 
