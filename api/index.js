@@ -29,10 +29,11 @@ app.use((error, req, res, next) => {
 var corsOptions={
     //access is allowed to everyone
     origin:"http://localhost:3000", //react app
-    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE"],
+    methods: "POST, PUT, GET, HEAD, PATCH, DELETE",
     credentials: true,
 }
 app.use(cors(corsOptions));
+
 
 // SAVE Sesssion middleware to varibale becaseu it needs to be used for socket io middleware
 const sessionMiddleware = session({
@@ -47,13 +48,14 @@ const sessionMiddleware = session({
     cookie:{
         //for deploy set the secure to TURE, TURE DONSN'T STORE COOKIE ON BROWSER in DEVELOPMENT(using postman and etc.)
         secure:false, //our cookies works wiht false -if false - any HTTP call which is NOT HTTPS and it doesn't have SSL can access our cookies(can access this app in general)
-        httpOnly: false, //if true - the  web page can't access the cookie in JS
+        httpOnly: true, //if true - the  web page can't access the cookie in JS
         // maxAge: 1000* 60 * 10, //session max age in ms 
         maxAge: 1000* 60 * 10, //session max age in ms
     }
 })
 //SESSION 
 app.use(sessionMiddleware);
+
 
 //Socket Server Init
 var Server = require("http").Server;
