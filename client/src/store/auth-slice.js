@@ -23,7 +23,6 @@ const initialState ={
     loading: false,
 }
 
-
 //every Trunk has 3 states(pending, fulfilled, and rejected)
 export const register = createAsyncThunk(
     'auth/register', //is action ,
@@ -64,7 +63,6 @@ export const login = createAsyncThunk(
             console.log("RESESEPEPE: " + JSON.stringify(response))            
             if(response.data){
                 if(!response.data.error){
-                    //localStorage.setItem('user', JSON.stringify(response.data))
                     Cookie.set('user', JSON.stringify(response.data))
                     return response.data;
                 }
@@ -88,11 +86,9 @@ export const logout = createAsyncThunk(
     async (trunkAPI) =>{
         try{
             const response = await axios.get('http://localhost:5000/api/logout');
-        //we want to set state.message and this will be seted in extraReducer case:fulfilled
-            // localStorage.removeItem('user');
 
-            //httpOnly:true , cookie cannot be manipulated through JS
-            Cookie.remove('sessionLog'); //
+            // //httpOnly:true , cookie cannot be manipulated through JS
+            // Cookie.remove('sessionLog'); //
             Cookie.remove('user');
          }
          catch(error){
