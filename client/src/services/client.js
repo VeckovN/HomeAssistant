@@ -2,6 +2,7 @@
 // axios.defaults.withCredentials = true;
 import { ThrowErorr } from '../utils/ThrowError'
 const BASE_URL = 'http://localhost:5000/api/'
+
 import { axiosSession } from '../utils/AxiosInterceptors'
 
 export const getUserData = async() =>{
