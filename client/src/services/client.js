@@ -1,11 +1,13 @@
-import axios from 'axios'
+// import axios from 'axios'
+// axios.defaults.withCredentials = true;
 import { ThrowErorr } from '../utils/ThrowError'
-axios.defaults.withCredentials = true;
 const BASE_URL = 'http://localhost:5000/api/'
+import { axiosSession } from '../utils/AxiosInterceptors'
 
 export const getUserData = async() =>{
     try{
-        const result = await axios.get(BASE_URL + `clients/info`)
+        //const result = await axios.get(BASE_URL + `clients/info`)
+        const result = await axiosSession.get(BASE_URL + `clients/info`)
         const client_data = result.data;
         return client_data;
     }
@@ -16,7 +18,7 @@ export const getUserData = async() =>{
 
 export const updateClient = async(newData) =>{
     try{
-        await axios.put(BASE_URL + `clients/update/`, newData);
+        await axiosSession.put(BASE_URL + `clients/update/`, newData);
     }
     catch(err)
     {
@@ -49,17 +51,17 @@ export const updateClient = async(newData) =>{
 export const deleteComment = async(client_username, comment_id) =>{
     try{
         const params = {client_username: client_username, comment_id: comment_id}
-        await axios.delete(BASE_URL + `clients/comment`, {params})
+        await axiosSession.delete(BASE_URL + `clients/comment`, {params})
     }
     catch(err){
         ThrowErorr(err);
     }
 }
 
-
+//axios default
 export const getRecommended= async(username) =>{
     try{
-        const result = await axios.get(BASE_URL + `clients/recommended/${username}`);
+        const result = await axiosSession.get(BASE_URL + `clients/recommended/${username}`);
         const recommendedData = result.data;
         return recommendedData;
     }

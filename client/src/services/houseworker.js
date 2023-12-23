@@ -1,12 +1,13 @@
 import axios from 'axios'
 import { ThrowErorr } from '../utils/ThrowError';
-axios.defaults.withCredentials = true;
 const BASE_URL = 'http://localhost:5000/api/'
+
+import { axiosSession } from '../utils/AxiosInterceptors';
 
 //username is included in the request and taken from session
 export const getUserData = async() =>{
     try{
-        const result = await axios.get(BASE_URL + `houseworker/info`);
+        const result = await axiosSession.get(BASE_URL + `houseworker/info`);
         const houseworkerResult = result.data;
         return houseworkerResult;
     }
@@ -15,6 +16,7 @@ export const getUserData = async() =>{
     }
 }
 
+//axios default
 export const getHouseworkers = async() =>{
     try{
         const result = await axios.get(BASE_URL + `houseworker`);
@@ -28,7 +30,7 @@ export const getHouseworkers = async() =>{
 
 export const updateHouseworker = async(newData) =>{
     try{
-        await axios.put( BASE_URL + `houseworker/update/`, newData);
+        await axiosSession.put( BASE_URL + `houseworker/update/`, newData);
     }
     catch(err){
         ThrowErorr(err);
@@ -37,7 +39,7 @@ export const updateHouseworker = async(newData) =>{
 
 export const updateProfessionWorkingHour = async(profession, working_hour) =>{
     try{
-        await axios.put( BASE_URL + `houseworker/professions/update/`, {profession, working_hour});
+        await axiosSession.put( BASE_URL + `houseworker/professions/update/`, {profession, working_hour});
     }
     catch(err){
         ThrowErorr(err);
@@ -47,7 +49,7 @@ export const updateProfessionWorkingHour = async(profession, working_hour) =>{
 //user of authenticated user(username taken from  session data)
 export const getAuthenticatedUserComments = async() =>{
     try{
-        const result = await axios.get(BASE_URL + `houseworker/ourcomments/`);
+        const result = await axiosSession.get(BASE_URL + `houseworker/ourcomments/`);
         const comms = result.data;
         return comms;
     }
@@ -59,7 +61,7 @@ export const getAuthenticatedUserComments = async() =>{
 //get commnets of the user with given username
 export const getComments = async(username) =>{
     try{
-        const result = await axios.get(BASE_URL + `houseworker/comments/${username}`);
+        const result = await axiosSession.get(BASE_URL + `houseworker/comments/${username}`);
         const comms = result.data;
         return comms;
     }
@@ -70,7 +72,7 @@ export const getComments = async(username) =>{
 
 export const postComment = async(postComment) =>{
     try{
-        await axios.post(BASE_URL + `clients/comment`, postComment);
+        await axiosSession.post(BASE_URL + `clients/comment`, postComment);
     }catch(err){
         ThrowErorr(err);
     }
@@ -79,7 +81,7 @@ export const postComment = async(postComment) =>{
 
 export const rateUser = async(rateObject) =>{
     try{
-        await axios.post(BASE_URL + 'clients/rate', rateObject)
+        await axiosSession.post(BASE_URL + 'clients/rate', rateObject)
         //fetch newRate(new calcuation of avarage rate)
         const result = await axios.get(BASE_URL + `houseworker/rating/${rateObject.houseworker}`)
         const ratingValue = result.data;
@@ -92,7 +94,7 @@ export const rateUser = async(rateObject) =>{
 }
 
 
-
+//axios default
 export const getRating = async(username) =>{
     try{
         const result = await axios.get(BASE_URL + `houseworker/rating/${username}`)
@@ -105,6 +107,7 @@ export const getRating = async(username) =>{
     }
 }
 
+//axios default
 //get all professions of the user(based on session.user ) 
 export const getProfessions = async()=>{
     try{
@@ -118,6 +121,7 @@ export const getProfessions = async()=>{
     }
 }
 
+//axios default
 export const getProfessionsByUsername = async(username)=>{
     try{
         const result = await axios.get(BASE_URL + `houseworker/professions/${username}`)
@@ -164,6 +168,7 @@ export const getCommentsCount = async(username) =>{
     }
 }
 
+//axios default
 export const getConversationCount = async(userRedisID) =>{
     try{
         const result = await axios.get( BASE_URL + `chat/conversationCount/${userRedisID}`)
@@ -179,6 +184,7 @@ export const getConversationCount = async(userRedisID) =>{
     }
 }
 
+//axios default
 //get all houseworkers cities
 export const getAllCities = async() =>{
     try{
@@ -203,6 +209,7 @@ export const getAllProfessions = async() =>{
     }
 }
 
+//axios default
 export const getHouseworkerByFilter = async(params) =>{
     try{
         const result = await axios.get(BASE_URL + `houseworker/filter?${params}`);
