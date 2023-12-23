@@ -1,6 +1,6 @@
-const extendSessionCookieMaxAge = (req,res,maxAge) =>{
-    // const newMaxAge = 1000 * 60 * 10;
-    const newMaxAge = maxAge;
+
+const extendSessionCookieMaxAge = (req,res) =>{
+    const newMaxAge = 1000 * 95 * 10;
     const currentCookie = req.cookies.sessionLog;
     // Set the updated cookie in the response headers
     res.cookie('sessionLog', currentCookie, { maxAge: newMaxAge });
@@ -14,8 +14,7 @@ const isLogged = (req,res,next)=>{
         })
     }
     //if is authoriazied just move on other middleware()
-    const maxAge = 1000 * 60 * 10;
-    extendSessionCookieMaxAge(req,res,maxAge);
+    extendSessionCookieMaxAge(req,res);
 
     next();
 }
@@ -29,8 +28,7 @@ const checkClient = (req,res,next)=>{
     }
         
     if(req.session.user.type === 'Client'){
-        const maxAge = 1000 * 60 * 10;
-        extendSessionCookieMaxAge(req,res,maxAge);
+        extendSessionCookieMaxAge(req,res);
         
         next();
     }    
@@ -48,8 +46,7 @@ const checkHouseworker = (req,res,next)=>{
         //return new Error({message:"Not Authenticated"});
 
     if(req.session.user.type === 'Houseworker'){
-        const maxAge = 1000 * 60 * 10;
-        extendSessionCookieMaxAge(req,res,maxAge)
+        extendSessionCookieMaxAge(req,res)
 
         next();
     }
