@@ -1,4 +1,4 @@
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 import Home from './components/Page/Home';
 import Header from './components/Layout/Header/Header.js'
 import Register from './components/Page/Register/Register.js'
@@ -16,10 +16,11 @@ import './toastify.css'
 
 
 import useSocket from './hooks/useSocket';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 //import Toastify Css
 import 'react-toastify/dist/ReactToastify.min.css';
 
+import { requestInterceptor } from './utils/AxiosInterceptors.js';
 
 // const socketIO = io("http://127.0.0.1:5000", {
 //   withCredentials: true,
@@ -29,6 +30,9 @@ function App() {
 
   const {user} = useSelector((state) => state.auth)    
   const [socket, connected] = useSocket(user);
+  const dispatch = useDispatch();
+
+  requestInterceptor(dispatch);
 
   return (
     <BrowserRouter>
