@@ -117,7 +117,7 @@ const logout = async(req,res)=>{
             if(err)
                 return res.json({error:err.message}).status(400);
         })
-        return res.json({success:"You're logout now"});
+        return res.clearCookie('sessionLog').json({success:"You're logout now"});
     }
     else
         return res.json({error:"You're not logged"})

@@ -45,7 +45,8 @@ const HouseworkerRegister = () =>{
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const onSubmitHandler = async (data) =>{
+    const onSubmitHandler = async (data,event ) =>{
+        event.preventDefault();
         console.log("Form DATA: \n " + JSON.stringify(data))
 
         //check does profession working hours entered
