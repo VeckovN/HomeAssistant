@@ -43,13 +43,9 @@ const useClient = (user) =>{
 
     //on every serachedData and filterData change reFeatch houseworkers
     useEffect(()=>{
-        //alert('fetchData(pageNumberRef.current);');
         fetchData(pageNumberRef.current);
-    },[searchedData, filteredData]) 
-
-    // useEffect(()=>{
-    //     fetchRecommendedData;
-    // },[])
+    },[searchedData, filteredData, user])
+    // //user because on logout(user change) houseworkers should be fetch again, bug fixed -> with showing recommended user(auth) after logout
 
 
     //IT"S APPLIED ON FIRST (Mounted ) BUT AND CAUSED UNNECESSARY RE-rENDERING 
