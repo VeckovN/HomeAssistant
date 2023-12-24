@@ -2,7 +2,8 @@ import ClientHome from "./Client/Home/ClientHome.js";
 import HouseworkerHome from './Houseworker/HouseworkerHome';
 
 const Home = ({socket, user}) =>{
-    // const coo = Cookie.get("sessionLog");
+    console.log("USERRRR", user);
+
     if(user === null)
         console.log("TESSSSSSSS");
 
