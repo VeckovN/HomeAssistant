@@ -1,5 +1,5 @@
 import {useEffect, useReducer, useState, useCallback} from 'react'; 
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import Chat from './Chat/Chat.js';
 import Rooms from './Rooms/Rooms.js';
 import {toast} from 'react-toastify';
@@ -80,6 +80,8 @@ const Messages = ({socket,connected}) =>{
             dispatch({type:"SET_HOUSEWORKERS", data:houseworkerResult});
         }
     
+
+
         const onRoomClickHanlder = ( async e =>{
             const roomID = e.target.value;
             //don't applie logic if is clicked on the same room
@@ -102,7 +104,7 @@ const Messages = ({socket,connected}) =>{
             //if(showMenu)    
             
         })
-    
+
         const onDeleteRoomHandler = useCallback( async(e)=>{ 
             const roomID = e.target.value;
             try{
@@ -235,6 +237,7 @@ const Messages = ({socket,connected}) =>{
                         roomInfo={state.roomInfo}
                         showMoreRoomUsers={showMoreRoomUsers}
                         onRoomClickHanlder={onRoomClickHanlder}
+                        // onRoomClickHanlder={onRoomClickHandlerWithSessionCheck}
                         onShowMoreUsersFromChatHandler={onShowMoreUsersFromChatHandler}
                         onUsersFromChatOutHanlder={onUsersFromChatOutHanlder}
                     />
