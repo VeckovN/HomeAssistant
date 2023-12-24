@@ -2,6 +2,7 @@ import HouseworkerCommentModal from "./HouseworkerCommentModal";
 import Rating from '@mui/material/Rating';
 import StarIcon from '@mui/icons-material/Star';
 import '../../../../../sass/components/_houseworkerCard.scss';
+import { Link } from "react-router-dom";
 
 const HouseworkerCardContent = ({
     comments,
@@ -76,13 +77,13 @@ const HouseworkerCardContent = ({
                             <div className='div-text'>Gender: <label className='label-text'>{houseworkerProps.gender}</label>
                             </div>
 
-                            <div className='div-text'>Address: <label className='label-text'> {isClient ? houseworkerProps.address : <b><a href='/login'>Log in</a></b>}</label>
+                            <div className='div-text'>Address: <label className='label-text'> {isClient ? houseworkerProps.address : <b><Link to='/login' className='link'>Log in</Link></b>}</label>
                             </div>
 
-                            <div className='div-text'>Phone number: <label className='label-text'> {isClient ? houseworkerProps.phone_number : <b><a href='/login'>Log in</a></b>}</label>
+                            <div className='div-text'>Phone number: <label className='label-text'> {isClient ? houseworkerProps.phone_number : <b><Link to='/login' className='link'>Log in</Link></b>}</label>
                             </div>
 
-                            <div className='div-text'>Age: <label className='label-text'>{isClient ? houseworkerProps.age : <b><a href='/login'>Log in</a></b>}</label>
+                            <div className='div-text'>Age: <label className='label-text'>{isClient ? houseworkerProps.age : <b><Link to='/login' className='link'>Log in</Link></b>}</label>
                             </div>
                         </div>
 
@@ -108,7 +109,7 @@ const HouseworkerCardContent = ({
                             </div>
                                         
                             <div className='description-box'>
-                                <div className='div-text-desc'><p>{isClient ? houseworkerProps.description : <a href='/login'>Log in</a>}</p>
+                                <div className='div-text-desc'><p>{isClient ? houseworkerProps.description : <Link to='/login' className='link'>Log in</Link>}</p>
                                 </div>
                             </div>
 
@@ -126,7 +127,7 @@ const HouseworkerCardContent = ({
                                             emptyIcon={<StarIcon style={{ color: 'grey' }} fontSize="inherit" />}
                                             precision={0.5} 
                                             readOnly /> 
-                                        : <a href='/login'>Log in</a>}
+                                        : <Link to='/login' className='link'>Log in</Link>}
                                     </p>
                                 </div>
                                 
