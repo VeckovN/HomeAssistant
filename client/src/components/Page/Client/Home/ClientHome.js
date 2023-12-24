@@ -28,8 +28,11 @@ const ClientHome = ({socket}) =>{
             setButtonState({showButton:true, delayedHide:false})
         }
         else{
-            setButtonState({showButton:false, delayedHide:true})
+            setButtonState((prev => ({...prev, delayedHide:true})));
         }
+        // else{
+        //     setButtonState({showButton:false, delayedHide:true})
+        // }
     },[]);
 
     
