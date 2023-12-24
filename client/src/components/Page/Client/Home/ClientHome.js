@@ -16,19 +16,19 @@ const ClientHome = ({socket}) =>{
 
     //LIMIT IF IS GUEST 
     console.log("SOCKET " + socket);
-
-    const [showButton ,setShowButton] = useState(false);
     const {user} = useSelector((state) => state.auth);
     const {data, loading, searchDataHanlder, filterDataHandler } = useClient(user);
     const [houseworkerData, setHouseworkerData] = useState([]);
 
+    const [buttonState, setButtonState] = useState({showButton:false, delayedHide:false});
+
     //event listener for showing button when is Y: +100px view
     const handleScroll = useCallback(() =>{
         if(window.scrollY >= 1000){
-            setShowButton(true);
+            setButtonState({showButton:true, delayedHide:false})
         }
-        else{            
-            setShowButton(false)
+        else{
+            setButtonState({showButton:false, delayedHide:true})
         }
     },[]);
 
@@ -39,6 +39,23 @@ const ClientHome = ({socket}) =>{
             behavior: 'smooth'
           });
     }
+
+    //Without useTransition 
+
+    //(applied fade out effect on scroll button div - after some time)
+    useEffect(()=>{
+        let timeout;
+
+        if(buttonState.delayedHide){
+            // Apply fade-out class after a short delay when showButton becomes false
+            timeout = setTimeout(() =>{
+                setButtonState({showButton:false, delayedHide:false})
+            },400)
+        }
+        return () =>{
+            clearTimeout(timeout);
+        }
+    },[buttonState.delayedHide])//when is window/scrollY triggered
 
     useEffect(()=>{
         window.addEventListener('scroll', handleScroll);
@@ -117,9 +134,9 @@ const ClientHome = ({socket}) =>{
                        
             </div>
 
-            {showButton && 
+            {buttonState.showButton && 
                 <div className='scroll-div'>
-                    <button id='scroll-to-top' onClick={scrollToTop}><KeyboardDoubleArrowUpIcon/></button>
+                    <button className={`scroll-to-top ${!buttonState.delayedHide ? 'fade-in' : 'fade-out'}`} onClick={scrollToTop}><KeyboardDoubleArrowUpIcon/></button>
                 </div>
             }
         </div>
