@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import ReactDom from 'react-dom';
+import {useEffect} from 'react';
 
 import '../../sass/components/_modal.scss';
 
@@ -40,6 +41,17 @@ const portalElement = document.getElementById('modal-portal');
 //OnCloseModal is functon from Component which use This Modal
 //const Modal = props=>{
 const Modal = ({onCloseModal, HeaderContext, BodyContext, FooterContext})=>{
+
+    //Prevent the background content from scrolling when a modal is open
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+    
+        // Cleanup function to remove the class when the component is unmounted or the modal is closed
+        return () => {
+          document.body.style.overflow = 'visible';
+        };
+      }, []);
+
     return (
         <>
             {ReactDom.createPortal(<BackView onCloseBv={onCloseModal}/>, portalElement)}
