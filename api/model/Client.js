@@ -419,7 +419,8 @@ const recomendedByCityAndInterest = async(username,city) =>{
             MATCH(h)<-[:IS_HOUSEWORKER]-(u:User)-[:LIVES_IN]->(l:City)
             MATCH(u)-[:GENDER]->(g:Gender)
             WHERE uu.username = $username and l.name = $city
-            RETURN u, h, l.name, g.type, rand() as rand
+            WITH DISTINCT u, h, l.name AS cityName, g.type AS genderType
+            RETURN u, h, cityName, genderType, rand() as rand
             ORDER BY rand ASC
             LIMIT 3
             `,{username:username, city:city}
