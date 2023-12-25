@@ -5,7 +5,7 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
 
     return(
         <div className='profile-container'>
-            {loading ? <Spinner/> :
+            {loading ? <Spinner className={'profile-spinner'}/> :
             <>
                 <h1>Client Profile</h1>
                 <form className='cl-profile-form' onSubmit={handleSubmit(onSubmitUpdate)}>

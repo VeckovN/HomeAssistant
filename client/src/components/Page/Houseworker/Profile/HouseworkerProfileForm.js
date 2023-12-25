@@ -7,7 +7,7 @@ const HouseworkerProfileForm = ({loading, houseworkerData, setHouseworkerData, c
     console.log("GOYUSEL ", houseworkerData);
     return(
         <div className='profile-container'>
-                {loading ? <Spinner/> :
+                {loading ? <Spinner className={'profile-spinner'}/> :
                 <>
                     {/* <div id='title'>{`Houseworker ${ houseworkerData.first_name} ${houseworkerData.last_name} Profile`}</div> */}
                     <form className='hs-profile-form' onSubmit={handleSubmit(onSubmitUpdate)}>

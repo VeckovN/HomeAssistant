@@ -6,8 +6,6 @@ import {useForm, useController} from 'react-hook-form';
 import { city_options } from '../../../../utils/options';
 import '../../../../sass/pages/_clientProfile.scss';
 
-import Spinner from '../../../UI/Spinner';
-
 const ClientProfile = () =>{ 
     const initialState = {
         email:'',

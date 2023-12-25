@@ -4,6 +4,10 @@
 
 .profile-container{
     @extend %profile-container;
+
+    .profile-spinner{
+        padding:10em 0em;
+    }
    
     h1{
         margin-top: 2em;
