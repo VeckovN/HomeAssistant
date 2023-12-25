@@ -8,6 +8,8 @@ import '../../../../sass/components/_chat.scss';
 
 const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSendMessageHandler, onAddUserToGroupHanlder, onDeleteRoomHandler, onShowMenuToggleHandler }) =>{
     const messageRef = useRef(); //taken message from input
+
+    console.log("ROOMM INFOOO : " , roomInfo);
     
     const onSendHandler = () =>{
         const message = messageRef.current.value;
@@ -70,11 +72,20 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
                         )
                     }
                     else{
+                        
+                        let userPicturePath;
+                        roomInfo.users.forEach(element => {
+                            if(element.username === el.fromUsername){
+                                userPicturePath = element.picturePath;
+                            }
+                        });
+
+                        console.log("ASDAS DS DAS DAS D: " + userPicturePath);
+
                         return(
                         <div className="message">
-                            <div className="photo" style={{backgroundImage: "url(https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80)"}}>
-                            {/* ADD PICTURE PATH IN USER OBJ */}
-                            {/* <div className="photo" src={`assets/userImages/${user.picturePath}`}> */}
+                            <div className="photo" style={{ backgroundImage: `url(assets/userImages/${userPicturePath})` }}>
+                                <div className='photo-hover-username'>{el.fromUsername}</div>
                                 <div className="online"></div>
                             </div>
                             <p className="text"> {el.message}</p>
