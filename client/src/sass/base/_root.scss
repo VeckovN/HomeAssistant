@@ -15,6 +15,14 @@
   font-size:$text-base-size;
 }
 
+.notFound{
+  display: flex;
+  justify-content: center;
+  color:white;
+  padding:15em 0em;
+  font-family: $root-font-family-1;
+}
+
 
 // @include breakpoint(md) {
 //   :root {

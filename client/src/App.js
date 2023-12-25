@@ -9,11 +9,11 @@ import Comments from './components/Page/Houseworker/CommentsList/CommentsList.js
 import Profile from './components/Page/Profile';
 import Messages from './components/Page/Messages/Messages'
 import PrivateRoute from './utils/PrivateRoute';
+import NotFound from './components/Page/NotFound.js';
 
 import {ToastContainer, toast} from 'react-toastify';
 //css class for custom style
 import './toastify.css'
-
 
 import useSocket from './hooks/useSocket';
 import { useSelector, useDispatch } from 'react-redux';
@@ -65,7 +65,8 @@ function App() {
             }
           />
 
-          
+          <Route path="*" element ={<NotFound/>}></Route> 
+
         </Routes>
         {/* IN THIS HOME WE HAVE MORE ROUTES  */}
         {/* Footer */}
