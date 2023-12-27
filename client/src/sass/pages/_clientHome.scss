@@ -71,17 +71,20 @@
         right:1em;
         width:3em;
         height: 3em;
-
         border:none;
-        // width:4em;
-        // height: 1em;
-        // background-color: #f2f2f2;
-        // padding: 10px;
-        // border-radius: 5px;
+        z-index: 10;
         
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 
-        #scroll-to-top{
+        .fade-in{
+            animation: fadeIn .4s;
+        }
+
+        .fade-out{
+            animation: fadeOut .4s;
+        }
+
+        .scroll-to-top{
             position: absolute;
             width: 100%;
             height: 100%;  
@@ -90,7 +93,6 @@
             background-color: $nav-hover-color;
             color:white;
             border:none;
-            animation: fadeIn .4s;
 
             &:hover{
                 color:black;
@@ -99,7 +101,7 @@
         }
 
         .scrollActive{
-            animation: fadeOut .1s;
+            animation: fadeOut .2s;
         }
        
     }
