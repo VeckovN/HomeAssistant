@@ -1,0 +1,57 @@
+@use '../abstracts/colors' as *;
+@use '../abstracts/fonts' as *; 
+@use '../abstracts/mixins' as *;
+
+
+.footer-container{
+    position: absolute;
+    width: 100%;
+    // bottom: 0;
+    background-color: rgba(0, 0, 0, 0.877);
+    color:white;
+
+    footer{
+        @include flex-with-direction-center($direction:column);
+        color:$white;
+
+        padding:2em 0em;
+
+        .social{
+            a{
+                color:$white;
+                padding:0em .5em;
+
+                &:hover{
+                    color:$grey-5;
+                }
+            }
+        }
+
+        .links{
+            @include flex-with-direction($direction:row);
+            padding: .5em 0;
+            
+            .link{
+                list-style: none;
+                padding:0em .5em;
+
+                a{
+                    color:$white;
+                    text-decoration: none;
+
+                    &:hover{
+                        color:$grey-5;
+                    }
+                }        
+            }
+            
+        }
+
+        .copyright-label{
+            font-size: 1em;
+            padding:.5em 0em;
+        }
+
+        
+    }
+}
