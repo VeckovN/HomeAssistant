@@ -1,6 +1,6 @@
 import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 import Home from './components/Page/Home';
-import Header from './components/Layout/Header/Header.js'
+import Header from './components/Layout/Header.js';
 import Register from './components/Page/Register/Register.js'
 import ClientRegister from './components/Page/Register/Client/ClientRegister';
 import HouseworkerRegister from './components/Page/Register/Houseworker/HouseworkerRegister';
@@ -73,6 +73,7 @@ function App() {
         <ToastContainer/>
       {/* </div> */}
 
+      {/* <Footer/> */}
     </BrowserRouter>
 
   );

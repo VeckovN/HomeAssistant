@@ -1,10 +1,10 @@
 import {Link, useNavigate} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
-import {logout, reset} from '../../../store/auth-slice';
+import {logout, reset} from '../../store/auth-slice';
 import { useEffect } from 'react';
 import {toast} from 'react-toastify';
 
-import '../../../sass/layout/_header.scss';
+import '../../sass/layout/_header.scss';
 
 const Header = () =>{
     const navigate = useNavigate();
