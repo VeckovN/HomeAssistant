@@ -1,59 +1,51 @@
+@use '../abstracts/colors' as *;
+@use '../abstracts/fonts' as *;
+@use '../base/typography' as *;
+
 .houseworker-container{
     width: 100%;
     height: 100%;
     display:flex;
     flex-direction: column;
     align-items: center;
-    padding:15rem 0 ;
+    padding:5em 0 ;
+    margin:2em 0em;
+
+    .houseworker-one{
+        margin:2em 0 4em 0;
+    }
 
     .houseworker-item-container{
-    /* height: 100%;
-        width: 70%; */
-        height: 20rem;
+        position: relative;
+        height: 20em;
         width: 80%;
-        padding:0 2rem;
+        min-width: 650px;
+        max-width: 1100px;
+        min-height: 270px;
+        padding:0 2em;
         display:flex;
         flex-wrap: wrap;
         justify-content: space-around;
         align-items: center;
-        background-color: rgba(249, 252, 255, 0.87);
-        border-radius: 1rem;
+        background-color: rgba(249, 252, 255, 0.719);
+        border-radius: 1em;
         box-shadow: 6px 5px 15px 10px rgba(0,0,0,0.3), inset 4px 4px 15px 0 rgba(0,0,0,0.3);
     
-        .houseworker-item {
-            background-color: rgb(97, 148, 172);
-            height: 11rem;
-            width: 11rem;
-            padding:0 1rem;
-            
-            display: flex;
-            flex-direction: column;
-            justify-content: space-evenly;
-            align-items: center;
-            border-radius: .8rem;
-            box-shadow: 6px 5px 15px 10px rgba(0,0,0,0.3), inset 4px 4px 15px 0 rgba(0,0,0,0.2);
-    
-            .item-title{
-                display: flex;  
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
 
-                label{
-                    font-size: 1.3rem;
-                    font-weight: 700;
-                    margin-bottom: 1rem;
-                }
-            }
-
-            .item-info{
-                font-size: 1.3rem;
-                font-weight: 700;
-            }
+        #housewokre-item-label{
+            position: absolute;
+            font-size: 1.5em;
+            font-family: $root-font-family-1;
+            font-weight: 700;
+            color:$black-3;
+            top:-1.5em;
+            left:.6em;
         }
-    }
 
+    }
 }
+
+
 
 
 
