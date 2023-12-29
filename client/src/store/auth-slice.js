@@ -7,16 +7,20 @@ import { Navigate } from 'react-router-dom';
 axios.defaults.withCredentials = true
 
 
-// // //We can use Axios interceptors to delete Cookie("user") on "sessionLog" cookie expire
-// ////alos in Axios interceptors i should call dispatch(logout)
+//Persist-state-redux is another solution for this problem 
 
-//console.log()
-//WITH LOGIN GET USER FROM COOKIE NOT FROM LOCALSTORAGE 
-//when is logged Express send cookie to client (cookieID -> 'sessionLog")
+//On initial i have to check does session exist (because i can left the page(app)(redux will be restarted)
+//and session stiill exist and after again entering the page this redux should store user)
+const userCookie = Cookie.get('user')
+let user;
+if(userCookie){
+    user = JSON.parse(userCookie);
+}
+
 
 const initialState ={
-    // user: user ? user : null,
-    user:null,
+    user: user ? user : null,
+    // user:null,
     message:'',
     success:false,
     error: false,
