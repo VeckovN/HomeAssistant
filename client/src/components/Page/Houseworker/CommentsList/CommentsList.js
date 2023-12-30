@@ -29,7 +29,7 @@ const CommentsList = () =>{
     const endMessageRef = useRef(null);
     
     const scrollToBottom = () =>{
-        endMessageRef.current?.scrollIntoView({ behavior: "instant" });
+        endMessageRef.current?.scrollIntoView({ behavior: "instant", block: 'nearest' });
     }
 
     useEffect(() =>{

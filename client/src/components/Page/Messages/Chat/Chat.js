@@ -21,12 +21,18 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
     }
     //Scroll to bottom of chat
     const endMessageRef = useRef(null);
+    const messagesChatRef = useRef(null);
     const scrollToBottom = () =>{
-        endMessageRef.current?.scrollIntoView({ behavior: "instant" });
+        
+        //scrollIntoView without block:'nearest' is affecting scroll to the whole page
+        //This effects on scroll to whole page(when is page entered its position on bottom of page(near to footer not on top of page))
+        endMessageRef.current?.scrollIntoView({behavior: 'instant', block: 'nearest'});
     }
     useEffect(() =>{
         scrollToBottom();
     },[roomMessages]);
+
+
 
     const conversation = roomMessages?.length >0;
 
@@ -58,7 +64,7 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
                 </div>
             }
             
-            <div className={`messages-chat ${showMenu && 'showMenu'}`}>
+            <div ref={messagesChatRef} className={`messages-chat ${showMenu && 'showMenu'}`}>
             {roomMessages?.length >0 ?   
             <>
                 {roomMessages.map(el =>{
