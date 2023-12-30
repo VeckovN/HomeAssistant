@@ -1,7 +1,7 @@
 import { useSelector, useDispatch} from 'react-redux';
 import { Navigate} from 'react-router-dom'; 
 import Cookie from 'js-cookie';
-import { logout, sessionExpired } from '../store/auth-slice';
+import { logout, sessionExpired } from '../../store/auth-slice';
 
 const PrivateRoute = ({children, privacy}) =>{
     const {user} = useSelector((state) => state.auth)  
