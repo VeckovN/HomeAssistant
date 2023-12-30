@@ -9,7 +9,8 @@ import Login from './components/Page/Login/Login.js'
 import Comments from './components/Page/Houseworker/CommentsList/CommentsList.js';
 import Profile from './components/Page/Profile';
 import Messages from './components/Page/Messages/Messages'
-import PrivateRoute from './utils/PrivateRoute';
+import PrivateRoute from './utils/Route/PrivateRoute.js';
+import NotAuthRoute from './utils/Route/NotAuthRoute.js';
 import NotFound from './components/Page/NotFound.js';
 import ScrollToTopWrapper from './utils/ScrollToTopWrapper.js';
 
@@ -42,11 +43,40 @@ function App() {
         <Header/>
         <Routes>
           <Route path='/' element={<Home socket={socket} connected={connected} user={user}/>}> </Route>
-          <Route path='/login' element={<Login/>}></Route>
+
+          <Route path='/login' element={
+              <NotAuthRoute>
+                <Login/>
+              </NotAuthRoute>
+            }
+          />
+
+          <Route path='/register' element={
+              <NotAuthRoute>
+                <Register/>
+              </NotAuthRoute>
+            }
+          />
+
+          <Route path='/clientRegister' element={
+              <NotAuthRoute>
+                <ClientRegister />
+              </NotAuthRoute>
+            }
+          />
+
+          <Route path='/HouseworkerRegister' element={
+              <NotAuthRoute>
+                <HouseworkerRegister/>
+              </NotAuthRoute>
+            }
+          />
+
+          {/* <Route path='/login' element={<Login/>}></Route> 
           <Route path='/register' element={<Register/>}></Route>
           <Route path='/clientRegister' element={<ClientRegister />}></Route>
-          <Route path='/HouseworkerRegister' element={<HouseworkerRegister/>}></Route>
-        
+          <Route path='/HouseworkerRegister' element={<HouseworkerRegister/>}></Route> */}
+
           <Route path='/comments' element={
               <PrivateRoute privacy='houseworker'>
                 <Comments/>
