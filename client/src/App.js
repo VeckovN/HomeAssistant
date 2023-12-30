@@ -11,6 +11,7 @@ import Profile from './components/Page/Profile';
 import Messages from './components/Page/Messages/Messages'
 import PrivateRoute from './utils/PrivateRoute';
 import NotFound from './components/Page/NotFound.js';
+import ScrollToTopWrapper from './utils/ScrollToTopWrapper.js';
 
 import {ToastContainer, toast} from 'react-toastify';
 //css class for custom style
@@ -37,7 +38,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      {/* <div className="App_container">     */}
+      <ScrollToTopWrapper>
         <Header/>
         <Routes>
           <Route path='/' element={<Home socket={socket} connected={connected} user={user}/>}> </Route>
@@ -69,12 +70,11 @@ function App() {
           <Route path="*" element ={<NotFound/>}></Route> 
 
         </Routes>
-        {/* IN THIS HOME WE HAVE MORE ROUTES  */}
-        {/* Footer */}
-        <ToastContainer/>
-      {/* </div> */}
 
-      <Footer/>
+        <Footer/>
+        <ToastContainer/>
+
+      </ScrollToTopWrapper>
     </BrowserRouter>
 
   );
