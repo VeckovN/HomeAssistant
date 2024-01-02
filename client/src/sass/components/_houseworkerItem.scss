@@ -3,32 +3,22 @@
 @use '../base/typography' as *;
 
 
-.houseworker-item {
+.houseworker-item{
     position: relative;
-    background-color: rgba(0, 0, 0, 0.87);
     height: 12em;
     width: 12em;
     padding:0 1em;
 
     font-family: $root-font-family-2;
-    color:$grey-2;
     
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
     border-radius: .8em;
-    box-shadow: 6px 5px 15px 10px rgba(0,0,0,0.3), inset 4px 4px 15px 0 rgba(0,0,0,0.2);
 
-    cursor: pointer;
-    text-decoration: none;
 
     .item-title{
-        position:absolute;
-        top:-2em;
-        color:$black;
-        visibility: hidden;
-
         label{
             font-family: $root-font-family-2;
             font-size: 1.4em;
@@ -36,12 +26,7 @@
         }
     }
 
-    .hovered{
-        visibility: visible;
-    }
-
     .icon{
-
         font-size: 5em;
     }
 
@@ -52,7 +37,31 @@
 
 }
 
-.rating-container{
+.link-item{
+    background-color: rgba(0, 0, 0, 0.87);
+    box-shadow: 6px 5px 15px 10px rgba(0,0,0,0.3), inset 4px 4px 15px 0 rgba(0,0,0,0.2);
+    color:$grey-2;
+
+    cursor: pointer;
+    text-decoration: none;
+
+    &:hover{
+        background-color: rgba(0, 0, 0, 0.911);
+    }
+
+    .item-title{
+        position:absolute;
+        top:-2em;
+        color:$black;
+        visibility: hidden;
+    }
+
+    .hovered{
+        visibility: visible;
+    }
+}
+
+.rating-item{
     background-color: rgba(249, 252, 255, 0.719);
     border-radius: 1em;
     box-shadow: 6px 5px 15px 10px rgba(0,0,0,0.3), inset 4px 4px 15px 0 rgba(0,0,0,0.3);
@@ -60,8 +69,4 @@
     color:rgba(0, 0, 0, 0.87);
     cursor:unset;
 
-    .item-title{
-        visibility:visible;
-        position:unset;
-    }
 }

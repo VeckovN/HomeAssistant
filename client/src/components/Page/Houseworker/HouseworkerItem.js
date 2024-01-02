@@ -10,7 +10,7 @@ const HouseworkerItem = ({title, icon, count, link}) =>{
     //no Link
     const element = link 
     ? 
-        <Link to={link} className='houseworker-item' onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+        <Link to={link} className='houseworker-item link-item' onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
             <div className={`item-title ${isHovered ? 'hovered' : ''}`}>
                 <label>{title}</label>
             </div>
@@ -20,7 +20,7 @@ const HouseworkerItem = ({title, icon, count, link}) =>{
             <div className='item-info'>{count}</div>
         </Link>
     :
-        <div className="houseworker-item rating-container">
+        <div className="houseworker-item rating-item">
             <div className='item-title'>
                 <label>{title}</label>
             </div>
