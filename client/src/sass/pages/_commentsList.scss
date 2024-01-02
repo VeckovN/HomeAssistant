@@ -1,7 +1,11 @@
 @use '../base/typography' as *;
 @use '../abstracts/fonts' as *;
+@use '../abstracts/mixins' as *;
+@use '../abstracts/colors' as *;
+@use '../abstracts/placeholders' as *;
 
 .comments-container{
+    position: relative;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -10,7 +14,7 @@
 
 
     .context-container{
-        width: 100%;
+        width: 80%;
         min-width: 500px;
         max-width: 1000px;
     
@@ -21,12 +25,8 @@
     
         max-height: 70vh; /* Set a maximum height */
         overflow-y:auto;
-        // overflow-y:hidden;
 
-        &::-webkit-scrollbar{
-            // background-color:transparent;
-        }
-        
+        @extend %scrollbar-chat-style;
     }
 
     h1{
