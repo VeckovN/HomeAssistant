@@ -9,18 +9,53 @@
     height: 100%;
     padding: 10em 0;
     font-family: $login-font-family;
-    background-color: rgba(36, 136, 182, 0.5);
+    background-color: $background-black-7;
+
 }
 .login_context{
-    @include flex-with-direction();
+    position: relative;
+    color:white;
+    // @include flex-with-direction();
+    width: 80vw;
+    max-width: 1000px;
+    min-width: 400px;
 
+    height: 100vh;
+    min-height: 500px;
 
-    max-width: 700px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
 
-    background-color: rgb(231, 231, 231);
-    box-shadow: 6px 5px 30px 30px rgba(0,0,0,0.2), inset 10px 10px 40px 0px rgba(15, 129, 182, 0.336);
+    // box-shadow: 6px 5px 5px 10px rgba(255, 255, 255, 0.11), inset 5px 5px 10px 0px rgba(255,255,255,0.65);
     padding: 6em 3em;
-    border-radius:$border-radius-md;
+    border-radius:.4em;
+
+    // background-image: url('../../../public/assets/img19.jpg');
+    background-image: url('../../../public/assets/login4.jpg');
+    // width: 100%;
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+
+    .context-item{
+        position: absolute;
+        left:2em;
+
+        min-width: 350px;
+
+        color:black;
+        width: 40%;
+        height: 70%;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-self: center;;
+    }
+
 }
 
 .login_welcome{
@@ -44,7 +79,7 @@
 
         border:none;
         background-color: transparent;
-        border-bottom: 2px solid $grey-6;
+        border-bottom: 2px solid $grey-9;
         outline: none;
         color:black;
 
@@ -56,7 +91,7 @@
 
 
     .input_error{
-        color:$color-error;
+        color:rgba(235, 1, 1, 0.938);
         font-family: $root-font-family-5;
         font-weight: 600;
         font-size:$fs6;
@@ -75,11 +110,14 @@
         font-weight: 600;
         height: 2.3em;
         width: 100%;
-        background:none;
+        background-color: $black-3;
+        color:white;
+
         cursor: pointer;
 
         &:hover{
-            background-color: rgb(47, 129, 235);
+            background-color: $black-4;
+            color:white;
         }
     }
 }

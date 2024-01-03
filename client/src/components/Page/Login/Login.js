@@ -41,36 +41,38 @@ const Login = () =>{
         <>
             <div className ='login_container'>
                 <div className="login_context">
-                    <div className='login_welcome'>
-                        <h3>Welcome</h3>
-                        <div className='logo-h'>Home Assistant</div>
+                    <div className='context-item'>
+                        <div className='login_welcome'>
+                            <h3>Welcome</h3>
+                            <div className='logo-h'>Home Assistant</div>
+                        </div>
+                        <form onSubmit={handleSubmit(onSubmitHandler)} className='login_form'>
+                            <div className='input_container'>
+                                <input
+                                    type='text'
+                                    placeholder='Enter a username'
+                                    //register has (name="username", onChange, onBlur and ref props) 
+                                    {...register('username')}
+                                />
+                                <div className="input_error">{errors.username?.message}</div>
+                            </div>
+                            
+                            <div className='input_container'>
+                                <input
+                                    type='password'
+                                    placeholder='Enter password'
+                                    autoComplete="off"
+                                    {...register('password')}
+                                />
+                                <div className="input_error">{errors.password?.message}</div>
+                            </div>
+
+                            <div className ='button_container'>
+                                <button type='submit' className='btn'>Log in</button>
+                            </div>
+
+                        </form>
                     </div>
-                    <form onSubmit={handleSubmit(onSubmitHandler)} className='login_form'>
-                        <div className='input_container'>
-                            <input
-                                type='text'
-                                placeholder='Enter a username'
-                                //register has (name="username", onChange, onBlur and ref props) 
-                                {...register('username')}
-                            />
-                            <div className="input_error">{errors.username?.message}</div>
-                        </div>
-                        
-                        <div className='input_container'>
-                            <input
-                                type='password'
-                                placeholder='Enter password'
-                                autoComplete="off"
-                                {...register('password')}
-                            />
-                             <div className="input_error">{errors.password?.message}</div>
-                        </div>
-
-                        <div className ='button_container'>
-                            <button type='submit' className='btn'>Log in</button>
-                        </div>
-
-                    </form>
                 </div>
             </div>
 
