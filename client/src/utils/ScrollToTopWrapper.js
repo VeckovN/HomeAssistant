@@ -12,10 +12,10 @@ const ScrollToTopWrapper = ({children}) =>{
 
     //useLayoutEffect is a version of useEffect that fires before the browser repaints the screen.
     //use if notice any visual artifact.Since it runs synchronously may reduce performance
-    useLayoutEffect( ()=>{
-        // document.documentElement.scrollTo(0,0);
-        window.scrollTo(0,0);
-    },[pathname])
+    // useLayoutEffect( ()=>{
+    //     // document.documentElement.scrollTo(0,0);
+    //     window.scrollTo(0,0);
+    // },[pathname])
 
     //Footer is not just rendered in Home
     return (
