@@ -4,6 +4,7 @@
 
 .profile-container{
     @extend %profile-container;
+    background-color: $background-white-2;
 
     .profile-spinner{
         padding:10em 0em;
