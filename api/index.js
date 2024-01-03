@@ -11,7 +11,7 @@ const path = require('path');
 const {sendMessage} = require('./model/Chat.js')
 const {client:redisClient, RedisStore} = require('./db/redis');
 const upload = require('./utils/Multer.js');
-const {register} = require('./controller/auth')
+const {register, uploadNewPicture} = require('./controller/auth')
 dotenv.config();
 
 
@@ -21,10 +21,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 //multer config
 app.use("/assetss", express.static(path.join(__dirname, "public/assets")));
-
-app.use((error, req, res, next) => {
-    console.log('This is the rejected field ->', error.field);
-});
 
 var corsOptions={
     //access is allowed to everyone
