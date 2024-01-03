@@ -124,6 +124,17 @@ const logout = async(req,res)=>{
    
 }
 
+const uploadNewPicture = async(req,res) =>{
+
+    //upload new Picture
+
+    //update newPicturePath (to Redis and Neo4j Database)
+    
+    //delete old picture( base od old picturePath)
+
+} 
+
+
 const putPicturePathToRedisUsers = async(req,res) =>{
 
     const usersInfo = await userModal.getAllUsersnameWithPicturePath();
@@ -147,9 +158,11 @@ const putPicturePathToRedisUsers = async(req,res) =>{
 
 
 
+
 module.exports ={
     register,
     login,
     logout,
+    uploadNewPicture,
     putPicturePathToRedisUsers
 }
