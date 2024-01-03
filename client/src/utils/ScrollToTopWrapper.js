@@ -1,9 +1,10 @@
 import { useLocation } from "react-router-dom"
 import { useEffect, useLayoutEffect } from "react"
+import Footer from "../components/Layout/Footer";
 
 //When is Link clicked(pathanme changed) the page is open but with same position of pervious page (not scrolled automatically on top of page) 
 const ScrollToTopWrapper = ({children}) =>{
-    const { pathname} = useLocation(); //return currentURL
+    const {pathname} = useLocation(); //return currentURL
 
     useEffect( ()=>{
         window.scrollTo(0,0);
@@ -16,7 +17,13 @@ const ScrollToTopWrapper = ({children}) =>{
         window.scrollTo(0,0);
     },[pathname])
 
-    return children;
+    //Footer is not just rendered in Home
+    return (
+        <>
+            {children}
+            {pathname !== '/' && <Footer/>} 
+        </>
+    )
 }
 
 export default ScrollToTopWrapper;

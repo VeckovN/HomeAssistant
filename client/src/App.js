@@ -1,7 +1,6 @@
-import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
+import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Home from './components/Page/Home';
 import Header from './components/Layout/Header.js';
-import Footer from './components/Layout/Footer.js';
 import Register from './components/Page/Register/Register.js'
 import ClientRegister from './components/Page/Register/Client/ClientRegister';
 import HouseworkerRegister from './components/Page/Register/Houseworker/HouseworkerRegister';
@@ -14,13 +13,11 @@ import NotAuthRoute from './utils/Route/NotAuthRoute.js';
 import NotFound from './components/Page/NotFound.js';
 import ScrollToTopWrapper from './utils/ScrollToTopWrapper.js';
 
-import {ToastContainer, toast} from 'react-toastify';
-//css class for custom style
+import {ToastContainer} from 'react-toastify';
 import './toastify.css'
 
 import useSocket from './hooks/useSocket';
 import { useSelector, useDispatch } from 'react-redux';
-//import Toastify Css
 import 'react-toastify/dist/ReactToastify.min.css';
 
 import { requestInterceptor } from './utils/AxiosInterceptors.js';
@@ -72,10 +69,6 @@ function App() {
             }
           />
 
-          {/* <Route path='/login' element={<Login/>}></Route> 
-          <Route path='/register' element={<Register/>}></Route>
-          <Route path='/clientRegister' element={<ClientRegister />}></Route>
-          <Route path='/HouseworkerRegister' element={<HouseworkerRegister/>}></Route> */}
 
           <Route path='/comments' element={
               <PrivateRoute privacy='houseworker'>
@@ -101,10 +94,10 @@ function App() {
 
         </Routes>
 
-        <Footer/>
         <ToastContainer/>
-
       </ScrollToTopWrapper>
+      {/* Footer conditionaly rendered in the ScrollToTopWrapper */}
+      {/* <Footer></Footer>  */}
     </BrowserRouter>
 
   );
