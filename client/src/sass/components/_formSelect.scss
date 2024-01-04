@@ -1,4 +1,6 @@
 @use '../abstracts/placeholders' as *;
+@use '../abstracts/colors' as *;
+@use '../abstracts/fonts' as *;
 
 .form-select{
     display: flex;
@@ -14,7 +16,10 @@
     }
 
     .dropdown{
-
+        color:$black-1;
+        font-weight: 500;
+        font-family: $root-font-family-2;
+        // text-align: center;
     }
 
     .input-errors{
