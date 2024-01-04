@@ -8,22 +8,18 @@ const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
 
     const onContactHandler = (e)=>{
         if(!isClient)
-            toast.error("Uloguj se da bi poslao poruku",{
+            toast.error("Log in to send a message",{
                 className:"toast-contact-message"
             })
         else{   
-        //    alert("Value: " + contactMessageRef.current.value);
             const messageFromContact = contactMessageRef.current.value
 
             if(messageFromContact!='')
             {
-                //DUPLICATED CODE - MOVE IT ON SOCKET SOMETHING FILE
                 const ourID = userID;
-                //value prop of this button -> props.id 
+                //props.id from button
                 const houseworkerID = e.target.value;
 
-                console.log("HOUSEWORKERID " + houseworkerID);
-                //Room based on users ID
                 const RoomID = `${ourID}:${houseworkerID}`;
                 const messageObj = {
                         message: messageFromContact,
@@ -31,7 +27,6 @@ const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
                         roomID:RoomID,
                         fromUsername:client_username
                 }
-                // alert(JSON.stringify(messageObj));
                 emitMessage(socket, {messageObj});
                 
                 toast.success("The message is send",{

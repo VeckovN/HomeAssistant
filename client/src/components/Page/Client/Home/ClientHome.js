@@ -30,9 +30,6 @@ const ClientHome = ({socket}) =>{
         else{
             setButtonState((prev => ({...prev, delayedHide:true})));
         }
-        // else{
-        //     setButtonState({showButton:false, delayedHide:true})
-        // }
     },[]);
 
     
@@ -44,7 +41,6 @@ const ClientHome = ({socket}) =>{
     }
 
     //Without useTransition 
-
     //(applied fade out effect on scroll button div - after some time)
     useEffect(()=>{
         let timeout;
@@ -77,7 +73,6 @@ const ClientHome = ({socket}) =>{
         houseworkerList = data.map(user =>
             <>
             {console.log("ID::: " + user.id)}
-            {/* {console.log("DATA: \n " + JSON.stringify(data))} */}
             <HouseworkerCard
                 recommended={user.recommended}
                 // recommended={user.recommended}
@@ -103,7 +98,6 @@ const ClientHome = ({socket}) =>{
 
             if(houseworkerList?.length >0){
                 setHouseworkerData(houseworkerList);
-                //alert("setHouseworkerData(houseworkerList);");
             }
     },[data]);
 
@@ -122,14 +116,9 @@ const ClientHome = ({socket}) =>{
                     />
                 </div>
                 
-                {/* <button className="recommended-btn" onClick={onShowRecommended}>{!showRecommended ? 'Show recommended' : 'Close Recommended'}</button> */}
-                
-                
                 <div className="houseworker-list">    
                     {loading ? <Spinner/> :
                     <>
-                        {/* {showRecommended && recommendedList } */}
-                        {/* {houseworkerList.length > 0 ? houseworkerList : <h3 id='none'>No Matches</h3> } */}
                         {houseworkerData.length > 0 ? houseworkerData : <h3 id='none'>No Matches</h3> }
                     </>
                     }
