@@ -90,8 +90,10 @@ const ClientProfile = () =>{
     }
 
     const onCityChangeHandler = (option) =>{
-        console.log("field", cityField);
-        cityField.onChange(option.value);
+        if(option !== null)
+            cityField.onChange(option.value);
+        else
+            cityField.onChange("");
     }
 
     return(

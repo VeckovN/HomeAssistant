@@ -63,8 +63,12 @@ const ClientRegister = () =>{
     }
 
     const onCityChangeHandler = (option) =>{
-        console.log("field", cityField);
-        cityField.onChange(option.value);
+        console.log("Option: " , option);
+
+        if(option !== null)
+            cityField.onChange(option.value);
+        else
+            cityField.onChange("");
     }
 
     const onChangeImageHandler = (event) =>{
@@ -158,8 +162,8 @@ const ClientRegister = () =>{
                                         </button>
                                     </div>
                                 )}
+                                <div className='input-error'>{errors.avatar?.message}</div>
                             </div>
-                            <div className='input-error'>{errors.avatar?.message}</div>
                         </div>
                     </div>
 
