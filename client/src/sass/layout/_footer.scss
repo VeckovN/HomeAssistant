@@ -7,8 +7,8 @@
     position: relative;
     width: 100%;
     // bottom: 0;
-    background-color: rgba(0, 0, 0, 0.877);
-    color:white;
+    background-color: $background-black-1;
+    color:$white;
 
     footer{
         @include flex-with-direction-center($direction:column);
@@ -51,7 +51,5 @@
             font-size: 1em;
             padding:.5em 0em;
         }
-
-        
     }
 }

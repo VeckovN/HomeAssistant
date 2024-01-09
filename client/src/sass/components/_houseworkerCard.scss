@@ -114,7 +114,7 @@
         display:flex;
         flex-direction: column;
     
-        background-color:  whitesmoke;
+        background-color:  $white-smoke;
         margin:.1rem 0 0 0;
         padding:2.2rem .5rem 0 0; 
         /* padding:3.5rem 3rem; */
@@ -123,16 +123,15 @@
     
         border-radius: 8px;
        /* border:solid black 1px; */
-        box-shadow: 0 5px 15px rgba(0,0,0,.7);
-       /* background: rgba(255,255,255,.7); */
-       background-color: rgb(0,0,0,0.75);
+        box-shadow: 0 5px 15px $background-black-5;
+       background-color: $background-black-4;
     
        /* transition:all 1s; */
 
     }
     .recommended{
-        background-color: rgb(0,0,0,0.9);
-        border:3px solid #6e74b9;
+        background-color: $background-black-1;
+        border:3px solid $color-hs-label;
         
     }
 
@@ -157,7 +156,7 @@
     
 
     #recommended-lb{
-        color:white;
+        color:$white;
         font-size:$fs1;
         font-weight: 600;
         font-family: $root-font-family-3;
@@ -206,7 +205,7 @@
             .div-text-profession{
                 font-weight: 700;
                 font-size:$fs5;
-                color:#6e74b9;
+                color:$color-hs-label;
                 padding:.4rem;
             
                 display: flex;
@@ -245,11 +244,11 @@
                 .div-text-desc{
                     font-weight: 500;
                     font-size:.9rem;
-                    color:white;
+                    color:$white;
                     padding:.4rem;
 
                     p{
-                        color:rgb(140, 140, 255);
+                        color:$color-hs-4;
                     }
 
                     a{
@@ -282,7 +281,7 @@
                 .div-text-rating{
                     font-weight: 500;
                     font-size:.9rem;
-                    color:rgb(140, 140, 255);
+                    color:$color-hs-4;
                     padding:.4rem;
 
                     a{
@@ -304,13 +303,13 @@
                         border-bottom: 2px solid rgb(63, 177, 63);
                     
                         &::placeholder{
-                            color:white;
+                            color:$white;
                             font-weight: 600;
                             font-size: .9rem;
                         }
 
                         &:focus{
-                            color:white;
+                            color:$white;
                             text-align: center;
                             font-weight: 700;
                             border:none
@@ -398,7 +397,7 @@
         button{
             font-weight: 600;
             padding:.1rem;
-            color: white;
+            color: $white;
             margin-left:45%;
             font-family: trebuchet ms;
         
@@ -433,21 +432,16 @@
     display:flex;
     flex-direction: column;
 
-    background-color:  whitesmoke;
+    background-color:  $white-smoke;
     justify-content: center;
     align-items: center;
-    /* margin:.1rem 0 0 0;
-    padding:2.2rem .5rem 0 0;  */
-    /* padding:3.5rem 3rem; */
     width: 80%;
     height: 50%;
     margin-top:-15rem;
 
     border-radius: 8px;
-   /* border:solid black 1px; */
     box-shadow: 0 5px 15px rgba(0,0,0,.5);
-   /* background: rgba(255,255,255,.7); */
-   background-color: rgb(0,0,0,0.6);
+   background-color: $background-black-7;
 
    /* transition:all 1s; */
    
@@ -457,29 +451,19 @@
 }
 
 
-
-
-
-
-
-
-
-
 .div-text-workingH{
     margin-top:3rem;
 }
-
 
 .profession-list{
     display: flex;
 }
 
 
-
 .btn-contact{
     font-weight: 600;
     padding:.1rem;
-    color: white;
+    color: $white;
     margin-left:45%;
     font-family: trebuchet ms;
 
@@ -504,7 +488,7 @@
 .btn-edit{
    font-weight: 600;
    padding:.1rem;
-   color: white;
+   color: $white;
    margin-left:45%;
    font-family: trebuchet ms;
 
@@ -525,7 +509,7 @@
 
 .form-message button{
     align-items: center;
-    color: white;
+    color: $white;
     font-family: trebuchet ms;
     margin-left:46%;
     margin-top: 8px;

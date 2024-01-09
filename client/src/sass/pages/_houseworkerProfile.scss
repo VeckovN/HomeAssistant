@@ -32,11 +32,11 @@
         .dropdown{
             width: 90%;
             font-size:$fs5;
-            color:black;
+            color:$black;
         }
     
         .professions{
-            border: 2px solid black;
+            border: 2px solid $black;
             border-radius: 6px;
             padding:1em;
             margin: 1em 2em;
@@ -63,25 +63,21 @@
                 .profession-input-container{
                     margin:.2em 0em;
                     input{
-                        //
-                        // background-color:rebeccapurple;
                         @extend %input-style;
                     }
 
                     .action-buttons{
                         display: flex;
-                    
-                        // background-color: $color-hs-2;
-                        // color:white;
+                
                         .change-profession{
                             button{
                                 //@include profession-button-styles(rgb(121, 119, 247));
-                                @include profession-button-styles(black, $color-hs-5);
+                                @include profession-button-styles($black, $color-hs-5);
                                 
                                 &:disabled{
                                     background-color: rgba(0,0,0,.2);
-                                    border: 1px solid black;
-                                    color:white;
+                                    border: 1px solid $black;
+                                    color: $white;
                                     font-weight: 600;
                                     cursor:unset;
                                 }
@@ -91,7 +87,7 @@
         
                         .delete-profession{
                             button{
-                                @include profession-button-styles(black,$color-hs-5);
+                                @include profession-button-styles($black, $color-hs-5);
                             }
                         }
                     }
@@ -130,7 +126,7 @@
 
                 .profession-add{
                     button{
-                        @include profession-button-styles(black,$color-hs-5);
+                        @include profession-button-styles($black,$color-hs-5);
                         width: 5em;
                         height: 1.9em;
                     }
@@ -139,7 +135,7 @@
         }
 
         .input-label-form {
-            border: 2px solid black;
+            border: 2px solid $black;
             border-radius: 6px;
             padding:1em;
             margin: 2em 2em;
@@ -187,7 +183,7 @@
                 textarea{
                     resize:none;
                     &::placeholder {
-                        color:black;
+                        color: $black;
                     }
 
                     &:focus::placeholder{

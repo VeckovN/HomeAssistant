@@ -8,24 +8,6 @@
     display:flex;
     flex-direction: column;
     padding: 4rem 0;
-
-    .recommended-btn{    
-        position: absolute;
-        left:33%;   
-        margin-top:.5em;
-        width: 16em;
-        height: 3em;
-        border-radius: .5rem;
-        font-size:$fs5;
-        font-weight: 600;
-        letter-spacing: 0.4px;
-    
-        background-color: rgb(24, 154, 187);
-
-        &:hover{
-            background-color: rgb(255, 255, 255);
-        }
-    }
    
     .search-box{
         position:relative;
@@ -92,11 +74,11 @@
             border:none;
             border-radius: 30%;
             background-color: $nav-hover-color;
-            color:white;
+            color:$white;
             border:none;
 
             &:hover{
-                color:black;
+                color:$black;
                 cursor: pointer;
             }
         }

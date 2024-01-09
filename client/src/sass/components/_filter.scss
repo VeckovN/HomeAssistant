@@ -1,6 +1,7 @@
 @use '../abstracts/mixins' as *;
 @use '../abstracts/fonts' as *;
 @use '../base/typography' as *;
+@use '../abstracts/colors' as *;
 
 .filter-box{
     @include flex-with-direction-center($direction:column);
@@ -11,9 +12,9 @@
     margin:1rem 0 0rem 2rem;
     padding:2rem 1rem;
 
-    background-color: rgb(0,0,0,0.70);
+    background-color: $background-black-5;
     color:#ffff;
-    box-shadow: 0 5px 15px rgba(0,0,0,.7);
+    box-shadow: 0 5px 15px $background-black-5;
     border-radius: .5rem;
 
     &-item{
@@ -82,10 +83,10 @@
             font-family: trebuchet ms;
             margin-top:1rem;
             margin-bottom: 1rem;
+            cursor: pointer;
 
             &:hover{
-                background-color: rgb(59, 158, 250);
-                cursor: pointer;
+                background-color: $nav-hover-color;
             }
         }
     }
