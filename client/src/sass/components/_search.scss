@@ -1,6 +1,7 @@
 @use '../abstracts/colors' as *;
 @use '../abstracts/fonts' as *;
 @use '../base/typography' as *;
+@use '../abstracts/brakepoints' as *;
 
     .input-search{
         position:absolute;
@@ -8,6 +9,16 @@
         width:70%;
         left:26%;
         top: .5em;
+
+        @include lg-breakpoint {
+            position: unset;
+            width:80%;
+            padding:1em 0em;
+            // top:0;
+            // display: flex;
+            // flex-direction: column;
+            
+        }
 
         .box-s{
             display: flex;
@@ -49,6 +60,10 @@
                 border-radius: 0em .5em .5em 0em;
                 border:none;
                 font-weight: 600;
+
+                @include lg-breakpoint {
+                    height: 2.5em;
+                }
 
                 &:hover{
                     background-color: $white;

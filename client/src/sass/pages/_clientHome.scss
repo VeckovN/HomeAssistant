@@ -1,5 +1,6 @@
 @use '../abstracts/colors' as *;
 @use '../base/typography' as *;
+@use '../abstracts/brakepoints' as *;
 
 .home-container{
     position: relative;
@@ -18,14 +19,43 @@
         /* opacity: .7; */
         margin:1rem 0 .5rem 0;
         animation: fadeIn 1.5s;
+        
+        @include lg-breakpoint {
+            margin:2rem 0 .5rem 0;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
     }
 
     .filter-houseworkers-container{
+        
         display:flex;
         flex-direction:row;
         margin:0;
         animation: fadeIn 2s;
-        
+
+        @include lg-breakpoint {
+            display:flex;
+            flex-direction:column;
+            // margin:0;
+            // animation: fadeIn 2s;
+
+            // background-color: green;
+
+            .filter-options{
+                // background-color: aqua;
+
+                margin:1em 0;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+
         .houseworker-list{
             display: -moz-flex;
             display: flex;
@@ -38,6 +68,13 @@
             padding-bottom: 3em;
             width: 90%;
             margin-bottom:4em;
+
+            @include lg-breakpoint {
+                margin-top:2em;
+                padding-bottom: 1em;
+                width: 100%;
+                margin-bottom:0;
+            }
 
             #none{
                 color:$black;

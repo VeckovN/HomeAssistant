@@ -2,6 +2,7 @@
 @use '../abstracts/fonts' as *;
 @use '../base/typography' as *;
 @use '../abstracts/colors' as *;
+@use '../abstracts/brakepoints' as *;
 
 .filter-box{
     @include flex-with-direction-center($direction:column);
@@ -16,6 +17,15 @@
     color:#ffff;
     box-shadow: 0 5px 15px $background-black-5;
     border-radius: .5rem;
+
+
+    @include lg-breakpoint {
+        // display: flex;
+        // flex-direction: row;
+        width: 23em;
+        margin:.3em;
+        padding: 1em;
+    }
 
     &-item{
         @include flex-with-direction-center($direction:column);

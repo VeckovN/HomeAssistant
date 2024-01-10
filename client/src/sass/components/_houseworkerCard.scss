@@ -2,6 +2,7 @@
 @use '../abstracts/fonts' as *;
 @use '../base/typography' as *;
 @use '../abstracts/mixins' as *;
+@use '../abstracts/brakepoints' as *;
 
 //this class doesn't exist in houseworkerCard
 // .main-container{
@@ -66,6 +67,11 @@
     top:150px;
 
     animation: fadeIn .3s;
+
+    @include lg-breakpoint {
+        top:10px;
+    }
+
 
 
     .label-text{
