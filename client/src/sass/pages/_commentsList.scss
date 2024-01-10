@@ -30,7 +30,7 @@
         @extend %scrollbar-chat-style;
     }
 
-    h1{
+    & h1{
         margin-bottom: $fs7;
         font-family:$root-font-family-2;
         font-weight: 700;

@@ -98,7 +98,7 @@
             color:rgb(226, 217, 205);
         }
 
-        a{
+        & a{
             font-weight: 600;
              font-size:.8rem;
             /* color:black; */
@@ -142,7 +142,7 @@
         align-items: center;
         height:40px;
 
-        img{
+        & img{
             width: 100px;
             height: 100px;
             margin-top:2rem;
@@ -247,11 +247,11 @@
                     color:$white;
                     padding:.4rem;
 
-                    p{
+                    & p{
                         color:$color-hs-4;
                     }
 
-                    a{
+                    & a{
                         color:rgb(221, 221, 255);
                         text-decoration:underline;
                      }
@@ -270,7 +270,7 @@
                 //     height: 2rem; */
                 // }
 
-                button{
+                & button{
                     width: 4rem;
                     height: 1.6rem;
                     border:none;
@@ -284,7 +284,7 @@
                     color:$color-hs-4;
                     padding:.4rem;
 
-                    a{
+                    & a{
                         color:rgb(221, 221, 255);
                         text-decoration:underline;
                     }
@@ -295,7 +295,7 @@
                     width: 100%;
                     justify-content: space-evenly;
 
-                    input{
+                    & input{
                         width: 4rem;
                         height: 1.6rem;
                         border:none;
@@ -384,7 +384,7 @@
         flex-direction: column; */
         position: relative;
 
-        input{
+        & input{
             width:50%;
             height: 2rem;
             left:50%;
@@ -394,7 +394,7 @@
             border-radius: .5rem;
         }
 
-        button{
+        & button{
             font-weight: 600;
             padding:.1rem;
             color: $white;

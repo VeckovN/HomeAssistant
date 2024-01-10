@@ -37,7 +37,7 @@
     display: flex;
     justify-content: center;
 
-    input{
+    & input{
         height: 1.8em;
         width: 50%;
         max-width: 300px;
@@ -48,7 +48,7 @@
         }
     }
 
-    button{
+    & button{
         height: 2em;
         width: 5.5em;
         border-radius: .5rem;

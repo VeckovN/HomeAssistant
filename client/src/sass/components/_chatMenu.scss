@@ -97,7 +97,7 @@
     .add-user-container{
         @extend %chat-menu-item;
 
-        button{
+        & button{
             margin: .5em .5em;
         }
 
@@ -105,7 +105,7 @@
 
     .kick-user-container{
         @extend %chat-menu-item;
-        button{
+        & button{
             margin: .5em .5em;
         }
     }
@@ -114,7 +114,7 @@
         @extend %chat-menu-item;
         height: 8.1em;
 
-        button{
+        & button{
             margin: .3em auto 1em auto ;
         }
     }
