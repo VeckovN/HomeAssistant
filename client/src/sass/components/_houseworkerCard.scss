@@ -71,25 +71,56 @@
     @include lg-breakpoint {
         top:10px;
     }
+    // $mdBrakepoint: 768px;
+    @include md-breakpoint {
+        // min-width: 28em;
+        max-width:36em;
+    }
 
+    // $smBrakepoint: 576px;
+    @include sm-breakpoint{
+        // width: 15em;
+        // height: 34em; 
+        min-width: 24em;
+        margin:1.5em .5em 4em .5em;
+    }
 
+    @include xs-breakpoint{
+        min-width: 15em;
+        // width: 100%;
+        // max-width: 20em;
+        margin:1.5em .2em 4em .2em;
+    }
 
     .label-text{
         font-weight: 600;
-        //font-size:.8rem;
         font-size: $fs6;
-       /* color:black; */
         color:white;
+
+        @include sm-breakpoint{
+            font-size: $fs7;
+        }
+
+        @include xs-breakpoint{
+            font-size: $fs8;
+        }
     }
 
     //Div-text for all children
     .div-text{
         font-weight: 700;
-        // font-size:1rem;
         font-size: $fs5;
 
         color:#6e74b9;
         padding:.4rem;
+
+        @include sm-breakpoint{
+            font-size: $fs6;
+            // white-space: nowrap;
+        }
+        @include xs-breakpoint{
+            font-size: $fs7;
+        }
         
         .line{
             border-bottom: 1px solid white;
@@ -98,18 +129,24 @@
 
         .label-category{
             font-weight: 600;
-            // font-size:.8rem;
             font-size: $fs5;
            /* color:black; */
             color:rgb(226, 217, 205);
+
+            @include sm-breakpoint{
+                font-size: $fs6;
+            }
+            @include xs-breakpoint{
+                font-size: $fs7;
+            }
         }
 
         & a{
             font-weight: 600;
-             font-size:.8rem;
+            font-size:$fs6;
             /* color:black; */
-             color:white;
-             text-decoration: underline;
+            color:white;
+            text-decoration: underline;
         }
     }
     ////////////////////////////////
@@ -183,30 +220,13 @@
 
         //Personal Info (POTENTIAL COMPONENT)
         .personal-info{
-            width: 12rem;
-            // .div-text{
-            //     .label-text{
-            //     }
-            //     .line{
-            //     }
-            //     .label-category{
-            //     }
-            //     a{
-            //     }
-            // }
+            width: 30%;
         }
 
         //Profession Info (POTENTIAL COMPONENT)
         .profession-info{
             width: 12rem;
-
-            
-            // .div-text{
-            //     .label-category{
-            //     }
-            //     a{
-            //     }
-            // }
+            width: 30%;
 
             .div-text-profession{
                 font-weight: 700;
@@ -224,7 +244,11 @@
                     margin-left:.5rem;
 
                     font-weight: 500;
-                    font-size:.9rem;
+                    font-size:$fs5;
+
+                    @include sm-breakpoint{
+                        font-size:$fs7;
+                    }
                 }
             
             }
@@ -235,21 +259,12 @@
         //Description INFO (POTENTIAL COMPONENT)
         .description-info{
             width: 15rem;
-
-
-            // .div-text{
-            //     .label-text{
-            //     }
-            //     .line{
-            //     }
-            //     a{
-            //     }
-            // }
+            width: 40%;
 
             .description-box{
                 .div-text-desc{
                     font-weight: 500;
-                    font-size:.9rem;
+                    font-size:$fs5;
                     color:$white;
                     padding:.4rem;
 
@@ -261,6 +276,11 @@
                         color:rgb(221, 221, 255);
                         text-decoration:underline;
                      }
+
+                     @include sm-breakpoint{
+                        font-size:$fs7;
+                     }
+                     
                 }
             }
 
@@ -286,7 +306,7 @@
 
                 .div-text-rating{
                     font-weight: 500;
-                    font-size:.9rem;
+                    font-size: $fs5;
                     color:$color-hs-4;
                     padding:.4rem;
 
@@ -297,8 +317,8 @@
                 }
                 .rating-field{
                     height: 1.6rem;
-                    display: flex;
                     width: 100%;
+                    display: flex;
                     justify-content: space-evenly;
 
                     & input{
@@ -311,7 +331,10 @@
                         &::placeholder{
                             color:$white;
                             font-weight: 600;
-                            font-size: .9rem;
+                            font-size: $fs5;
+
+                            @include sm-breakpoint{
+                            }
                         }
 
                         &:focus{
@@ -329,6 +352,11 @@
                         cursor: pointer;
                         color:$white;
 
+                        @include sm-breakpoint{
+                            font-size: $fs7;
+                        }
+                        
+
                         &:hover{
                             background-color: rgb(177, 46, 46);
                             color:$black;
@@ -339,6 +367,12 @@
                         background-color: rgb(203, 216, 82);
                         cursor: pointer;
 
+                        @include xs-breakpoint{
+                            width: 3.5rem;
+                            height: 1.5rem;
+                            font-size: $fs7;
+                        }
+
                         &:hover{
                             background-color: rgb(147, 160, 29);
                         }
@@ -348,6 +382,10 @@
                         background-color: rgb(63, 185, 63);
                         cursor: pointer;
                         color:$white;
+
+                        @include sm-breakpoint{
+                            font-size: $fs7;
+                        }
 
                         &:hover{
                             background-color: rgb(42, 158, 42);
@@ -363,6 +401,10 @@
                 justify-content: center;
                 padding:.7em .3em;
 
+                @include xs-breakpoint{
+                    padding:.2em .3em;
+                }
+
                 .comment-btn{
                     width: 6rem;
                     height: 2rem;
@@ -373,6 +415,19 @@
                     background-color: rgb(47, 101, 172);
                     color:white;
                     cursor: pointer;
+
+                    @include sm-breakpoint{
+                        width: 5.8rem;
+                        height: 1.9rem;
+                    }
+
+                    @include xs-breakpoint{
+                        width: 5rem;
+                        height: 1.5rem;
+
+                        font-size: $fs7;
+                        font-weight: 500;
+                    }
 
                     &:hover{
                         background-color: rgba(22, 76, 148, 0.9);
@@ -386,38 +441,59 @@
 
     //COMMUNICATE (INPUT FIELD)
     .communicate-box{
-        /* display: flex;
-        flex-direction: column; */
+        // /* display: flex;
+        // flex-direction: column; */
         position: relative;
 
+        display: flex;
+        flex-direction: column;
+
+        justify-content: center;
+        align-items: center;
+
+        
         & input{
             width:50%;
             height: 2rem;
-            left:50%;
-            transform:translate(50%, -50%);
             padding:0em .4em;
-        
             border-radius: .5rem;
+
+            @include sm-breakpoint{
+                width:55%;
+                height: 1.8rem;
+            }
+
+            @include xs-breakpoint{
+                height: 1.6rem;
+                font-size: $fs7;
+            }
         }
 
         & button{
             font-weight: 600;
             padding:.1rem;
             color: $white;
-            margin-left:45%;
             font-family: trebuchet ms;
         
-            margin-bottom: 10px;
-            margin-top: 10px;
+            margin: .8em 0;
             border: none;
             border-radius: 6px;
             background-color: rgb(63, 141, 63) ;
         
-            width:200px;
-            height:40px;
-    
-            position:relative;
-            right:10%;
+            // width:200px;
+            width:35%;
+            height:3em;
+
+
+            @include sm-breakpoint{
+                height:2.6em;
+            }
+
+            @include xs-breakpoint{
+                height:2.5em;
+                font-size: $fs7;
+            }
+
 
             cursor: pointer;
 
