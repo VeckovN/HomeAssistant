@@ -104,7 +104,7 @@ const HouseworkerCardContent = ({
                         </div>
 
                         <div className='description-info'>
-                            <div className='div-text'><label className='label-text'>Description</label>
+                            <div className='div-text'><label className='label-category'>Description</label>
                                 <div className='line'> </div>   
                             </div>
                                         
@@ -113,7 +113,7 @@ const HouseworkerCardContent = ({
                                 </div>
                             </div>
 
-                            <div className='div-text'><label className='label-text'>Rating</label>
+                            <div className='div-text'><label className='label-category'>Rating</label>
                                 <div className='line'> </div>   
                             </div>
 
@@ -143,7 +143,7 @@ const HouseworkerCardContent = ({
                                 </div>
                             </div>
 
-                            <div className='div-text'><label className='label-text'>Commnets</label>
+                            <div className='div-text'><label className='label-category'>Commnets</label>
                                 <div className='line'> </div>   
                             </div>
 
