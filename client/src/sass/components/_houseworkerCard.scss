@@ -71,6 +71,7 @@
 
     @include xs-breakpoint{
         min-width: 15em;
+        height: 32em;
         // width: 100%;
         // max-width: 20em;
         margin:1.5em .2em 4em .2em;
@@ -100,6 +101,8 @@
             // white-space: nowrap;
         }
         @include xs-breakpoint{
+            padding:.2rem .1rem;
+
             font-size: $fs7;
             
             .label-text{
