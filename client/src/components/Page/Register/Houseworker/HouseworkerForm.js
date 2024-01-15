@@ -3,6 +3,7 @@ import FormInput from '../../../../utils/FormInput';
 import FormSelect from '../../../../utils/FormSelect';
 
 import '../../../../sass/pages/Register/_registerUser.scss';
+import '../../../../sass/pages/Register/_registerHouseworker.scss';
 
 const HouseworkerForm = ({register, errors, getValues, cityField, professionField, avatarField, handleSubmit, onRemoveAvatarHanlder, onChangeHouseworkerProfessionsHandler, onChangeProffesionsHandler, onChangeImageHandler, onChangeCityHandler, onSubmitHandler,  profession_options, city_options}) =>{
 
