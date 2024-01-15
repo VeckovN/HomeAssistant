@@ -1,6 +1,8 @@
 @use '../abstracts/colors' as *;
 @use '../abstracts/fonts' as *; 
 @use '../abstracts/mixins' as *;
+@use '../base/typography' as *;
+@use '../abstracts/brakepoints' as *;
 
 
 .footer-container{
@@ -10,6 +12,14 @@
     background-color: $background-black-1;
     color:$white;
 
+    @include sm-breakpoint{
+        font-size:$fs5;
+    }
+
+    @include xs-breakpoint{
+        font-size:$fs6;
+    }
+
     footer{
         @include flex-with-direction-center($direction:column);
         color:$white;
@@ -17,6 +27,8 @@
         padding:2em 0em;
 
         .social{
+            font-size:2em;
+
             & a{
                 color:$white;
                 padding:0em .5em;
@@ -34,6 +46,10 @@
             .link{
                 list-style: none;
                 padding:0em .5em;
+
+                @include xs-breakpoint{
+                    padding:0em .3em;
+                }
 
                 & a{
                     color:$white;
