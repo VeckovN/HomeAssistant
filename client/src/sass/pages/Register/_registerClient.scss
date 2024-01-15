@@ -1,0 +1,42 @@
+@use '../../base/typography' as *;
+@use '../../abstracts/mixins' as *;
+@use '../../abstracts/brakepoints' as *;
+
+.register-user-container{
+    .client-form{
+        min-width: 400px;
+        max-width: 450px;
+
+        @include xs-breakpoint{
+            width: 100%;
+            min-width: 200px;
+        }
+    }
+}
+
+form{
+    .cl-form-inputs{
+        padding-left: 2em;
+        @include flex-with-direction-center($direction:column);    
+
+        @include xs-breakpoint{
+            width: 100%;
+            padding:0em 1em;
+        }
+
+        .client-inputs{
+            @include xs-breakpoint{
+                width: 100% !important;
+            }
+        }
+
+    }
+    .cl-selectors{
+        // @include flex-with-direction-center($direction:column);
+    }
+
+
+    .interest-container{
+        margin:.2em 0;
+    }
+}

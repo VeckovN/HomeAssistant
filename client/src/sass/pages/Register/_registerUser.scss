@@ -3,6 +3,7 @@
 @use '../../abstracts/fonts' as *;
 @use '../../abstracts/colors' as *;
 @use '../../base/typography' as *;
+@use '../../abstracts/brakepoints' as *;
 
 .register-user-container{
     background-color: $background-white-2;
@@ -14,15 +15,6 @@
     padding:4rem 0rem;
     @include flex-container($direction:column ,$justify:space-evenly, $align:center);
     
-    .houseworker-form{
-        min-width: 600px;
-        max-width: 800px;
-    }
-
-    .client-form{
-        min-width: 300px;
-        max-width: 450px;
-    }
 
     form{
         font-family: $root-font-family-2;
@@ -48,32 +40,10 @@
             letter-spacing: .03em;
             font-weight: 700;
             padding-bottom: 1rem;        
-        }
 
-        .form-client-inputs{
-            width: 70%;
-           
-            .client-inputs{
-                // display: flex;
-                // flex-direction: column;
-                // justify-content: center;
-                // align-items: center;
+            @include xs-breakpoint{
+                font-size:$fs2;
             }
-        }
-
-        // .hs-form-inputs{
-        //     align-items: flex-start;
-        // }
-        
-        .cl-form-inputs{
-            // width: 80%;
-            padding-left: 2em;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .cl-selectors{
-            // @include flex-with-direction-center($direction:column);
         }
 
         .form-inputs{
@@ -98,16 +68,6 @@
 
             }
 
-            .inputs{
-                width: 80%;
-                margin:1em 0 1em 0;
-                padding-left: 1em;
-                display: flex;
-                flex-direction: column;
-                // justify-content: center;
-                align-items: flex-end;
-                
-            }
             .selectors{
                 padding:em 0 0 0;
             }
@@ -226,58 +186,6 @@
                 }
 
             }
-        }
-
-        .professions-container{
-            .select-box{
-                width: 70%;
-            }
-        }
-
-        .working-hour-container{
-            display: flex;
-            flex-direction: column;
-            justify-items: center;
-            // align-items: center;
-            font-size: $fs5;
-            
-            margin:.2em 0;
-
-            .working-hours{
-                margin:.3em 0;
-                display: flex;
-                justify-content: center;
-                align-self: center;
-    
-                label{
-                    margin:0 .5em;
-                }
-
-                input{
-                    @extend %input-style;
-                    width: 6em;
-            
-                    &:focus{
-                        color:$grey-1;
-                        border-color:$grey-9;
-                    }
-                }
-            }
-        }
-
-
-        .desc-container{
-            @include flex-with-direction-center($direction:column);
-
-            .description-box{
-                width: 80%;
-                resize: none;
-            }
-        }
-
-        .interest-container{
-            margin:.2em 0;
-            // width: 70%;
         }
 
         .register-button-container{

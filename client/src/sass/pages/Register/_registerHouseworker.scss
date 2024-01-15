@@ -1,0 +1,98 @@
+@use '../../abstracts/placeholders' as *;
+@use '../../abstracts/mixins' as *;
+@use '../../abstracts/colors' as *;
+@use '../../base/typography' as *;
+@use '../../abstracts/brakepoints' as*;
+
+.register-user-container{
+
+    .houseworker-form{
+        width: 85%;
+        min-width: 550px;
+        max-width: 800px;
+
+        @include sm-breakpoint{
+            width: 95%;
+            min-width: 250px;
+        }
+
+        @include xs-breakpoint{
+            width: 100%;
+        }
+    }
+
+    form{
+        .hs-form-inputs{
+            @include sm-breakpoint{
+                @include flex-with-direction-center($direction:column);    
+            }
+
+            .inputs{
+                width: 80%;
+                margin:1em 0 1em 0;
+                padding-left: 1em;
+                display: flex;
+                flex-direction: column;
+                // justify-content: center;
+                align-items: flex-end;
+    
+                @include sm-breakpoint{
+                    // background-color: red;
+                    width: 100%;
+                    margin:1em .5em 1em 0em;
+                    padding-left: .0em;
+
+                    align-items: center;
+                }
+            }
+    
+            .professions-container{
+                .select-box{
+                    width: 70%;
+                }
+            }
+    
+            .working-hour-container{
+                display: flex;
+                flex-direction: column;
+                justify-items: center;
+                // align-items: center;
+                font-size: $fs5;
+                
+                margin:.2em 0;
+    
+                .working-hours{
+                    margin:.3em 0;
+                    display: flex;
+                    justify-content: center;
+                    align-self: center;
+    
+                    label{
+                        margin:0 .5em;
+                    }
+    
+                    input{
+                        @extend %input-style;
+                        width: 6em;
+                
+                        &:focus{
+                            color:$grey-1;
+                            border-color:$grey-9;
+                        }
+                    }
+                }
+            }
+    
+            .desc-container{
+                @include flex-with-direction-center($direction:column);
+    
+                .description-box{
+                    width: 80%;
+                    resize: none;
+                }
+            }
+
+        }
+    }
+
+}
