@@ -1,6 +1,7 @@
 @use '../../abstracts/mixins' as *;
 @use '../../abstracts/colors' as *;
 @use '../../abstracts/fonts' as *;
+@use '../../abstracts/brakepoints' as *;
 
 
 .register-container{
@@ -9,16 +10,32 @@
     height: 100%;
    
     .register-options{
+        width: 100%;
         position:absolute;
         top:50%;
         left:50%;
         transform: translate(-50% , -50%);
         @include flex-with-direction-center();
 
+        @include xs-breakpoint{
+            flex-direction: column-reverse;
+
+        }
+
         .register-item{
             width: 15rem;
             height: 10rem;
-            margin:2em;
+            margin:0em 2em;
+
+            @include sm-breakpoint{
+                width: 50%;
+                height: 9rem;
+                margin:0 1em;
+            }
+
+            @include xs-breakpoint{
+                margin:2em 0em 3em 0em;
+            }
 
             .register-link{
                 @include flex-with-direction-center($direction:column);
