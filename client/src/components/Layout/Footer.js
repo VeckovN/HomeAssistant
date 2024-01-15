@@ -14,10 +14,10 @@ const Footer = () =>{
         <div className='footer-container'>
             <footer>
                 <div className="social">
-                    <a href="#"><InstagramIcon fontSize='large'/></a>
-                    <a href="#"><TwitterIcon fontSize='large'/></a>
-                    <a href="#"><FacebookIcon fontSize='large'/></a>
-                    <a href="#"><RedditIcon fontSize='large'/></a>
+                    <a href="#"><InstagramIcon fontSize='inherit'/></a>
+                    <a href="#"><TwitterIcon fontSize='inherit'/></a>
+                    <a href="#"><FacebookIcon fontSize='inherit'/></a>
+                    <a href="#"><RedditIcon fontSize='inherit'/></a>
                 </div>
                 <ul className="links">
                     <li className='link'><a href="#">Home</a></li>
