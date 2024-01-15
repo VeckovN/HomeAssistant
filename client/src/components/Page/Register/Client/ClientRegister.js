@@ -11,6 +11,7 @@ import FormInput from '../../../../utils/FormInput';
 import FormSelect from '../../../../utils/FormSelect';
 
 import '../../../../sass/pages/Register/_registerUser.scss';
+import '../../../../sass/pages/Register/_registerClient.scss';
 
 
 const ClientRegister = () =>{
