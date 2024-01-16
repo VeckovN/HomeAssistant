@@ -115,6 +115,29 @@
     }
 }
 
+%profile-submit-button{  
+        display: flex;
+        justify-content: center;
+
+        .update-button{
+            height: 2.5em;
+            width: 6em;
+
+            border:none;
+            border-radius: $border-radisu-xsm;
+            font-family: $root-font-family-3;
+            background-color: $white;
+            cursor: pointer;
+
+            font-weight: 500;
+
+            &:hover{
+                background-color: $grey-2;
+                font-weight: 550;
+            }
+        }
+}
+
 
 //////////////
 %form-input-error{
