@@ -120,9 +120,11 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                         <div className='professions'>
                             
                         </div>
-
+                        <div className='profile-submit'>
+                            <button type='submit' className='update-button'>Update</button>
+                        </div>
                         {/* button for submit Above inputs  */}
-                        <button type='submit' className='profile-submit'>Update</button>
+                        
                     </div>
                 </form>
             </>
