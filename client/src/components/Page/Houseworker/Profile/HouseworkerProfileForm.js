@@ -8,7 +8,7 @@ import '../../../../sass/pages/_houseworkerProfile.scss'
 const HouseworkerProfileForm = ({loading, houseworkerData, setHouseworkerData, cityField, register, errors, watch, handleSubmit, getNotOwnedProfessions, onSubmitUpdate, onChangeCityHandler}) =>{
     console.log("GOYUSEL ", houseworkerData);
     return(
-        <div className='profile-container'>
+        <div className='hs-profile-container'>
                 {loading ? <Spinner className={'profile-spinner'}/> :
                 <>
                     {/* <div id='title'>{`Houseworker ${ houseworkerData.first_name} ${houseworkerData.last_name} Profile`}</div> */}
@@ -34,7 +34,10 @@ const HouseworkerProfileForm = ({loading, houseworkerData, setHouseworkerData, c
                                 onChangeCityHandler={onChangeCityHandler}
                             />
                             <br></br>
-                            <button type='submit'  className='profile-submit'>Update</button>
+
+                            <div className='profile-submit'>
+                                <button type='submit' className='update-button'>Update</button>
+                            </div>
                         </div>
 
                     </form>
