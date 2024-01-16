@@ -5,8 +5,6 @@ import {profession_options} from '../../../../utils/options';
 import {getUserData, getProfessions, updateHouseworker} from '../../../../services/houseworker.js';
 import {useForm, useController} from 'react-hook-form';
 
-import '../../../../sass/pages/_houseworkerProfile.scss';
-
 const HouseworkerProfile = () =>{
 
     const initalStateForm = {

@@ -3,6 +3,8 @@ import HouseworkerProfessions from './HouseworkerProfessions';
 import HouseworkerInputs from './HouseworkerInputs.js';
 import Spinner from '../../../UI/Spinner';
 
+import '../../../../sass/pages/_houseworkerProfile.scss'
+
 const HouseworkerProfileForm = ({loading, houseworkerData, setHouseworkerData, cityField, register, errors, watch, handleSubmit, getNotOwnedProfessions, onSubmitUpdate, onChangeCityHandler}) =>{
     console.log("GOYUSEL ", houseworkerData);
     return(

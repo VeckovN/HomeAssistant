@@ -1,6 +1,8 @@
 import Select from 'react-select';
 import Spinner from '../../../UI/Spinner';
 
+import '../../../../sass/pages/_clientProfile.scss';
+
 const ClientProfileForm = ({loading, clientData, cityField, errors, register, watch, city_options,handleSubmit ,onSubmitUpdate,onSubmitUpdateHandler, onCityChangeHandler }) =>{
 
     return(

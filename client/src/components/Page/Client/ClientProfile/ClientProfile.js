@@ -4,7 +4,6 @@ import ClientProfileForm from './ClientProfileForm';
 import {getUserData, updateClient} from '../../../../services/client.js';
 import {useForm, useController} from 'react-hook-form';
 import { city_options } from '../../../../utils/options';
-import '../../../../sass/pages/_clientProfile.scss';
 
 const ClientProfile = () =>{ 
     const initialState = {
