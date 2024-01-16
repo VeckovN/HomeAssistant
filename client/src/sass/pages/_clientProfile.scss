@@ -1,10 +1,14 @@
 @use '../abstracts/colors' as *;
 @use '../abstracts/fonts' as *;
 @use '../abstracts/placeholders' as *;
+@use '../abstracts/brakepoints' as *;
+@use '../base/typography' as *;
+@use '../abstracts/mixins' as *;
 
 .profile-container{
     @extend %profile-container;
     background-color: $background-white-2;
+
 
     .profile-spinner{
         padding:10em 0em;
@@ -15,21 +19,52 @@
         font-family: $root-font-family-3;
         letter-spacing: .02em;
         color:$white;
+
+        @include sm-breakpoint{
+            font-size:1.6rem;
+        }
+        @include xs-breakpoint{
+            font-size:1.2rem;
+        }    
     }
 
     .cl-profile-form{
         @extend %profile-form-style;
-    
+
+        @include sm-breakpoint{
+            width: 90%;
+            min-width:250px;
+        }
+
+        @include xs-breakpoint{
+            width: 95%;
+        }
+
         .input-label-form{
+            display: flex;
+            flex-direction: column;
+
+            @include sm-breakpoint{
+                width: 90%;
+            }
+
+            @include xs-breakpoint{
+                font-size: $fs5;
+            }
 
             .profile-input-container{
-                padding:.6rem 1rem;
+                padding:.6em 1em;
+
+                @include xs-breakpoint{
+                    padding: .5em .4em;
+                }
 
                 label{
-                    font-size: 1.1rem;
+                    font-size: 1.1em;
                 }
 
                 input{
+                    width: 100%;
                     @extend %input-style;
                 }
 
@@ -44,22 +79,26 @@
 
             }
 
-            .profile-submit{
-                width: 8rem;
-                height: 2rem;
-                // align-self: center;
-                margin: 0 6em;
-                border:none;
-                border-radius: $border-radisu-xsm;
-                font-family: $root-font-family-3;
-                background-color: $white;
-                cursor: pointer;
+            .profile-submit{    
+                display: flex;
+                justify-content: center;
 
-                font-weight: 500;
-
-                &:hover{
-                    background-color: $grey-2;
-                    font-weight: 550;
+                .update-button{
+                    height: 2.5em;
+                    width: 6em;
+    
+                    border:none;
+                    border-radius: $border-radisu-xsm;
+                    font-family: $root-font-family-3;
+                    background-color: $white;
+                    cursor: pointer;
+    
+                    font-weight: 500;
+    
+                    &:hover{
+                        background-color: $grey-2;
+                        font-weight: 550;
+                    }
                 }
             }
         }
