@@ -40,18 +40,6 @@ const HouseworkerHome = () =>{
             setLoading(false);
         }
     }
-    // const fetchRating = async() =>{
-    //     const ratingValue = await getRating(user.username); 
-    //     setRating(ratingValue.toFixed(1));
-    // }   
-    // const fetchCommentsCount = async() => {
-    //     const count = await getCommentsCount(user.username);
-    //     setCommentsCount(count)   
-    // }
-    // const fetchConversationCount = async() =>{
-    //     const countConv = await getConversationCount(user.userID);
-    //     setConversationCount(countConv);
-    // }
 
     useEffect(()=>{
        fetchData();
@@ -70,28 +58,28 @@ const HouseworkerHome = () =>{
                 </div>
 
                 <div className ='houseworker-item-container'>
-                    <div id='housewokre-item-label'>Profile Insights</div>
+                    <div id='houseworker-item-label'>Profile Insights</div>
                     
-                    <HouseworkerItem 
-                        title='Conversations'
-                        icon={<QuestionAnswerIcon fontSize='inherit'/>}
-                        count={conversationCount}
-                        link={'/messages'}
-                    />
+                        <HouseworkerItem 
+                            title='Conversations'
+                            icon={<QuestionAnswerIcon fontSize='inherit'/>}
+                            count={conversationCount}
+                            link={'/messages'}
+                        />
 
-                    <HouseworkerItem 
-                        title='Comments'
-                        icon={<CommentIcon fontSize='inherit'/>}
-                        count={commentsCount}
-                        link={'/comments'}
-                    />
+                        <HouseworkerItem 
+                            title='Comments'
+                            icon={<CommentIcon fontSize='inherit'/>}
+                            count={commentsCount}
+                            link={'/comments'}
+                        />
 
-                    <HouseworkerItem 
-                        title='Professions'
-                        icon={<BadgeIcon fontSize='inherit'/>}
-                        count={3}
-                        link={'/profile'}
-                    />
+                        <HouseworkerItem 
+                            title='Professions'
+                            icon={<BadgeIcon fontSize='inherit'/>}
+                            count={3}
+                            link={'/profile'}
+                        />
                 </div>
 
             </>
