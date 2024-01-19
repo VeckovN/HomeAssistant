@@ -2,6 +2,7 @@
 @use '../abstracts/fonts' as *;
 @use '../abstracts/colors' as *;
 @use '../base/typography' as *;
+@use '../abstracts/brakepoints' as *;
 
 .comment{
     position: relative;
@@ -10,15 +11,18 @@
     width: 95%;
     // height: 4rem;
 
-    font-size: $fs5;
+    font-size: $fs-em-5;
     font-family: $root-font-family-5;
     color:$grey-1;
 
     @include flex-with-direction-center($direction:column);
 
-    padding:.9rem 0rem;
-    margin:.5rem 0rem;
+    padding:.9em 0rem;
+
+    margin:.5em 0rem;
     border-radius: .7rem;
+
+
 
     .comment-delete-btn{
         position: absolute;
@@ -30,18 +34,17 @@
         background: none;
     
         color:red;
-        font-size: .8rem;
+        font-size: $fs-em-6;
         font-weight: 600;
         cursor: pointer;
 
         &:hover{
             color:$white;
-            font-size: .9rem;
+            font-size: $fs-em-5;
         }
     }
 
     .info{
-
         margin:.5rem 0rem;
         position: absolute;
         top:-.4rem;
@@ -64,7 +67,7 @@
         .context{
             padding:.5rem 0rem;
             margin-top:.5em;
-            font-size: $fs4;
+            font-size: $fs-em-4;
             font-family: $root-font-family-2;
             font-weight: 500;
             letter-spacing: 0.02em;

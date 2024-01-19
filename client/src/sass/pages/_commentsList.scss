@@ -3,44 +3,76 @@
 @use '../abstracts/mixins' as *;
 @use '../abstracts/colors' as *;
 @use '../abstracts/placeholders' as *;
+@use '../abstracts/brakepoints' as *;
 
 .comments-container{
     position: relative;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
+    @include flex-with-direction-center($direction:column);
     background-color: $background-white-2;
 
-    .context-container{
+
+    & h1{
+        margin-bottom: .5em;
+        font-family:$root-font-family-1;
+        font-weight: 700;
+
+        @include sm-breakpoint{
+            font-size:1.6em;
+        }
+    }
+
+    .comment-card{
         width: 80%;
         min-width: 500px;
         max-width: 1000px;
+
+        padding: 1em;
+
+        background-color: $background-white-1;
+        border-radius: .5em;
+
+        @include md-breakpoint{
+            width: 95%;
+            font-size:$fs4;
+        }
+
+        @include sm-breakpoint{
+            width: 100%;
+            min-width: 280px;
+        }
+
+        @include xs-breakpoint{
+            padding:.3em;
+        }
+        
+        .context-container{
+            width: 100%;
+            @include flex-with-direction-center($direction:column);
+
+            .comment-list{
+                max-height: 70vh; /* Set a maximum height */
+                overflow-y:auto;
+                @extend %scrollbar-commnet-style;
+
+                font-size:$fs4;
+
+                @include md-breakpoint{
+                    font-size:$fs5;
+                }
+
+                @include sm-breakpoint{
+                    font-size:$fs6;
+                }
+            }
+        }
     
-        display: flex;
-        flex-direction: column;
-        //justify-content: center;
-        align-items: center;
-    
-        max-height: 70vh; /* Set a maximum height */
-        overflow-y:auto;
-
-        @extend %scrollbar-chat-style;
-    }
-
-    & h1{
-        margin-bottom: $fs7;
-        font-family:$root-font-family-2;
-        font-weight: 700;
-    }
-
-    .no-hs-comments{
-        padding:8rem 0;
-        font-size: 2rem;
-        font-weight: 600;
-        color:white;
+        .no-hs-comments{
+            padding:8rem 0;
+            font-size: 2rem;
+            font-weight: 600;
+            color:$white;
+        }
     }
 }
 
