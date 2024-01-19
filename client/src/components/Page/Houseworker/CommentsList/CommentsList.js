@@ -10,10 +10,7 @@ const CommentsList = () =>{
     //{comment:commentProp, from:clientProp}
     const [comments, setComments] = useState(null);
     const [loading, setLoading] = useState(true);
-
-    const userAuth = useSelector((state) => state.auth)
-    const user = userAuth.user.username;
-    console.log("YS2: " + user);
+    const endCommentsRef = useRef(null);
 
     useEffect(()=>{
         fetchComments()
@@ -24,12 +21,9 @@ const CommentsList = () =>{
         setComments(comms);
         setLoading(false);
     }
-    console.log("COMMENTS: " + JSON.stringify(comments));
 
-    const endMessageRef = useRef(null);
-    
     const scrollToBottom = () =>{
-        endMessageRef.current?.scrollIntoView({ behavior: "instant", block: 'nearest' });
+        endCommentsRef.current?.scrollIntoView({ behavior: "instant", block: 'nearest' });
     }
 
     useEffect(() =>{
@@ -56,9 +50,13 @@ const CommentsList = () =>{
                     ?
                     <>
                         <h1>Comments</h1>
-                        <div className='context-container'>
-                            {commentList}
-                            <div ref={endMessageRef}></div>
+                        <div className='comment-card'>
+                            <div className='context-container'>
+                                <div className='comment-list'>
+                                    {commentList}
+                                </div>
+                                <div ref={endCommentsRef}></div>
+                            </div>
                         </div>
                     </>
                     :
