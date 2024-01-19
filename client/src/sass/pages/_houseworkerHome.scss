@@ -1,6 +1,8 @@
 @use '../abstracts/colors' as *;
 @use '../abstracts/fonts' as *;
 @use '../base/typography' as *;
+@use '../abstracts/brakepoints' as *;
+@use '../abstracts/mixins' as *;
 
 .houseworker-container{
     width: 100%;
@@ -17,22 +19,33 @@
 
     .houseworker-item-container{
         position: relative;
-        height: 20em;
         width: 80%;
         min-width: 650px;
         max-width: 1100px;
-        min-height: 270px;
-        padding:0 2em;
-        display:flex;
+
+        padding:2.5em 2em;
+
+        @include flex-container($justify:space-around, $align:center);
         flex-wrap: wrap;
-        justify-content: space-around;
-        align-items: center;
+
         background-color: rgba(249, 252, 255, 0.719);
         border-radius: 1em;
         box-shadow: 6px 5px 15px 10px rgba(0,0,0,0.3), inset 4px 4px 15px 0 rgba(0,0,0,0.3);
     
+        @include sm-breakpoint{
+            width: 70%;
+            min-width:230px;
 
-        #housewokre-item-label{
+            flex-direction: column;
+            justify-content: center;
+            flex-wrap: nowrap;
+            gap:2.5em;
+        
+        }
+
+
+
+        #houseworker-item-label{
             position: absolute;
             font-size: 1.5em;
             font-family: $root-font-family-1;
@@ -40,8 +53,13 @@
             color:$grey-2;
             top:-1.5em;
             left:.6em;
-        }
 
+            @include sm-breakpoint{
+                left:50%;
+                transform:translateX(-50%);
+                text-wrap: nowrap;
+            }
+        }
     }
 }
 
