@@ -6,23 +6,19 @@
 
 .comment{
     position: relative;
-    background-color: $black-4;
-
     width: 95%;
-    // height: 4rem;
-
-    font-size: $fs-em-5;
-    font-family: $root-font-family-5;
-    color:$grey-1;
+    padding:.9em 0rem;
+    margin:.5em 0rem;
 
     @include flex-with-direction-center($direction:column);
 
-    padding:.9em 0rem;
+    background-color: $black-4;
+    color:$grey-1;
 
-    margin:.5em 0rem;
+    font-size: $fs-em-5;
+    font-family: $root-font-family-5;
+
     border-radius: .7rem;
-
-
 
     .comment-delete-btn{
         position: absolute;
@@ -33,13 +29,14 @@
         border:none;
         background: none;
     
-        color:red;
+        color:$white;
+        color:rgba(255, 221, 221, 0.897);
         font-size: $fs-em-6;
         font-weight: 600;
         cursor: pointer;
 
         &:hover{
-            color:$white;
+            color:rgb(185, 29, 29);
             font-size: $fs-em-5;
         }
     }
@@ -71,6 +68,8 @@
             font-family: $root-font-family-2;
             font-weight: 500;
             letter-spacing: 0.02em;
+
+            
         }
     }
 

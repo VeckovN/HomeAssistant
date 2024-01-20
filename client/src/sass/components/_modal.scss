@@ -2,138 +2,146 @@
 @use '../abstracts/fonts' as *;
 @use '../base/typography' as *;
 @use '../abstracts/mixins' as *;
+@use '../abstracts/brakepoints' as *;
 
 .backView{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%; /* 100vw same  */
-    height: 100vh;
-    background-color: #E6F4FA;
-    // background-color: $grey-1;
-    filter:opacity(0.7);
-    z-index: 16;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%; /* 100vw same  */
+  height: 100vh;
+  background-color: $grey-1;
+  filter:opacity(0.7);
+  z-index: 16;
 }
 
 //after modal - when is unshowned set new animation
 
-
 .modal{
-    position:fixed;
-    background-color: hwb(204 64% 2% / 0.76);
-    border-radius: $border-radius-md;
+  position:fixed;
 
-    // animation: fadeIn 0.1s ease-in-out forwards;
-    animation: fadeInDown 0.3s ease-in;
+  width:60%;
+  max-width: 800px;
+  min-width: 560px;
 
-    width:50vw;
-    max-width: 700px;
-    min-width: 500px;
-    max-height: 70%;
-    // overflow: auto;
+  max-height: 70%;
 
-    top:55%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  margin-bottom: 1rem;
 
-    z-index: 20;
-    margin-bottom: 1rem;
+  top:40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  background-color: $white;
+  border-radius: $border-radius-md;
+
+  // animation: fadeIn 0.1s ease-in-out forwards;
+  animation: fadeInDown 0.3s ease-in;
+
+  z-index: 20;
+  
+  @include sm-breakpoint{
+    width: 95%;
+    min-width: 200px;
+  }
+
+  @include xs-breakpoint{
+    font-size: .9rem;
+  }
 
 
-    //modal-container
-    &-container{
-        width: 100%;
-        height: 100%;
+  //modal-container
+  &-container{
+    width: 100%;
+    height: 100%;
 
-        &-header{
-            display: flex;
-            justify-content: space-between;
-            background-color:#14191a;
-            padding: 0.7rem 0;
-            border-radius: 1em 1em 0 0;
+    &-header{
+      display: flex;
+      justify-content: space-between;
+      background-color:#14191a;
+      padding: 0.7em 0;
+      border-radius: 1em 1em 0 0;
 
-            :first-child{
-                font-family: 'Skranji', cursive;
-                letter-spacing: 0.05rem;
-                font-weight: 700;
-                //font-size: 1.2rem;
-                font-size: $fs3;
-                padding-left: 1rem; //$f5
-                color:white;
-            }
+      :first-child{
+        font-family: $root-font-family-2;
+        letter-spacing: 0.1rem;
+        font-weight: 600;
+        font-size: $fs-em-4;
+        padding-left: 1rem; //$f5
+        color:$white;
+      }
 
-            & button{ /* second div of modal-header */ 
-                color:rgb(201, 5, 5);
-                font-size:$fs6;
-                font-weight: bold;
-                margin-right:.7rem;
-                cursor: pointer;
-                float: right;
-                
-                background-color: transparent;
-                border:transparent;
-                
+      & button{ /* second div of modal-header */ 
+        float: right;
+        margin-right:.7rem;
+        font-size:$fs6;
+        font-weight: bold;
+        
+        border:transparent;
+        background-color: transparent;
+        color:$white;
 
-                &:hover{
-                    color:white;
-                    font-size:$fs4;
-                }
-            }
+        cursor: pointer;
+    
+        &:hover{
+            color:rgb(184, 0, 0);
+            font-size:$fs4;
         }
-
-        &-body{
-            background-color: hwb(204 64% 2% / 0.76);
-            /* background-image: url('../../../public/BackgroundCenter.jpg'); */
-            padding:0.2rem 0;
-            border-radius: $border-radius-md;
-
-            // display: flex;
-            // flex-direction: column;
-            // //justify-content: center;
-            // align-items: center;
-
-            // max-height: 500px; /* Set a maximum height */
-            // overflow-y: auto;
-
-            // :first-child{  
-            //     // @include flex-with-direction-center($direction:column);
-            //      display: flex;
-            //     flex-direction: column;
-            //     //justify-content: center;
-            //     align-items: center;
-            // }
-        }
-
-        &-footer{
-            width: 100%;
-            /* background-color: aliceblue; */
-            position:static;
-            bottom:0;
-            padding: 0.6rem 0;
-            background-color:#14191a;
-        }
+      }
     }
+
+    &-body{
+      background-color: $white;
+      /* background-image: url('../../../public/BackgroundCenter.jpg'); */
+      padding:0.2rem 0;
+      border-radius: $border-radius-md;
+
+      // display: flex;
+      // flex-direction: column;
+      // //justify-content: center;
+      // align-items: center;
+
+      // max-height: 500px; /* Set a maximum height */
+      // overflow-y: auto;
+
+      // :first-child{  
+      //     // @include flex-with-direction-center($direction:column);
+      //      display: flex;
+      //     flex-direction: column;
+      //     //justify-content: center;
+      //     align-items: center;
+      // }
+    }
+
+    &-footer{
+      width: 100%;
+      position:static;
+      bottom:0;
+      padding: 0.6rem 0;
+      background-color:#14191a;
+    }
+  }
 }
 
 @keyframes fadeInDown {
-    0% {
-      opacity: 0;
-      transform: translateX(-50%);
-    }
-    100% {
-      opacity: 1;
-      transform: translate(-50%, -50%)
-    }
+  0% {
+    opacity: 0;
+    transform: translateX(-50%);
   }
-  @keyframes fadeOutUp {
-    0% { 
-      opacity: 1;
-      transform: translate(-50%, -50%)
-    }
-    100% {
-      opacity: 0;
-      transform: translateX(-50%);
-    }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%)
   }
+}
+@keyframes fadeOutUp {
+  0% { 
+    opacity: 1;
+    transform: translate(-50%, -50%)
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%);
+  }
+}
 
 
