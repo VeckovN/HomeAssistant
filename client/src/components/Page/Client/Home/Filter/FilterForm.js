@@ -1,4 +1,5 @@
 import Select from 'react-select';
+import '../../../../../sass/components/_filter.scss';
 
 const FilterForm = ({city_options, profession_options, onChange, onChangeCity, onChangeProffesions, filterClickHanlder }) =>{
     return (

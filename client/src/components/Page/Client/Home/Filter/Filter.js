@@ -4,8 +4,6 @@ import {getAllCities, getAllProfessions} from '../../../../../services/housework
 import useUser from '../../../../../hooks/useUser.js';
 import FilterForm from './FilterForm.js';
 
-import '../../../../../sass/components/_filter.scss';
-
 const Filter = (prop) =>{
     
     console.log("FILTER RENDER");
