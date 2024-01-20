@@ -27,6 +27,15 @@
         padding: 1em;
     }
 
+    @include sm-breakpoint {
+        font-size:$fs5;
+    }
+
+    @include xs-breakpoint {
+        font-size:$fs6;
+    }
+
+
     &-item{
         @include flex-with-direction-center($direction:column);
         margin-bottom: 1em;
@@ -51,13 +60,13 @@
         margin:.3em 0 .2em 0;
         padding-bottom:.2em;
         
-        font-size: $fs3;
+        font-size: $fs-em-3;
         font-weight: 500;
     }
 
     .filter-card{
         @include flex-with-direction();
-        font-size: $fs4;
+        font-size: $fs-em-4;
         font-weight: 500;
 
         .filter-item{
@@ -89,7 +98,7 @@
             height:2rem;
             border-radius: 10rem;
             border:none;
-            font-size: medium;
+            font-size: $fs-em-4;
             font-family: trebuchet ms;
             margin-top:1rem;
             margin-bottom: 1rem;

@@ -19,6 +19,10 @@
         // flex-direction: column;
     }
 
+    @include xs-breakpoint {
+        font-size: $fs5;
+    }
+
     &-box {
         .sort{
             width: 4.5em;
@@ -28,7 +32,7 @@
             border-radius: 5px;
             border:none;
             font-family: $root-font-family-1;
-            font-size: $fs6;
+            font-size: $fs-em-6;
 
             text-align: center;
 

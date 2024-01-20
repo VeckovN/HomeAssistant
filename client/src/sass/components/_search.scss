@@ -12,9 +12,16 @@
 
         @include lg-breakpoint {
             position: unset;
-            width:80%;
+            width:90%;
             padding:1em 0em;
+            
         }
+
+        @include sm-breakpoint {
+            font-size:$fs5;
+        }
+
+
 
         .box-s{
             height: 50%;
@@ -46,7 +53,7 @@
                 border-radius: .4rem;
                 
                 font-family: $root-font-family-1;
-                font-size: .85em;
+                font-size: $fs-em-5;
                 font-weight: 600;
                 color:#ffff;
 
