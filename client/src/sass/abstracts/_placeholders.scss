@@ -25,15 +25,14 @@
 %nav-link-styles{
     font-family: $root-font-family-2;
     margin:.3rem;
-    color:white;
+    color:$white;
     letter-spacing: .08rem;
     font-weight: 700;
-    font-size: .9rem;
+    font-size: .9em;
     transition:color .4s;
     text-decoration: none;
 
     &:hover{
-        // color:
         cursor:pointer;
     }
 }
