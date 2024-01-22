@@ -1,77 +1,184 @@
 // $nav-background-color: black;
 // $nav-hover-color: #13a7ec;
 @use '../abstracts/colors' as c;
-@use '../abstracts//placeholders' as *;
-@use '../abstracts//fonts' as *;
+@use '../abstracts/placeholders' as *;
+@use '../abstracts/fonts' as *;
+@use '../base/typography' as *;
+@use '../abstracts/mixins' as *;
+@use '../abstracts/brakepoints' as *;
 
 .navbar{
-    width:100%;
-    height: 4rem;
-    background-color: c.$nav-background-color;
     position:fixed;
     top:0;
-    z-index:15;
+    width:100%;
+    height: 4rem;
     padding:0.5rem;
-}
 
-.logo{
-    position:absolute;
-    top:25%;
-    left:3rem;
+    background-color: c.$nav-background-color;
+    z-index:15;
 
-    & a{
-        font-family:'MADE Soulmaze', sans-serif;
-        font-size:1.5rem;
-        font-weight: 800;
-        color:white;
-        letter-spacing: .1rem;
-        transition: color .3s;
 
-        span:first-child{
-            color:white;
-            transition: color .2s;
-        }
-
-        span:last-child{
-            color:c.$nav-hover-color;
-            transition: color .2s;
-        }
-
-        &:hover span:first-child{
-            color:c.$nav-hover-color;
-        }
-        &:hover span:last-child{
-            color:white;
-        }
-    }
-}
-
-.nav-list{
-    position:absolute;       /*Ovo je za stavke logoint i register kada se izlogujete sa naloga*/
-    top: 1.3rem;
-    right:2rem;
-}
-
-.nav-link{
-    @extend %nav-link-styles;
-
-    &:hover{
-        color:c.$nav-hover-color;
-    }
-}
-
-.nav-link-button{    
-    @extend %nav-link-styles;
-
-    background:none;
-    border:none;   
+    .logo{
+        position:absolute;
+        top:1rem;
+        left:3rem;
     
-    &:hover{
-        color:#f55d4c;
+        @include lg-breakpoint{
+            left:1rem;
+        }
+
+        @include xs-breakpoint{
+            font-size:$fs6;
+        }
+    
+        & a{
+            font-family:'MADE Soulmaze', sans-serif;
+            font-size:1.5em;
+            font-weight: 800;
+            color: c.$white;
+            letter-spacing: .1rem;
+            transition: color .3s;
+    
+            span:first-child{
+                color:white;
+                transition: color .2s;
+            }
+    
+            span:last-child{
+                color:c.$nav-hover-color;
+                transition: color .2s;
+            }
+    
+            &:hover span:first-child{
+                color:c.$nav-hover-color;
+            }
+            &:hover span:last-child{
+                color:white;
+            }
+        }
     }
+
+
+    .burger{
+
+        display: none;
+
+        cursor: pointer;
+
+        .bar{
+            background-color: c.$white;
+            width:20px;
+            height:3px;
+            margin:2.5px;
+
+            -webkit-transition: 0.2s ease-in-out;
+            transition: 0.2s ease-in-out;
+        }
+
+
+        @include sm-breakpoint{
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            right:1em;
+            top:1.2em;
+        }
+
+        &:hover >* {
+            background-color: c.$nav-hover-color;
+        }
+
+
+        &-active :nth-child(1){
+            transform: translate(-45%, 10px) rotate(45deg);
+        }
+
+        &-active :nth-child(2){
+            background-color: c.$nav-hover-color;
+            transform: translate(0%, 0px) rotate(45deg);
+        }
+
+        &-active :nth-child(3){
+            transform: translate(45%, -10px) rotate(45deg);
+        }
+    
+    }
+
+    .nav-list{
+        position:absolute;       /*Ovo je za stavke logoint i register kada se izlogujete sa naloga*/
+        top: 1.3rem;
+        right:2em;
+
+        @include sm-breakpoint{
+            visibility: hidden;
+            right:.5em;
+            font-size: .8em;
+        }
+
+        .nav-link{
+            @extend %nav-link-styles;
+        
+            &:hover{
+                color:c.$nav-hover-color;
+            }
+        }
+
+        .nav-link-button{    
+            @extend %nav-link-styles;
+        
+            background:none;
+            border:none;   
+            
+            &:hover{
+                color:#f55d4c;
+            }
+        }
+
+    }
+}
+
+.navbar-mobile{
+    background-color: c.$black-8;
+    width: 100%;
+    height: 100%;
+
+    .activeList{
+        visibility: visible;   
+        position:relative;
+        right:0em;
+        width: 100%;
+
+        @include flex-with-direction-center($direction:column);
+
+        margin: 4em 0em;
+        font-size: $fs1;
+
+        .nav-link, .nav-link-button{
+            width: 110%;
+            height: 4em;
+
+            @include flex-with-direction-center();
+
+            font-family: $root-font-family-2;
+
+            &:hover{
+                background-color: c.$nav-hover-color;
+                color:black;
+            }
+        }
+
+        .nav-link-button{
+            &:hover{
+                color:#f7422e;
+            }
+        }
+        
+    }
+
 }
 
 
 .fas{
     color:White;
+    color:red;
 }
