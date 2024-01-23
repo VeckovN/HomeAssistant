@@ -11,7 +11,11 @@ const Register = () =>{
                 <div className='register-item'>
                     <Link to='/clientRegister' className='register-link'>
                         <div className='avatar-container'>
-                            <img src='assets/clientAvatar1.png'></img>
+                            <picture>
+                                <source srcset="assets/clientAvatar1.webp"/>
+                                <img className='avatar' src='assets/clientAvatar1.png'></img>
+                            </picture>
+                            {/* <img className='avatar' src='assets/clientAvatar1.png'></img> */}
                         </div>
                         <div className='register-label'>Client</div>
                     </Link>
@@ -20,7 +24,10 @@ const Register = () =>{
                 <div className='register-item'>
                     <Link to='/houseworkerRegister' className='register-link'>
                         <div className='avatar-container'>
-                            <img src='assets/houseworkerAvatar1.png'></img>
+                            <picture>
+                                <source srcset="assets/houseworkerAvatar1.webp"/>
+                                <img className='avatar'src='assets/houseworkerAvatar1.png'></img>
+                            </picture>
                         </div>
                         <div className='register-label'>Houseworker</div>
                     </Link>
