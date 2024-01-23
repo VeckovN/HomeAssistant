@@ -41,6 +41,22 @@ const Login = () =>{
         <>
             <div className ='login_container'>
                 <div className="login_context">
+
+                    <picture className="login-image">
+                        <source srcset="../../../assets/images/login4.webp" type="../../../assets/images/webp"/>
+                        <img
+                            src={require('../../../assets/images/login4.jpg')}
+                            alt="Login Image"
+                            className="login-image"
+                        />
+                    </picture>
+
+                    {/* <img
+                        src={require('../../../assets/images/login4.jpg')}
+                        alt="Login Image"
+                        className="login-image"
+                        // loading="lazy"
+                    /> */}
                     <div className='context-item'>
                         <div className='login_welcome'>
                             <h3>Welcome</h3>
