@@ -12,7 +12,7 @@ const Register = () =>{
                     <Link to='/clientRegister' className='register-link'>
                         <div className='avatar-container'>
                             <picture>
-                                <source srcset="assets/clientAvatar1.webp"/>
+                                <source srcSet="assets/clientAvatar1.webp"/>
                                 <img className='avatar' src='assets/clientAvatar1.png'></img>
                             </picture>
                             {/* <img className='avatar' src='assets/clientAvatar1.png'></img> */}
@@ -25,7 +25,7 @@ const Register = () =>{
                     <Link to='/houseworkerRegister' className='register-link'>
                         <div className='avatar-container'>
                             <picture>
-                                <source srcset="assets/houseworkerAvatar1.webp"/>
+                                <source srcSet="assets/houseworkerAvatar1.webp"/>
                                 <img className='avatar'src='assets/houseworkerAvatar1.png'></img>
                             </picture>
                         </div>

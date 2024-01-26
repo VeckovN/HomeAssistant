@@ -43,7 +43,7 @@ const Login = () =>{
                 <div className="login_context">
 
                     <picture className="login-image">
-                        <source srcset="../../../assets/images/login4.webp" type="../../../assets/images/webp"/>
+                        <source srcSet="../../../assets/images/login4.webp" type="../../../assets/images/webp"/>
                         <img
                             src={require('../../../assets/images/login4.jpg')}
                             alt="Login Image"
