@@ -54,8 +54,8 @@ const CommentsList = () =>{
                             <div className='context-container'>
                                 <div className='comment-list'>
                                     {commentList}
+                                    <div ref={endCommentsRef}></div>
                                 </div>
-                                <div ref={endCommentsRef}></div>
                             </div>
                         </div>
                     </>
