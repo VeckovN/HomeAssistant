@@ -1,39 +1,34 @@
-import { useSelector, useDispatch} from 'react-redux';
+import { useSelector} from 'react-redux';
 import { Navigate} from 'react-router-dom'; 
-import Cookie from 'js-cookie';
-import { logout, sessionExpired } from '../../store/auth-slice';
 
 const PrivateRoute = ({children, privacy}) =>{
     const {user} = useSelector((state) => state.auth)  
-    const user_type = user?.type;
-    const dispatch = useDispatch();
 
-    const userCookie = Cookie.get("user");
     const isAuthenticated = () =>{
-        if(!userCookie){
-            dispatch(sessionExpired())
-            return false;
-        }
-        const user = JSON.parse(userCookie);
-
-        if(privacy === "houseworker" && user.type === "Houseworker"){
+        if(user)
             return true;
-        }
-        
-        else if (privacy === "client" && user.type === "Client"){
-            return true;
-        }
-        //without privacy (only logged user) 
-        else if (user){ //default route for logged in users
-            return true;
-        }
         return false;
     }
 
+    const isAuthorized = () =>{
+        if(privacy != undefined){
+            if(privacy === "houseworker" && user.type === "Client"){
+                return false;
+            }
+        
+            if (privacy === "client" && user.type === "Houseworker"){
+                return false;
+            }
+
+            return true;
+        }
+        return true;
+    }
+
     return isAuthenticated() ? (
-        children 
+        isAuthorized() ? children : <Navigate to ='/'/>
     ) : (
-        <Navigate to ='/login' />
+        <Navigate to ='/login'/>
     )
 }
 

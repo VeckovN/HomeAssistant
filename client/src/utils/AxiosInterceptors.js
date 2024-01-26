@@ -9,11 +9,21 @@ export const axiosSession = axios.create({
 export const requestInterceptor = (dispatch) => axiosSession.interceptors.response.use(
     response => {return response},
     (error) =>{
-        //hanlde session cookie expiration
+        //401 status on not authenticated users (when is session expired server will return 401 status)
+
         if(error.response.status === 401){
             dispatch(sessionExpired());
+            alert("12312312");
             return Promise.reject(error);
-        }   
-        return Promise.reject(error);
+            
+        }
+    
+        //don't logout(removeSession) on not Authorized request
+        if(error.response.status === 403){
+            //logic
+            return Promise.reject(error);
+        }
+
+        return Promise.reject(error); 
     }
 );
