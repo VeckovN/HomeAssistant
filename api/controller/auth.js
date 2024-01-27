@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const { json } = require('body-parser');
 const {client:redisClient, sub} = require('../db/redis.js');
+// const sharp = require('sharp');
 //express-session
 //To store confidential session data, we can use the express-session package.
 // It stores the session data on the server and gives the client
@@ -13,49 +14,87 @@ const chatModel = require('../model/Chat');
 
 const {get, set, sadd, hset} = require('../db/redis');
 
-
 const register = async (req,res)=>{
-    const {username,password,type, ...otherData} = req.body;
-    const hashedPassword = bcrypt.hashSync(password, 12);
-    // const picturePath = req.files[0].filename;
-    //if picturePath exists
-    const picturePath = req.files[0]?.filename;
-    const userData = {username, password:hashedPassword, picturePath:picturePath, ...otherData};
-    const userExists = await userModal.checkUser(username);
-    const emailExist = await userModal.checkEmail(username);
 
-    if(userExists)
-        return res.status(400).json({error:"User with this username exists"}) 
-    if(emailExist)
-        return res.status(400).json({error:"User with this email exists"}) 
-    
     try{
-        const redisUser = await chatModel.createUser(username, hashedPassword, picturePath);
+        const {username,password,type, ...otherData} = req.body;
+        const hashedPassword = bcrypt.hashSync(password, 12);
 
-        if(redisUser.success){
-            userData.id = Number(redisUser.id);
+        //*TODO BackUp the projects and Upgrade NodeJS 
+        //Sharp module support: Node-API v9, including Node.js >= 18.17.0  
+        
+        //CURRENT NodeJS Version Doesn't support Sharp module 
+        //image compression
+        // const file = req.files[0];
+        // if(file){
+        //     try{
+        //         const compressedBuffer = await sharp(file.path)
+        //             .jpeg({quality: 70})
+        //             .toBuffer();
 
-            try{
-                if(type=='Client'){
-                    await clientModal.create(userData);
-                    //assign user to the session after creating the user /request from client(set the sesson to client)
-                    res.status(200).send({success:true, message:"Client Sucessfully created"});
+        //         console.log("CompressedBuffer", compressedBuffer);
+        //         console.log("\n CompressBuffer size: " + compressedBuffer.length)
+
+        //         // if(compressedBuffer.length > 50 * 1024){
+        //         //     compressedBuffer = await sharp(compressedBuffer) // Use the existing buffer
+        //         //     .jpeg({ quality: 70}) // Adjust quality as needed
+        //         //     .toBuffer();
+        //         // }
+
+        //         await sharp(compressedBuffer)
+        //             .toFile(`../../client/public/assets/userImages/${file.filename}`)
+            
+        //     }catch(commpressionError){
+        //         console.error("Error compressing image", commpressionError);
+        //         //just notify user, the uncompressed image will exist 
+        //     }
+        // }
+        //if is image size above 50kb
+
+
+        // const picturePath = req.files[0].filename;
+        //if picturePath exists
+        const picturePath = req.files[0]?.filename;
+        const userData = {username, password:hashedPassword, picturePath:picturePath, ...otherData};
+        const userExists = await userModal.checkUser(username);
+        const emailExist = await userModal.checkEmail(username);
+
+        if(userExists)
+            return res.status(400).json({error:"User with this username exists"}) 
+        if(emailExist)
+            return res.status(400).json({error:"User with this email exists"}) 
+        
+        try{
+            const redisUser = await chatModel.createUser(username, hashedPassword, picturePath);
+
+            if(redisUser.success){
+                userData.id = Number(redisUser.id);
+
+                try{
+                    if(type=='Client'){
+                        await clientModal.create(userData);
+                        //assign user to the session after creating the user /request from client(set the sesson to client)
+                        res.status(200).send({success:true, message:"Client Sucessfully created"});
+                    }
+                    else if(type=='Houseworker'){ //houseworker
+                        await houseworkerModal.create(userData);
+                        res.status(200).send({success:true, message:"Houseworker  Sucessfully created"});
+                    }
                 }
-                else if(type=='Houseworker'){ //houseworker
-                    await houseworkerModal.create(userData);
-                    res.status(200).send({success:true, message:"Houseworker  Sucessfully created"});
+                catch(neo4jError){
+                    console.error("Neo4j error: " + neo4jError);
+                    await chatModel.deleteUserOnNeo4JFailure(username, redisUser.id);
+                    return res.status(500).json({error:"Error creating user in Neo4j"})
                 }
-            }
-            catch(neo4jError){
-                console.error("Neo4j error: " + neo4jError);
-                await chatModel.deleteUserOnNeo4JFailure(username, redisUser.id);
-                return res.status(500).json({error:"Error creating user in Neo4j"})
             }
         }
-    }
-    catch(error){
-        console.error("Error during creating user");
-        return res.status(500).json({error:"An error during user registration"})
+        catch(redisError){
+            console.error("Error during creating user", redisError);
+            return res.status(500).json({error:"An error during user registration"})
+        }
+    }catch(error){
+        console.error("Error during registration", error);
+        return res.status(500).json({error:"An unexpected register error occurred"});
     }
      
 }
