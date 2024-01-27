@@ -13,7 +13,6 @@ export const requestInterceptor = (dispatch) => axiosSession.interceptors.respon
 
         if(error.response.status === 401){
             dispatch(sessionExpired());
-            alert("12312312");
             return Promise.reject(error);
             
         }
