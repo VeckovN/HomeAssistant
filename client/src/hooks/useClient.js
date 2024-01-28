@@ -135,7 +135,7 @@ const useClient = (user) =>{
 
 
                 if(pageNumberRef.current > 0){
-                    alert("page");
+                    // alert("page");
                     setData(prev =>([
                         ...prev,
                         ...houseworkers
@@ -243,7 +243,7 @@ const useClient = (user) =>{
 
     //On every re-rendering this function will be differentand without using useCallback and Filter component will be re-rendered(unnecessary)
     const filterDataHandler = useCallback((filterData) =>{
-        alert("FFFFF");
+        // alert("FFFFF");
         //filteredData is passed data from Children Component (Filter)
         console.log("FILTERS IN PARRANET" + JSON.stringify(filterData));
         console.log("fiut", filterData);
