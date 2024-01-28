@@ -22,22 +22,34 @@ const ClientHome = ({socket}) =>{
 
     const [buttonState, setButtonState] = useState({showButton:false, delayedHide:false});
 
-    //event listener for showing button when is Y: +100px view
-    const handleScroll = useCallback(() =>{
-        if(window.scrollY >= 1000){
-            setButtonState({showButton:true, delayedHide:false})
-        }
-        else{
-            setButtonState((prev => ({...prev, delayedHide:true})));
-        }
-    },[]);
-
+    // //THIS CAUSED UNNECESSARY RERENDERING ON CLIENTHOME PAGE
+    // //event listener for showing button when is Y: +100px view
     
+
+    // const handleScroll = useCallback(() =>{
+    //     if(window.scrollY >= 1000){
+    //         setButtonState({showButton:true, delayedHide:false})
+    //     }
+    //     else{
+    //         setButtonState((prev => ({...prev, delayedHide:true})));
+    //     }
+    // },[]);
+
+    // useEffect(()=>{
+    //     window.addEventListener('scroll', handleScroll);
+    //     return () =>{
+    //         window.removeEventListener('scroll', handleScroll);
+    //     }
+    // }, [handleScroll]);
+
+
     const scrollToTop = () =>{
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
           });
+        
+        setButtonState()
     }
 
     //Without useTransition 
@@ -56,13 +68,6 @@ const ClientHome = ({socket}) =>{
         }
     },[buttonState.delayedHide])//when is window/scrollY triggered
 
-    useEffect(()=>{
-        window.addEventListener('scroll', handleScroll);
-        return () =>{
-            window.removeEventListener('scroll', handleScroll);
-        }
-    }, [handleScroll]); //put handleScroll as dependecies -> it will be applied only one times 
-    //because using useCallback its creating(freezing) only one copy of that function
 
     console.log("DATA: " , data);
 
@@ -102,36 +107,49 @@ const ClientHome = ({socket}) =>{
     },[data]);
 
     return (
-        <div className='home-container'>
-            <div className='search-box'>
-                <Search search={searchDataHanlder}></Search>
-                <Sort search={searchDataHanlder}></Sort>
-            </div>
-            <div className='filter-houseworkers-container'>
-                <div className='filter-options'>
-                    <Filter 
-                    //This FilterDataHandler is different on every render by default - so memo(Filter) won't work to prevent Filter unnecessary re-rendering
-                    //so i had to this filterDataHandler made unique (frize on first fucntion creating -> useCallback on filterDataHandler in useClient )
-                        filterOptions={filterDataHandler}
-                    />
+        <main className='home-container'>
+
+            <section className='info-section'>
+                <div className='info'>
+                    Find People that can help you in your daily Home jobs
                 </div>
                 
-                <div className="houseworker-list">    
-                    {loading ? <Spinner/> :
-                    <>
-                        {houseworkerData.length > 0 ? houseworkerData : <h3 id='none'>No Matches</h3> }
-                    </>
-                    }
-                </div>   
-                       
-            </div>
-
-            {buttonState.showButton && 
-                <div className='scroll-div'>
-                    <button className={`scroll-to-top ${!buttonState.delayedHide ? 'fade-in' : 'fade-out'}`} onClick={scrollToTop}><KeyboardDoubleArrowUpIcon/></button>
+                <div className='users-count-message'>
+                 <span>1029</span> Currently Users registerd That Offer Jobs
                 </div>
-            }
-        </div>
+            </section>
+
+            <section className='houseworker-content-section'>
+                <div className='search-box'>
+                    <Search search={searchDataHanlder}></Search>
+                    <Sort search={searchDataHanlder}></Sort>
+                </div>
+                <div className='filter-houseworkers-container'>
+                    <div className='filter-options'>
+                        <Filter 
+                        //This FilterDataHandler is different on every render by default - so memo(Filter) won't work to prevent Filter unnecessary re-rendering
+                        //so i had to this filterDataHandler made unique (frize on first fucntion creating -> useCallback on filterDataHandler in useClient )
+                            filterOptions={filterDataHandler}
+                        />
+                    </div>
+                    
+                    <div className="houseworker-list">    
+                        {loading ? <Spinner/> :
+                        <>
+                            {houseworkerData.length > 0 ? houseworkerData : <h3 id='none'>No Matches</h3> }
+                        </>
+                        }
+                    </div>   
+                        
+                </div>
+
+                {buttonState.showButton && 
+                    <div className='scroll-div'>
+                        <button className={`scroll-to-top ${!buttonState.delayedHide ? 'fade-in' : 'fade-out'}`} onClick={scrollToTop}><KeyboardDoubleArrowUpIcon/></button>
+                    </div>
+                }
+            </section>
+        </main>
     )
     
 }
