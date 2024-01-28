@@ -3,6 +3,8 @@ import Rating from '@mui/material/Rating';
 import StarIcon from '@mui/icons-material/Star';
 import '../../../../../sass/components/_houseworkerCard.scss';
 import { Link } from "react-router-dom";
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+
 
 const HouseworkerCardContent = ({
     comments,
@@ -47,7 +49,10 @@ const HouseworkerCardContent = ({
                 <div className={houseworkerProps.recommended ? 'houseworker-content recommended' : 'houseworker-content'}>
                     
                     <div className="img-box">
-                        <img className='' src={`assets/userImages/${houseworkerProps.picturePath}`}/>
+                        <LazyLoadImage
+                            src={`assets/userImages/${houseworkerProps.picturePath}`}
+                        />
+                        {/* <img src={`assets/userImages/${houseworkerProps.picturePath}`} alt='profile-avatar' loading="lazy"/> */}
                         {/* <img src={`data:image/jpeg;base64, ${houseworkerProps.picturePath}`}></img> */}
                     </div>
 
