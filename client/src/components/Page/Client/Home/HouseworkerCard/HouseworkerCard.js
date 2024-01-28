@@ -1,4 +1,4 @@
-import {useEffect, useState, useRef, memo} from 'react';
+import React, {useEffect, useState, useRef, memo} from 'react';
 import {useSelector} from 'react-redux'
 import axios from 'axios';
 import HouseworkerCardContent from './HouseworkerCardContent.js';
@@ -9,6 +9,8 @@ import {getProfessionsByUsername} from '../../../../../services/houseworker.js'
 
 axios.defaults.withCredentials = true
 
+
+
 //CLIENT - Serach, Filter, HouseworkersCard(wiht paggination)
 //GUEST sees everything just like THE CLIENT but 
 // -can't see all information(Working hours, Rating) and cant send message and post comment
@@ -16,6 +18,8 @@ axios.defaults.withCredentials = true
 
 //EVERY HOUSEWORKER CARD DO THIS - IT WILL BE AGAIN RE-RENDER WHEN is CLIENTHOME COMPONENT RENDER -
 //AND SHOWNED CARD WILL BE AGAIN RE-RENDERED 
+
+const LazyHouseworkerCardContent = React.lazy(() => import('./HouseworkerCardContent'));
 
 //@Todo //Custom Hook for useFetch
 const HouseworkersCard = (props) =>{
@@ -107,6 +111,7 @@ const HouseworkersCard = (props) =>{
         <>
             { !loading &&
                 <HouseworkerCardContent 
+                // <LazyHouseworkerCardContent
                     houseworkerUsername ={houseworkerUsername}
                     comments ={comments}
                     onCommentSubmit ={onCommentSubmit}
