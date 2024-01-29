@@ -2,8 +2,7 @@ const houseworkerModel = require('../model/HouseWorker');
 const userModel = require('../model/User')
 const bcrypt = require('bcrypt');
 
-const getHouseworkerByUsername = async(req,res)=>{
-    //from LocalStorage or Cookie
+const getHouseworkerByUsername = async(req,res)=>{e
     const HouseworkerUsername = req.params.username;
     try{
         const result = await houseworkerModel.findByUsername(HouseworkerUsername);
@@ -60,8 +59,20 @@ const getHouseworkerInfo = async(req,res)=>{
         res.json(result);
     }
     catch(err){
-        console.log("ERROR GetClientInfo: " + err);
+        console.log("ERROR GetHouseworkerInfo: " + err);
         res.status(404).json({error:'Houseworkers Error'});
+    }
+}
+
+const getHomeInfo = async(req,res) =>{
+    try{
+        const username = req.params.username;
+        const result = await houseworkerModel.getHomeInfo(username);
+        res.json(result);
+    }
+    catch(err){
+        console.log("ERROR GetHomeInfo: " + err);
+        res.status(404).json({error:'Houseworkers Home Info Error'});
     }
 }
 
@@ -78,11 +89,8 @@ const deleteHouseworker = async(req, res)=>{
 }
 
 const getRatings = async(req,res)=>{
-    // const houseworkerUsername = "Sara"
     try{
-        //from session
         const username = req.session.user.username
-        console.log("saaaasasasas :" + username);
         const result = await houseworkerModel.getRatings(username);
         res.json(result);
     }
@@ -119,11 +127,8 @@ const getCities = async(req,res)=>{
 
 //COmments without parrameters(session based)
 const getOurComments = async(req,res)=>{
-    // const houseworkerUsername = "Sara"
-    console.log("HEREEE");
     try{
         const username = req.session.user.username
-        console.log("\n COMMENTSESSON:" + JSON.stringify(req.session))
         const result = await houseworkerModel.getComments(username);
         res.json(result);
     }
@@ -135,15 +140,13 @@ const getOurComments = async(req,res)=>{
 
 //Client click on Houseowrker comment button
 const getComments = async(req,res)=>{
-    // const houseworkerUsername = "Sara"
     try{
         const username = req.params.username;
-        console.log("USEE: " + username)
         const result = await houseworkerModel.getComments(username);
         res.json(result);
     }
     catch(err){
-        console.log("ERROR Comments: " + err);
+        console.error("ERROR Comments: " + err);
         res.status(404).json({error:'Comments Error'});
     }
 }
@@ -173,7 +176,6 @@ const getAllProfessions = async(req,res) => {
 
 const getProfessions = async(req,res)=>{
     try{
-        //const username = req.params.username;
         const username = req.session.user.username;
         const result = await houseworkerModel.getProfessions(username);
         res.json(result);
@@ -296,5 +298,6 @@ module.exports ={
     getRatingUsername,
     getCities,
     getHouseworkerInfo,
-    getHouseworkerCommentsCount
+    getHouseworkerCommentsCount,
+    getHomeInfo
 }

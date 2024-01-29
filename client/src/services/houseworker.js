@@ -222,3 +222,15 @@ export const getHouseworkerByFilter = async(params) =>{
 }
 
 
+export const getHomeInfo= async(username) =>{
+    try{
+        const result = await axiosSession.get(BASE_URL + `houseworker/home/${username}`)
+        const homeInfo = result.data;
+
+        return homeInfo;
+    }
+    catch(err){
+        ThrowErorr(err);
+    }
+}
+

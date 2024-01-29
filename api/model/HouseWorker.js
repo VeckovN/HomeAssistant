@@ -429,6 +429,10 @@ const findCities = async()=>{
 }
 
 
+//TRY TO TAKE AVG RATING  LIKE THIS
+// OPTIONAL MATCH (m)<-[r:RATED]-()
+// RETURN professionCount, commentCount, AVG(r.rating) AS avgRating`,
+
 //all rates
 const getRatings = async(username)=>{
     const session = driver.session();
@@ -782,6 +786,32 @@ const updateGender = async(gender)=>{
     return result.records[0].get(0);
 }
 
+
+const getHomeInfo = async(username) =>{
+    const session = driver.session();
+    //OPTIONAL MATCH because not all houseworkers may have comments, 
+    //and we want to count them if they exist.
+    const result = await session.run(`
+        MATCH (n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(h)
+        OPTIONAL MATCH (h)<-[:BELONGS_TO]-(c:Comment)
+        WITH n, h, COUNT(DISTINCT c) AS commentCount
+        MATCH (h)-[:OFFERS]->(p:Profession)
+        WITH n, h, COUNT(DISTINCT p) AS professionCount, commentCount
+        MATCH (n)-[:IS_HOUSEWORKER]->(m)
+        OPTIONAL MATCH (m)<-[r:RATED]-()
+        RETURN professionCount, commentCount, AVG(r.rating) AS avgRating`,
+        {houseworker:username}
+    )
+
+    session.close();
+
+    const professionCount = parseInt(result.records[0].get(0));
+    const commentCount = parseInt(result.records[0].get(1));
+    const avgRating = parseInt(result.records[0].get(2));
+
+    return {professionCount, commentCount, avgRating};
+}
+
 module.exports ={
     findByUsername,
     findAll,
@@ -799,10 +829,10 @@ module.exports ={
     updateWorkingHour,
     update,
     updateCity,
-
     updateGender,
     create,
     findCities,
-    getCommentsCount
+    getCommentsCount,
+    getHomeInfo
 
 }

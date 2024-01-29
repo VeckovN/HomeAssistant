@@ -20,6 +20,7 @@ const {
     getCities,
     getHouseworkerInfo,
     getHouseworkerCommentsCount,
+    getHomeInfo
 } = require('../controller/houseworkerController');
 
 const router = express.Router();
@@ -52,6 +53,7 @@ router.put('/professions/update', checkHouseworker, updateProfessionWorkingHour)
 router.get('/cities',  getCities);
 router.get('/:username', checkHouseworker, getHouseworkerByUsername);
 router.post('/professions/add', checkHouseworker, addProfession);
+router.get('/home/:username', checkHouseworker, getHomeInfo);
 
 
 
