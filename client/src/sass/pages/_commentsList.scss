@@ -52,6 +52,7 @@
 
             .comment-list{
                 max-height: 70vh; /* Set a maximum height */
+                width: 100%;
                 overflow-y:auto;
                 @extend %scrollbar-commnet-style;
 
@@ -66,13 +67,15 @@
                 }
             }
         }
-    
-        .no-hs-comments{
-            padding:8rem 0;
-            font-size: 2rem;
-            font-weight: 600;
-            color:$white;
-        }
+    }
+
+    .no-hs-comments{
+        padding:8rem 0;
+
+        font-family: $root-font-family-2;
+        font-size: 2rem;
+        font-weight: 700;
+        color:$black;
     }
 }
 
