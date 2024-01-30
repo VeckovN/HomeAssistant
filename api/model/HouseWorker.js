@@ -198,17 +198,9 @@ const findAllWithFilters = async(filters)=>{
         var age = false;
         var skipCount = pageNumber * itemsPerPage;
 
-        console.log("PAGE Number " + pageNumber)
-        console.log("ITEMS PER PAGE" + itemsPerPage);
-
-        
-        console.log("AGEEEEEEEEEEEEEEEEEEEE " + age);
-
         //WHERE PART
         if((city!=undefined && city!='') && (gender!=undefined && city!='')){
             where+=`c.name='${city}' AND g.type='${gender}'`
-            // if(searchName!=undefined)
-            //     where +=` AND n.username STARTS WITH '${searchName}' \n`
         }
         else{
             //Add match for each filter options
@@ -235,15 +227,8 @@ const findAllWithFilters = async(filters)=>{
                 where+=`h.age > '${ageFrom}' AND h.age < '${ageTo}' `
         }
 
-        if(searchName!=undefined && searchName!= ''){
-            if(where.trim().length > 5)
-                where +=` toLower(AND n.username) STARTS WITH toLower('${searchName}') \n`
-            else
-                where+=`toLower(n.username) STARTS WITH toLower('${searchName}') \n`
-        }
-
+        //Professions
         var professionsLength = 0;
-        //---------PROFESSIONS-------------
         if(professions){            
             let professionsArray = professions.split(',');
             professionsLength = professionsArray.length;
@@ -260,7 +245,6 @@ const findAllWithFilters = async(filters)=>{
                                 //0         1           2           3
                     //we got ("Staratelj ," "Kuvar ," "Bastovan ," "Dadilja")
                     // last comma after 2 index 
-                    // console.log("PROSSSSSSSSSSS: " +  ); 
                     for(let i=0; i<professionsLength; i++){
                         if(i<professionsLength-1) //0,1,2  --- <4-1
                             professionString+= `"${professionsArray[i]}" ,`
@@ -274,14 +258,19 @@ const findAllWithFilters = async(filters)=>{
                     where+= ` AND p.title IN [${professionString}] `
                     console.log("TEST1");
                 }
-                    // where+= ` AND p.title IN [${professionString}]`
                 else{
                     where+= `p.title IN [${professionString}] `
                     console.log("TEST2");
                 }
-                    
             }
             
+        }
+
+        if(searchName!=undefined && searchName!= ''){
+            if(where.trim().length > 5)
+                where +=`AND toLower(n.username) STARTS WITH toLower('${searchName}') \n`
+            else
+                where+=`toLower(n.username) STARTS WITH toLower('${searchName}') \n`
         }
                 
         if(sortFlag){
@@ -294,11 +283,10 @@ const findAllWithFilters = async(filters)=>{
         }
         
         //ADDING WHERE PART TO QUERY
-        // if(city!=undefined || gender!=undefined || ageFrom!=0 || ageTo!=100 || !searchName)
         if((city!=undefined && city!='' )||( gender!=undefined && gender!='' )|| (ageTo!=undefined && ageTo!= '') || (ageFrom!=undefined && ageFrom!= '')||( searchName!=undefined && searchName!='') || sortFlag || professionsLength>0)
             queryNeo4j+=where
 
-        //Orderby
+        //ORDER By part
         if(sort!='ASC' )
             if(sort=="RatingUp" ){
                 queryNeo4j+=`
@@ -320,18 +308,14 @@ const findAllWithFilters = async(filters)=>{
             orderBy+='ORDER BY n.username ASC \n'
 
         //RETURN part --- concatenate return to query
-        // queryNeo4j+= `RETURN n `
         queryNeo4j+=orderBy;
         queryNeo4j+=returnQ;
-        // queryNeo4j+=orderBy;
-        // queryNeo4j+=`LIMIT ${limit}`
 
         // //Infinity Scroll (SKIP AND LIMIT clausules)
         queryNeo4j+=`SKIP ${skipCount} \n`
         queryNeo4j+=`LIMIT ${itemsPerPage}`
 
         console.log("QUERY: \n" +  queryNeo4j + "\n");
-        console.log("PARAMS1: " + city + '/ ' + gender + '/' + searchName);
 
         const result = await session.run(queryNeo4j);
         const houseworkers = result.records.map(el =>{
@@ -343,31 +327,22 @@ const findAllWithFilters = async(filters)=>{
             userInfo.city = el.get(2);
             userInfo.gender =el.get(3); 
 
-            //console.log("USER INFOOOO : " + JSON.stringify(userInfo));
-
             return userInfo;
         })
 
         // //STORE(CATCH) FILTERED HOYUSEWORKER IN REDIS 
         await set(JSON.stringify(filters), JSON.stringify(houseworkers))
-        await expire(JSON.stringify(filters), 10*60);
-        // //with TTL 10 min
+        await expire(JSON.stringify(filters), 10*60); //TTL 10 min
         
         session.close();
         return houseworkers;
     }
     else{
         console.log("\n CATCH EXISSSSSSST \n");
-        //Filtered Houseworker exist in Catch
         return catchData;
     }
-
 }
 
-// const getRecommended = async(username) =>{
-    
-
-// }
 
 const findByUsernameAndDelete = async (username)=>{
     //User -[:IS_CLIENT]->Client

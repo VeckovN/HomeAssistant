@@ -18,29 +18,9 @@ const ClientHome = ({socket}) =>{
     console.log("SOCKET " + socket);
     const {user} = useSelector((state) => state.auth);
     const {data, loading, searchDataHanlder, filterDataHandler } = useClient(user);
-    const [houseworkerData, setHouseworkerData] = useState([]);
-
+    // const {data, searchDataHanlder, filterDataHandler } = useClient(user);
+    const [houseworkerData, setHouseworkerData] = useState([]); //List of HouseworkerCard
     const [buttonState, setButtonState] = useState({showButton:false, delayedHide:false});
-
-    // //THIS CAUSED UNNECESSARY RERENDERING ON CLIENTHOME PAGE
-    // //event listener for showing button when is Y: +100px view
-    
-
-    // const handleScroll = useCallback(() =>{
-    //     if(window.scrollY >= 1000){
-    //         setButtonState({showButton:true, delayedHide:false})
-    //     }
-    //     else{
-    //         setButtonState((prev => ({...prev, delayedHide:true})));
-    //     }
-    // },[]);
-
-    // useEffect(()=>{
-    //     window.addEventListener('scroll', handleScroll);
-    //     return () =>{
-    //         window.removeEventListener('scroll', handleScroll);
-    //     }
-    // }, [handleScroll]);
 
 
     const scrollToTop = () =>{
@@ -68,19 +48,16 @@ const ClientHome = ({socket}) =>{
         }
     },[buttonState.delayedHide])//when is window/scrollY triggered
 
-
     console.log("DATA: " , data);
-
     //THIS CAUSED RE_RENDERING ON EVERY DATA CHANGE ITS CHANGE  setHouseworkerData(houseworkerList); THAT AGAIN CAUSE RE_REDNERING
     useEffect(()=>{
         let houseworkerList;
-        data  ? 
+        data ? 
         houseworkerList = data.map(user =>
             <>
             {console.log("ID::: " + user.id)}
             <HouseworkerCard
                 recommended={user.recommended}
-                // recommended={user.recommended}
                 socket={socket}
                 key={user.id}
                 id={user.id}
@@ -98,12 +75,10 @@ const ClientHome = ({socket}) =>{
                 professions={user.professions}
             />
             </>
-            )
-            : houseworkerList =[]       
-
-            if(houseworkerList?.length >0){
-                setHouseworkerData(houseworkerList);
-            }
+        )
+        : houseworkerList =[]       
+        
+            setHouseworkerData(houseworkerList)
     },[data]);
 
     return (
@@ -136,9 +111,9 @@ const ClientHome = ({socket}) =>{
                     <div className="houseworker-list">    
                         {loading ? <Spinner/> :
                         <>
-                            {houseworkerData.length > 0 ? houseworkerData : <h3 id='none'>No Matches</h3> }
+                            {houseworkerData.length > 0 ? houseworkerData : <h3 id='no-matches'>No Found Housewokrers</h3> }
                         </>
-                        }
+                        }   
                     </div>   
                         
                 </div>

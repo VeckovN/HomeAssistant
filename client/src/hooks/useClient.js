@@ -24,9 +24,22 @@ const useClient = (user) =>{
 
     const pageNumberRef = useRef(0);
     
+
+
+    //this will ensure that the scroll event is not triggered multiple times in quick succession,
+    //and thus help in fetching data only once on each scroll event.
+    const debouncedHandleScroll = debounce(() =>{   
+        const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
+        if (window.scrollY >= scrollableHeight) {
+            const newPage =  pageNumberRef.current+ 1;
+            pageNumberRef.current = newPage;
+
+            fetchData(newPage);
+        }
+    }, 50);
+    
     //on initial check does localStorage (filtered Data exists and delete it)
     useEffect(()=>{
-        //console.log("FIRST USE EFFFFFE");
         if(localStorage.getItem("filteredData"))
             localStorage.clear("filteredData")
         
@@ -43,50 +56,12 @@ const useClient = (user) =>{
 
     //on every serachedData and filterData change reFeatch houseworkers
     useEffect(()=>{
+        setLoading(true);
         fetchData(pageNumberRef.current);
     },[searchedData, filteredData, user])
-    // //user because on logout(user change) houseworkers should be fetch again, bug fixed -> with showing recommended user(auth) after logout
+    //user because on logout(user change) houseworkers should be fetch again (recommended users removed)
 
 
-    //IT"S APPLIED ON FIRST (Mounted ) BUT AND CAUSED UNNECESSARY RE-rENDERING 
-    //It should be only trigger when is recomended button click
-
-    // useEffect(()=>{
-    //     alert('useEffect(() showrec, recmonmended');
-    //     //only when is recommended button clicked and not fetched yet
-    //     if(showRecommended==true && recommended?.length == 0)
-    //         fetchRecommendedData();
-    //     else{
-    //         alert('setData(oldData);');
-    //         setData(oldData);
-    //     }
-            
-    // },[showRecommended, recommended])
-
-
-    //this will ensure that the scroll event is not triggered multiple times in quick succession,
-    //and thus help in fetching data only once on each scroll event.
-    const debouncedHandleScroll = debounce(() =>{  
-        // alert("debouncedHandleScroll = debounce(()")    
-        const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
-        if (window.scrollY >= scrollableHeight) {
-            const newPage =  pageNumberRef.current+ 1;
-            pageNumberRef.current = newPage;
-
-            fetchData(newPage);
-        }
-    }, 50); //debounce delay 
-
-    // //scroll event listener attached on intial page rendering
-    // useEffect(()=>{
-    //     window.addEventListener('scroll', debouncedHandleScroll);
-    //     //cleanup function remove event listener on component unmount
-    //     return () =>{
-    //         window.removeEventListener('scroll',debouncedHandleScroll);
-    //     }
-    // },[]);
-
-    
 
 
     const fetchData = async(pageNubmer)=>{
@@ -136,6 +111,7 @@ const useClient = (user) =>{
 
                 if(pageNumberRef.current > 0){
                     // alert("page");
+                    console.log("PREFNUYMB REF DATA: ", data);
                     setData(prev =>([
                         ...prev,
                         ...houseworkers
@@ -143,7 +119,6 @@ const useClient = (user) =>{
                 }
                 else{
                     if(user!== null && !showRecommended){
-                        // alert("DATA FETCH Recommended");
                         const recommendedData = await fetchRecommended(houseworkers);
                         console.log("DATA RECOMMENDED: " + JSON.stringify(data));
                         setData([...recommendedData, ...houseworkers]);
@@ -166,12 +141,11 @@ const useClient = (user) =>{
                 }
                 else{ //or on first page if there ins't houseworkers
                     setData(null)
-                    alert("setData(null)")
+                    // alert("setData(null)")
                 }
             }   
             
             setLoading(false);
-           //alert("setLoading(false);")
         }catch(err){
             console.log("ERR: " + err);
         }   
@@ -182,9 +156,6 @@ const useClient = (user) =>{
             const recommendedData = await getRecommended(user.username);
             console.log("recommendedData ", recommendedData);
             return recommendedData;
-            // const updatedData = excludeRecommendedFromUserData(houseworkers, recommendedData);
-            // console.log("recommended updatedData", updatedData);
-            // return updatedData;
         }
         catch(err){
             console.error("Error wiht recommended fetch user " + err);
@@ -256,6 +227,7 @@ const useClient = (user) =>{
     },[]);
 
     return {data, loading, pageNumberRef, searchDataHanlder, filterDataHandler}
+    // return {data, pageNumberRef, searchDataHanlder, filterDataHandler}
 }
 
 export default useClient;
