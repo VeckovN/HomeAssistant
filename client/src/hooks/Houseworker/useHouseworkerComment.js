@@ -1,5 +1,5 @@
 import {useState, useRef, useEffect} from 'react';
-import {getComments} from '../../services/houseworker.js';
+import {getComments, postComment} from '../../services/houseworker.js';
 import {deleteComment} from '../../services/client.js';
 import {emitCommentNotification} from '../../sockets/socketEmit.js'
 import { toast } from 'react-toastify';
@@ -26,6 +26,8 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
 
     const getHouseworkerComments = async(username) =>{
         const comms = await getComments(username);
+        console.log(" COMMMS: " , comms);
+
         if(comms)
             if(comms.length > 0)
                 setComments(comms)
@@ -81,24 +83,30 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
             //fetch out of useEffect(in this example won't be a problem)
             //this fetch will be only trigger on Comment submit this is a reason why we can fetch over the useEffect
             try{
-                const postComment = {
+                const newPostComment = {
                     client:client_username,
                     houseworker:houseworker.username,
                     comment: newCommentContext
                 }
-                await axios.post(`http://localhost:5000/api/clients/comment`, postComment);
-                
+                // await axios.post(`http://localhost:5000/api/clients/comment`, postComment);
+               
+                const commentID = await postComment(newPostComment);
+                console.log("COMMENNTASD ASD AS ID: " + commentID);
+
                 toast.success("Comment successfully posted",{
                     className:'toast-contact-message'
                 })
 
-                const postCommentNew = {...postComment, houseworkerID: houseworker.id}
-                emitCommentNotification(socket, postCommentNew)
+                const emitComment = {...newPostComment, houseworkerID: houseworker.id}
+                emitCommentNotification(socket, emitComment)
+
 
                 const newComment = {
                     //we send (looged user) comment to (showenedModal ->oldComment)
                     from: client_username,
-                    comment:postComment.comment
+                    commentID:commentID,
+                    comment:newPostComment.comment,
+                    new:true //animation flag for entering modal 
                 }
 
                 //this will trigger Comp re-render
