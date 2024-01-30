@@ -60,6 +60,20 @@
         }
     }
 
+    .date{
+        margin:.5rem 0rem;
+        position: absolute;
+        bottom:-.2rem;
+        left:.5rem;
+
+        &-label{
+            font-weight: 600;
+            color:$white;
+            
+        }
+    }
+
+
     .context-container{
         text-align: center;
         .context{

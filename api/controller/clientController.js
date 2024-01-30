@@ -96,14 +96,8 @@ const deleteComment = async(req,res) =>{
 
 const commentHouseworker = async(req, res)=>{
     try{
-        // const client = req.session.user.username;
-        const client= req.body.client
-        const houseworker = req.body.houseworker;
-        const comment = req.body.comment;
-
-        // const {client, houseworker, comment} = req.body;
-
-        console.log("JSSSOSOSOSO: " + client + "/ " + houseworker + "/ " + comment)
+        const {client, houseworker, comment} = req.body;
+        console.log("CSA");
         const result = await clientModel.commentHouseworker(client,houseworker, comment);
         res.json(result);
     }

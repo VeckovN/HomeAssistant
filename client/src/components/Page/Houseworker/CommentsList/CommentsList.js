@@ -37,6 +37,7 @@ const CommentsList = () =>{
                 // key={}
                 from={comm.from}
                 comment = {comm.comment}
+                date={comm.date}
             />
         ))
         : commentList=[];

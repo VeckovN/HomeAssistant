@@ -3,7 +3,6 @@ import {getComments, postComment} from '../../services/houseworker.js';
 import {deleteComment} from '../../services/client.js';
 import {emitCommentNotification} from '../../sockets/socketEmit.js'
 import { toast } from 'react-toastify';
-import axios from 'axios';
 
 const useHouseworkerComment = (socket, isClient, client_username) =>{
 
@@ -26,7 +25,6 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
 
     const getHouseworkerComments = async(username) =>{
         const comms = await getComments(username);
-        console.log(" COMMMS: " , comms);
 
         if(comms)
             if(comms.length > 0)
@@ -88,10 +86,8 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                     houseworker:houseworker.username,
                     comment: newCommentContext
                 }
-                // await axios.post(`http://localhost:5000/api/clients/comment`, postComment);
-               
-                const commentID = await postComment(newPostComment);
-                console.log("COMMENNTASD ASD AS ID: " + commentID);
+            
+                const commentResult = await postComment(newPostComment);
 
                 toast.success("Comment successfully posted",{
                     className:'toast-contact-message'
@@ -100,11 +96,11 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                 const emitComment = {...newPostComment, houseworkerID: houseworker.id}
                 emitCommentNotification(socket, emitComment)
 
-
                 const newComment = {
                     //we send (looged user) comment to (showenedModal ->oldComment)
+                    commentID:commentResult.commentID,
+                    date:commentResult.commentDate,
                     from: client_username,
-                    commentID:commentID,
                     comment:newPostComment.comment,
                     new:true //animation flag for entering modal 
                 }

@@ -9,7 +9,9 @@ const CommentItem = (props) =>{
             }
             <div className='info'>
                 <div className='commented'>Commented:<span>{props.from}</span></div>
-                <div className='time'>Time:</div>
+            </div>
+            <div className='date'>
+                <div className='date-label'>{props.date}</div>
             </div>
             <div className='context-container'>
                 <div className='context'>{props.comment}</div>

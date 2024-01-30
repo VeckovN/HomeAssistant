@@ -73,8 +73,8 @@ export const getComments = async(username) =>{
 export const postComment = async(newComment) =>{
     try{
         const result = await axiosSession.post(BASE_URL + `clients/comment`, newComment);
-        const commentID = result.data;
-        return commentID;
+        const commentResult = result.data;
+        return commentResult;
     }catch(err){
         ThrowErorr(err);
     }

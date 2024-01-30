@@ -341,6 +341,7 @@ const findAllWithFilters = async(filters)=>{
         console.log("\n CATCH EXISSSSSSST \n");
         return catchData;
     }
+
 }
 
 
@@ -462,7 +463,7 @@ const getComments = async(username)=>{
         MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(m)
         MATCH(c:Comment)-[:BELONGS_TO]->(m)
         MATCH(c)<-[:COMMENTED]-(t)
-        RETURN ID(c) AS commentID, c.context, t.username`,
+        RETURN ID(c) AS commentID, c.context, t.username, apoc.date.format(c.timestamp, "ms", "dd.MM.yyyy") AS commentTimestamp`,
     {houseworker:username}
     )
     //{Comment:context, From:'clientUsername'}
@@ -471,9 +472,11 @@ const getComments = async(username)=>{
         let comment_id_integer = id.low + id.high;
         let commentProp = rec.get(1);
         let clientProp = rec.get(2);
-        return {commentID:comment_id_integer, comment:commentProp, from:clientProp}
+        let commentDate = rec.get(3);
+        return {commentID:comment_id_integer, comment:commentProp, from:clientProp, date:commentDate}
     }) 
     session.close();
+
     return comments;
     //Example - 2 comments
     //records[0] records[1]

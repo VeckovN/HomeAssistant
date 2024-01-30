@@ -30,6 +30,7 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
                         <CommentItem
                             onDeleteCommentHandler={onCommentDelete}
                             id={comm.commentID}
+                            date={comm.date}
                             from={comm.from}
                             comment={comm.comment}
                             new={comm.new}
@@ -37,6 +38,7 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
                         ) : (             
                             <CommentItem
                                 id={comm.commentID}
+                                date={comm.commentDate}
                                 from={comm.from}
                                 comment={comm.comment}
                                 new={comm.new}
