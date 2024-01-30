@@ -56,7 +56,6 @@ const useClient = (user) =>{
 
     //on every serachedData and filterData change reFeatch houseworkers
     useEffect(()=>{
-        setLoading(true);
         fetchData(pageNumberRef.current);
     },[searchedData, filteredData, user])
     //user because on logout(user change) houseworkers should be fetch again (recommended users removed)
@@ -226,7 +225,7 @@ const useClient = (user) =>{
         localStorage.setItem('filteredData', JSON.stringify(filterData));
     },[]);
 
-    return {data, loading, pageNumberRef, searchDataHanlder, filterDataHandler}
+    return {data, loading, setLoading, pageNumberRef, searchDataHanlder, filterDataHandler}
     // return {data, pageNumberRef, searchDataHanlder, filterDataHandler}
 }
 
