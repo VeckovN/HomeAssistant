@@ -70,13 +70,14 @@ export const getComments = async(username) =>{
     }
 }
 
-export const postComment = async(postComment) =>{
+export const postComment = async(newComment) =>{
     try{
-        await axiosSession.post(BASE_URL + `clients/comment`, postComment);
+        const result = await axiosSession.post(BASE_URL + `clients/comment`, newComment);
+        const commentID = result.data;
+        return commentID;
     }catch(err){
         ThrowErorr(err);
     }
-    
 }
 
 export const rateUser = async(rateObject) =>{

@@ -173,7 +173,6 @@ const getAllComments = async (username)=>{
 
 const commentHouseworker = async(client, houseworker, comment)=>{
     const session = driver.session();
-    //our (CLient) username from LocalStore or cookie
 
     const result = await session.run(`
     MATCH (n:Client {username:$client})
@@ -181,15 +180,14 @@ const commentHouseworker = async(client, houseworker, comment)=>{
     CREATE (c:Comment {context:$comment})
     CREATE (n)-[:COMMENTED]->(c)
     CREATE (c)-[:BELONGS_TO]->(m)
-    RETURN c`
+    RETURN ID(c) AS commentID`
     , {client:client, houseworker:houseworker, comment:comment}
     )
 
-    const commentResult = result.records[0].get(0).properties;
+    const commentID = parseInt(result.records[0].get(0));
 
     session.close();
-    return commentResult;
-    
+    return commentID;
 }
 
 

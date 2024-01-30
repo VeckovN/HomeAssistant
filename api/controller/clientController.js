@@ -100,9 +100,11 @@ const commentHouseworker = async(req, res)=>{
         const client= req.body.client
         const houseworker = req.body.houseworker;
         const comment = req.body.comment;
+
+        // const {client, houseworker, comment} = req.body;
+
         console.log("JSSSOSOSOSO: " + client + "/ " + houseworker + "/ " + comment)
         const result = await clientModel.commentHouseworker(client,houseworker, comment);
-        console.log("RESSS: " +  JSON.stringify(result));
         res.json(result);
     }
     catch(err){
