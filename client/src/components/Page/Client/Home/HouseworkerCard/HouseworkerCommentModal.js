@@ -13,6 +13,7 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
 
     useEffect(() =>{
         scrollToBottom();
+        console.log("Comments:" , comments);
     },[comments]);
 
     const commentHeaderContext =
@@ -31,12 +32,14 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
                             id={comm.commentID}
                             from={comm.from}
                             comment={comm.comment}
+                            new={comm.new}
                         />
                         ) : (             
                             <CommentItem
                                 id={comm.commentID}
                                 from={comm.from}
                                 comment={comm.comment}
+                                new={comm.new}
                             />
                         )
                     )
