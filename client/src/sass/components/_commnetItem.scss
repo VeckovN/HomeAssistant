@@ -4,6 +4,7 @@
 @use '../base/typography' as *;
 @use '../abstracts/brakepoints' as *;
 
+
 .comment{
     position: relative;
     width: 95%;
@@ -73,4 +74,20 @@
         }
     }
 
+}
+
+.new-comment{
+    animation: enterLabUp .3s;
+}
+
+@keyframes enterLabUp {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
