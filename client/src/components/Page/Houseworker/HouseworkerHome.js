@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react';
-import { useSelector } from 'react-redux';
-import {getRating, getCommentsCount, getConversationCount, getProfessions} from '../../../services/houseworker.js'
+import {useSelector} from 'react-redux';
+import {getConversationCount, getHomeInfo} from '../../../services/houseworker.js'
 import Spinner from '../../UI/Spinner.js';
 
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
@@ -14,26 +14,21 @@ import '../../../sass/pages/_houseworkerHome.scss';
 const HouseworkerHome = () =>{
 
     const {user} = useSelector((state) => state.auth)
-    const [rating, setRating] = useState('');
-    const [commentsCount, setCommentsCount] = useState('');
     const [conversationCount, setConversationCount] = useState('');
+    const [homeInfo, setHomeInfo] = useState({});
     const [loading, setLoading] = useState(true);
 
     //Spinner should be showned until these 3 functions are executed
     //PromisAll will solve this problem(garantees that after executing all these func the loading state is changed  )
-
     const fetchData = async () =>{
         try{
-            const [ratingValue, count, countConv] = await Promise.all([
-                getRating(user.username),
-                getCommentsCount(user.username),
+            const [countConv, homeInfo] = await Promise.all([
                 getConversationCount(user.userID),
-                // getProfessionsOfferCount(user.userID),
+                getHomeInfo(user.username),
             ]);
-
-            setRating(ratingValue.toFixed(1));
-            setCommentsCount(count)
+            
             setConversationCount(countConv);
+            setHomeInfo(homeInfo);
         }catch(err){
             console.log("Error Durgin fetching PromisAll data")
         }finally{ //after all funcs executions
@@ -53,13 +48,12 @@ const HouseworkerHome = () =>{
                     <HouseworkerItem 
                         title='Rating'
                         icon={<GradeIcon fontSize='inherit'/>}
-                        count={rating}
+                        count={homeInfo.avgRating}
                     />
                 </div>
 
                 <div className ='houseworker-item-container'>
                     <div id='houseworker-item-label'>Profile Insights</div>
-                    
                         <HouseworkerItem 
                             title='Conversations'
                             icon={<QuestionAnswerIcon fontSize='inherit'/>}
@@ -70,14 +64,14 @@ const HouseworkerHome = () =>{
                         <HouseworkerItem 
                             title='Comments'
                             icon={<CommentIcon fontSize='inherit'/>}
-                            count={commentsCount}
+                            count={homeInfo.commentCount}
                             link={'/comments'}
                         />
 
                         <HouseworkerItem 
                             title='Professions'
                             icon={<BadgeIcon fontSize='inherit'/>}
-                            count={3}
+                            count={homeInfo.professionCount}
                             link={'/profile'}
                         />
                 </div>
