@@ -42,7 +42,7 @@ const HouseworkerHome = () =>{
  
     return (
         <div className='houseworker-container'>
-            {loading ? <Spinner/> :
+            {loading ? <Spinner className='profile-spinner'/> :
             <>
                 <div className='houseworker-one'>
                     <HouseworkerItem 
