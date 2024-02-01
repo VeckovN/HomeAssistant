@@ -7,13 +7,14 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
 
     return(
         <div className='profile-container'>
-            {loading ? <Spinner className={'profile-spinner'}/> :
+            {loading ? <Spinner className='profile-spinner'/> :
             <>
-                <h1>Client Profile</h1>
                 <form className='cl-profile-form' onSubmit={handleSubmit(onSubmitUpdate)}>
                     {/* left side */}
+                    <h1>You can edit your profile information</h1>
                     <div className='input-label-form'>
-                        <div className='profile-input-container'>
+                        <div className='profile-input-card'>
+                            <div className='personal-label'>Personal Informations</div>
                             <label>First Name: <b>{clientData.first_name}</b></label>
                             <br/>
                             <input
@@ -31,7 +32,7 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                             <div className='input-errors'>{errors.first_name?.message}</div>
                         </div>
 
-                        <div className='profile-input-container'>
+                        <div className='profile-input-card'>
                             <label>Last name: <b>{clientData.last_name}</b></label>
                             <br/>
                             <input
@@ -49,7 +50,7 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                             <div className='input-errors'>{errors.last_name?.message}</div>
                         </div>
 
-                        <div className='profile-input-container'>
+                        <div className='profile-input-card'>
                             <label>Email: <b>{clientData.email}</b></label>
                             <br/>
                             <input
@@ -68,7 +69,7 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                             <div className='input-errors'>{errors.email?.message}</div>
                         </div>
 
-                        <div className='profile-input-container'>
+                        <div className='profile-input-card'>
                             <label>Password</label>
                             <br/>
                             <input 
@@ -82,7 +83,7 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                         </div>
 
                         {watch('password') &&  //only if is password entered
-                        <div className='profile-input-container'>
+                        <div className='profile-input-card'>
                             <label>Confirm password</label>
                             <br/>
                             <input 
@@ -103,16 +104,18 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                         </div>
                         }
 
-                        <div className='profile-input-container'>
+                        <div className='profile-input-card'>
                             <label>City: <b>{clientData.city}</b></label><br/>
-                            <Select 
-                                className='dropdown'
-                                placeholder="Select a city"
-                                value={city_options.find(({value}) => value === cityField.value)}
-                                options={city_options}
-                                onChange={onCityChangeHandler}
-                                isClearable
-                            />
+                            <div className='selector'>
+                                <Select 
+                                    className='dropdown'
+                                    placeholder="Select a city"
+                                    value={city_options.find(({value}) => value === cityField.value)}
+                                    options={city_options}
+                                    onChange={onCityChangeHandler}
+                                    isClearable
+                                />
+                            </div>
                             <div className='input-errors'>{errors.city?.message}</div>
                         </div>
                         <br></br>

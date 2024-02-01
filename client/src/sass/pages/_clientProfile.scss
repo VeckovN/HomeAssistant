@@ -6,80 +6,121 @@
 @use '../abstracts/mixins' as *;
 
 .profile-container{
-    @extend %profile-container;
+    @include flex-with-direction-center($direction:column);
+    width: 100%;
+    min-height: 100%;
     background-color: $background-white-2;
 
-
     .profile-spinner{
-        padding:10em 0em;
-    }
-   
-    & h1{
-        font-family: $root-font-family-3;
-        letter-spacing: .02em;
-        color:$white;
-
-        @include sm-breakpoint{
-            font-size:1.6rem;
-        }
-        @include xs-breakpoint{
-            font-size:1.2rem;
-        }    
+        position:absolute;
+        top:40%;
     }
 
     .cl-profile-form{
         @extend %profile-form-style;
+        @include flex-with-direction-center($direction:column);
+
+        @include lg-breakpoint{
+        }
 
         @include sm-breakpoint{
-            width: 90%;
-            min-width:250px;
+            width: 100%;
+            font-size: $fs5;
         }
 
         @include xs-breakpoint{
-            width: 95%;
+            font-size: $fs6;
+        }
+
+        & h1{
+            margin:0em 0 2em 0;
+            letter-spacing: .02em;
+            font-size:$fs-em-1;
+            font-family: $root-font-family-3;
+            color:$black-2;
+            text-align: center;
+    
+            @include sm-breakpoint{
+                // font-size:$fs-em-4;
+            }
+            @include xs-breakpoint{
+                // font-size:$fs-em-5;
+            }    
         }
 
         .input-label-form{
-            display: flex;
-            flex-direction: column;
+            @include flex-with-direction-center($direction:column);
+            width: 90%;
+            max-width: 1000px;
+            height: 100%;
+
+            padding:1em 0 0 0;
 
             @include sm-breakpoint{
-                width: 90%;
+                width: 95%;
             }
 
             @include xs-breakpoint{
-                font-size: $fs5;
+                width: 100%;
             }
 
-            .profile-input-container{
-                padding:.6em 1em;
-
+            .profile-input-card{
+                width: 90%;
+                @extend %profile-input-card-style;
+        
                 @include xs-breakpoint{
-                    padding: .5em .4em;
+                    width: 95%;
                 }
 
-                label{
-                    font-size: 1.1em;
+                .personal-label{
+                    position: absolute;
+                    left:0;
+                    top:-2em;
+    
+                    font-size: $fs-em-3;
+                    font-weight: 600;
+    
+                    @include sm-breakpoint{
+                        font-size:$fs-em-4;
+                    }
                 }
 
-                input{
-                    width: 100%;
+                @extend %input-label-and-span;
+
+                .input-field{
                     @extend %input-style;
                 }
 
+    
                 //select
                 .dropdown{
                     color:$black;
+                    width: 70%;     
+                    height: 100%;
                 }
-
                 .input-errors{
                     @extend %form-input-error;
+
+                    @include xs-breakpoint{
+                        font-size: $fs-em-4;
+                        height: 2.6em;
+                    }
                 }
 
             }
 
             .profile-submit{    
-                @extend %profile-submit-button;
+                display: flex;
+                justify-content: center;
+                width: 50%;
+
+                // @include xs-breakpoint{
+                //     width: 40%;
+                // }
+
+                .update-button{
+                    @extend %profile-update-button;
+                }
             }
         }
 
