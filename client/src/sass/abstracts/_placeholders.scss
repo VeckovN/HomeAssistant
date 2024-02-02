@@ -53,12 +53,14 @@
     max-width: 1200px;
 
     margin:0rem 0rem 0rem 0rem;
-    padding:8em 0em 5em 0em;
+    // padding:8em 0em 5em 0em;
     
     font-family: $root-font-family-2;
     color:#ffff;
 
     z-index: 10;
+
+
 }
 
 %profile-input-card-style{
@@ -91,6 +93,21 @@
     }
 }
 
+%profile-profession-input-style{
+    border:none;
+    background-color: transparent;
+    // border-bottom: 2px solid rgba(19, 16, 16, 0.466);
+    border-bottom: 2px solid $white;
+    border-radius: 4px;
+    outline: none;
+    font-size: $fs-em-5;
+    color:$white;
+
+    &::placeholder{
+        color:$white;
+    }
+}
+
 %input-label-and-span{
     & label{
         font-size: $fs-em-4;
@@ -110,8 +127,6 @@
     }
 
     input{
-        // @extend %input-style;
-
         margin:.1rem 0;
         border:none;
         background-color: transparent;
