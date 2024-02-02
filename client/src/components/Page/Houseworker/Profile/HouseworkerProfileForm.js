@@ -13,17 +13,17 @@ const HouseworkerProfileForm = ({loading, houseworkerData, setHouseworkerData, c
                 <>
                     {/* <div id='title'>{`Houseworker ${ houseworkerData.first_name} ${houseworkerData.last_name} Profile`}</div> */}
                     <form className='hs-profile-form' onSubmit={handleSubmit(onSubmitUpdate)}>
-                    <div id='title'>{`Houseworker ${ houseworkerData.first_name} ${houseworkerData.last_name} Profile`}</div>
-                        <div className ='professions'>
-                            <div id='professions-label'>Professions</div>
+                    <div id='title'>Houseworker <span>{ houseworkerData.first_name} {houseworkerData.last_name}</span> Profile</div>
+                        <section className ='professions'>
+                            <div className='section-label'>Professions</div>
                             <HouseworkerProfessions
                                 houseworkerData={houseworkerData}
                                 setHouseworkerData={setHouseworkerData}
                                 getNotOwnedProfessions={getNotOwnedProfessions}
                             />
-                        </div>
-                        <div className='input-label-form'>
-                            <div id='personalInfo-label'>Personal Info</div>
+                        </section>
+                        <section className='input-form'>
+                            <div className='section-label'>Personal Info</div>
                             <HouseworkerInputs
                                 houseworkerData={houseworkerData}
                                 register={register}
@@ -38,7 +38,7 @@ const HouseworkerProfileForm = ({loading, houseworkerData, setHouseworkerData, c
                             <div className='profile-submit'>
                                 <button type='submit' className='update-button'>Update</button>
                             </div>
-                        </div>
+                        </section>
 
                     </form>
                 </>

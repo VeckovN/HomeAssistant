@@ -8,37 +8,49 @@
 .hs-profile-container{
     @include flex-with-direction-center($direction:column);
     min-height: 100vh;
-    margin:5em 0 3em 0;
+    // margin:5em 0 3em 0;
+    background-color: $background-white-2;
+
+    .profile-spinner{
+        position:absolute;
+        top:40%;
+    }
+
 
     @include sm-breakpoint{
-        background-color: red;
+        // background-color: red;
     }
 
     @include xs-breakpoint{
-        font-size:$fs5;
-        background-color: green;
+        font-size:$fs6;
+        // background-color: green;
     }
 
-    .profile-spinner{
-        padding:10em 0em;
-    }
 
     #title{
+        margin:.2em 0 1.5em 0;
+        
+        text-align: center;
         font-size: $fs-em-1;
         font-family:$root-font-family-2;
         font-weight: 800;
-        margin:.2em 0 1.5em 0;
+        color:$black-6;
 
-        text-align: center;
+        & span{
+            color:$black-1;
+        }
 
         @include xs-breakpoint{
-            font-size: $fs-em-3;
-            margin:.2em 0 1.5em 0;
+            // font-size: $fs-em-3;
+            margin:0em 0 1.5em 0;
         }
     }
 
     .hs-profile-form{
         @extend %profile-form-style;
+        padding:7em 0em 5em 0em;
+
+        @include flex-with-direction-center($direction:column);
 
         @include sm-breakpoint{
             width: 90%;
@@ -47,7 +59,19 @@
 
         @include xs-breakpoint{
             width: 95%;
-            padding:1em 0em;
+            // padding:1em 0em;
+        }
+
+        .section-label{
+            position:absolute;
+            top:-1.5em;
+            left:-.1em;
+            
+            font-family: $root-font-family-3;
+            font-weight: 800;
+            font-size: $fs-em-4;
+            color:$black-1;
+
         }
         
         .dropdown{
@@ -57,159 +81,81 @@
         }
 
         .professions{
-            border: 2px solid $black;
-            border-radius: 6px;
-            padding:1em .5em;
-            margin: 1em 2em;
+            position:relative;
             width: 90%;
             display: flex;
             flex-direction: column;
-            position:relative;
+            align-items: center;
+
+            // border: 2px solid $black;
+            border-radius: 6px;
+            padding:1.5em .5em;
+            margin: 1em 2em;
+
+            background-color: $background-white-3;
+
+            @include sm-breakpoint{
+                // background-color: red;
+                width: 100%;
+                padding:1em 0em;
+                margin: 1em 0em;
+            }
 
             @include xs-breakpoint{ 
-                padding:.5em .5em;
+                // padding:.5em .5em;
             }
-
-            #professions-label{
-                font-weight: 800;
-                position:absolute;
-                top:-1.3em;
-                left:-.1em;
-            }
-
-            label{
-                font-size:$fs-em-6;
-            }
-
-            .profession-changing{
-                margin-left:1em;
-                @include xs-breakpoint{
-                    margin-left:.5em;
-                    width: 100%;
-                }
-
-                .profession-input-container{
-                    margin:.2em 0em;
-
-                    input{
-                        @extend %input-style;
-
-                        @include xs-breakpoint{
-                            width: 90%;
-                        }
-
-                    }
-
-                    .action-buttons{
-                        display: flex;
-                
-                        .change-profession{
-                            button{
-                                @include profession-button-styles($black, $color-hs-5);
-                                
-                                &:disabled{
-                                    background-color: rgba(0,0,0,.2);
-                                    border: 1px solid $black;
-                                    color: $white;
-                                    font-weight: 600;
-                                    cursor:unset;
-                                }
-                            }
-                        
-                        }
-        
-                        .delete-profession{
-                            button{
-                                @include profession-button-styles($black, $color-hs-5);
-                            }
-                        }
-                    }
-                
-                }
-            }
-
-            .profession-adding{
-                margin:.2em 0 0 1em;
-
-                @include xs-breakpoint{
-                    margin-left: .5em;
-                    width: 100%;
-                }
-
-                .dropdown{
-                    margin-bottom: .5em;
-                }
-
-                #enter-hs-wr{
-                    color:$color-hs-5;
-                    margin:3em 0em;
-                    font-family: $root-font-family-2;
-                    font-size: $fs-em-4;
-
-                    @include xs-breakpoint{
-                        font-size: $fs-em-6;
-                    }
-                }
-
-                .working-hours{
-                    margin:.2em 0 .2em 0;
-                    
-                    label{
-                        margin-right: .5rem;
-                        font-size: $fs-em-5;
-                    }
-                    
-                    input{
-                        @extend %input-style;
-                        text-align: center;
-                        width: 4em;
-                    }
-                }
-
-                .profession-add{
-                    button{
-                        @include profession-button-styles($black,$color-hs-5);
-                        width: 5em;
-                        height: 1.9em;
-                    }
-                }
-            }
+            //_houseworkerProfessions.scss
         }
 
-        .input-label-form {
-            border: 2px solid $black;
-            border-radius: 6px;
-            padding:1em;
-            margin: 2em 2em;
-            width: 90%;
-            display: flex;
-            flex-direction: column;
+        .input-form {
             position:relative;
+            @include flex-with-direction-center($direction:column);
+            width: 90%;
+            height: 100%;
+
+            padding:1.5em;
+            margin: 2em 2em 0em 2em;
+
+            border-radius: 6px;
             font-family: $root-font-family-1;
 
-            #personalInfo-label{
-                font-weight: 800;
-                position:absolute;
-                top:-1.3em;
-                left:-.1em;
+            background-color: $background-white-4;
+
+            @include sm-breakpoint{
+                width: 100%;
+                padding:.8em .7em;
             }
 
-            .profile-input-container{
-                padding:.5em 1.5em;
-                position:relative;
-                
-
+            .profile-input-card{
+                width: 100%;
+                @extend %profile-input-card-style;
+            
                 @include xs-breakpoint{
-                    padding:.5em .2em;
+                    padding:.5em .7em;
                 }
 
+                @extend %input-label-and-span;
+                & input{
+                    width: 80%;
+                    height: 10%;
+                    
+                    @extend %input-style;
 
-                label{
-                    font-size: $fs-em-4;
 
-                    span{
-                        font-size: $fs-em-3;
-                        font-weight: 700;
+                    @include sm-breakpoint{
+                        width: 100%;
+                    }
+                }
+
+                //cityselect
+                .dropdown{
+                    font-size: $fs4;
+                    color:$black;
+                    font-size:$fs6;
+                    
+
+                    &::placeholder{
+                        font-size: $fs6;
                     }
                 }
 
@@ -217,22 +163,7 @@
                     @extend %form-input-error;
                 }
 
-                input{
-                    @extend %input-style;
-                    width:80%;
-
-                    @include sm-breakpoint{
-                        width:100%;
-                    }
-
-                }
-
-                //select
-                .dropdown{
-                    color:$black;
-                }
-
-                textarea{
+                & textarea{
                     resize:none;
                     width: 100%;
 
@@ -251,7 +182,23 @@
             }
 
             .profile-submit{    
-                @extend %profile-submit-button;
+                display: flex;
+                justify-content: center;
+                width: 50%;
+
+                @include sm-breakpoint{
+                    // width: 40%;
+                    min-width: 2em;
+                }
+
+                .update-button{
+                    @extend %profile-update-button;
+
+                    @include xs-breakpoint{
+                        font-size: $fs-em-4;
+                        height: 2.6em;
+                    }
+                }
             }
         }
     }

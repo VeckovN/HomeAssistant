@@ -4,7 +4,7 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
     console.log("HouseWDa: ", houseworkerData);
     return(
     <>
-        <div className='profile-input-container'>
+        <div className='profile-input-card'>
             <label>First name: <span>{houseworkerData.first_name}</span></label>
             <br/>
             <input 
@@ -21,7 +21,7 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
             <div className='input-errors'>{errors.first_name?.message}</div>
         </div>
 
-        <div className='profile-input-container'>
+        <div className='profile-input-card'>
             <label>Last name: <span>{houseworkerData.last_name}</span></label>
             <br/>
             <input 
@@ -38,7 +38,7 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
             <div className='input-errors'>{errors.last_name?.message}</div>
         </div>
         
-        <div className='profile-input-container'>
+        <div className='profile-input-card'>
             <label>Email: <span>{houseworkerData.email}</span></label>
             <br/>
             <input 
@@ -56,7 +56,7 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
             <div className='input-errors'>{errors.email?.message}</div>
         </div>
 
-        <div className='profile-input-container'>
+        <div className='profile-input-card'>
             <label>Password</label>
             <br/>
             <input 
@@ -70,7 +70,7 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
         </div>
 
         {watch('password') &&   //only if is password entered
-        <div className='profile-input-container'>
+        <div className='profile-input-card'>
             <label>Repeat password</label>
             <br/>
             <input 
@@ -90,7 +90,7 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
         </div>
         }
 
-        <div className='profile-input-container'>
+        <div className='profile-input-card'>
             <label>Address: <span>{houseworkerData.address}</span></label>
             <br/>
             <input 
@@ -107,7 +107,7 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
             <div className='input-errors'>{errors.address?.message}</div>
         </div>
 
-        <div className='profile-input-container'>
+        <div className='profile-input-card'>
             <label>Phone number: <span>{houseworkerData.phone_number}</span></label>
             <br/>
             <input 
@@ -124,7 +124,7 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
             <div className='input-errors'>{errors.phone_number?.message}</div>
         </div>
         
-        <div className='profile-input-container'>
+        <div className='profile-input-card'>
             <label>City: <span>{houseworkerData.city}</span></label>
             <Select 
                 className='dropdown'
@@ -137,7 +137,7 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
             <div className='input-errors'>{errors.city?.message}</div>
         </div>
 
-        <div className='profile-input-container'>  
+        <div className='profile-input-card'>  
             <label>Description: </label>     
             <br/>  
             <textarea  
