@@ -9,6 +9,7 @@
     position: relative;
     height: 100%;
     @include flex-with-direction-center($direction:column);
+    
     background-color: $background-white-2;
 
 
@@ -16,9 +17,15 @@
         margin-bottom: .5em;
         font-family:$root-font-family-1;
         font-weight: 700;
+        font-size:1.8rem;
 
         @include sm-breakpoint{
             font-size:1.6em;
+        }
+        
+        @include xs-breakpoint{
+            font-size: 1.4em;
+            margin-bottom: .5em;
         }
     }
 
@@ -27,9 +34,9 @@
         min-width: 500px;
         max-width: 1000px;
 
-        padding: 1em;
+        padding: 1em .5em;
 
-        background-color: $background-white-1;
+        background-color: $background-white-4;
         border-radius: .5em;
 
         @include md-breakpoint{
@@ -43,7 +50,7 @@
         }
 
         @include xs-breakpoint{
-            padding:.3em;
+            // padding:.3em;
         }
         
         .context-container{
@@ -52,12 +59,15 @@
 
             .comment-list{
                 max-height: 70vh; /* Set a maximum height */
-                width: 100%;
-                overflow-y:auto;
+                // width: 100%;
                 @extend %scrollbar-commnet-style;
+                overflow-y:auto;
+
+                display: flex;
+                flex-direction: column;
+                align-items: center;
 
                 font-size:$fs4;
-
                 @include md-breakpoint{
                     font-size:$fs5;
                 }
