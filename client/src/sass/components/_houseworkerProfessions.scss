@@ -1,0 +1,159 @@
+@use '../abstracts/mixins' as *;
+@use '../abstracts/colors' as *;
+@use '../abstracts/placeholders' as *;
+@use '../abstracts/fonts' as *;
+@use '../base/typography' as *;
+@use '../abstracts/brakepoints' as *;
+
+.profession-conatiner{
+    position:relative;
+    width: 95%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    border: 2px solid $black;
+    border-radius: 6px;
+    padding:1em 0em;
+    background-color: $black-3;
+
+    @include sm-breakpoint{
+        flex-direction: column;
+        padding:1em 1em;
+    }
+
+    @include xs-breakpoint{
+        padding:.5em .7em
+    }
+
+    .dropdown-select{
+        margin:.2em 0 .5em 0;
+
+        width: 90%;
+        font-size:$fs-em-5;
+        color:$black;
+
+        @include sm-breakpoint{
+            width: 100%;
+        }
+
+        &::placeholder{
+            font-size: $fs6;
+        }
+    }
+
+    .sub-section-label{
+        font-size: $fs-em-4;
+        font-weight: 600;
+        padding:.5em 0em;
+    }
+
+    .profession-changing{
+        flex:50%;
+        // margin-left:1em;
+        margin:.2em 0 0 1.3em;
+
+        @include sm-breakpoint{
+            margin:.2em 0 1em 0em;
+            width: 100%;
+        }
+
+        @include xs-breakpoint{
+            margin-left:0em;
+            // width: 100%;
+        }
+
+        .profession-input-container{
+            margin:.2em 0em;
+
+            & input{
+                @extend %profile-profession-input-style;
+                margin:.1rem 0;
+                padding:0 .5em;
+                width: 6.5em;
+                text-align: center;
+
+                @include xs-breakpoint{
+                    // width: 90%;
+                }
+
+            }
+
+            .action-buttons{
+                display: flex;
+        
+                .change-profession{
+                    button{
+                        @include profession-button-styles($black, $color-hs-5);
+                        
+                        &:disabled{
+                            background-color: rgba(0,0,0,.2);
+                            border: 1px solid $black;
+                            color: $white;
+                            font-weight: 600;
+                            cursor:unset;
+                        }
+                    }
+                }
+
+                .delete-profession{
+                    button{
+                        @include profession-button-styles($black, $color-hs-5);
+                    }
+                }
+            }
+        
+        }
+    }
+
+    .profession-adding{
+        flex:50%;
+        margin:.2em 0 0 0em;
+
+
+        @include xs-breakpoint{
+            margin-left: 0em;
+            // width: 100%;
+        }
+
+        #enter-hs-wr{
+            color:$color-hs-5;
+            margin:2em 0;
+            font-size: $fs-em-5;
+            font-weight: 600;
+            // text-align: center;
+        
+        }
+
+        .working-hours{
+            margin:.2em 0 .2em 0;
+            
+            & label{
+                margin-right: .5rem;
+                font-size: $fs-em-5;
+                // color:red;
+                // background-color: aqua;
+            }
+            
+            & input{
+                @extend %profile-profession-input-style;
+                margin:.1rem 0;
+                width: 5.5em;
+                text-align: center;
+
+                &::placeholder{
+                    // color:black;
+                    color:$white;
+                }
+            }
+        }
+
+        .profession-add{
+            & button{
+                @include profession-button-styles($black,$color-hs-5);
+                width: 5em;
+                height: 1.9em;
+            }
+        }
+    }
+}
