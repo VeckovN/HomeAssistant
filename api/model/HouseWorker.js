@@ -775,20 +775,24 @@ const getHomeInfo = async(username) =>{
         OPTIONAL MATCH (h)<-[:BELONGS_TO]-(c:Comment)
         WITH n, h, COUNT(DISTINCT c) AS commentCount
         MATCH (h)-[:OFFERS]->(p:Profession)
-        WITH n, h, COUNT(DISTINCT p) AS professionCount, commentCount
         MATCH (n)-[:IS_HOUSEWORKER]->(m)
         OPTIONAL MATCH (m)<-[r:RATED]-()
-        RETURN professionCount, commentCount, AVG(r.rating) AS avgRating`,
+        WITH p.title AS profs, commentCount, AVG(r.rating) AS avgRating
+        RETURN COLLECT(profs) AS professions, commentCount, avgRating`,
         {houseworker:username}
     )
 
     session.close();
 
-    const professionCount = parseInt(result.records[0].get(0));
+    console.log("REZZ ", result.records[0]);
+
+    const professions = result.records[0].get(0);
     const commentCount = parseInt(result.records[0].get(1));
     const avgRating = parseInt(result.records[0].get(2));
 
-    return {professionCount, commentCount, avgRating};
+    console.log("Professions: " , professions);
+
+    return {professions, commentCount, avgRating};
 }
 
 module.exports ={
