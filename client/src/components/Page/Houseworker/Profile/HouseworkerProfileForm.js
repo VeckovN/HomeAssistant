@@ -13,7 +13,6 @@ const HouseworkerProfileForm = ({loading, houseworkerData, setHouseworkerData, c
                 <>
                     {/* <div id='title'>{`Houseworker ${ houseworkerData.first_name} ${houseworkerData.last_name} Profile`}</div> */}
                     <form className='hs-profile-form' onSubmit={handleSubmit(onSubmitUpdate)}>
-                    <div id='title'>Houseworker <span>{ houseworkerData.first_name} {houseworkerData.last_name}</span> Profile</div>
                         <section className ='professions'>
                             <div className='section-label'>Professions</div>
                             <HouseworkerProfessions

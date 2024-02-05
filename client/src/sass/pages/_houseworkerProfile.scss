@@ -9,7 +9,8 @@
     @include flex-with-direction-center($direction:column);
     min-height: 100vh;
     // margin:5em 0 3em 0;
-    background-color: $background-white-1;
+    // background-color: $background-white-1;
+    
 
     .profile-spinner{
         position:absolute;
@@ -48,7 +49,7 @@
 
     .hs-profile-form{
         @extend %profile-form-style;
-        padding:7em 0em 5em 0em;
+        padding:2em 0em 3em 0em;
 
         @include flex-with-direction-center($direction:column);
 
@@ -70,7 +71,7 @@
             font-family: $root-font-family-3;
             font-weight: 800;
             font-size: $fs-em-4;
-            color:$black-1;
+            color:$white;
 
         }
         
@@ -89,10 +90,11 @@
 
             // border: 2px solid $black;
             border-radius: 6px;
-            padding:1.5em .5em;
+            padding:.6em 0em;
             margin: 1em 2em;
 
-            background-color: $background-white-3;
+            // background-color: $background-white-3;
+            background-color: rgba(255, 255, 255, 0.753);
 
             @include sm-breakpoint{
                 // background-color: red;
@@ -113,13 +115,14 @@
             width: 90%;
             height: 100%;
 
-            padding:1.5em;
+            padding:.6em 1em;
             margin: 2em 2em 0em 2em;
 
             border-radius: 6px;
             font-family: $root-font-family-1;
 
-            background-color: $background-white-4;
+            // background-color: $background-white-4;
+            background-color: rgba(255, 255, 255, 0.753);
 
             @include sm-breakpoint{
                 width: 100%;
