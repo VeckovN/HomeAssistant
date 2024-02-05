@@ -9,19 +9,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@100;300;400;500;600;700;800;900&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Montagu+Slab:opsz,wght@16..144,100..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montagu+Slab:opsz,wght@16..144,100..700&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montaga&family=Montagu+Slab:opsz,wght@16..144,100..700&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 $root-font-family-1: 'Open Sans', sans-serif;
 $root-font-family-2:'Raleway', sans-serif;
 $root-font-family-3:'Montserrat Alternates', sans-serif;
 $root-font-family-4:'Playfair Display', serif;
 $root-font-family-5:'Roboto', sans-serif;
+$root-font-family-6:"Montagu Slab", serif;
+$root-font-family-7:"Montserrat", sans-serif;
+$root-font-family-8:"Montaga", serif;
 
 $message-font-family:'Montserrat Alternates', sans-serif;
 
-
 $login-font-family: 'Signika', sans-serif;
 $logo-font-family: 'MADE Soulmaze', sans-serif;
+
+
+
 // $base-font-size:convert-rem(16px); //1rem -> 16px
 $base-font-wight:400;
 
