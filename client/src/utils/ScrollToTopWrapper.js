@@ -3,7 +3,8 @@ import { useEffect, useLayoutEffect } from "react"
 import Footer from "../components/Layout/Footer";
 
 //When is Link clicked(pathanme changed) the page is open but with same position of pervious page (not scrolled automatically on top of page) 
-const ScrollToTopWrapper = ({children}) =>{
+const ScrollToTopWrapper = ({children, user}) =>{
+    console.log("USERRR: " , user);
     const {pathname} = useLocation(); //return currentURL
 
     useEffect( ()=>{
@@ -21,7 +22,7 @@ const ScrollToTopWrapper = ({children}) =>{
     return (
         <>
             {children}
-            {pathname !== '/' && <Footer/>} 
+            {(pathname !== '/' & user?.type!=="Houseworker") ? <Footer/> : null} 
         </>
     )
 }
