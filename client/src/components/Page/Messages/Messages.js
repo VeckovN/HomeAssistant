@@ -224,8 +224,8 @@ const Messages = ({socket,connected}) =>{
         }
     
     return (
-        <div className='container'> 
-            {state.loading ? <Spinner className='spinner'/> :
+        <div className={`container-${user.type === "Houseworker" ? "houseworker" : "client"}`}> 
+            {state.loading ? <Spinner className='profile-spinner'/> :
             <div className='messages-container'>
                 <section className='rooms-container'>
                     <div className='room-chat-header'>
