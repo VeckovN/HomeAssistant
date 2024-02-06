@@ -1,7 +1,4 @@
-import {useEffect} from 'react';
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import {useSelector, useDispatch} from 'react-redux';
-
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import CottageIcon from '@mui/icons-material/Cottage';
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
@@ -10,25 +7,8 @@ import TuneIcon from '@mui/icons-material/Tune';
 
 import '../../sass/layout/_sidebar.scss';
 
-
+ 
 const Sidebar = () => {
-    const {user, message, error, success} = useSelector((state) => state.auth) //null when not exists
-    const navigate = useNavigate();
-
-    useEffect(()=>{
-        if(error)
-            toast.error(message,{
-                className:'toast-contact-message'
-            })
-    
-        if(success){
-            navigate('/')
-            toast.success(message,{
-                className:'toast-contact-message'
-            })
-        }
-    },[user,error,success])
-
     const menuItem1 = [
         {
             path:"/", //link to
