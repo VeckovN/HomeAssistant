@@ -21,6 +21,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 import { requestInterceptor } from './utils/AxiosInterceptors.js';
+import Sidebar from './components/Layout/Sidebar.js';
+import HouseworkerHome from './components/Page/Houseworker/HouseworkerHome.js';
+import ClientHome from './components/Page/Client/Home/ClientHome.js';
+import ClientLayout from './components/Layout/ClientLayout.js';
 
 // const socketIO = io("http://127.0.0.1:5000", {
 //   withCredentials: true,
@@ -28,79 +32,234 @@ import { requestInterceptor } from './utils/AxiosInterceptors.js';
 
 function App() {
 
-  const {user} = useSelector((state) => state.auth)    
+  const {user} = useSelector((state) => state.auth) 
   const [socket, connected] = useSocket(user);
   const dispatch = useDispatch();
-
   requestInterceptor(dispatch);
 
   return (
-    <BrowserRouter>
-      <ScrollToTopWrapper>
-        <Header/>
-        <Routes>
-          <Route path='/' element={<Home socket={socket} connected={connected} user={user}/>}> </Route>
+  <BrowserRouter>
+    <ScrollToTopWrapper>
+      <Routes>
 
-          <Route path='/login' element={
-              <NotAuthRoute>
-                <Login/>
-              </NotAuthRoute>
-            }
-          />
+      {console.log("User", user)}
 
-          <Route path='/register' element={
-              <NotAuthRoute>
-                <Register/>
-              </NotAuthRoute>
-            }
-          />
+      {(user?.type === "Client" || user == null) && (
+        <Route element={<ClientLayout/>}>
+          <Route index path="/" element={<ClientHome socket={socket} />} />
+          <Route path="/login" element={<NotAuthRoute><Login/></NotAuthRoute>} />
+          <Route path="/register" element={<NotAuthRoute><Register/></NotAuthRoute>} />
+          <Route path="/clientRegister" element={<NotAuthRoute><ClientRegister /></NotAuthRoute>} />
+          <Route path="/HouseworkerRegister" element={<NotAuthRoute><HouseworkerRegister/></NotAuthRoute>} />
+          <Route path="/profile" element={<PrivateRoute><Profile/></PrivateRoute>} />
+          <Route path="/messages" element={<PrivateRoute><Messages socket={socket} connected={connected}/></PrivateRoute>} />
+          <Route path="*" element={<NotFound/>} />
+        </Route>
+      )}
 
-          <Route path='/clientRegister' element={
-              <NotAuthRoute>
-                <ClientRegister />
-              </NotAuthRoute>
-            }
-          />
+      {user?.type === "Houseworker" && (
+        <Route element={<Sidebar />} >
+          <Route index path="/" element={<PrivateRoute><HouseworkerHome/></PrivateRoute>} />
+          <Route path="/messages" element={<PrivateRoute><Messages socket={socket} connected={connected}/></PrivateRoute>} />
+          <Route path="/comments" element={<PrivateRoute privacy='houseworker'><Comments/></PrivateRoute>} />
+          <Route path="/profile" element={<PrivateRoute><Profile/></PrivateRoute>} />
+          <Route path="/login" element={<NotAuthRoute><Login/></NotAuthRoute>} />
+          <Route path="*" element={<NotFound/>} />
+        </Route>
+      )}
 
-          <Route path='/HouseworkerRegister' element={
-              <NotAuthRoute>
-                <HouseworkerRegister/>
-              </NotAuthRoute>
-            }
-          />
+      </Routes>
+    
+    <ToastContainer/>
+    </ScrollToTopWrapper>
+
+  </BrowserRouter>
+  )
 
 
-          <Route path='/comments' element={
-              <PrivateRoute privacy='houseworker'>
-                <Comments/>
-              </PrivateRoute>
-            }
-          />
-         <Route path='/profile' element={
-              <PrivateRoute >
-                <Profile/> 
-              </PrivateRoute>
-            }
-          />
+  // return (
+  //   <BrowserRouter>
+  //     <ScrollToTopWrapper>
+  //       {user?.type === 'Houseworker' ? "": <Header/>}
 
-          <Route path='/messages' element={
-              <PrivateRoute >
-                <Messages socket={socket} connected={connected}/>
-              </PrivateRoute>
-            }
-          />
+  //       <Routes>
 
-          <Route path="*" element ={<NotFound/>}></Route> 
+  //       <Route element={user?.type === "Houseworker" && <Sidebar/>}>
+  //         <Route path='/' element={
+  //           <PrivateRoute >
+  //             <HouseworkerHome/>
+  //           </PrivateRoute>
+  //         }/>
 
-        </Routes>
+  //         <Route path='/messages' element={
+  //           <PrivateRoute >
+  //             <Messages socket={socket} connected={connected}/>
+  //           </PrivateRoute>
+  //           }
+  //         />
+  //         <Route path='/comments' element={
+  //           <PrivateRoute privacy='houseworker'>
+  //             <Comments/>
+  //           </PrivateRoute>
+  //           }
+  //         />
+  //         <Route path='/profile' element={
+  //           <PrivateRoute >
+  //             <Profile/> 
+  //           </PrivateRoute>
+  //           }
+  //         />
+  //         </Route>
 
-        <ToastContainer/>
-      </ScrollToTopWrapper>
-      {/* Footer conditionaly rendered in the ScrollToTopWrapper */}
-      {/* <Footer></Footer>  */}
-    </BrowserRouter>
+  //         {/* Client and Guest(Not Authenitacted user) Routes */}
+  //         {/* <Route element={user?.type!= 'Houseworker' && <ClientHome socket={socket} user={user}/>}> */}
+  //         <Route path='/' element={user?.type === "Client" || user ==  null && <ClientHome socket={socket}/>}>
+  //           <Route path='/login' element={
+  //             <NotAuthRoute>
+  //               <Login/>
+  //             </NotAuthRoute>
+  //           }
+  //           />
 
-  );
+  //           <Route path='/register' element={
+  //             <NotAuthRoute>
+  //               <Register/>
+  //             </NotAuthRoute>
+  //           }
+  //           />
+
+  //           <Route path='/clientRegister' element={
+  //             <NotAuthRoute>
+  //               <ClientRegister />
+  //             </NotAuthRoute>
+  //           }
+  //           />
+
+  //           <Route path='/HouseworkerRegister' element={
+  //             <NotAuthRoute>
+  //               <HouseworkerRegister/>
+  //             </NotAuthRoute>
+  //           }
+  //           />
+
+  //           {/* <Route path='/comments' element={
+  //               <PrivateRoute privacy='houseworker'>
+  //                 <Comments/>
+  //               </PrivateRoute>
+  //             }
+  //           /> */}
+  //           <Route path='/profile' element={
+  //               <PrivateRoute >
+  //                 <Profile/> 
+  //               </PrivateRoute>
+  //             }
+  //           />
+
+  //           <Route path='/messages' element={
+  //               <PrivateRoute >
+  //                 <Messages socket={socket} connected={connected}/>
+  //               </PrivateRoute>
+  //             }
+  //           />
+  //       </Route>
+
+        
+
+
+  //         {/* Houseworker routes */}
+
+
+
+  //         {/* SHared routes (accessible to both user type) */}
+  //         <Route path="*" element ={<NotFound/>}></Route> 
+
+  //       </Routes>
+
+  //       <ToastContainer/>
+  //     </ScrollToTopWrapper>
+  //     {/* Footer conditionaly rendered in the ScrollToTopWrapper */}
+  //     {/* <Footer></Footer>  */}
+  //   </BrowserRouter>
+
+  // );
+
+
+///////////////////////////////////////////
+
+
+
+
+  // return (
+  //   <BrowserRouter>
+  //     <ScrollToTopWrapper>
+
+  //       {/* Houseworker will have a SideMenu (not Header) */}
+  //       {user?.type === 'Houseworker' ? "Show in Slide MEnu": <Header/>}
+        
+
+  //       <Routes>
+  //         <Route path='/' element={<Home socket={socket} connected={connected} user={user}/>}> </Route>
+
+  //         <Route path='/login' element={
+  //             <NotAuthRoute>
+  //               <Login/>
+  //             </NotAuthRoute>
+  //           }
+  //         />
+
+  //         <Route path='/register' element={
+  //             <NotAuthRoute>
+  //               <Register/>
+  //             </NotAuthRoute>
+  //           }
+  //         />
+
+  //         <Route path='/clientRegister' element={
+  //             <NotAuthRoute>
+  //               <ClientRegister />
+  //             </NotAuthRoute>
+  //           }
+  //         />
+
+  //         <Route path='/HouseworkerRegister' element={
+  //             <NotAuthRoute>
+  //               <HouseworkerRegister/>
+  //             </NotAuthRoute>
+  //           }
+  //         />
+
+
+  //         <Route path='/comments' element={
+  //             <PrivateRoute privacy='houseworker'>
+  //               <Comments/>
+  //             </PrivateRoute>
+  //           }
+  //         />
+  //        <Route path='/profile' element={
+  //             <PrivateRoute >
+  //               <Profile/> 
+  //             </PrivateRoute>
+  //           }
+  //         />
+
+  //         <Route path='/messages' element={
+  //             <PrivateRoute >
+  //               <Messages socket={socket} connected={connected}/>
+  //             </PrivateRoute>
+  //           }
+  //         />
+
+  //         <Route path="*" element ={<NotFound/>}></Route> 
+
+  //       </Routes>
+
+  //       <ToastContainer/>
+  //     </ScrollToTopWrapper>
+  //     {/* Footer conditionaly rendered in the ScrollToTopWrapper */}
+  //     {/* <Footer></Footer>  */}
+  //   </BrowserRouter>
+
+  // );
 }
 
 export default App;
