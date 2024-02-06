@@ -104,7 +104,7 @@ const HouseworkerHome = () =>{
                             <div className='desc-info'>Comments</div>
                         </div>
                         <div className='insight-card'>
-                            <div className='count-info'>{Object.keys(homeInfo.professions).length}</div>
+                            <div className='count-info'>{homeInfo?.professions ? Object.keys(homeInfo.professions).length : 'Null'}</div>
                             <div className='desc-info'>Professions that you offer</div>
                         </div>
                        
