@@ -1,5 +1,4 @@
 import {useEffect, useState, useRef} from 'react';
-import {useSelector} from 'react-redux';
 import CommentItem  from '../../../UI/CommentItem.js';
 import {getAuthenticatedUserComments} from '../../../../services/houseworker.js'
 import Spinner from '../../../UI/Spinner.js';
@@ -50,7 +49,6 @@ const CommentsList = () =>{
                 {commentList.length >0 
                     ?
                     <>
-                        <h1>Comments</h1>
                         <div className='comment-card'>
                             <div className='context-container'>
                                 <div className='comment-list'>
