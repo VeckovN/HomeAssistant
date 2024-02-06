@@ -1,0 +1,23 @@
+@use '../abstracts/fonts' as *;
+@use '../base/typography' as *;
+
+.notFound{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    color:white;
+    // padding:15em 0em;
+    font-family: $root-font-family-1;
+
+    font-size: $fs1;
+
+    & h1{
+        font-size: $fs-em-1;
+    }
+  }
+  
+  
