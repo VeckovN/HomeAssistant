@@ -1,14 +1,25 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import {useDispatch} from 'react-redux';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import CottageIcon from '@mui/icons-material/Cottage';
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined';
 import TuneIcon from '@mui/icons-material/Tune';
+import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
+
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import {logout} from '../../store/auth-slice'
 
 import '../../sass/layout/_sidebar.scss';
 
  
 const Sidebar = () => {
+    const dispatch = useDispatch();
+
+    const logoutHandler = () =>{
+        dispatch(logout());
+    }
+
     const menuItem1 = [
         {
             path:"/", //link to
@@ -36,9 +47,10 @@ const Sidebar = () => {
         {
             path:"/a",
             name:"HelpCenter",
-            icon:"i",
+            icon:<ContactSupportOutlinedIcon fontSize='inherit'/>,
         },
     ]
+
 
     return(
         <main className='sidebar-container'>
@@ -70,7 +82,7 @@ const Sidebar = () => {
                         }
                     </div>
 
-                    <div className='line'></div>
+                    <div className='line'/>
 
                     <div className="menu-option">
                         {
@@ -84,6 +96,12 @@ const Sidebar = () => {
                                 </NavLink>
                             ))
                         }
+                        <div className='line'/>
+                        <div className='sidebar-menu-link logout' onClick={logoutHandler}>
+                            <div className='sidebar-menu-icon'><LogoutOutlinedIcon fontSize="inherit"/></div>
+                            <div className='sidebar-menu-name'>Logout</div>
+                        </div>
+                        
                     </div>
                 </div>
             </section>
