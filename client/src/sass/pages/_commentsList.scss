@@ -6,9 +6,10 @@
 @use '../abstracts/brakepoints' as *;
 
 .comments-container{
-    position: relative;
     height: 100vh;
+    position: relative;
     @include flex-with-direction-center($direction:column);
+
 
     .comment-card{
         width: 80%;
@@ -29,6 +30,7 @@
         @include sm-breakpoint{
             width: 100%;
             min-width: 280px;
+            padding: .5em 0em;
         }
         
         .context-container{
