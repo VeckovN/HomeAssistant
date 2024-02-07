@@ -1,6 +1,18 @@
 import { useState } from "react";
 import { NavLink, Outlet} from "react-router-dom";
 import {useDispatch} from 'react-redux';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHouse } from '@fortawesome/free-solid-svg-icons';
+import { faMessage } from '@fortawesome/free-solid-svg-icons';
+import { faComments } from '@fortawesome/free-solid-svg-icons';
+import { faSliders } from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+
+
+
+
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import CottageIcon from '@mui/icons-material/Cottage';
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
@@ -10,6 +22,7 @@ import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlin
 
 import KeyboardArrowRightOutlinedIcon from '@mui/icons-material/KeyboardArrowRightOutlined';
 import KeyboardArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardArrowLeftOutlined';
+
 
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import {logout} from '../../store/auth-slice'
@@ -29,17 +42,17 @@ const Sidebar = () => {
         {
             path:"/", //link to
             name:"Home",
-            icon:<HomeOutlinedIcon fontSize='inherit'/>,
+            icon:<FontAwesomeIcon icon={faHouse}/>,
         },
         {
             path:"/messages",
             name:"Messages",
-            icon:<ForumOutlinedIcon fontSize='inherit'/>,
+            icon:<FontAwesomeIcon icon={faMessage}/>,
         },
         {
             path:"/comments",
             name:"Comments",
-            icon:<CommentOutlinedIcon fontSize='inherit'/>,
+            icon:<FontAwesomeIcon icon={faComments} />,
         }
     ];
 
@@ -47,15 +60,15 @@ const Sidebar = () => {
         {
             path:"/profile",
             name:"Settings",
-            icon:<TuneIcon fontSize='inherit'/>,
+            icon:<FontAwesomeIcon icon={faSliders} />,
+
         },
         {
             path:"/a",
             name:"HelpCenter",
-            icon:<ContactSupportOutlinedIcon fontSize='inherit'/>,
+            icon:<FontAwesomeIcon icon={faCircleInfo} />,
         },
     ]
-
 
     return(
         <main className='sidebar-container'>
@@ -78,7 +91,6 @@ const Sidebar = () => {
 
                 <div className='sidebar-menu'>
                     <div className="menu-option">
-                        {/* Link to page */}
                         {
                              menuItem1.map((el, index) =>(
                                 <NavLink to={el.path} key={'el-'+index}  
@@ -108,7 +120,7 @@ const Sidebar = () => {
                         }
                         <div className='line'/>
                         <div className='sidebar-menu-link logout' onClick={logoutHandler}>
-                            <div className='sidebar-menu-icon'><LogoutOutlinedIcon fontSize="inherit"/></div>
+                            <div className='sidebar-menu-icon'><FontAwesomeIcon icon={faArrowRightFromBracket} /></div>
                             <div className='sidebar-menu-name'>Logout</div>
                         </div>
                         
@@ -116,9 +128,7 @@ const Sidebar = () => {
                 </div>
             </section>
             
-            {/* HERE IS CONTAINER WHERE PAGE SHOULD BE DISPLAYED */}
             <section className='sidebar-context-container'>
-                {/* {children} */}
                 <Outlet />
             </section>
         </main>

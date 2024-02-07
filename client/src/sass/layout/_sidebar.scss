@@ -30,7 +30,7 @@
 
         @include md-breakpoint{
             display: unset;
-            left:1em;
+            left:.7em;
         }
 
         @include sm-breakpoint{
@@ -68,8 +68,7 @@
         @include md-breakpoint{
             position:absolute;
 
-            width: 5rem;
-            // width: 100px;
+            width: 4rem;
             height: 100%;
             max-width: unset;
             min-width: unset;
@@ -78,8 +77,7 @@
         }
 
         @include sm-breakpoint{
-            width: 50px;
-            // height: 100vh;
+            width: 3.5rem;
             height: 100%;
 
         }
@@ -137,6 +135,7 @@
 
                 @include md-breakpoint{
                     padding:0em .1em;
+                    margin: 0em;
                     display: flex;
                     flex-direction: column;
                     // justify-content: center;
@@ -144,9 +143,7 @@
                 }
                 @include sm-breakpoint{
                     padding:0em .3em;
- 
                 }
-
 
                 .sidebar-menu-link{
 
@@ -157,7 +154,7 @@
                     padding:.2em 0 0 .4em;
                     margin:.3em 0;
 
-                    color:$black;
+                    color:$black-7;
                     border-radius: 8px;
 
                     &:hover{
@@ -165,30 +162,10 @@
                         color:$white;
                     }
                     
-                    @include md-breakpoint{
-                        padding:.3em .2em .2em .7em;
-                    }
-
-                    @include sm-breakpoint{
-                        padding:.2em 0 0 .4em;
-                    }
-
-
                     .sidebar-menu-icon{
-                        font-size:1.6em;
-                        margin:.2em .2em 0 0;
+                        font-size:1.3rem;
+                        padding:.2em .2em .2em .2em;
                         padding-right:.4em;
-                        font-weight: 500;
-
-                        @include md-breakpoint{
-                            font-size: 1.8em;
-                            margin:.2em .1em 0 0;
-                            
-                        }
-                        @include sm-breakpoint{
-                            margin:.1em .1em 0 0;
-                            padding-right:.3em;
-                        }
 
                     }
                     .sidebar-menu-name{
