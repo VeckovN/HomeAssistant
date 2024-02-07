@@ -5,7 +5,8 @@
 @use '../abstracts/mixins' as *;
 
 .sidebar-container{
-    width: 90%;
+    // width: 90%;
+    width: 100%;
     max-width: 1600px;
     // height: 100vh;
     // height: 100%;
@@ -29,16 +30,62 @@
     // max-width: 1500px;
     // background-color: rgb(170, 167, 167);
 
-    @include xl-breakpoint(){
+    // @include md-breakpoint(){
+    //     flex-direction: column;
+    // }
+
+    // @include lg-breakpoint(){
+    //     // flex-direction: column;
+    // }
+
+    @include xl-breakpoint{
         position:unset;
         transform:translateX(0);
-        width: 100%;
-        
+        // width: 100%;
     }
 
+    .nav-button{
+        display: none;
+        position:absolute;
+        top:.6em;
+    
+        z-index: 101;
+        // background-color: red;
+
+
+        // width: 3em;
+        // height: 2em;
+
+        @include md-breakpoint{
+            display: unset;
+            // top:.6em;
+            left:1em;
+        }
+
+        @include sm-breakpoint{
+            // top:.6em;
+            left:.3em;
+        }
+
+        &:hover{
+            color:$color-hs-6;
+            cursor: pointer;
+        }
+
+        &-icon{
+            font-size:2.5rem;
+            text-align: center;
+            // background-color: blue;
+        }
+
+    }
+
+    .close-nav-button{
+        color:$white;
+    }
 
     .section-menu{
-        width: 20%;
+        width: 30%;
         max-width: 250px;
         min-width: 200px;
 
@@ -48,7 +95,30 @@
         flex-direction: column;
         // justify-content: center;
         align-content: center;
-        
+
+        @include md-breakpoint{
+            position:absolute;
+
+            width: 5rem;
+            // width: 100px;
+            height: 100%;
+            max-width: unset;
+            min-width: unset;
+
+            z-index: 20;
+        }
+
+        @include sm-breakpoint{
+            width: 50px;
+            // height: 100vh;
+            height: 100%;
+
+        }
+
+
+        // @include md-breakpoint(){
+        //     width: 2em;
+        // }
 
         .sidebar-logo{
             
@@ -57,11 +127,17 @@
 
             font-family: $root-font-family-8;
             font-size: 1.4rem;
+
+            @include md-breakpoint(){
+                visibility: hidden;
+            }
+            
+            
             
             // background-color: aqua;
             .logo-icon{
                 font-size: 1.3em;
-                padding-right:.1em;
+                padding-right:.2em;
                 color:$nav-hover-color;
                 // background-color: red;
             }
@@ -89,8 +165,31 @@
 
         .sidebar-menu{
 
+            @include md-breakpoint(){
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+
+                margin:.5em 0em;
+                
+            }
+
             .menu-option{
                 padding:0em .8em;
+
+                @include md-breakpoint{
+                    padding:0em .1em;
+                    display: flex;
+                    flex-direction: column;
+                    // justify-content: center;
+                    align-items: center;
+                }
+                @include sm-breakpoint{
+                    padding:0em .3em;
+ 
+                }
+
 
                 .sidebar-menu-link{
 
@@ -108,15 +207,47 @@
                         background-color:$color-hs-1;
                         color:$white;
                     }
+
+                    // @include md-breakpoint{
+                    //     padding:.3em 3em;
+                    //     margin:0em;
+                    // }
                     
+                    @include md-breakpoint{
+                        padding:.3em .2em .2em .7em;
+                    }
+
+                    @include sm-breakpoint{
+                        padding:.2em 0 0 .4em;
+                    }
+
+
                     .sidebar-menu-icon{
                         font-size:1.6em;
-                        margin:.2em .2em 0 0
+                        margin:.2em .2em 0 0;
+                        padding-right:.4em;
+                        font-weight: 500;
+
+
+                        @include md-breakpoint{
+                            font-size: 1.8em;
+                            margin:.2em .1em 0 0;
+                            
+                        }
+                        @include sm-breakpoint{
+                            margin:.1em .1em 0 0;
+                            padding-right:.3em;
+                        }
+
                     }
                     .sidebar-menu-name{
                         font-family: $root-font-family-8;
                         font-size: $fs-em-4;
-                        font-weight: 600;
+                        font-weight: 500;
+
+                        @include md-breakpoint{
+                            display:none;
+                        }
                     }
                 }
 
@@ -146,7 +277,17 @@
 
                 margin:1em 0em;
 
+                // @include md-breakpoint(){
+                //     display: none;
+                // }
+
             }
+        }
+    }
+
+    .section-menu-close{
+        @include md-breakpoint{
+            display: none;
         }
     }
 
@@ -158,4 +299,6 @@
 
         // display: flex;
     }
+
+
 }

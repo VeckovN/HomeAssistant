@@ -1,4 +1,5 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { NavLink, Outlet} from "react-router-dom";
 import {useDispatch} from 'react-redux';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import CottageIcon from '@mui/icons-material/Cottage';
@@ -6,6 +7,9 @@ import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined';
 import TuneIcon from '@mui/icons-material/Tune';
 import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
+
+import KeyboardArrowRightOutlinedIcon from '@mui/icons-material/KeyboardArrowRightOutlined';
+import KeyboardArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardArrowLeftOutlined';
 
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import {logout} from '../../store/auth-slice'
@@ -15,6 +19,7 @@ import '../../sass/layout/_sidebar.scss';
  
 const Sidebar = () => {
     const dispatch = useDispatch();
+    const [isOpen, setIsOpen] = useState(false);
 
     const logoutHandler = () =>{
         dispatch(logout());
@@ -54,7 +59,12 @@ const Sidebar = () => {
 
     return(
         <main className='sidebar-container'>
-            <section className='section-menu'>
+
+            {/* <div className='nav-button'> */}
+            <div className={`nav-button ${!isOpen ? 'close-nav-button' : ''}`} onClick={()=> setIsOpen(!isOpen)}>
+                <div className='nav-button-icon'>{!isOpen ? <KeyboardArrowRightOutlinedIcon fontSize="inherit"/> : <KeyboardArrowLeftOutlinedIcon fontSize="inherit"/>}</div>
+            </div>
+            <section className={`section-menu ${!isOpen ? 'section-menu-close' : ''}`} >
 
                 <div className='sidebar-logo'>
                     <div className='logo-icon'>
@@ -64,8 +74,8 @@ const Sidebar = () => {
                         <span className='logo-span'>Home</span> 
                         <span className="logo-span">Assistant</span>
                     </div>
-                   
                 </div>
+
                 <div className='sidebar-menu'>
                     <div className="menu-option">
                         {/* Link to page */}
