@@ -6,11 +6,8 @@
 
 .page-conainer{
     width: 100%;
-    // height: 100vh;
     min-height: 100vh;
-    // background-color: rgba(7, 7, 7, 0.911);
-    // @include flex-with-direction-center($direction:column);
-    position: relative;
+    @include flex-with-direction-center($direction:column);
 
     .profile-spinner{
         position:absolute;
@@ -88,16 +85,20 @@
             }
 
             .image-container{
-                background-color: rgba(124, 124, 124, 0.205);
+                // background-color: rgba(124, 124, 124, 0.205);
                 // flex:1;
                 flex:40%;
                 min-width:250px;
+                color:$white;
                 // max-height: 300px;
                 
+                display: flex;
+                align-items: center;
+                justify-content: center;
 
-                // display: flex;
-                // justify-content: center;
-                // align-items: center;
+                @include sm-breakpoint{
+                    display:none;
+                }
             }
             
         }
@@ -138,15 +139,10 @@
                 }
 
                 .rating-box{
-                    // background-color: #423112;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: flex-end;
-
+                    @include flex-container($direction:column , $justify:center, $align:flex-end);
+                    flex:10%;
                     padding-right:1em;
 
-                    flex:10%;
 
                     .rate-box-container{
                         display: flex;
@@ -196,13 +192,16 @@
             }
             
             .insight-container{
-                // background-color: rgb(54, 54, 54);
                 width: 100%;
                 padding:0em 2em 3em 2em;
 
                 display: flex;
                 justify-content: space-evenly;
                 gap:1em;
+
+                @include sm-breakpoint {
+                    display:grid;
+                }
 
                 .insight-card{
                     max-width: 280px;
@@ -253,15 +252,11 @@
             }
 
             .profile-professions-container{
-
-                // background-color: aqua;
-                padding: 1em .4em;
-                width: 100%;
-
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: space-evenly;
                 gap:.5em;
+                padding: 1em .4em;
             }
         }
         
