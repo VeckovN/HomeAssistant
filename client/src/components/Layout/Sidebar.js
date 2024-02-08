@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { NavLink, Outlet} from "react-router-dom";
 import {useDispatch} from 'react-redux';
+import {logout} from '../../store/auth-slice'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHouse } from '@fortawesome/free-solid-svg-icons';
@@ -10,22 +11,9 @@ import { faSliders } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 
-
-
-
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import CottageIcon from '@mui/icons-material/Cottage';
-import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
-import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined';
-import TuneIcon from '@mui/icons-material/Tune';
-import ContactSupportOutlinedIcon from '@mui/icons-material/ContactSupportOutlined';
-
 import KeyboardArrowRightOutlinedIcon from '@mui/icons-material/KeyboardArrowRightOutlined';
 import KeyboardArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardArrowLeftOutlined';
-
-
-import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
-import {logout} from '../../store/auth-slice'
 
 import '../../sass/layout/_sidebar.scss';
 

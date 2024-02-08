@@ -1,6 +1,5 @@
 import {useState, useRef, useEffect} from 'react';
 import {io} from "socket.io-client";
-import { toast } from 'react-toastify';
 import { listenForCommentNotification, listenForRatingNotfication, listenFormMessage} from '../sockets/socketListen';
 
 //take user info from redux

@@ -1,6 +1,7 @@
 import {Link} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
-import {logout, reset} from '../../store/auth-slice';
+import {logout} from '../../store/auth-slice';
+
 import {useState} from 'react';
 
 import '../../sass/layout/_header.scss';
