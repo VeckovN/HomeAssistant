@@ -1,37 +1,25 @@
-import React, {useEffect, useState, useRef, memo} from 'react';
+import React, {memo} from 'react';
 import {useSelector} from 'react-redux'
 import axios from 'axios';
 import HouseworkerCardContent from './HouseworkerCardContent.js';
 import useHouseworkerComment from '../../hooks/Houseworker/useHouseworkerComment.js'
 import useHouseworkerRating from '../../hooks/Houseworker/useHouseworkerRating.js';
 import useHouseworkerContact from '../../hooks/Houseworker/useHouseworkerContact.js';
-import {getProfessionsByUsername} from '../../services/houseworker.js'
 
 axios.defaults.withCredentials = true
-
-
-//CLIENT - Serach, Filter, HouseworkersCard(wiht paggination)
-//GUEST sees everything just like THE CLIENT but 
-// -can't see all information(Working hours, Rating) and cant send message and post comment
-
-
-//EVERY HOUSEWORKER CARD DO THIS - IT WILL BE AGAIN RE-RENDER WHEN is CLIENTHOME COMPONENT RENDER -
-//AND SHOWNED CARD WILL BE AGAIN RE-RENDERED 
 
 const LazyHouseworkerCardContent = React.lazy(() => import('./HouseworkerCardContent'));
 
 //@Todo //Custom Hook for useFetch
 const HouseworkersCard = (props) =>{
-    //console.log("RENDER: " + props.first_name) ;
-    // console.log("Props: \n", JSON.stringify(props));
     const socket = props.socket;
-
     const userAuth = useSelector((state) => state.auth.user)
     const isClient = userAuth && userAuth.type === "Client";
     const clientUsername = userAuth?.username;
     const clientID = userAuth?.userID;
 
-    const [loading, setLoading] = useState(true);
+    console.log("HOUSEWROERK-CARD-ID: " + props.id);
+
 
     const {
         comments, 
@@ -44,12 +32,14 @@ const HouseworkersCard = (props) =>{
         onCloseComment
     } = useHouseworkerComment(socket, isClient, clientUsername)
     
+
+    //Here the houseworkerProfessions is fetched as well
     const {
         rate, 
-        rating,
+        houseworkerRating,
+        houseworkerProfessions,
         showRateInput, 
         showRateInputCssClass,
-        ratingInitialize, 
         onRateHandler, 
         onCloseRateHandler, 
         onChangeRate
@@ -62,53 +52,25 @@ const HouseworkersCard = (props) =>{
 
 
     //FIRST IS SHOWNED ALL CARDS WITHOUT PROFESSIONS AND AFTER THAT AGAIN ALL CARD IS RE-RENDERED WITH FETCHED PROFESSIONS
-    const [professions, setProfessions] = useState([]);
-    const fetchProfessions = async() =>{
-        // const professionsArray = await getProfessions(props.username);
-        const professionsArray = await getProfessionsByUsername(props.username);
-        setProfessions(professionsArray);
-        //alert('setProfessions(professionsArray);')
-    }
-
-
-    //WAIT FOR ALL CUSTOM HOOKS(async calles to be done)
-    useEffect(() => {
-        // Use Promise.all to wait for all custom hooks to finish fetching
-        //when is ratingIntialize()async operation(also fetchProfessions)done then the setLoading will be set to false
-        Promise.all([ratingInitialize(), fetchProfessions()]).then(() => {
-          setLoading(false);
-        });
-    }, []);
-
-    // if(rating !=='')
-    //     console.log("RATING EXIST")
-    // else{
-    //     console.log("RATING NOONE")
+    // const [professions, setProfessions] = useState([]);
+    // const fetchProfessions = async() =>{
+    //     // const professionsArray = await getProfessions(props.username);
+    //     const professionsArray = await getProfessionsByUsername(props.username);
+    //     setProfessions(professionsArray);
+    //     //alert('setProfessions(professionsArray);')
     // }
-    
-
-    //useCallback used instead useMemo to prevent unnecessary re-renders
-    // const fetchRatingCal = useCallback( async ()=>{
-    //     try{
-    //         const result = await axios.get(`http://localhost:5000/api/houseworker/rating/${props.username}`)
-    //         const ratingValue = result.data;
-    //         //console.log("RATING: " + JSON.stringify(ratingValue));
-    //         setRating(ratingValue);
-    //         console.log('RATING FETCHING');
-    //     }
-    //     catch(error){
-    //         console.log("Error: " + error);
-    //     }
-    // },[props.username])
-
-    // useEffect(()=>{
-    //     // fetchRating();
-    //     fetchProfessions(); 
-    // },[])
+    // WAIT FOR ALL CUSTOM HOOKS(async calles to be done)
+    // useEffect(() => {
+    //     // Use Promise.all to wait for all custom hooks to finish fetching
+    //     //when is ratingIntialize()async operation(also fetchProfessions)done then the setLoading will be set to false
+    //     Promise.all([ratingInitialize(), fetchProfessions()]).then(() => {
+    //       setLoading(false);
+    //     });
+    // }, []);
 
     return (
         <>
-            { !loading &&
+            { houseworkerRating &&
                 <HouseworkerCardContent 
                 // <LazyHouseworkerCardContent
                     houseworkerUsername ={houseworkerUsername}
@@ -120,8 +82,8 @@ const HouseworkersCard = (props) =>{
                     houseworkerProps={props}
                     isClient={isClient}
                     clientUsername={clientUsername}
-                    professions={professions}
-                    rating={rating}
+                    houseworkerRating={houseworkerRating}
+                    houseworkerProfessions={houseworkerProfessions}
                     showRateInput={showRateInput}
                     rate={rate}
                     onChangeRate={onChangeRate}
@@ -138,6 +100,6 @@ const HouseworkersCard = (props) =>{
     )
 }
 
-//BIG OPTIMIZATION OPTIMIZATION
+//optimization
 //memo ensures that houseworker that exist(rendered) are not re-render again(because their context(props) are not changing) 
 export default memo(HouseworkersCard); 

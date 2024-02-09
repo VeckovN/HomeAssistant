@@ -1,35 +1,50 @@
 import {useState, useEffect} from 'react';
 import { toast } from 'react-toastify';
 import {rateUser} from '../../services/houseworker.js'
-import { getRating } from '../../services/houseworker.js';
+import {getHouseworkerProfessionsAndRating, getRating, getProfessionsByUsername } from '../../services/houseworker.js';
 import { emitRatingNotification } from '../../sockets/socketEmit.js';
 
 //Not fatching propertly - one time its good fetched , next time some houseworker doesn;t have rating
 const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsername) =>{
-    // alert("useHouseworkerRating " );
 
     const [rate, setRate] = useState(''); //value from input
     const [showRateInput, setShowRateInput] = useState();
-    const [rating, setRating] = useState(''); //hosueworker current ranking value
+    const [houseworkerRating, setHouseworkerRating] = useState(''); //hosueworker current ranking value
+    const [houseworkerProfessions, setHouseworkerProfessions] = useState('');
 
-    const fetchRating = async() =>{
-        const ratingValue = await getRating(houseworkerUsername);
-        //console.log("raingValue , " + ratingValue + "houseworekrusername: "  + houseworkerUsername);
-        setRating(ratingValue);
-        // alert("setRating(ratingValue);")
-    } 
-
-    // Function to initialize the data fetching
-    const ratingInitialize = async () => {
-        await fetchRating();
-      };
-    
+    const fetchProfessionAndRating = async( ) =>{
+        const result = await getHouseworkerProfessionsAndRating(houseworkerUsername);
+        setHouseworkerRating(result.rating);
+        setHouseworkerProfessions(result.professions);
+    }
 
     useEffect(()=>{
-        // alert("FETCHING RATING");
-        ratingInitialize();
-        // alert("fetchRating();")
+        fetchProfessionAndRating();
     },[])
+
+
+
+
+    // //solution wiht promiseALl instead of axios.all
+    // const fetchData2 = async() =>{
+    //     const response = await Promise.all([
+    //         getRating(houseworkerUsername),
+    //         getProfessionsByUsername(houseworkerUsername)
+    //     ]);
+
+    //     return {rating:response[0], professions:response[1]};
+    // }
+
+    // useEffect(()=>{
+    //     const fethDataAndSet = async() =>{
+    //         const data = await fetchData2();
+    //         console.log("DATA:" , data);
+    //         setRate(data.rating);
+    //         setProfessions(data.professions);
+    //     }
+
+    //     fethDataAndSet();
+    // },[])
 
     var showRateInputCssClass =''
     if(!showRateInput)
@@ -50,8 +65,7 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
             })
             return 
         }
-        //when rate value not exist , again click on Rate button 
-        //will close input
+        //when rate value doesn't exist , again click on Rate button will close input
         if(rate == ''){
             setShowRateInput(prev => !prev);
             alert("setShowRateInput(prev => !prev)");
@@ -95,7 +109,7 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
         alert("setRate(e.target.value)");
     }
 
-    return {rate, rating, ratingInitialize, showRateInput, showRateInputCssClass, onRateHandler, onCloseRateHandler, onChangeRate}
+    return {rate, houseworkerRating, houseworkerProfessions, showRateInput, showRateInputCssClass, onRateHandler, onCloseRateHandler, onChangeRate}
 
 }
 

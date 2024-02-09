@@ -15,8 +15,8 @@ const HouseworkerCardContent = ({
     houseworkerProps,
     isClient,
     clientUsername,
-    professions,
-    rating,
+    houseworkerRating,
+    houseworkerProfessions,
     showRateInput,
     rate,
     onChangeRate,
@@ -28,12 +28,8 @@ const HouseworkerCardContent = ({
     onContactHandler,
     commentClick
 }) =>{
-    //console.log("TYPE OF " + typeof(parseFloat(rating)) + " VALUE: " + parseFloat(rating));
-    //alert("HS CArd Context --- " + "username: "  +  houseworkerProps.username);
     return (
         <>
-            {/* When is comment button Clicked */}
-            {/* {houseworkerUsername &&  */}
             {commentClick.current &&
                 <HouseworkerCommentModal
                     comments ={comments}
@@ -97,8 +93,8 @@ const HouseworkerCardContent = ({
                                 <div className='line'> </div>   
                             </div>
                             {
-                            professions ? 
-                                professions.map((pr,index) => 
+                            houseworkerProfessions ? 
+                                houseworkerProfessions.map((pr,index) => 
                                         <div className='div-text-profession' key={index}><label className='label-text profession-text'>{pr.profession}</label>
                                             <div id='profession-money'> €{pr.working_hour}/hr</div>
                                         </div>
@@ -128,7 +124,7 @@ const HouseworkerCardContent = ({
                                         <Rating 
                                             name="half-rating-read" 
                                             size="small"
-                                            defaultValue={parseFloat(rating)} 
+                                            defaultValue={parseFloat(houseworkerRating)} 
                                             emptyIcon={<StarIcon style={{ color: 'grey' }} fontSize="inherit" />}
                                             precision={0.5} 
                                             readOnly /> 
