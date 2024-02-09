@@ -127,7 +127,9 @@ const HouseworkerCardContent = ({
                                             defaultValue={parseFloat(houseworkerRating)} 
                                             emptyIcon={<StarIcon style={{ color: 'grey' }} fontSize="inherit" />}
                                             precision={0.5} 
-                                            readOnly /> 
+                                            readOnly 
+                                        />
+                                        // <div>My rating: {houseworkerRating}</div>
                                         : <Link to='/login' className='link'>Log in</Link>}
                                     </p>
                                 </div>
