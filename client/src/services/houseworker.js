@@ -235,3 +235,17 @@ export const getHomeInfo= async(username) =>{
     }
 }
 
+
+export const getProfessionsAndCities = async() =>{
+    try{
+        const response = await axios.all([
+            await axios.get(BASE_URL +`houseworker/professions/all`),
+            await axios.get( BASE_URL + `houseworker/cities`)
+        ]);
+        return {houseworker_professions: response[0].data, houseworker_cities: response[1].data}
+    }
+    catch(err){
+        console.error(err);
+        ThrowErorr(err);
+    }
+}
