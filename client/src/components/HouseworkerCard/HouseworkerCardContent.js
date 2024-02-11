@@ -47,6 +47,7 @@ const HouseworkerCardContent = ({
                     <div className="img-box">
                         <LazyLoadImage
                             src={`assets/userImages/${houseworkerProps.picturePath}`}
+                            alt='avatar'
                         />
                         {/* <img src={`assets/userImages/${houseworkerProps.picturePath}`} alt='profile-avatar' loading="lazy"/> */}
                         {/* <img src={`data:image/jpeg;base64, ${houseworkerProps.picturePath}`}></img> */}
@@ -120,7 +121,7 @@ const HouseworkerCardContent = ({
 
                             <div className='rating-box'>
                                 <div className='div-text-rating'>
-                                    <p>{isClient ? 
+                                    <div>{isClient ? 
                                         <Rating 
                                             name="half-rating-read" 
                                             size="small"
@@ -131,7 +132,7 @@ const HouseworkerCardContent = ({
                                         />
                                         // <div>My rating: {houseworkerRating}</div>
                                         : <Link to='/login' className='link'>Log in</Link>}
-                                    </p>
+                                    </div>
                                 </div>
                                 
                                 <div className='rating-field'>
