@@ -4,9 +4,8 @@ import Room from "./Room.js";
 const Rooms = ({rooms, roomInfo, showMoreRoomUsers, onRoomClickHanlder, onShowMoreUsersFromChatHandler, onUsersFromChatOutHanlder}) =>{
     return (
             <div className='rooms'>
-            {console.log("Roomsss")}
                 {rooms ?
-                    rooms.map((el, index)=>(      
+                    rooms.map(el =>(      
                         <Room
                             key={el.roomID}
                             info={el}
@@ -17,7 +16,7 @@ const Rooms = ({rooms, roomInfo, showMoreRoomUsers, onRoomClickHanlder, onShowMo
                             onUsersFromChatOutHanlder={onUsersFromChatOutHanlder}
                         />
                     ))
-                : <Spinner></Spinner>
+                : <Spinner/>
                 }
             </div>
     )

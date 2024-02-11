@@ -7,36 +7,27 @@ import MenuIcon from '@mui/icons-material/Menu';
 import '../../sass/components/_chat.scss';
 
 const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSendMessageHandler, onAddUserToGroupHanlder, onDeleteRoomHandler, onShowMenuToggleHandler }) =>{
-    const messageRef = useRef(); //taken message from input
-
-    console.log("ROOMM INFOOO : " , roomInfo);
+    const messageInputRef = useRef();
+    const endMessageRef = useRef(null);
     
     const onSendHandler = () =>{
-        const message = messageRef.current.value;
+        const message = messageInputRef.current.value;
         const fromRoomID = roomInfo.roomID;
         if(message != '')
-            messageRef.current.value = ''
+            messageInputRef.current.value = ''
 
         onSendMessageHandler({message, fromRoomID});
     }
-    //Scroll to bottom of chat
-    const endMessageRef = useRef(null);
-    const messagesChatRef = useRef(null);
+
     const scrollToBottom = () =>{
-        
         //scrollIntoView without block:'nearest' is affecting scroll to the whole page
-        //This effects on scroll to whole page(when is page entered its position on bottom of page(near to footer not on top of page))
         endMessageRef.current?.scrollIntoView({behavior: 'instant', block: 'nearest'});
     }
     useEffect(() =>{
         scrollToBottom();
     },[roomMessages]);
 
-
-
     const conversation = roomMessages?.length >0;
-
-    alert("SADAS: " + conversation);
 
     return(     
         <>
@@ -64,7 +55,7 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
                 </div>
             }
             
-            <div ref={messagesChatRef} className={`messages-chat ${showMenu && 'showMenu'}`}>
+            <div className={`messages-chat ${showMenu && 'showMenu'}`}>
             {roomMessages?.length >0 ?   
             <>
                 {roomMessages.map(el =>{
@@ -85,8 +76,6 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
                                 userPicturePath = element.picturePath;
                             }
                         });
-
-                        console.log("ASDAS DS DAS DAS D: " + userPicturePath);
 
                         return(
                         <div className="message">
@@ -110,13 +99,14 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
             
             }
             </div>
+
             <div className="footer-chat" >
                 <input
                     type='text'
                     className={`write-message ${showMenu && 'showMenu'} `}
                     placeholder="Type your message here"
                     name='message-text'
-                    ref={messageRef}
+                    ref={messageInputRef}
                     disabled={showMenu || !conversation}
                 />
                 <button className={`send-icon ${showMenu && 'showMenu'}` } onClick={onSendHandler} disabled={showMenu || !conversation}><SendIcon/></button>

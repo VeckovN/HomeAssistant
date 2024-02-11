@@ -8,10 +8,7 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onDel
     const [searchTerm, setSearchTerm] = useState(''); // entered houseworker username(not selected)
 
     const SelectedHandler = (username) =>{
-        setSelectedUsernam(username);
-        console.log("houseworeks", houseworkers);
-        console.log("ROOM INFO: ", roomInfo);
-        console.log("ROOM_ID: " + roomInfo.roomID + " SELECTED_USERNAME: " + username)    
+        setSelectedUsernam(username); 
     }
 
     const ChangeSearchInputHandler = (e, roomID) =>{
@@ -136,9 +133,6 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onDel
                 <button className='delete-room-btn' onClick={onDeleteRoomHandler} value={roomInfo.roomID}>Delete room</button>
             </div>
         </div>
-        {/* <div className='delete-container'>
-            <button className='delete-room-btn' onClick={onDeleteRoomHandler} value={roomInfo.roomID}>Delete room</button>
-        </div> */}
     </div>
     )
 }
