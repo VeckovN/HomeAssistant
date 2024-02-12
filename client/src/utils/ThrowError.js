@@ -1,12 +1,12 @@
 export const ThrowErorr = (error) =>{
     if(error.response){
-        console.log("HTTP RESPONSE ERROR: " , error.response)
+        console.error("HTTP RESPONSE ERROR: " , error.response)
         throw error;
         //in client err.response.data.error
     }
     else if(error.request){
         // Network error (no response received)
-        console.log("NETWORK ERROR: ", error.request);
+        console.error("NETWORK ERROR: ", error.request);
         throw new Error("Network error");
     }
     else {

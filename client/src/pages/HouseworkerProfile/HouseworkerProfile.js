@@ -50,14 +50,11 @@ const HouseworkerProfile = () =>{
         const {professions:not_owned_professions, profession_format } = getNotOwnedProfessions(houseworker_professions);
         const newHouseworker = {...houseworkerResult, professions:[...profession_format], not_owned_professions:[...not_owned_professions]}
 
-        console.log("HOUSEOWRKER DATA: " , newHouseworker)
-
         setHouseworkerData(newHouseworker);
         setLoading(false);
     }
 
     const onSubmitUpdate = async (submitData)=>{
-        console.log("SUBMITED VALUE: " , submitData)
         try{
             let newData = {};
             Object.keys(submitData).forEach(key =>{

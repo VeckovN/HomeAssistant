@@ -111,7 +111,7 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
             addProffesionRef.current.clearValue();
         }
         catch(err){
-            console.log("Error: " + err);
+            console.error("Error: " + err);
             toast.error("ERROR: You can't add the profession")
         }
     }
@@ -134,7 +134,7 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
             changeProfessionRef.current.clearValue();
         }
         catch(err){
-            console.log("Error: " + err);
+            console.error("Error: " + err);
             toast.error("ERROR: You can't delete the profeesion")
         }   
     }

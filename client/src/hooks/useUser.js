@@ -2,10 +2,7 @@ import {useState} from 'react'
 
 //This handlers are repated in differt components
 const useUser =(initialState)=>{
-
-    //alert("useUSER RENDER")
-    // console.log("useUSER RENDER");
-
+    
     const [data, setData] = useState(initialState);
     const [errors, setErrors] = useState({});
     
@@ -37,12 +34,10 @@ const useUser =(initialState)=>{
                 picture:file
             }
         ))
-        console.log(file.name);
     }
 
 
     const onChangeCity = (e) =>{
-        console.log("ONC HANGE CITY :  ", e );
         if(e !== null){
             let city = e.value;
             setData(prev =>(
@@ -60,7 +55,6 @@ const useUser =(initialState)=>{
                 }
             ))
         }
-        //console.log("CITY: " + data.city)
     }
 
     //update profession on houseowrker 
@@ -161,7 +155,6 @@ const useUser =(initialState)=>{
     }
 
     const onChangeInterest = (e) =>{
-        console.log("ON CHANGE INTEREST")
         let professionsArray;
         professionsArray = Array.isArray(e) ? e.map(p => p.value): [];        
         setData(prev =>(

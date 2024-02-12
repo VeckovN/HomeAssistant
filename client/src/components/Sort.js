@@ -19,8 +19,6 @@ const Sort = (prop) =>{
             })
             return 
         }
-        console.log("OPTION: " + opt);
-        console.log("SELECTED: " + selectedOption);
 
         //toggle effect
         if(selectedOption === opt)

@@ -66,7 +66,7 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
             })
         }   
         catch(err){
-            console.log(err);
+            console.error(err);
         }
     }
 
@@ -121,7 +121,7 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                 postCommentRef.current.value='';
                     
             }catch(err){
-                console.log(err);
+                console.error(err);
             }
         }
     }

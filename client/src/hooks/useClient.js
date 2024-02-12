@@ -10,8 +10,6 @@ import { toast } from 'react-toastify';
 import debounce from 'lodash/debounce';
 
 const useClient = (user) =>{
-    console.log("use Client");
-
     //fetched(houseworker) Data based on filtered and searched Data
     const [data, setData] = useState([]);
     const [showRecommended, setShowRecommended] = useState(false);
@@ -92,11 +90,8 @@ const useClient = (user) =>{
         }
         try{
             const params = new URLSearchParams(queryParams);
-            console.log("PARAMS: " + params);
-            console.log("URL: " + `http://localhost:5000/api/houseworker/filter?/${params}`);
-            
+            // console.log("URL: " + `http://localhost:5000/api/houseworker/filter?/${params}`);
             const houseworkers = await getHouseworkerByFilter(params);
-            console.log("HOUSEWORKERSSSSSSSSSS: " +  JSON.stringify(houseworkers))
             if(houseworkers.length >0){
                 //if is new houseworkers fetched then contcatenate it with older houseworkers
                 
@@ -109,8 +104,6 @@ const useClient = (user) =>{
 
 
                 if(pageNumberRef.current > 0){
-                    // alert("page");
-                    console.log("PREFNUYMB REF DATA: ", data);
                     setData(prev =>([
                         ...prev,
                         ...houseworkers
@@ -119,7 +112,6 @@ const useClient = (user) =>{
                 else{
                     if(user!== null && !showRecommended){
                         const recommendedData = await fetchRecommended(houseworkers);
-                        console.log("DATA RECOMMENDED: " + JSON.stringify(data));
                         setData([...recommendedData, ...houseworkers]);
                         setShowRecommended(true);
                     }
@@ -146,14 +138,13 @@ const useClient = (user) =>{
             
             setLoading(false);
         }catch(err){
-            console.log("ERR: " + err);
+            console.error("ERR: " + err);
         }   
     }
 
     const fetchRecommended = async(houseworkers) =>{
         try{
             const recommendedData = await getRecommended(user.username);
-            console.log("recommendedData ", recommendedData);
             return recommendedData;
         }
         catch(err){
@@ -171,7 +162,6 @@ const useClient = (user) =>{
     
     const searchDataHanlder = useCallback((searchDataObj) =>{
         //searchData is data from SearchAndSort(Child) component
-        console.log("SEARCH: " + JSON.stringify(searchDataObj));
 ; 
         //This will ensure that the old key is overide with new value and new key added to this object
         setSearchData(prev=>{
@@ -213,10 +203,7 @@ const useClient = (user) =>{
 
     //On every re-rendering this function will be differentand without using useCallback and Filter component will be re-rendered(unnecessary)
     const filterDataHandler = useCallback((filterData) =>{
-        // alert("FFFFF");
         //filteredData is passed data from Children Component (Filter)
-        console.log("FILTERS IN PARRANET" + JSON.stringify(filterData));
-        console.log("fiut", filterData);
         
         pageNumberRef.current = 0;
 

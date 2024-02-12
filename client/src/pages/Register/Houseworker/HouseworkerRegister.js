@@ -47,7 +47,7 @@ const HouseworkerRegister = () =>{
 
     const onSubmitHandler = async (data,event ) =>{
         event.preventDefault();
-        console.log("Form DATA: \n " + JSON.stringify(data))
+        // console.log("Form DATA: \n " + JSON.stringify(data))
 
         //check does profession working hours entered
         if(getValues('professions') && houseworkerProfessionsFields.length == 0){
@@ -87,7 +87,6 @@ const HouseworkerRegister = () =>{
 
     const onChangeImageHandler = (event) =>{
         avatarField.onChange(event.target.files[0]);
-        console.log("avatarField", avatarField);
     }
 
     const onRemoveAvatarHanlder = (e) =>{

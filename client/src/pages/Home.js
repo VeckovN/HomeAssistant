@@ -2,11 +2,6 @@ import ClientHome from './ClientHome.js';
 import HouseworkerHome from './HouseworkerHome.js';
 
 const Home = ({socket, user}) =>{
-    console.log("USERRRR", user);
-
-    if(user === null)
-        console.log("TESSSSSSSS");
-
     const isClient = user && user.type === 'Client' ? true : false;
    
     return (

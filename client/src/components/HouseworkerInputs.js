@@ -1,7 +1,6 @@
 import Select from 'react-select';
 
 const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, city_options, onChangeCityHandler}) =>{
-    console.log("HouseWDa: ", houseworkerData);
     return(
     <>
         <div className='profile-input-card'>

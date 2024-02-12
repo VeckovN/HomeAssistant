@@ -35,9 +35,9 @@ const useSocket = (user) =>{
         }   
         //userNotExxists (Not authorized)
         else{
-            console.log("HHHEEEEEE ELSEEEEEEEEEE");
+            // console.log("HHHEEEEEE ELSEEEEEEEEEE");
             if(socket !== null){
-                console.log("socket.disconnect();")
+                // console.log("socket.disconnect();")
                 socket.disconnect();
             }
             // console.log("setConnected(false);")

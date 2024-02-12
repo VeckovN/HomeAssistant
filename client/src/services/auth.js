@@ -9,7 +9,7 @@ export const loginService = async(user)=>{
         return response;
     }
     catch(err){
-        console.log(err);
+        console.error(err);
     }
 }
 
@@ -27,7 +27,7 @@ export const registerService = async(userFormData) =>{
         return response;
     }
     catch(err){
-        console.log(err);
+        console.error(err);
     }
 }
 

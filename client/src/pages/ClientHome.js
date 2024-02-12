@@ -12,7 +12,7 @@ import '../sass/pages/_clientHome.scss';
 
 const ClientHome = ({socket}) =>{
     //LIMIT IF IS GUEST 
-    console.log("SOCKET " + socket);
+    // console.log("SOCKET " + socket);
     const {user} = useSelector((state) => state.auth);
     const {data, loading, searchDataHanlder, filterDataHandler } = useClient(user);
     const [houseworkerData, setHouseworkerData] = useState([]); //List of HouseworkerCard
@@ -44,7 +44,6 @@ const ClientHome = ({socket}) =>{
         }
     },[buttonState.delayedHide])//when is window/scrollY triggered
 
-    console.log("DATA: " , data);
     //THIS CAUSED RE_RENDERING ON EVERY DATA CHANGE ITS CHANGE  setHouseworkerData(houseworkerList); THAT AGAIN CAUSE RE_REDNERING
     useEffect(()=>{
         let houseworkerList;

@@ -62,8 +62,7 @@ export const login = createAsyncThunk(
     'auth/login',
     async(user, thunkAPI) =>{
         try{
-            const response = await axios.post('http://localhost:5000/api/login', user);
-            console.log("RESESEPEPE: " + JSON.stringify(response))            
+            const response = await axios.post('http://localhost:5000/api/login', user);       
             if(response.data){
                 if(!response.data.error){
                     Cookie.set('user', JSON.stringify(response.data))
@@ -75,7 +74,6 @@ export const login = createAsyncThunk(
             }
         }
         catch(err){
-            console.log("ERRRRRRRR: " + JSON.stringify(err.response));
             const message = (err.response && err.response.data.error) || err.message || err
             //err.response.data.error
             //to get "error" prop - return res.status(401).json({error: "Incorrect username or password"});

@@ -47,7 +47,7 @@ const ClientRegister = () =>{
     // }
 
     const onSubmitHandler = (data) =>{
-        console.log("Form DATA: \n " + JSON.stringify(data) )
+        // console.log("Form DATA: \n " + JSON.stringify(data) )
 
         const formData = new FormData();
         for(const key in data){

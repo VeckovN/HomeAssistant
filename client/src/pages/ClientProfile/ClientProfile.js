@@ -23,8 +23,7 @@ const ClientProfile = () =>{
     const [clientData, setClientData] = useState({})
     const [loading, setLoading] = useState(true);
 
-    useEffect( ()=>{
-        console.log("On Initial render")
+    useEffect(()=>{
         fetchData()
     }, [])
 
@@ -39,7 +38,6 @@ const ClientProfile = () =>{
 
     const fetchData = async() =>{
         const clientData = await getUserData();
-        console.log("DATA : "  + JSON.stringify(clientData))
         setClientData(clientData);
         setLoading(false);
     }

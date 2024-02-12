@@ -100,7 +100,6 @@ export const getRating = async(username) =>{
     try{
         const result = await axios.get(BASE_URL + `houseworker/rating/${username}`)
         const ratingValue = result.data;
-        // console.log("RATIIIIING :" + ratingValue);
         return ratingValue;
     }
     catch(err){
@@ -174,10 +173,6 @@ export const getConversationCount = async(userRedisID) =>{
     try{
         const result = await axios.get( BASE_URL + `chat/conversationCount/${userRedisID}`)
         const count = result.data;
-
-        console.log("COUNTTTTT :" +JSON.stringify(result));
-        console.log("COUNTTTTT DATA :" +JSON.stringify(result.data));
-        console.log("YYYYYYY : " + typeof(count))
         return count;
     }
     catch(err){
@@ -202,7 +197,6 @@ export const getAllProfessions = async() =>{
     try{
         const result = await axios.get(BASE_URL +`houseworker/professions/all`);
         const professionsResult = result.data;
-        console.log("RESLSLLSLSL: "  + professionsResult)
         return professionsResult;
     }
     catch(err){

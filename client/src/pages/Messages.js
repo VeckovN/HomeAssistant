@@ -50,7 +50,7 @@ const Messages = ({socket,connected}) =>{
 
         const fetchAllRooms = ( async () =>{   
             const data = await getUserRooms(user.username); //roomID, users{}
-            console.log('DATA ROOMS : \n' + JSON.stringify(data));
+            // console.log('DATA ROOMS : \n' + JSON.stringify(data));
             dispatch({type:"SET_ROOMS", data:data}) 
 
             //When user has conversations
@@ -75,7 +75,6 @@ const Messages = ({socket,connected}) =>{
         });
 
         const getAllHouseworkers = async() =>{
-            console.log("getAllhouseworekres")
             const houseworkerResult = await getHouseworkers();
             dispatch({type:"SET_HOUSEWORKERS", data:houseworkerResult});
         }
@@ -185,9 +184,7 @@ const Messages = ({socket,connected}) =>{
             emitRoomJoin(socket, newRoomID);
         });
 
-        const onSendMessageHandler = ({message, fromRoomID}) =>{    
-            console.log("FORM ROOM ID: " + fromRoomID + "FROM: " + user.userID)
-    
+        const onSendMessageHandler = ({message, fromRoomID}) =>{        
             if(message != ''){
                 // messageRef.current.value = ''
                 //emit io.socket event for sending mesasge

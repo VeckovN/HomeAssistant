@@ -29,7 +29,7 @@ const HouseworkerHome = () =>{
             setConversationCount(countConv);
             setHomeInfo(homeInfo);
         }catch(err){
-            console.log("Error Durgin fetching PromisAll data")
+            console.error("Error during fetching PromisAll data")
         }finally{ //after all funcs executions
             setLoading(false);
         }
@@ -42,7 +42,6 @@ const HouseworkerHome = () =>{
     const logoutHandler = () =>{
         //emit disconnected socket
         dispatch(logout());
-        setShowMenu(false);
     }
 
     return (
