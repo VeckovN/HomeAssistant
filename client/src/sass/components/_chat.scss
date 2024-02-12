@@ -29,7 +29,7 @@
         gap:.5em;
         margin: 0 0 0 20px;
         text-transform: uppercase;
-        font-family: $root-font-family-2;
+        font-family: $font-family-2;
         font-weight: 600;
         font-size: $fs5;
         color:$white;
@@ -69,7 +69,7 @@
         display:flex;
         align-items: center;
         margin-bottom: 8px;
-        font-family: $root-font-family-2;
+        font-family: $font-family-2;
         font-weight: 500;
         font-size: .9em;
 
@@ -93,7 +93,7 @@
             &-hover-username{
                 position: absolute;
                 top:-1em;
-                font-family: $root-font-family-3;
+                font-family: $font-family-3;
                 color:$white;
                 visibility: hidden;
             }
@@ -139,7 +139,7 @@
         color:white;
         font-size:$fs3;
         font-weight: 600;
-        font-family: $root-font-family-1;
+        font-family: $font-family-1;
         
         text-align: center;       
     }
@@ -184,7 +184,7 @@
         margin-left: 20px;
         padding: 10px;
 
-        font-family: $root-font-family-2;
+        font-family: $font-family-2;
         border:none;
         border-radius: .5em;
 

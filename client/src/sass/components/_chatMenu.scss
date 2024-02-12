@@ -11,7 +11,7 @@
     height: 10em;
 
     margin:.5em 0;
-    font-family: $root-font-family-3;
+    font-family: $font-family-3;
 
     .menu-option{
         display: flex;
@@ -28,7 +28,6 @@
         border-radius:$border-radisu-xsm;
     
         .menu-option-title{
-            font-family: $root-font-family-3;
             font-size: $fs3;
             font-weight: 600;
             text-align: center;
@@ -54,7 +53,7 @@
                 width: 100%;
                 border:none;
 
-                font-family: $root-font-family-2;
+                font-family: $font-family-2;
                 font-weight: 700;
 
                 &::placeholder{

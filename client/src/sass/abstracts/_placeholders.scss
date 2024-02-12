@@ -23,7 +23,7 @@
 
 //Header links
 %nav-link-styles{
-    font-family: $root-font-family-2;
+    font-family: $font-family-2;
     margin:.3rem;
     color:$white;
     letter-spacing: .08rem;
@@ -55,7 +55,7 @@
     margin:0rem 0rem 0rem 0rem;
     // padding:8em 0em 5em 0em;
     
-    font-family: $root-font-family-2;
+    font-family: $font-family-2;
     color:#ffff;
 
     z-index: 10;
@@ -68,7 +68,7 @@
     padding:.6em 1.4em;
 
     background-color: $black-3;
-    font-family: $root-font-family-1;
+    font-family: $font-family-1;
 
     border-bottom: 3px solid white;
     border-radius: .5em;
@@ -155,7 +155,7 @@
 
             border:none;
             border-radius: $border-radisu-xsm;
-            font-family: $root-font-family-3;
+            font-family: $font-family-3;
             background-color: $white;
             cursor: pointer;
 
@@ -175,7 +175,7 @@
 
     border:none;
     border-radius: $border-radisu-xsm;
-    font-family: $root-font-family-3;
+    font-family: $font-family-3;
     font-weight: 500;
     background-color: $black-3;
     color:$white;
@@ -276,7 +276,7 @@
         width: 8em;
         height: 2em;
 
-        font-family: $root-font-family-2;
+        font-family: $font-family-2;
 
         border:none;
         border-radius:.5em;

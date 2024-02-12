@@ -1,9 +1,13 @@
-@use '../abstracts//fonts' as *;
+@use '../abstracts/fonts' as *;
 @use './typography' as *;
 
 #root{
     height: 100%;
     width: 100%;
+    // background-color: red;
+
+    font-family:$font-family-1;
+    font-size:$text-base-size;
 
   }
 
@@ -11,7 +15,9 @@
   height: 100%;
   width: 100%;
 
-  font-family:$root-font-family-1;
+  // background-color: red;
+
+  font-family:$font-family-1;
   font-size:$text-base-size;
 }
 

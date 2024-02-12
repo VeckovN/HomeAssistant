@@ -17,7 +17,7 @@
     
 
     form{
-        font-family: $root-font-family-2;
+        font-family: $font-family-2;
         width: 60%;
         margin-top:2em;
         padding:1.4rem 1rem;
@@ -36,8 +36,7 @@
 
         .form-title{
             font-size:$fs1;
-            font-family: $root-font-family-5;
-            letter-spacing: .03em;
+            font-family: $font-family-1;
             font-weight: 700;
             padding-bottom: 1rem;        
 
@@ -112,7 +111,7 @@
             @include flex-with-direction-center($direction:column);
 
             .gender-option{
-                font-family: $root-font-family-2;
+                font-family: $font-family-2;
                 width: 9.2em;
                 height: 1.7rem;
                 text-align: center;
