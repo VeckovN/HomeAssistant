@@ -14,8 +14,7 @@ const ClientHome = ({socket}) =>{
     //LIMIT IF IS GUEST 
     console.log("SOCKET " + socket);
     const {user} = useSelector((state) => state.auth);
-    const {data, loading, setLoading, searchDataHanlder, filterDataHandler } = useClient(user);
-    // const {data, searchDataHanlder, filterDataHandler } = useClient(user);
+    const {data, loading, searchDataHanlder, filterDataHandler } = useClient(user);
     const [houseworkerData, setHouseworkerData] = useState([]); //List of HouseworkerCard
     const [buttonState, setButtonState] = useState({showButton:false, delayedHide:false});
 
@@ -25,8 +24,8 @@ const ClientHome = ({socket}) =>{
             top: 0,
             behavior: 'smooth'
           });
-        
-        setButtonState()
+
+        setButtonState();
     }
 
     //Without useTransition 
@@ -111,7 +110,6 @@ const ClientHome = ({socket}) =>{
                         </>
                         }   
                     </div>   
-                        
                 </div>
 
                 {buttonState.showButton && 
