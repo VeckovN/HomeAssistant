@@ -1,4 +1,4 @@
-import React, {memo, useEffect} from 'react';
+import React from 'react';
 import {useSelector} from 'react-redux'
 import axios from 'axios';
 import HouseworkerCardContent from './HouseworkerCardContent.js';

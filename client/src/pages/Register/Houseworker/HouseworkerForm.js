@@ -1,4 +1,3 @@
-import Select from 'react-select';
 import FormInput from '../../../utils/FormInput.js';
 import FormSelect from '../../../utils/FormSelect.js';
 

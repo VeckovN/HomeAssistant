@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import Cookie from 'js-cookie';
-import { Navigate } from 'react-router-dom';
 // /https://stackoverflow.com/questions/43002444/make-axios-send-cookies-in-its-requests-automatically
 // TO SEND COOKIE force credentials to every Axios requests
 axios.defaults.withCredentials = true

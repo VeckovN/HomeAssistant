@@ -122,15 +122,16 @@ const HouseworkerCardContent = ({
                             <div className='rating-box'>
                                 <div className='div-text-rating'>
                                     <div>{isClient ? 
-                                        <Rating 
-                                            name="half-rating-read" 
-                                            size="small"
-                                            defaultValue={parseFloat(houseworkerRating)} 
-                                            emptyIcon={<StarIcon style={{ color: 'grey' }} fontSize="inherit" />}
-                                            precision={0.5} 
-                                            readOnly 
-                                        />
-                                        // <div>My rating: {houseworkerRating}</div>
+                                        //NOT OPTIMIZED FOR REDERING MORE COMPONENTS
+                                        // <Rating 
+                                        //     name="half-rating-read" 
+                                        //     size="small"
+                                        //     defaultValue={parseFloat(houseworkerRating)} 
+                                        //     emptyIcon={<StarIcon style={{ color: 'grey' }} fontSize="inherit" />}
+                                        //     precision={0.5} 
+                                        //     readOnly 
+                                        // />
+                                        <div>My rating: {houseworkerRating}</div>
                                         : <Link to='/login' className='link'>Log in</Link>}
                                     </div>
                                 </div>

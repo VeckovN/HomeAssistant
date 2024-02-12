@@ -1,5 +1,4 @@
-import { update } from 'lodash';
-import {useState, useEffect} from 'react'
+import {useState} from 'react'
 
 //This handlers are repated in differt components
 const useUser =(initialState)=>{

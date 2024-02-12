@@ -1,6 +1,4 @@
-// import ClientHome from "./Client/Home/ClientHome.js";
 import ClientHome from './ClientHome.js';
-// import HouseworkerHome from './Houseworker/HouseworkerHome';
 import HouseworkerHome from './HouseworkerHome.js';
 
 const Home = ({socket, user}) =>{

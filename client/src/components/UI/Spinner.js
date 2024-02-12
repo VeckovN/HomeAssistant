@@ -1,6 +1,6 @@
-import ClockLoader from 'react-spinners/ClockLoader'
+// import ClockLoader from 'react-spinners/ClockLoader'
+// import HashLoader from 'react-spinners/HashLoader'
 import PuffLoader from 'react-spinners/PuffLoader'
-import HashLoader from 'react-spinners/HashLoader'
 
 const override = {
     display: "block",
