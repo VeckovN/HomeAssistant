@@ -1,16 +1,15 @@
+import {lazy, Suspense} from 'react';
 
-
-//*TODO - LAZY LOAD(only when is needed, used)
-import CleaningServicesOutlinedIcon from '@mui/icons-material/CleaningServicesOutlined';
-import ChildCareOutlinedIcon from '@mui/icons-material/ChildCareOutlined';
-import CountertopsOutlinedIcon from '@mui/icons-material/CountertopsOutlined';
-import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
-import LocalDrinkOutlinedIcon from '@mui/icons-material/LocalDrinkOutlined';
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
-import ElderlyOutlinedIcon from '@mui/icons-material/ElderlyOutlined';
-import PetsOutlinedIcon from '@mui/icons-material/PetsOutlined';
-import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+const CleaningServicesOutlinedIcon = lazy(() => import ('@mui/icons-material/CleaningServicesOutlined'));
+const ChildCareOutlinedIcon = lazy(() => import ('@mui/icons-material/ChildCareOutlined'));
+const CountertopsOutlinedIcon = lazy(() => import ('@mui/icons-material/CountertopsOutlined'));
+const LocalFloristIcon = lazy(() => import ('@mui/icons-material/LocalFlorist'));
+const LocalDrinkOutlinedIcon = lazy(() => import ('@mui/icons-material/LocalDrinkOutlined'));
+const DirectionsCarIcon = lazy(() => import ('@mui/icons-material/DirectionsCar'));
+const ElderlyOutlinedIcon = lazy(() => import ('@mui/icons-material/ElderlyOutlined'));
+const PetsOutlinedIcon = lazy(() => import ('@mui/icons-material/PetsOutlined'));
+const HealthAndSafetyIcon = lazy(() => import ('@mui/icons-material/HealthAndSafety'));
+const ShoppingCartIcon = lazy(() => import ('@mui/icons-material/ShoppingCart'));
 
 import '../sass/components/_houseworkerProfessionItem.scss';
 
@@ -36,7 +35,9 @@ const HouseworkerProfessionItem = ({professionTitle}) =>{
     return(
         <div className='profile-profession-card'>
             <div className="profile-profession-card-title">
-                <div className='icon'>{profession.icon}</div>
+                <Suspense fallback={<div>Loading...</div>}>
+                    <div className='icon'>{profession.icon}</div>
+                </Suspense>
                 <div className='profession-name'>{profession.title}</div>
             </div>
             <div className='profile-profession-card-desc'>

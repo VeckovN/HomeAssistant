@@ -1,8 +1,12 @@
+import { lazy, Suspense } from 'react';
 import { Link } from "react-router-dom";
-import HouseworkerCommentModal from "./HouseworkerCommentModal.js";
-import Rating from '@mui/material/Rating';
-import StarIcon from '@mui/icons-material/Star';
+// import Rating from '@mui/material/Rating';
+// import StarIcon from '@mui/icons-material/Star';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
+
+const HouseworkerCommentModal = lazy(
+    () => import('./HouseworkerCommentModal.js')
+);
 
 import '../../sass/components/_houseworkerCard.scss';
 
@@ -30,7 +34,9 @@ const HouseworkerCardContent = ({
 }) =>{
     return (
         <>
+            {/* Optimization (Lazy) : HouseworkerCommentModal will be render only when is button clicked */}
             {commentClick.current &&
+            <Suspense fallback={<div>Loading ...</div>}>
                 <HouseworkerCommentModal
                     comments ={comments}
                     clientUsername={clientUsername}
@@ -39,6 +45,7 @@ const HouseworkerCardContent = ({
                     onCommentDelete={onCommentDelete}
                     onCloseComment = {onCloseComment}
                 />
+            </Suspense>
             }
 
             <div className="houseworker-card">
