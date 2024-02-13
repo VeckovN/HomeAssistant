@@ -4,7 +4,6 @@ import CommentItem from "../../components/UI/CommentItem";
 import '../../sass/components/_houseworkerCommentModal.scss';
 
 const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, postCommentRef, onCloseComment, onCommentDelete}) =>{
-
     const endMessageRef = useRef(null);
     
     const scrollToBottom = () =>{
@@ -18,7 +17,6 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
     const commentHeaderContext =
         'Comments';
 
-    //Comment Modal context(use CommentItem)
     const commentBodyContext = 
         <>
             <div className='comment-container'>
@@ -56,10 +54,6 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
             </div>
         </>
 
-    //Comments
-    const commentFooterContext = 
-        <></>
-    
     return(
         <Modal
             HeaderContext = {commentHeaderContext}
