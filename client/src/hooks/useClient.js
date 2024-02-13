@@ -1,8 +1,3 @@
-//Hook that manage filtered and searched data(Houseworkers) on client home page
-
-// TODO: -add pagination(Load first 5 on start then load more 5 on every bottom scroll)
-// FIXME: - City filter (probably others) doesn't work when is recommended button clicked(recommended showned)
-
 import {useState, useEffect, useRef, useCallback} from 'react';
 import {getHouseworkerByFilter} from '../services/houseworker.js'
 import {getRecommended} from '../services/client.js'
@@ -22,8 +17,6 @@ const useClient = (user) =>{
 
     const pageNumberRef = useRef(0);
     
-
-
     //this will ensure that the scroll event is not triggered multiple times in quick succession,
     //and thus help in fetching data only once on each scroll event.
     const debouncedHandleScroll = debounce(() =>{   
@@ -58,14 +51,7 @@ const useClient = (user) =>{
     },[searchedData, filteredData, user])
     //user because on logout(user change) houseworkers should be fetch again (recommended users removed)
 
-
-
-
     const fetchData = async(pageNubmer)=>{
-        //alert('fetchData = async(pageNubmer)');
-        //Merge a filer and sort option to the queryParams OBJ
-        //let queryParams = {};
-    
         //pageNumber on initialization
         let queryParams = {pageNumber:pageNubmer}
         const savedFilteredData = JSON.parse(localStorage.getItem('filteredData'));
@@ -94,15 +80,6 @@ const useClient = (user) =>{
             const houseworkers = await getHouseworkerByFilter(params);
             if(houseworkers.length >0){
                 //if is new houseworkers fetched then contcatenate it with older houseworkers
-                
-                //if is recommended user showned - exclude it from other users
-                // if(showRecommended){
-                //     const updatedData = excludeRecommendedFromUserData(data, recommended);
-                //     setData(updatedData);
-                //     alert("setData(updatedData);");
-                // }
-
-
                 if(pageNumberRef.current > 0){
                     setData(prev =>([
                         ...prev,
@@ -116,7 +93,6 @@ const useClient = (user) =>{
                         setShowRecommended(true);
                     }
                     else{
-                        // alert("Not user setData(houseworker)")
                         setData(houseworkers);
                     }
                     
@@ -125,14 +101,12 @@ const useClient = (user) =>{
             else{
                 //if houseworekrs exist on page then delete scroll event(prevent to go on next page)
                 if(pageNumberRef.current > 0){
-                    alert("pageNumberRef.current > 0")
                     toast.info("No more houseworkers",{
                         className:"toast-contact-message"
                     })
                 }
                 else{ //or on first page if there ins't houseworkers
                     setData(null)
-                    // alert("setData(null)")
                 }
             }   
             
@@ -152,16 +126,9 @@ const useClient = (user) =>{
         }
     }
     
-    const excludeRecommendedFromUserData = (user_data, recommended_data) =>{
-        const updatedData = user_data.filter(user =>{
-            //return only different users
-            return !recommended_data.some(prop => prop.username === user.username)
-        })
-        return updatedData
-    }
-    
     const searchDataHanlder = useCallback((searchDataObj) =>{
         //searchData is data from SearchAndSort(Child) component
+        console.log("SEARCH DATA HANDLER");
 ; 
         //This will ensure that the old key is overide with new value and new key added to this object
         setSearchData(prev=>{
@@ -170,12 +137,10 @@ const useClient = (user) =>{
             const newKey = Object.keys(searchDataObj);
             const newValue = searchDataObj[newKey];
 
-            //existed key in object
             const currentKeys = Object.keys(search_obj);
 
             //Ensure if we click on same Sort (example AgeUp) then replace this sort with default "ASC"
             if(currentKeys.includes('sort')){
- 
                 //(reset)show again initial houseworkers (without filters)
                 if(search_obj['sort'] == newValue){
                     search_obj['sort'] = 'ASC';
@@ -189,7 +154,6 @@ const useClient = (user) =>{
                 if(search_obj['name']){
                     setShowRecommended(false);
                     delete search_obj.name;
-                    // return search_obj;
                 } 
             }
 
@@ -199,18 +163,18 @@ const useClient = (user) =>{
         })
         pageNumberRef.current = 0;
 
-    },[]);
+    },[searchedData]);
+    // },[]);
 
     //On every re-rendering this function will be differentand without using useCallback and Filter component will be re-rendered(unnecessary)
     const filterDataHandler = useCallback((filterData) =>{
         //filteredData is passed data from Children Component (Filter)
-        
-        pageNumberRef.current = 0;
+        console.log("FILTER DATA HANDLER");
 
-        //(show default)set recommended if is filter button clicked without filter options
+        pageNumberRef.current = 0;
         setFilterData(filterData);        
         localStorage.setItem('filteredData', JSON.stringify(filterData));
-    },[]);
+    },[filteredData]);
 
     return {data, loading, setLoading, pageNumberRef, searchDataHanlder, filterDataHandler}
     // return {data, pageNumberRef, searchDataHanlder, filterDataHandler}
