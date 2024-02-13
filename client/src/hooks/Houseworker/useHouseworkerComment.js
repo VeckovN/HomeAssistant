@@ -5,9 +5,7 @@ import {emitCommentNotification} from '../../sockets/socketEmit.js'
 import { toast } from 'react-toastify';
 
 const useHouseworkerComment = (socket, isClient, client_username) =>{
-
-    console.log("useHouseworkerComment")
-
+    
     const [comments, setComments] = useState(null);
     const postCommentRef = useRef();
     const commentClick = useRef(false);
@@ -19,9 +17,6 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
     })
 
     useEffect(()=>{
-        console.log("FETCH");
-        //console.log("REFF CURRENT " + commentClick.current + " US: " + houseworker.username);
-        // if(commentClick.current == true || newComment == true) //if is clicked or newComment added
         if(commentClick.current == true) //if is clicked or newComment added
             getHouseworkerComments(houseworker.username)
     },[houseworker.username])
