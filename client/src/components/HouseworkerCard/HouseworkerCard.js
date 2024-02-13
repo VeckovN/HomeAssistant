@@ -6,9 +6,7 @@ import useHouseworkerComment from '../../hooks/Houseworker/useHouseworkerComment
 import useHouseworkerRating from '../../hooks/Houseworker/useHouseworkerRating.js';
 import useHouseworkerContact from '../../hooks/Houseworker/useHouseworkerContact.js';
 
-axios.defaults.withCredentials = true
-
-const LazyHouseworkerCardContent = React.lazy(() => import('./HouseworkerCardContent'));
+axios.defaults.withCredentials = true;
 
 //@Todo //Custom Hook for useFetch
 const HouseworkersCard = (props) =>{
@@ -78,36 +76,6 @@ const HouseworkersCard = (props) =>{
             </>
         )
     }
-
-    // return (
-    //     <>
-    //             <HouseworkerCardContent 
-    //             // <LazyHouseworkerCardContent
-    //                 houseworkerUsername ={houseworkerUsername}
-    //                 comments ={comments}
-    //                 onCommentSubmit ={onCommentSubmit}
-    //                 postCommentRef ={postCommentRef}
-    //                 onCommentDelete={onCommentDelete}
-    //                 onCloseComment = {onCloseComment}
-    //                 houseworkerProps={props}
-    //                 isClient={isClient}
-    //                 clientUsername={clientUsername}
-    //                 houseworkerRating={houseworkerRating}
-    //                 houseworkerProfessions={houseworkerProfessions}
-    //                 showRateInput={showRateInput}
-    //                 rate={rate}
-    //                 onChangeRate={onChangeRate}
-    //                 onCloseRateHandler={onCloseRateHandler}
-    //                 onRateHandler={onRateHandler}
-    //                 showRateInputCssClass={showRateInputCssClass}
-    //                 onCommentHandler={onCommentHandler}
-    //                 contactMessageRef={contactMessageRef}
-    //                 onContactHandler={onContactHandler}
-    //                 commentClick={commentClick}
-
-    //             />
-    //     </>
-    // )
 }
 
 //optimization
