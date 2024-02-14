@@ -54,6 +54,6 @@ router.get('/cities',  getCities);
 router.get('/:username', checkHouseworker, getHouseworkerByUsername);
 router.post('/professions/add', checkHouseworker, addProfession);
 router.get('/home/:username', isLogged, getHomeInfo);
-router.get('/professionsandrating/:username', checkClient, getHouseworkerProfessionsAndRating)
+router.get('/professionsandrating/:username', getHouseworkerProfessionsAndRating)
 
 module.exports = router;
