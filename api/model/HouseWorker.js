@@ -1,7 +1,4 @@
-const bcrypt = require('bcrypt');
-const { address } = require('ip');
-const { Session } = require('neo4j-driver');
-const {session,driver} = require('../db/neo4j');
+const {driver} = require('../db/neo4j');
 const { set ,get, expire} = require('../db/redis');
 
 //MOST IMPORTANT THING WIHT REACT(AWAIT/ASYNC)-ASYNC CALL
@@ -27,26 +24,7 @@ const findByUsername = async (username)=>{
         session.close();
         return client;
     }
-    
 }
-
-// const getHouseworkerUsername = async ()=>{
-//     const session = driver.session();
-//     const result = await session.run(
-//         'MATCH (n:User {username:$name})-[:IS_HOUSEWORKER]->() RETURN h.username',
-//         {name:username})
-//     if(result.records.length == 0){
-//         session.close();
-//         return null
-//     }
-//     else{
-//         const singleRecord = result.records[0];
-//         const node = singleRecord.get(0);
-//         const client = node.properties;
-//         session.close();
-//         return client;
-//     }
-// }
 
 const getInfo = async(username)=>{
     const session = driver.session();
@@ -69,49 +47,36 @@ const getInfo = async(username)=>{
 
     const {password, ...houseworkerInfo} = userProp;
 
-    //props from Houseworker Node
     houseworkerInfo.address = houseworkerProp.address;
     houseworkerInfo.phone_number = houseworkerProp.phone_number;
     houseworkerInfo.description = houseworkerProp.description;
     
-    //Gender and city
     houseworkerInfo.gender = houseworkerGender;
     houseworkerInfo.city = houseworkerCity;
-
-    console.log("HOUSEWORRK PROP " + JSON.stringify(houseworkerProp));
-    console.log("HOUSEWORKER INFO " + JSON.stringify(houseworkerInfo));
 
     session.close();
     return houseworkerInfo;
 }
 
 const findAll = async ()=>{
-    //more than one is expected
     const session = driver.session();
     const result = await session.run(
         'Match(n:User)-[:IS_HOUSEWORKER]->() return n'
     )
     const clients = result.records.map(el=>{
-        //return each clients propteries as object
         return el.get(0).properties;
     })
     session.close();
     return clients;
 }
 
-
 const checkFilterHouseworkerInCache = async (filters)=>{
-
-    //filter query =?
-
     const filter = JSON.stringify(filters);
     
     console.log("FILTERS: " + filter);
     //fillter will be key in REDIS DB
-
     const data = await get(filter); //this is clasic string -> that is ok structure for this
     //becasue we store houseworkers as JSON()
-    console.log("DATA: " + data);
 
     if(data){
         //cache hit
@@ -122,7 +87,6 @@ const checkFilterHouseworkerInCache = async (filters)=>{
         //no houseworker with filters in DB
         return null;
     }
-    //houseworker list will be Value in RedisDb
 }
 
 //FILTER
@@ -323,7 +287,6 @@ const findAllWithFilters = async(filters)=>{
             const userNode = el.get(0).properties;
             const housworkerNode = el.get(1).properties;
             userInfo ={...userNode, ...housworkerNode}
-            //gotted id{"low":0,"high":0} it MUST parse to INT
             userInfo.city = el.get(2);
             userInfo.gender =el.get(3); 
 
@@ -341,13 +304,9 @@ const findAllWithFilters = async(filters)=>{
         console.log("\n CATCH EXISSSSSSST \n");
         return catchData;
     }
-
 }
 
-
 const findByUsernameAndDelete = async (username)=>{
-    //User -[:IS_CLIENT]->Client
-    //to delete a node it is necessery to DELTE THE RELATIONSHIP FIRST
     const session = driver.session();
     await session.run(
         `   MATCH (n:User {username:$name})-[r:IS_HOUSEWORKER]->(h)
@@ -360,7 +319,6 @@ const findByUsernameAndDelete = async (username)=>{
         {name:username}
     )
 
-    //all others client
     session.close();
     return await findAll();
 }
@@ -387,7 +345,6 @@ const getAge = async(username)=>{
     return result.records[0].get(0)
 }
 
-//all Cities of Houseworkers
 const findCities = async()=>{
     const session = driver.session();
     const result = await session.run(`
@@ -404,12 +361,6 @@ const findCities = async()=>{
     return cities;
 }
 
-
-//TRY TO TAKE AVG RATING  LIKE THIS
-// OPTIONAL MATCH (m)<-[r:RATED]-()
-// RETURN professionCount, commentCount, AVG(r.rating) AS avgRating`,
-
-//all rates
 const getRatings = async(username)=>{
     const session = driver.session();
     const result = await session.run(`
@@ -417,13 +368,7 @@ const getRatings = async(username)=>{
         MATCH(m)<-[r:RATED]-() return r.rating`,
         {houseworker:username}
     )
-    //return array of propertie rating(return r)
-    // const ratings = result.records.map(rec =>{
-    //     return rec.get(0).properties.ratings
-    // })
 
-    //return r.rating
-    //get(0)takes first returned element (r is first and last in this query) , 
     const ratings = result.records.map(rec =>{
         return rec.get(0);
     })
@@ -434,24 +379,15 @@ const getRatings = async(username)=>{
         session.close();
         return parseInt(0); //strict Int value (not Boolean)
     }
-    //average rating
+
     if(ratings.length >=2){
         avgSum = ratings.reduce((rat1, rat2) => parseInt(rat1) + parseInt(rat2));  //0 start acc
         avgRating = avgSum / ratings.length;
     }
     else{
         session.close();
-        // idk why return object {"low": 5,"high": 0} instead the value 5
-        //and then prase it to INT
         return parseInt(ratings)
-
     }
-        
-
-    console.log("RATINGS: " + ratings);
-    console.log("TYPEOF :" + JSON.stringify(ratings));
-    console.log("TYPEOF :" + JSON.stringify(avgRating))
-    console.log("AVG", avgRating);
 
     session.close();
     return avgRating;
@@ -479,9 +415,6 @@ const getComments = async(username)=>{
     session.close();
 
     return comments;
-    //Example - 2 comments
-    //records[0] records[1]
-    //get(0)c, get(1)t NODE For each Records
 }
 
 const getCommentsCount = async(username) =>{
@@ -499,26 +432,6 @@ const getCommentsCount = async(username) =>{
     session.close();
     return parseInt(commentsCount);
 }
-
-const getProfessions_reqSession = async ()=>{
-    //Get Professions with working Hours
-    const session = driver.session();
-    const ourUsername ="Sara";
-    const result = await session.run(`
-        MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(m)
-        MATCH(m)-[r:OFFERS]->(p)
-        return p.title,r.working_hour`,
-        {houseworker:ourUsername}
-    )
-    const professions = result.records.map(rec =>{
-        //title ='Dadilja" npr (rec.get(0) is WHOLE NODE and has the properties, while rec.get(1) ->r.working_hour is returned property)
-        return {profession:rec.get(0) , working_hour:rec.get(1)}
-    })
-    session.close();
-    return professions;
-}
-
-//Create Profession
 
 
 const getProfessions = async (username)=>{
@@ -556,7 +469,6 @@ const getAllProffesions = async() =>{
 }
  
 const addProfession = async(username,profession, working_hour)=>{
-    //const ourUsername ="Sara";
     //MERGE INSTEAD CREATE(m)-[r:OFFERS]->(p)
     //PREVENT TO CREATE MULTIPLE TIMES SAME 'OFFER' RELATIONSHIP
     //(If there is the Offers relationship it will be returned not created )
@@ -571,12 +483,7 @@ const addProfession = async(username,profession, working_hour)=>{
         RETURN p.title, p.working_hour`,
     {houseworker:username, profession:profession, hour:working_hour}
     )
-
-    //title of added profession
-    // return result.records[0].get(0).properties.title;
-    //or RETURN p.title
     session.close();
-    // return {profession:records[0].get(0), working_hour:records[0].get(1)}
 }
 const deleteProfession = async(username,profession)=>{
     const session = driver.session();
@@ -611,9 +518,6 @@ const updateWorkingHour = async(username, profession, working_hour)=>{
 
     session.close()
     return {profession:result.records[0].get(0) , working_hour:result.records[0].get(1)}
-
-    //title of added profession
-    // return result.records[0].get(0).properties.title;
 }
 
 
@@ -705,15 +609,6 @@ const create = async(houseworkerObject)=>{
 }
 
 const update = async(username, newUserValue, newHouseworkerValue)=>{
-
-    //take only properties of User Node
-    console.log("newUserValue", newUserValue);
-    console.log("newHouseworkerValue", newHouseworkerValue);
-    
-
-    //other properties for HouseworkerNode and RelationSHips(like city and professions)
-
-    //Update UserNode 
     const session = driver.session(); 
     const result = await session.run(`
         MATCH (n:User { username: $houseworker})
@@ -784,15 +679,36 @@ const getHomeInfo = async(username) =>{
 
     session.close();
 
-    console.log("REZZ ", result.records[0]);
-
     const professions = result.records[0].get(0);
     const commentCount = parseInt(result.records[0].get(1));
     const avgRating = parseInt(result.records[0].get(2));
 
-    console.log("Professions: " , professions);
-
     return {professions, commentCount, avgRating};
+}
+
+
+const getProfessionsAndRating = async(username) =>{
+    const session = driver.session();
+    //OPTIONAL MATCH because not all houseworkers may have comments, 
+    //and we want to count them if they exist.
+    const result = await session.run(`
+        MATCH (n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(h)
+        MATCH (h)-[o:OFFERS]->(p:Profession)
+        OPTIONAL MATCH (h)<-[r:RATED]-()
+        WITH p.title AS title, o.working_hour AS workingHour, AVG(r.rating) AS avgRating
+        RETURN COLLECT({title: title, workingHour: workingHour}) AS professions, avgRating`,
+        {houseworker:username}
+    )
+    session.close();
+
+    // const professions = result.records[0].get(0).map(rec =>{
+    const professions = result.records[0].get('professions').map(rec =>{
+        return {profession:rec.title , working_hour:rec.workingHour}
+    })
+    //or result.records[0].get("avgRating")
+    const avgRating = result.records[0].get(1);
+    
+    return {professions:professions, avgRating:avgRating}
 }
 
 module.exports ={
@@ -816,6 +732,6 @@ module.exports ={
     create,
     findCities,
     getCommentsCount,
-    getHomeInfo
-
+    getHomeInfo,
+    getProfessionsAndRating
 }

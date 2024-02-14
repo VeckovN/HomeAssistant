@@ -279,6 +279,18 @@ const updateProfessionWorkingHour = async(req,res)=>{
     }
 }
 
+const getHouseworkerProfessionsAndRating = async(req,res) =>{
+    try{
+        const username = req.params.username;
+        const result = await houseworkerModel.getProfessionsAndRating(username);
+        res.status(200).json(result);
+    }
+    catch(err){
+        console.log("Error updateProfessionWorkingHour: " + err);
+        res.status(500).json({error:`Working hour update error`});
+    }
+}
+
 
 module.exports ={
     getHouseworkerByUsername,
@@ -299,5 +311,6 @@ module.exports ={
     getCities,
     getHouseworkerInfo,
     getHouseworkerCommentsCount,
-    getHomeInfo
+    getHomeInfo,
+    getHouseworkerProfessionsAndRating
 }

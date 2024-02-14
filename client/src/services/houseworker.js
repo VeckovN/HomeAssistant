@@ -231,11 +231,12 @@ export const getHomeInfo= async(username) =>{
 
 
 //This is equivalent to Promise.All(for both request )
+
 export const getProfessionsAndCities = async() =>{
     try{
         const response = await axios.all([
             await axios.get(BASE_URL +`houseworker/professions/all`),
-            await axios.get( BASE_URL + `houseworker/cities`)
+            await axios.get(BASE_URL + `houseworker/cities`)
         ]);
         return {houseworker_professions: response[0].data, houseworker_cities: response[1].data}
     }
@@ -245,14 +246,17 @@ export const getProfessionsAndCities = async() =>{
     }
 }
 
-export const getHouseworkerProfessionsAndRating = async(username) =>{
+export const getProfessionsAndRating = async(username) =>{
     try{
-        const response = await axios.all([
-            await axios.get(BASE_URL + `houseworker/professions/${username}`),
-            await axios.get(BASE_URL + `houseworker/rating/${username}`)
-        ])
+        // const response = await axios.all([
+        //     await axios.get(BASE_URL + `houseworker/professions/${username}`),
+        //     await axios.get(BASE_URL + `houseworker/rating/${username}`)
+        // ])
+        // return {professions:response[0].data, rating:response[1].data}
+        const result = await axios.get(BASE_URL + `houseworker/professionsandrating/${username}`)
+        const houseworkerData = result.data;
 
-        return {professions:response[0].data, rating:response[1].data}
+        return {professions:houseworkerData.professions, rating:houseworkerData.avgRating}
     }
     catch(err){
         console.error(err);

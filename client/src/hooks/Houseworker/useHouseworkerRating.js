@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react';
 import { toast } from 'react-toastify';
 import {rateUser} from '../../services/houseworker.js'
-import {getHouseworkerProfessionsAndRating} from '../../services/houseworker.js';
+import {getProfessionsAndRating} from '../../services/houseworker.js';
 import { emitRatingNotification } from '../../sockets/socketEmit.js';
 
 //Not fatching propertly - one time its good fetched , next time some houseworker doesn;t have rating
@@ -14,7 +14,7 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
     const [loadingRating, setLoadingRating] = useState(true);
 
     const fetchProfessionAndRating = async( ) =>{
-        const result = await getHouseworkerProfessionsAndRating(houseworkerUsername);
+        const result = await getProfessionsAndRating(houseworkerUsername);
         setHouseworkerRating(result.rating);
         setHouseworkerProfessions(result.professions);
         setLoadingRating(false);

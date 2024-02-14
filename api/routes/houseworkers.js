@@ -20,7 +20,8 @@ const {
     getCities,
     getHouseworkerInfo,
     getHouseworkerCommentsCount,
-    getHomeInfo
+    getHomeInfo,
+    getHouseworkerProfessionsAndRating
 } = require('../controller/houseworkerController');
 
 const router = express.Router();
@@ -40,7 +41,6 @@ router.delete('/:username', checkHouseworker, deleteHouseworker);
 router.get('/rating', checkHouseworker, getRatings);
 router.get('/rating/:username', getRatingUsername);
 
-//Client click on comment button
 router.get('/comments/:username',  getComments);
 router.get('/comments/count/:username', getHouseworkerCommentsCount)
 router.get('/ourcomments/', checkHouseworker, getOurComments)
@@ -53,8 +53,7 @@ router.put('/professions/update', checkHouseworker, updateProfessionWorkingHour)
 router.get('/cities',  getCities);
 router.get('/:username', checkHouseworker, getHouseworkerByUsername);
 router.post('/professions/add', checkHouseworker, addProfession);
-router.get('/home/:username', checkHouseworker, getHomeInfo);
-
-
+router.get('/home/:username', isLogged, getHomeInfo);
+router.get('/professionsandrating/:username', checkClient, getHouseworkerProfessionsAndRating)
 
 module.exports = router;
