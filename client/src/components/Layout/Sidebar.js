@@ -81,7 +81,7 @@ const Sidebar = () => {
                     <div className="menu-option">
                         {
                              menuItem1.map((el, index) =>(
-                                <NavLink to={el.path} key={'el-'+index}  
+                                <NavLink to={el.path} onClick={()=> setIsOpen(false)} key={'el-'+index}  
                                     className={({ isActive}) =>
                                     isActive ? "sidebar-menu-link active-link" : "sidebar-menu-link"
                                 }>
@@ -97,7 +97,7 @@ const Sidebar = () => {
                     <div className="menu-option">
                         {
                              menuItem2.map((el, index) =>(
-                                <NavLink to={el.path} key={'el-'+index}
+                                <NavLink to={el.path} onClick={()=> setIsOpen(false)} key={'el-'+index}
                                     className={({ isActive}) =>
                                     isActive ? "sidebar-menu-link active-link" : "sidebar-menu-link"
                                 }>
