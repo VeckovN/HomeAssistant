@@ -14,21 +14,17 @@
             position: unset;
             width:90%;
             padding:1em 0em;
-            
         }
 
         @include sm-breakpoint {
             font-size:$fs5;
         }
-
-
-
+        
         .box-s{
             height: 50%;
             width: 80%;
 
             position:relative;
-            // max-width: 77em;
             top:25%;
             left:10%;
 
@@ -52,7 +48,7 @@
                 border:none;
                 border-radius: .4rem;
                 
-                // font-family: $font-family-1;
+                font-family: $font-family-2;
                 font-size: $fs-em-5;
                 font-weight: 600;
                 color:#ffff;
