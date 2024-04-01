@@ -100,8 +100,9 @@
         border-bottom: 2px solid $grey-7;
         outline: none;
         color:$black-8;
+        font-family: $font-family-2;
         font-size: $fs5;
-        font-weight: 600;
+        font-weight: 700;
 
         &:focus{
             color:$black;
@@ -126,7 +127,7 @@
     .input_error{
         color:rgba(235, 1, 1, 0.938);
         font-family: $font-family-2;
-        font-weight: 600;
+        font-weight: 700;
         font-size:$fs6;
 
         @include xs-breakpoint{
@@ -141,12 +142,13 @@
     padding: 1rem 1.2rem;
 
     button{
-        border-radius:$border-radius-md;
-        font-size: $fs6;
-        font-weight: 600;
         height: 2.3em;
         width: 100%;
+        border-radius:$border-radius-md;
         background-color: $black-4;
+        font-size: $fs6;
+        font-weight: 600;
+        font-family: $font-family-2;
         color:white;
 
         cursor: pointer;
