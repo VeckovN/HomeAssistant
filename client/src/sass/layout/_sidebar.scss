@@ -56,7 +56,7 @@
     .section-menu{
         width: 30%;
         max-width: 250px;
-        min-width: 200px;
+        min-width: 230px;
 
         background-color: #F5F5F5;
 
@@ -82,13 +82,12 @@
 
         }
 
-        .sidebar-logo{
-            
+        .sidebar-logo{            
             display: flex;
             padding:.7em .3em;
 
             font-family: $font-family-3;
-            font-size: 1.4rem;
+            font-size: 1.4em;
 
             @include md-breakpoint(){
                 visibility: hidden;
