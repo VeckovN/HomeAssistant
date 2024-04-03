@@ -6,8 +6,7 @@ import Filter from '../components/Filter/Filter.js';
 import Search from '../components/Search.js';
 import Sort from '../components/Sort.js';
 import Spinner from '../components/UI/Spinner.js';
-import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
-
+import ScrollToTopHome from '../utils/ScrollToTopHome.js';
 import '../sass/pages/_clientHome.scss';
 
 const ClientHome = ({socket}) =>{
@@ -16,34 +15,7 @@ const ClientHome = ({socket}) =>{
     const {user} = useSelector((state) => state.auth);
     const {data, loading, searchDataHanlder, filterDataHandler } = useClient(user);
     const [houseworkerData, setHouseworkerData] = useState([]); //List of HouseworkerCard
-    const [buttonState, setButtonState] = useState({showButton:false, delayedHide:false});
-
-
-    const scrollToTop = () =>{
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-
-        setButtonState();
-    }
-
-    //Without useTransition 
-    //(applied fade out effect on scroll button div - after some time)
-    useEffect(()=>{
-        let timeout;
-
-        if(buttonState.delayedHide){
-            // Apply fade-out class after a short delay when showButton becomes false
-            timeout = setTimeout(() =>{
-                setButtonState({showButton:false, delayedHide:false})
-            },400)
-        }
-        return () =>{
-            clearTimeout(timeout);
-        }
-    },[buttonState.delayedHide])//when is window/scrollY triggered
-
+ 
     //THIS CAUSED RE_RENDERING ON EVERY DATA CHANGE ITS CHANGE  setHouseworkerData(houseworkerList); THAT AGAIN CAUSE RE_REDNERING
     useEffect(()=>{
         let houseworkerList;
@@ -111,11 +83,7 @@ const ClientHome = ({socket}) =>{
                     </div>   
                 </div>
 
-                {buttonState.showButton && 
-                    <div className='scroll-div'>
-                        <button className={`scroll-to-top ${!buttonState.delayedHide ? 'fade-in' : 'fade-out'}`} onClick={scrollToTop}><KeyboardDoubleArrowUpIcon/></button>
-                    </div>
-                }
+                <ScrollToTopHome/>
             </section>
         </main>
     )
