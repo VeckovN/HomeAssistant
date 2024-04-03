@@ -21,7 +21,9 @@ const useClient = (user) =>{
     //and thus help in fetching data only once on each scroll event.
     const debouncedHandleScroll = debounce(() =>{   
         const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
-        if (window.scrollY >= scrollableHeight) {
+        //20px above page bottom
+        const triggerThreshold = scrollableHeight - 200; 
+        if (window.scrollY >= triggerThreshold) {
             const newPage =  pageNumberRef.current+ 1;
             pageNumberRef.current = newPage;
 
