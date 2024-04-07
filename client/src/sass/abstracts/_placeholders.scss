@@ -212,7 +212,7 @@
         border-radius: 10px;
         background: linear-gradient(to left, #fff, #e4e4e4);
         background-color: #c9c9c9;
-        border: 1px solid #8d8d8d73;
+        // border: 1px solid #8d8d8d73;
     }
 
     &::-webkit-scrollbar-thumb:hover{
@@ -220,7 +220,7 @@
     }
 
     &::-webkit-scrollbar-thumb:active{
-        background: linear-gradient(to left, #22ADD4, #1E98BA);
+        background-color: $color-hs-4;
     }
 }
 
