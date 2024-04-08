@@ -254,7 +254,8 @@
     }
 
     &::-webkit-scrollbar-thumb:active{
-        background: linear-gradient(to left, #22ADD4, #1E98BA);
+        // background: linear-gradient(to top, rgb(204, 204, 204), rgb(121, 121, 121));
+        background-color: rgb(197, 197, 197);
         cursor: pointer;
     }
 }
