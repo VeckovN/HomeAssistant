@@ -1,9 +1,9 @@
 # HomeAssistant (Still in Progress)
 
 #Tehnology-Stack: <br />
-FrontEnd: ReactJS, Redux Toolkit<br />
+FrontEnd: HTML5, SCSS, ReactJS, Redux Toolkit<br />
 BackEnd: NodeJS, Express <br />
-Databases:Neo4j, Redis <br />
+Databases:Neo4j, Redis<br />
 Real-time: Socket.IO <br />
 
 User Types: Client, Houseworker
