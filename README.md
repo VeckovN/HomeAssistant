@@ -1,11 +1,18 @@
 # HomeAssistant (Still in Progress)
 
 ## Technology-Stack
-FrontEnd: HTML5, SCSS, ReactJS, Redux Toolkit<br />
-BackEnd: NodeJS, Express <br />
+Frontend: HTML5, SCSS, ReactJS, Redux Toolkit<br />
+Backend: NodeJS, Express <br />
 Databases: Neo4j, Redis <br />
 Real-time: Socket.IO <br />
-Design(Houseworker Part): Figma
+Authorization: Cookie - Session-based authorization <br />
+Design(Houseworker Part): Figma <br />
+
+### Redis
+Session store, Cache recent filtered users, cache recommended users(for clients) 
+
+### Neo4j
+Persistent user storage, comments and rates, recommended users (based on client interests, city) 
 
 ## User Types 
 Client <br />
