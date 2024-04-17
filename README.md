@@ -5,6 +5,7 @@ FrontEnd: HTML5, SCSS, ReactJS, Redux Toolkit<br />
 BackEnd: NodeJS, Express <br />
 Databases:Neo4j, Redis <br />
 Real-time: Socket.IO <br />
+Design(Houseworker Part): Figma
 
 ## User Types 
 Client <br />
