@@ -10,6 +10,7 @@ Real-time: Socket.IO <br />
 Client <br />
 Houseworker
 
+## App Pages
 ### Home Page
 ![1](https://github.com/VeckovN/HomeAssistant/assets/56490716/0a16663b-7165-472b-80fe-70faf1747662)
 
