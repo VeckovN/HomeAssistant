@@ -65,7 +65,6 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
         //when rate value doesn't exist , again click on Rate button will close input
         if(rate == ''){
             setShowRateInput(prev => !prev);
-            alert("setShowRateInput(prev => !prev)");
         }
         else {
             try{
@@ -93,13 +92,10 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
     const onCloseRateHandler =()=>{
         setShowRateInput(false);
         setRate('');
-        alert("setShowRateInput(false)")
-        alert("setRate('')")
     }
 
     const onChangeRate = (e)=>{
         setRate(e.target.value);
-        alert("setRate(e.target.value)");
     }
 
     return {rate, houseworkerRating, houseworkerProfessions, loadingRating, showRateInput, showRateInputCssClass, onRateHandler, onCloseRateHandler, onChangeRate}
