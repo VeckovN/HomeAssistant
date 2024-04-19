@@ -706,7 +706,10 @@ const getProfessionsAndRating = async(username) =>{
         return {profession:rec.title , working_hour:rec.workingHour}
     })
     //or result.records[0].get("avgRating")
-    const avgRating = result.records[0].get(1);
+    let avgRating = result.records[0].get(1);
+    if(avgRating == null)
+        avgRating = 0;
+    console.log(" \n RAAAAAARIIIIING : " + avgRating + "  USERNAME : " + username + '\n')
     
     return {professions:professions, avgRating:avgRating}
 }
