@@ -1,7 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Link } from "react-router-dom";
-// import Rating from '@mui/material/Rating';
-// import StarIcon from '@mui/icons-material/Star';
+import Rating from '@mui/material/Rating';
+import StarIcon from '@mui/icons-material/Star';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const HouseworkerCommentModal = lazy(
@@ -130,15 +130,14 @@ const HouseworkerCardContent = ({
                                 <div className='div-text-rating'>
                                     <div>{isClient ? 
                                         //NOT OPTIMIZED FOR REDERING MORE COMPONENTS
-                                        // <Rating 
-                                        //     name="half-rating-read" 
-                                        //     size="small"
-                                        //     defaultValue={parseFloat(houseworkerRating)} 
-                                        //     emptyIcon={<StarIcon style={{ color: 'grey' }} fontSize="inherit" />}
-                                        //     precision={0.5} 
-                                        //     readOnly 
-                                        // />
-                                        <div>My rating: {houseworkerRating}</div>
+                                        <Rating 
+                                            name="half-rating-read" 
+                                            size="small"
+                                            defaultValue={parseFloat(houseworkerRating)} 
+                                            emptyIcon={<StarIcon style={{ color: 'grey' }} fontSize="inherit" />}
+                                            precision={0.5} 
+                                            readOnly 
+                                        />
                                         : <Link to='/login' className='link'>Log in</Link>}
                                     </div>
                                 </div>
