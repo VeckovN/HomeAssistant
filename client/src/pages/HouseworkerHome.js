@@ -77,7 +77,7 @@ const HouseworkerHome = () =>{
                 <section className='insight-info-section'>
                     <div className='welcome-and-rating'>
                         <div className='welcome'>
-                            <div id='first-message'>Hello <span>Sara</span></div>
+                            <div id='first-message'>Hello <span>{user.username}</span></div>
                             <div>Here is your profile insight</div>
                         </div>
 
