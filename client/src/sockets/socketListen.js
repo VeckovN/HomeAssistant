@@ -3,7 +3,9 @@ import messageSound from '../assets/sounds/message-sound.mp3'
 import announcementSound from '../assets/sounds/announcement-sound.mp3'
 
 export const listenForCommentNotification = async(socket, self_id) => {
+    console.log("listenForCommentNotification");
     socket.on(`privateCommentNotify-${self_id}`, (client_username) =>{
+        console.log("socket.on(privateCommentNotify-${self_id}");
         toast.info(`You received Comment from ${client_username} `,{
             className:"toast-contact-message"
         })
@@ -17,7 +19,9 @@ export const listenForCommentNotification = async(socket, self_id) => {
 }
 
 export const listenForRatingNotfication = async(socket, self_id) =>{
+    console.log("listenForRatingNotfication")
     socket.on(`privateRatingNotify-${self_id}`, (client_username) =>{
+        console.log("socket.on(privateRatingNotify-${self_id}");
         toast.info(`You got a Rate from ${client_username} `,{
             className:"toast-contact-message"
         })
@@ -31,7 +35,9 @@ export const listenForRatingNotfication = async(socket, self_id) =>{
 }
 
 export const listenFormMessage = async(socket, self_id) =>{
+    console.log("listenFormMessage")
     socket.on("messageResponseNotify", (messageObj) =>{
+        console.log("socket.on(messageResponseNotify)");
         const {from, roomID, fromUsername} = messageObj;
         const users = roomID.split(':');
 
