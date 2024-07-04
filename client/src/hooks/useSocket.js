@@ -64,14 +64,6 @@ const useSocket = (user) =>{
                 socketIn.on("connect", () =>{
                     setConnected(true);
                     console.log("Socket Connected After Initial");
-
-                    
-                    // //in both situations set again listeners
-                    // //message send to all users and user which id is in message obj should
-                    // listenFormMessage(socketRef.current, user.userID);
-                    // //listen only for comment that belongs to logged user
-                    // listenForCommentNotification(socketRef.current, user.userID);
-                    // listenForRatingNotfication(socketRef.current, user.userID);
                 })
 
                 socketIn.on("disconnect", ()=>{
@@ -95,28 +87,22 @@ const useSocket = (user) =>{
             else{
                 // Reconnect the existing socket(when enter app and user is still authenticated)
                 socket.connect();
-                
-                // //in both situations set again listeners
-                // //message send to all users and user which id is in message obj should
-                // listenFormMessage(socket, user.userID);
-                // //listen only for comment that belongs to logged user
-                // listenForCommentNotification(socket, user.userID);
-                // listenForRatingNotfication(socket, user.userID);
                 console.log("socket.connect() - Reconnected")
             }
 
-            // setConnected(true);
-
-            // return() =>{
-            //     socket.disconnect();
-            //     console.log('socketIn.disconnect();');
-            // }
         }   
         //userNotExxists(Not authorized) and socket still esists
         else if (socketRef.current){
             socket.disconnect();
             console.log("socketRef.current.disconnect()");
         }   
+
+        return () => {
+            if (socket) {
+              socket.disconnect();
+              console.log('socket.disconnect()');
+            }
+          };
 
     // },[socket,user]) //wont reacreate socket on change(socket)
     },[user]) 
