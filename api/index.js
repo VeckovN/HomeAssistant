@@ -90,6 +90,7 @@ app.get("/api/", (req,res)=>{
 
 server.listen(5000, ()=>{
     io.on('connection', async(socket)=>{
+        console.log("CONNECTION INITIALIZED");
 
         socket.on("room.join", id =>{ //listen on 'room.join' event
             console.log("CLIENT ENTERED THE ROOM " + id);
