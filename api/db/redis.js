@@ -80,21 +80,13 @@ const srem = (key = "key", key2 = "") =>
 const expire = (key = "key", value = "0") =>
     new Promise((resolve, reject) => client.expire(key, value, resolvePromise(resolve, reject)))
 
-
-    //key, offset, size
-// const zrevrange = (key, value, value2) => {
-//     const limit = parseInt(value+value2);
-//     return new Promise((resolve, reject)=> client.zRange(key, value, limit, resolvePromise(resolve, reject)))
-// }
-const zrevrange = (key, value, value2) => {
-    const limit = parseInt(value+value2);
-    return new Promise((resolve, reject)=> client.zrevrange(key, value, limit, resolvePromise(resolve, reject)))
-}
-    // const limit = value+value2;
-    // new Promise((resolve, reject)=> client.zRange(key, value, value+value2, resolvePromise(resolve, reject)))
-
 const zrange = (key, value, value2) => {
     return new Promise((resolve, reject)=> client.zrange(key, value, value2, resolvePromise(resolve, reject)))
+}
+//key, offset, size
+const zrangelimit = (key, value, value2) => {
+    const limit = parseInt(value+value2);
+    return new Promise((resolve, reject)=> client.zrange(key, value, limit, resolvePromise(resolve, reject)))
 }
 
 const zrem = (key, value) =>
@@ -126,12 +118,11 @@ module.exports ={
     sismember,
     smembers,
     srem,
-    zrevrange,
     zrange,
     zrem,
     del,
     expire,
     rename,
-    scard
-     
+    scard,
+    zrangelimit
 }
