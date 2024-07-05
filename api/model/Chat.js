@@ -1,6 +1,7 @@
 const { Socket } = require('socket.io');
 const {incr, set, hmset, sadd, hmget, exists, client, zrevrange, zrange, smembers, zadd, srem, del, get, rename, scard} = require('../db/redis');
 const { use } = require('../routes/clients');
+const formatDate = require('../utils/dateUtils');
 
 
 //persist ChatApp data to Redis database
@@ -124,19 +125,14 @@ const getMessages = async(roomID, offset=0, size=50) =>{
     const roomExists = await exists(roomKey)
     if(!roomExists)
         return null;
-    else{
 
-        //return all messages from room
-        console.log("TTTTTT" + roomID + " " + offset + " " + size);
-        const ReMessages = await zrevrange(roomKey, offset, size);
-        const messages = ReMessages.reverse();
+    console.log("TTTTTT" + roomID + " " + offset + " " + size);
+    // const ReMessages = await zrevrange(roomKey, offset, size);
+    const messages = await zrange(roomKey, offset, size);
+    // const messages = ReMessages.reverse();
 
-        //Parsing JSON to obj
-        const messagesObj = messages.map((mes) => JSON.parse(mes));
-        console.log("MESSAGESSS : " + JSON.stringify(messagesObj) + "TP: " + typeof(messagesObj));
-
-        return messagesObj;
-    }
+    const messagesObj = messages.map((mes) => JSON.parse(mes)); //Parsing JSON to obj
+    return messagesObj;
 }
 
 const getAllRooms = async(username)=>{
@@ -271,10 +267,14 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
 const sendMessage = async(messageObj) =>{
     const {roomID} = messageObj;
 
-    //ZADD {room:1:3} 1615480369 {user:1, date:1615480369, message:'Hello"}
-    const date = Date.now();
+    //ZADD {room:1:3} 1615480369 {user:1, date:formattedDate, message:'Hello"}
     const roomKey = `room:${roomID}`;
     const roomExists = await exists(roomKey);
+
+    const timestamps = Date.now(); //used for score value (miliseconds)
+    const date = new Date(timestamps); //obj that contains 
+    const dateFormat = formatDate(date);
+    const newMessageObj = {...messageObj, date:dateFormat};
 
     if(!roomExists){
     //or we have to create room and then send message
@@ -309,8 +309,7 @@ const sendMessage = async(messageObj) =>{
     }
     //ZADD roomKey:1:2 1617197047 { "From": "2", "Date": 1617197047, "Message": "Hello", "RoomId": "1:2" }
     //ZADD Key=room:1:2 Score=1617197047 Value=obj
-    await zadd(roomKey, date, JSON.stringify(messageObj));
-
+    await zadd(roomKey, timestamps, JSON.stringify(newMessageObj));
     return roomKey;
 }
 
