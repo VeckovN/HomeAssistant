@@ -28,6 +28,9 @@ const Messages = ({socket,connected}) =>{
     const [showMenu, setShowMenu] = useState(false);
     const [showMoreRoomUsers, setShowMoreRoomUsers] = useState({});
 
+    const onShowMenuToggleHandler = () =>  setShowMenu(prev => !prev);
+    const onUsersFromChatOutHanlder = () => setShowMoreRoomUsers({});
+
     useEffect(() => {
             if(connected && user){
                 console.log("HEEEEEEEEE");
@@ -41,13 +44,7 @@ const Messages = ({socket,connected}) =>{
                 })
             }
         },[socket]) //on socket change (SOCKET WILL CHANGE WHEN IS MESSAGE SEND --- socket.emit)
-    
-
-        const onShowMenuToggleHandler = () =>{
-            setShowMenu(prev => !prev);
-        }
-
-
+            
         const fetchAllRooms = ( async () =>{   
             const data = await getUserRooms(user.username); //roomID, users{}
             // console.log('DATA ROOMS : \n' + JSON.stringify(data));
@@ -78,7 +75,6 @@ const Messages = ({socket,connected}) =>{
             const houseworkerResult = await getHouseworkers();
             dispatch({type:"SET_HOUSEWORKERS", data:houseworkerResult});
         }
-    
 
 
         const onRoomClickHanlder = ( async e =>{
@@ -186,6 +182,8 @@ const Messages = ({socket,connected}) =>{
 
         const onSendMessageHandler = ({message, fromRoomID}) =>{        
             if(message != ''){
+
+                console.log("MEESSAGEGEG : " , message);
                 // messageRef.current.value = ''
                 //emit io.socket event for sending mesasge
                 //this will trigger evento on server (in index.js) and send message to room
@@ -212,14 +210,7 @@ const Messages = ({socket,connected}) =>{
                 })
         }
 
-        const onShowMoreUsersFromChatHandler = ({roomID, users}) => {
-            setShowMoreRoomUsers({roomID, users});
-        }
-
-        const onUsersFromChatOutHanlder = () =>{
-            setShowMoreRoomUsers({});
-        }
-    
+        const onShowMoreUsersFromChatHandler = ({roomID, users}) => setShowMoreRoomUsers({roomID, users});
     return (
         <div className={`container-${user.type === "Houseworker" ? "houseworker" : "client"}`}> 
             {state.loading ? <Spinner className='profile-spinner'/> :
