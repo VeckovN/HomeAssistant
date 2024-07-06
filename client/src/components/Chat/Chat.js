@@ -9,6 +9,8 @@ import '../../sass/components/_chat.scss';
 const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSendMessageHandler, onAddUserToGroupHanlder, onDeleteRoomHandler, onShowMenuToggleHandler }) =>{
     const messageInputRef = useRef();
     const endMessageRef = useRef(null);
+
+    const conversation = roomMessages?.length >0;
     
     const onSendHandler = () =>{
         const message = messageInputRef.current.value;
@@ -26,8 +28,6 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
     useEffect(() =>{
         scrollToBottom();
     },[roomMessages]);
-
-    const conversation = roomMessages?.length >0;
 
     return(     
         <>
@@ -59,17 +59,18 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
             {roomMessages?.length >0 ?   
             <>
                 {roomMessages.map(el =>{
+                    console.log("Message: " , el);
                     if(user.userID==el.from){
                         return(
                         <div className="message text-only">
                             <div className="response">
+                                {el.date && <p className='date-response'>{`${el.date.day}.${el.date.month}.${el.date.year} ${el.date.time}`}</p>}
                                 <p className="text"> {el.message}</p>
                             </div>
                         </div>
                         )
                     }
                     else{
-                        
                         let userPicturePath;
                         roomInfo.users.forEach(element => {
                             if(element.username === el.fromUsername){
@@ -84,6 +85,7 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
                                 <div className="online"></div>
                             </div>
                             <p className="text"> {el.message}</p>
+                            {el.date && <p className='date'>{`${el.date.day}.${el.date.month}.${el.date.year} ${el.date.time}`}</p>}
                         </div>
                         // if is it last message in row of user then show timer
                         // <p className="time"> 14h58</p>

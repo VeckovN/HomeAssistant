@@ -12,7 +12,6 @@
     align-items: center;
     position:relative;
 
-
     .menu-icon{
         margin-left: auto;
         margin-right:1em;
@@ -84,55 +83,87 @@
             background-size: cover;
             background-repeat: no-repeat;
 
-            &:hover{
-                .photo-hover-username{
-                    visibility: visible;
-                }
-            }
-
             &-hover-username{
-                position: absolute;
+                position: relative;
                 top:-1em;
                 font-family: $font-family-3;
+                font-size: $fs-em-5;
                 color:$white;
                 visibility: hidden;
+                opacity: 0;
+                transform: translateY(10px);
+                transition: opacity .2s ease, transform .3s ease;
+
             }
+
+            &:hover .photo-hover-username {
+                visibility: visible;
+                opacity: 1;
+                transform:translateY(0);
+            }
+        }
+
+        .date{
+            @extend %chat-date-hidden;            
+        }
+        
+        // + sibling combinator - (.date is next sibling of .text)
+        .text:hover + .date{
+            @extend %chat-date-visible;
         }
     }
 
-    .text {
-        margin: 0 35px;
+    .text{
+        margin: 0 15px;
         background-color: #f6f6f6;
         padding: 15px;
         border-radius: 12px;
+
+        &:hover .date{
+            background-color: red;
+            visibility: visible;
+        }
     }
 
     .text-only{
         margin-left: 45px;
     }   
 
-    .time {
+    .time{
         font-size: 10px;
         color:$grey-1;
         margin-bottom:10px;
         margin-left: 85px;
-      }
+    }
       
-      .response-time {
+    .response-time {
         float: right;
         margin-right: 40px !important;
-      }
+    }
 
-      .response{
+    .response{
+        display: flex;
+        align-items: center;
+        position:relative;
         float: right;
         margin-right: 0px !important;
         margin-left:auto; /* flexbox alignment rule */
+        // background-color: red;
 
         .text{
             background-color: #e3effd !important;
         }
 
-      }
+        .date-response{
+            @extend %chat-date-hidden;
+        }
+
+        &:hover .date-response{
+            @extend %chat-date-visible;
+        }
+        
+
+    }
 
     .no_conversation{
         margin-top:1em;
@@ -144,8 +175,6 @@
         text-align: center;       
     }
 }
-
-
 
 .footer-chat{
     width: 100%;
@@ -199,9 +228,6 @@
     }
 
 }
-
-
-
 
 
 //----------------------OLD------------------------//
