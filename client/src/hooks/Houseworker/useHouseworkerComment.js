@@ -37,6 +37,7 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
             return 
         }
 
+        console.log("ON COMM EVETN : ", e.target.id)
         setHouseworker({
             username:e.target.value,
             id:e.target.id
@@ -92,7 +93,7 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                 })
 
                 const emitComment = {...newPostComment, houseworkerID: houseworker.id}
-                emitCommentNotification(socket, emitComment)
+                emitCommentNotification(socket, emitComment);
 
                 const newComment = {
                     //we send (looged user) comment to (showenedModal ->oldComment)
@@ -111,9 +112,7 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                     ]);
                 }
                 else{
-                    setComments([
-                        newComment
-                    ])
+                    setComments([newComment])
                 }
                 postCommentRef.current.value='';
                     
