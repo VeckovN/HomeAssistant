@@ -58,6 +58,8 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
         try{
             await deleteComment(from, comment_id);
             const newComments = comments.filter(comm => comm.commentID!=comment_id)
+
+            //also trigger
             setComments(newComments);
 
             toast.success("Comment successfully deleted",{
@@ -92,17 +94,16 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                     className:'toast-contact-message'
                 })
 
-                const emitComment = {...newPostComment, houseworkerID: houseworker.id}
-                emitCommentNotification(socket, emitComment);
-
                 const newComment = {
-                    //we send (looged user) comment to (showenedModal ->oldComment)
                     commentID:commentResult.commentID,
                     date:commentResult.commentDate,
-                    from: client_username,
-                    comment:newPostComment.comment,
+                    from: client_username, //client
+                    houseworkerID: houseworker.id,
+                    comment:newCommentContext,
                     new:true //animation flag for entering modal 
                 }
+
+                emitCommentNotification(socket, newComment);
 
                 //this will trigger Comp re-render
                 if(comments){
@@ -111,9 +112,10 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                         newComment
                     ]);
                 }
-                else{
+                else
                     setComments([newComment])
-                }
+                
+                    
                 postCommentRef.current.value='';
                     
             }catch(err){

@@ -3,31 +3,26 @@ import messageSound from '../assets/sounds/message-sound.mp3'
 import announcementSound from '../assets/sounds/announcement-sound.mp3'
 
 export const listenForCommentNotification = async(socket, self_id) => {
-    console.log("listenForCommentNotification");
     socket.on(`privateCommentNotify-${self_id}`, (client_username) =>{
-        console.log("socket.on(privateCommentNotify-${self_id}");
         toast.info(`You received Comment from ${client_username} `,{
             className:"toast-contact-message"
         })
 
         if(!document.hasFocus()){
-            //sound notification
             const sound = new Audio(announcementSound);
             sound.play();
         }
     })
 }
 
+
 export const listenForRatingNotfication = async(socket, self_id) =>{
-    console.log("listenForRatingNotfication")
     socket.on(`privateRatingNotify-${self_id}`, (client_username) =>{
-        console.log("socket.on(privateRatingNotify-${self_id}");
         toast.info(`You got a Rate from ${client_username} `,{
             className:"toast-contact-message"
         })
 
         if(!document.hasFocus()){
-            //sound notification
             const sound = new Audio(announcementSound);
             sound.play();
         }
@@ -41,7 +36,7 @@ export const listenFormMessage = async(socket, self_id) =>{
         const {from, roomID, fromUsername} = messageObj;
         const users = roomID.split(':');
 
-        //exclude sender from users notification
+        //exclude the sender from users notification
         const notifyUsers = users.filter(el => el!=from);
         //if our userID is in array of notifyUsers
         if(notifyUsers.includes(self_id)){
@@ -51,7 +46,6 @@ export const listenFormMessage = async(socket, self_id) =>{
         }
 
         if(!document.hasFocus()){
-            //sound notification
             const sound = new Audio(messageSound);
             sound.play();
         }

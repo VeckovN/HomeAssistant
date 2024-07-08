@@ -102,12 +102,11 @@ server.listen(5000, ()=>{
             socket.leave(`room:${id}`)
         })
 
-        socket.on("commentNotification", ({postComment}) =>{
-            //emit only to user whom the message is intended
-            console.log("COMMENT SEND TO : " + postComment.houseworkerID)
-            console.log("CCM: " , postComment);
-            console.log(`privateCommentNotify-${postComment.houseworkerID} : ${postComment.client}`)
-            io.emit(`privateCommentNotify-${postComment.houseworkerID}`, postComment.client);
+        socket.on("commentNotification", (postComment) =>{
+            //emit notification
+            io.emit(`privateCommentNotify-${postComment.houseworkerID}`, postComment.from);
+            //emit newComment, only when the user is on the comments page
+            io.emit(`newComment-${postComment.houseworkerID}`, {postComment});
         })
 
         socket.on("ratingNotification", ({ratingObj}) =>{

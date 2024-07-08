@@ -60,7 +60,7 @@ function App() {
           <Route element={<Sidebar />} >
             <Route index path="/" element={<PrivateRoute><HouseworkerHome/></PrivateRoute>} />
             <Route path="/messages" element={<PrivateRoute><Messages socket={socket} connected={connected}/></PrivateRoute>} />
-            <Route path="/comments" element={<PrivateRoute privacy='houseworker'><Comments/></PrivateRoute>} />
+            <Route path="/comments" element={<PrivateRoute privacy='houseworker'><Comments socket={socket} user={user}/></PrivateRoute>} />
             {/* <Route path="/profile" element={<PrivateRoute><Profile/></PrivateRoute>} /> */}
             <Route path="/profile" element={<PrivateRoute><HouseworkerProfile/></PrivateRoute>} />
             <Route path="/login" element={<NotAuthRoute><Login/></NotAuthRoute>} />
