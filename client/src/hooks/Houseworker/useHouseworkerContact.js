@@ -1,12 +1,13 @@
 import {useRef} from 'react';
 import { emitMessage } from '../../sockets/socketEmit';
+import { sendMessageToUser} from '../../services/chat';
 import { toast } from 'react-toastify';
 
 const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
 
     const contactMessageRef = useRef(null);
 
-    const onContactHandler = (e)=>{
+    const onContactHandler = async(e)=>{
         if(!isClient)
             toast.error("Log in to send a message",{
                 className:"toast-contact-message"
@@ -25,14 +26,26 @@ const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
                         message: messageFromContact,
                         from:ourID,
                         roomID:RoomID,
-                        fromUsername:client_username
+                        fromUsername:client_username,
                 }
-                emitMessage(socket, {messageObj});
-                
-                toast.success("The message is send",{
-                    className:'toast-contact-message'
-                })
-                contactMessageRef.current.value='';
+                try{
+                    const result = await sendMessageToUser(messageObj);
+                    const {roomKey} = result;
+                    const messageWithRoomKey = {...messageObj, roomKey:roomKey};
+
+                    emitMessage(socket, {data:messageWithRoomKey});
+                    
+                    toast.success("The message is send",{
+                        className:'toast-contact-message'
+                    })
+                    contactMessageRef.current.value='';
+                }
+                catch(err){
+                    console.log("Error sending the contact message");
+                    toast.error("Failed to send message. Please try again.", {
+                        className: 'toast-contact-message'
+                    });
+                }
             }
             else
                 toast.error("You cannot send the empty message",{

@@ -117,11 +117,11 @@ server.listen(5000, ()=>{
             
         })
     
-        socket.on("message", ({messageWithRoomKey})=>{ 
+        socket.on("message", ({data})=>{ 
             try{
-                const roomKey = messageWithRoomKey.roomKey;
-                io.to(roomKey).emit("messageRoom", messageWithRoomKey)
-                io.emit("messageResponseNotify" , messageWithRoomKey);
+                const roomKey = data.roomKey;
+                io.to(roomKey).emit("messageRoom", data)
+                io.emit("messageResponseNotify" , data);
             }
             catch(error){
                 console.error("Error Handling message: ", error);

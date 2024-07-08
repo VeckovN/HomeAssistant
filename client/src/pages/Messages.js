@@ -57,7 +57,9 @@ const Messages = ({socket,connected}) =>{
                 const users = data[0].users;
                 dispatch({type:"SET_ROOM_INFO", ID:roomID, usersArray:users});
                 //join displayed room
-                emitRoomJoin(socket, roomID);
+
+                //COMMENTED
+                // emitRoomJoin(socket, roomID);
                 
                 //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
                 const messages = await getMessagesByRoomID(roomID)
@@ -194,15 +196,25 @@ const Messages = ({socket,connected}) =>{
                     roomID:fromRoomID,
                     fromUsername:user.username
                 }
-                const result = await sendMessageToUser(messageObj);
-                const {roomKey} = result;
-                const messageWithRoomKey = {...messageObj, roomKey:roomKey};
 
-                emitMessage(socket, {messageWithRoomKey});
+                try{
+                    const result = await sendMessageToUser(messageObj);
+                    const {roomKey} = result;
+                    const messageWithRoomKey = {...messageObj, roomKey:roomKey};
+
+                    emitMessage(socket, {data:messageWithRoomKey});
+                    
+                    //update last message of private room
+                    if(fromRoomID.split(":").length <= 2)
+                        dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:fromRoomID, message:message})
+                }
+                catch(err){
+                    console.log("Error sending the message");
+                    toast.error("Failed to send message. Please try again.", {
+                        className: 'toast-contact-message'
+                    });
+                }
                 
-                //update last message of private room
-                if(fromRoomID.split(":").length <= 2)
-                    dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:fromRoomID, message:message})
             }
             else
                 toast.error("Empty message cannot be sent",{
