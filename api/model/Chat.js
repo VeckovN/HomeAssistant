@@ -260,7 +260,12 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
                 await sadd(`user:${id}:rooms`, newRoomID);
             })
         }
-        return {roomID:newRoomID, isPrivate:isPrivateChat, newUserPicturePath:userPicturePath};
+        return {
+            newAddedUserID:newUserID,
+            roomID:newRoomID, 
+            isPrivate:isPrivateChat, 
+            newUserPicturePath:userPicturePath
+        };
     }
 }
 

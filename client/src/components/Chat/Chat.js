@@ -59,7 +59,7 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
             {roomMessages?.length >0 ?   
             <>
                 {roomMessages.map(el =>{
-                    console.log("Message: " , el);
+                    // console.log("Message: " , el);
                     if(user.userID==el.from){
                         return(
                         <div className="message text-only">
