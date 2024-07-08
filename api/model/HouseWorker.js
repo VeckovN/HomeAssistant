@@ -400,7 +400,7 @@ const getComments = async(username)=>{
         MATCH(c:Comment)-[:BELONGS_TO]->(m)
         MATCH(c)<-[:COMMENTED]-(t)
         RETURN ID(c) AS commentID, c.context, t.username, apoc.date.format(c.timestamp, "ms", "dd.MM.yyyy") AS commentTimestamp
-        ORDER BY c.timestamp DESC`,
+        ORDER BY c.timestamp ASC`,
     {houseworker:username}
     )
     //{Comment:context, From:'clientUsername'}
