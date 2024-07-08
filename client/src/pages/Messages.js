@@ -7,7 +7,7 @@ import {MessagesReducer} from '../components/MessagesReducer.js';
 import {getHouseworkers} from '../services/houseworker.js';
 import {listenOnMessageInRoom} from '../sockets/socketListen.js';
 import {emitRoomJoin, emitLeaveRoom, emitMessage} from '../sockets/socketEmit.js';
-import {getUserRooms, deleteRoom, addUserToRoom, getMessagesByRoomID} from '../services/chat.js';
+import {getUserRooms, deleteRoom, addUserToRoom, getMessagesByRoomID, sendMessageToUser} from '../services/chat.js';
 import Spinner from '../components/UI/Spinner.js';
 
 import '../sass/pages/_messages.scss';
@@ -35,7 +35,7 @@ const Messages = ({socket,connected}) =>{
             if(connected && user){
                 console.log("HEEEEEEEEE");
                 //io.to(roomKey).emit("messageRoom", messageObj)
-                //users which looking on chat will  receive message 
+                //users which looking on chat will receive message 
                 listenOnMessageInRoom(socket, dispatch);
     
                 //when is created new room show it with others
@@ -180,7 +180,7 @@ const Messages = ({socket,connected}) =>{
             emitRoomJoin(socket, newRoomID);
         });
 
-        const onSendMessageHandler = ({message, fromRoomID}) =>{        
+        const onSendMessageHandler = async({message, fromRoomID}) =>{        
             if(message != ''){
 
                 console.log("MEESSAGEGEG : " , message);
@@ -194,15 +194,15 @@ const Messages = ({socket,connected}) =>{
                     roomID:fromRoomID,
                     fromUsername:user.username
                 }
-                //emit message(server listen this for sending message to user(persist in db) )
-                //and also client listen this event to notify another user for receiving message
-                emitMessage(socket, {messageObj});
+                const result = await sendMessageToUser(messageObj);
+                const {roomKey} = result;
+                const messageWithRoomKey = {...messageObj, roomKey:roomKey};
+
+                emitMessage(socket, {messageWithRoomKey});
                 
                 //update last message of private room
                 if(fromRoomID.split(":").length <= 2)
                     dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:fromRoomID, message:message})
-                
-                //SOUND NOTIFICATION WHEN ON MESSAGE SENDING
             }
             else
                 toast.error("Empty message cannot be sent",{

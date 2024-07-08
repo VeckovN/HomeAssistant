@@ -105,6 +105,8 @@ server.listen(5000, ()=>{
         socket.on("commentNotification", ({postComment}) =>{
             //emit only to user whom the message is intended
             console.log("COMMENT SEND TO : " + postComment.houseworkerID)
+            console.log("CCM: " , postComment);
+            console.log(`privateCommentNotify-${postComment.houseworkerID} : ${postComment.client}`)
             io.emit(`privateCommentNotify-${postComment.houseworkerID}`, postComment.client);
         })
 
@@ -115,17 +117,15 @@ server.listen(5000, ()=>{
             
         })
     
-        socket.on("message", async({messageObj})=>{ 
-
-            console.log("MESSAD ASD ASD ASD: " + messageObj);
-            console.log("MEW NEW : " + JSON.stringify(messageObj));
-
-            console.log("\n \n")
-
-            const roomKey = await sendMessage(messageObj);
-            //message(showned) only for joined clients
-            io.to(roomKey).emit("messageRoom", messageObj)
-            io.emit("messageResponseNotify" , messageObj);
+        socket.on("message", ({messageWithRoomKey})=>{ 
+            try{
+                const roomKey = messageWithRoomKey.roomKey;
+                io.to(roomKey).emit("messageRoom", messageWithRoomKey)
+                io.emit("messageResponseNotify" , messageWithRoomKey);
+            }
+            catch(error){
+                console.error("Error Handling message: ", error);
+            }
         })
     
         socket.on('disconnect', async(id)=>{

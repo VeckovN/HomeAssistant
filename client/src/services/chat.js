@@ -55,3 +55,14 @@ export const addUserToRoom = async(roomInfo) =>{
 }
 
 
+export const sendMessageToUser = async(messageObj) =>{
+    try{
+        const result = await axiosSession.post(BASE_URL + 'chat/room/message', messageObj);
+        return result.data;
+    }
+    catch(err){
+        ThrowErorr(err);
+    }
+}
+
+

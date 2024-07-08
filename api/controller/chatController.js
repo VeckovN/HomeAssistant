@@ -17,6 +17,18 @@ const getMessages = async(req,res)=>{
     }
 }
 
+const postMessage = async(req,res) =>{
+    try{
+        const messageObj = req.body;
+        const messageResult = await chatModal.sendMessage(messageObj);
+        res.json({roomKey:messageResult});
+    }
+    catch(err){
+        console.error(err);
+        res.status(400).json({error:"Message posting Error"});
+    }
+}   
+
 const getAllRooms = async(req,res)=>{
     try{
         const username = req.params.username;
@@ -69,6 +81,7 @@ const getConversationCount = async(req,res)=>{
 
 module.exports ={
     getMessages,
+    postMessage,
     getAllRooms,
     deleteRoom,
     addUserToRoom,

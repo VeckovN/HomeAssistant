@@ -2,6 +2,7 @@ const express = require('express');
 const {isLogged ,checkClient, checkHouseworker} = require('../middleware/checkLoggin.js')
 const {
     getMessages,
+    postMessage,
     getAllRooms,
     deleteRoom,
     addUserToRoom,
@@ -14,6 +15,7 @@ const router = express.Router();
 //http://localhost:5000/api/chat/room/1:2/messages?offset=0&size=50
 
 router.get('/room/:id/messages', isLogged, getMessages);
+router.post('/room/message', isLogged, postMessage);
 router.post('/room/delete', checkClient, deleteRoom);
 router.post('/room/addUser', checkClient, addUserToRoom);
 router.get('/conversationCount/:userID', checkHouseworker, getConversationCount);
