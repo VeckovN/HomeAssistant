@@ -92,18 +92,6 @@ server.listen(5000, ()=>{
     io.on('connection', async(socket)=>{
         console.log("CONNECTION INITIALIZED");
 
-        socket.on("room.join", id =>{ //listen on 'room.join' event
-            console.log("CLIENT ENTERED THE ROOM " + id);
-            socket.join(`room:${id}`); //join room -> room:1:2 example or group room:1:5:7
-            
-        })
-    
-        socket.on("leave.room", id =>{
-            console.log("You left the room: " + id);
-            socket.leave(`room:${id}`)
-        })
-
-
         //every user on socket init join the room * used to send end receive data for concrete user
         //instead of broadcasting with io.emit('dynamicName') because it's less efficient and not good performance
         socket.on('joinRoom', (userID)=>{
@@ -116,6 +104,17 @@ server.listen(5000, ()=>{
             socket.leave(`user:${userID}`);
         })
 
+
+        //Chat rooms
+        socket.on("chatRoom.join", id =>{ //listen on 'room.join' event
+            console.log("CLIENT ENTERED THE ROOM " + id);
+            socket.join(`room:${id}`); //join room -> room:1:2 example or group room:1:5:7
+        })
+    
+        socket.on("chatRoom.leave", id =>{
+            console.log("You left the room: " + id);
+            socket.leave(`room:${id}`)
+        })
 
         //REFFACTORED
         socket.on("commentNotification", (postComment) =>{
@@ -139,8 +138,18 @@ server.listen(5000, ()=>{
         socket.on("message", ({data})=>{ 
             try{
                 const roomKey = data.roomKey;
-                io.to(roomKey).emit("messageRoom", data)
-                io.emit("messageResponseNotify" , data);
+                //add message to chat(users that enter the chat room(room:ID) will listen this event ro)
+                io.to(roomKey).emit("messageRoom", data) //entered chat page(view)
+
+                //Notify message recipients
+                const {from, roomID, fromUsername} = data;
+                const users = roomID.split(':');
+                //exclude the sender from users notification
+                const notifyUsers = users.filter(el => el!=from);
+                notifyUsers.forEach(id =>{
+                    io.to(`user:${id}`).emit("messageResponseNotify" , fromUsername);
+                })
+
             }
             catch(error){
                 console.error("Error Handling message: ", error);

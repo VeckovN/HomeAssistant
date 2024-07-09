@@ -53,28 +53,13 @@ export const listenOnUserAddToGroupNotification = (socket) =>{
 
     //redner new added users room(if the user is on page)
     socket.on("notifyUserToGroup")
-
-
-
 }
 
-
-//mutile receivers, refcatori it using the rooms
-export const listenFormMessage = async(socket, self_id) =>{
-    console.log("listenFormMessage")
-    socket.on("messageResponseNotify", (messageObj) =>{
-        console.log("socket.on(messageResponseNotify)");
-        const {from, roomID, fromUsername} = messageObj;
-        const users = roomID.split(':');
-
-        //exclude the sender from users notification
-        const notifyUsers = users.filter(el => el!=from);
-        //if our userID is in array of notifyUsers
-        if(notifyUsers.includes(self_id)){
-            toast.info(`You received Message from ${fromUsername}`,{
-                className:"toast-contact-message"
-            })
-        }
+export const listenFormMessage = async(socket) =>{
+    socket.on("messageResponseNotify", (fromUsername) =>{
+        toast.info(`You received Message from ${fromUsername}`,{
+            className:"toast-contact-message"
+        })
 
         if(!document.hasFocus()){
             const sound = new Audio(messageSound);
@@ -86,7 +71,6 @@ export const listenFormMessage = async(socket, self_id) =>{
 
 
 //users Joined in room (room.join(io.to(roomKey).emit()) listen for these events
-
 export const listenOnMessageInRoom = (socket, dispatch) =>{
     socket.on("messageRoom", (contextObj) =>{
         dispatch({type:"SEND_MESSAGE", data:contextObj})

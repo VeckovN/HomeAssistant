@@ -5,8 +5,8 @@ import Rooms from '../components/Chat/Rooms.js';
 import {toast} from 'react-toastify';
 import {MessagesReducer} from '../components/MessagesReducer.js';
 import {getHouseworkers} from '../services/houseworker.js';
-import {listenOnMessageInRoom} from '../sockets/socketListen.js';
-import {emitRoomJoin, emitLeaveRoom, emitMessage} from '../sockets/socketEmit.js';
+import {listenOnMessageInRoom, listenOnUserAddToGroup, listenOnCreateUserGroup} from '../sockets/socketListen.js';
+import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat} from '../sockets/socketEmit.js';
 import {getUserRooms, deleteRoom, addUserToRoom, getMessagesByRoomID, sendMessageToUser} from '../services/chat.js';
 import Spinner from '../components/UI/Spinner.js';
 
@@ -32,11 +32,14 @@ const Messages = ({socket,connected}) =>{
     const onUsersFromChatOutHanlder = () => setShowMoreRoomUsers({});
 
     useEffect(() => {
-            if(connected && user){
+            if(socket && user){
                 console.log("HEEEEEEEEE");
                 //io.to(roomKey).emit("messageRoom", messageObj)
                 //users which looking on chat will receive message 
                 listenOnMessageInRoom(socket, dispatch);
+                listenOnCreateUserGroup(socket, dispatch);
+                listenOnUserAddToGroup(socket, dispatch);
+                // listenOnUserAddToGroupNotification(socket, roomID);
     
                 //when is created new room show it with others
                 socket.on('show.room', (room) =>{
@@ -59,7 +62,7 @@ const Messages = ({socket,connected}) =>{
                 //join displayed room
 
                 //COMMENTED
-                // emitRoomJoin(socket, roomID);
+                emitRoomJoin(socket, roomID);
                 
                 //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
                 const messages = await getMessagesByRoomID(roomID)
@@ -158,7 +161,8 @@ const Messages = ({socket,connected}) =>{
             }
 
             const result = await addUserToRoom(roomInfo);
-            const {roomID:newRoomID, isPrivate, newUserPicturePath} = result.data;
+            const {newAddedUserID:newUserID, roomID:newRoomID, isPrivate, newUserPicturePath} = result.data;
+            console.log("Resss : ", result);
 
             if(newRoomID === null){
                 toast.error("The group already exists");
@@ -167,14 +171,29 @@ const Messages = ({socket,connected}) =>{
             
             if(isPrivate){                    
                 const roomUsers = state.rooms.filter(room => room.roomID == roomID);
-                const currentUser = roomUsers[0].users; //users of room that we add new user
-                dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, user:currentUser, newUsername:username, picturePath:newUserPicturePath})
+                const currentUser = roomUsers[0].users; 
+                const groupData = {newUserID, roomID, newRoomID, currentUser, username, newUserPicturePath}
+                // dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, user:currentUser, newUsername:username, picturePath:newUserPicturePath})
+                emitCreteUserGroup(socket, {data:groupData});
                 toast.info("A Group with "+ username + " has been created");
             }
             else{ 
-                dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});    
+                const groupData = {newUserID, roomID, newRoomID, username, newUserPicturePath};
+                // dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});    
+                emitUserAddedToChat(socket, {data:groupData});
                 toast.info("User is added to the room: "+  newRoomID);
             }
+
+            // const userObj ={
+            //     roomID:roomID, //current rooom
+            //     newRoomID:newRoomID, //new created
+            //     newUsername:username, //username that has been added
+            //     picturePath:newUserPicturePath //
+            //     user:currentUser
+            // }
+
+            //notify
+            // emitUserAddedToChat(socket, );
             
             //show messages of new created group
             MessagesAfterRoomsAction(newRoomID);

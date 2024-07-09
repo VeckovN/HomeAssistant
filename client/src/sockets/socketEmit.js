@@ -12,10 +12,22 @@ export const emitMessage = (socket, messageObj) =>{
     socket.emit('message', messageObj)
 }
 
+export const emitCreteUserGroup = (socket, groupObj) =>{
+    socket.emit("createUserGroup", groupObj)
+}
+
+export const emitUserAddedToChat = (socket, groupObj) =>{
+    socket.emit("addUserToGroup", groupObj)
+}
+
 export const emitRoomJoin = (socket, roomID) =>{
-    socket.emit('room.join', roomID);
+    socket.emit('chatRoom.join', roomID);
 }
 
 export const emitLeaveRoom = (socket, roomID) =>{
-    socket.emit('leave.room', roomID);
+    socket.emit('chatRoom.leave', roomID);
 }
+
+
+
+
