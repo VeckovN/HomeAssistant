@@ -12,7 +12,6 @@ const useSocket = (user) =>{
         if (user) {
           // Create a new socket instance if it doesn't exist
             if (!socketRef.current) {
-                alert("!socketRef.current");
                 const socket = io('http://127.0.0.1:5000', { withCredentials: true });
                 socketRef.current = socket;
             }
@@ -21,7 +20,6 @@ const useSocket = (user) =>{
             socketRef.current.on('connect', () => {
                 //this execute a little bit after the exercution (probably asyn think)
                 console.log('Socket connected');
-                alert("socketRef.current.on('connect', () ")
                 setConnected(true);
 
                 // Emit join request for the user's room
@@ -32,7 +30,6 @@ const useSocket = (user) =>{
             // Handle disconnection events (optional)
             socketRef.current.on('disconnect', () => {
                 //clean up function trigger this disconnect event
-                alert("socketRef.current.on('disconnect', () => {")
                 console.log('Socket disconnected');
                 setConnected(false);
 
@@ -51,7 +48,6 @@ const useSocket = (user) =>{
                 //     listenOnCreateUserNotification(socketRef.current, user.userID);
                 // }
     
-            alert("Set Listeners")
             // Listeners for notifications (assuming separate functions for each)
             listenFormMessage(socketRef.current, user.userID); // Listen for message notifications
             listenForCommentNotification(socketRef.current, user.userID); // Listen for comment notifications
@@ -61,19 +57,15 @@ const useSocket = (user) =>{
             // Clean up on unmount
             //logout will trigger this(redirectin to home trigger onMount component)
             return () => {
-                alert("return () => {")
                 if (socketRef.current) {
-                    alert("if (socketRef.current)")
                     socketRef.current.disconnect(); // Disconnect the socket
-                    console.log("socketRef.current.disconnect()")
-
+                    console.log("socketRef.current.disconnect()");
                     // socketRef.current.removeAllListeners(); // Remove all event listeners
                     // console.log("socketRef.current.removeAllListeners()")
                 }   
             };
         } else if (socketRef.current) { 
             //this executed then the seesion expired(user doesn't exist) but socketRef is still present
-            alert("else if (socketRef.current)")
             // Disconnect socket if user is no longer present
             socketRef.current.disconnect();
             console.log(" socketRef.current.disconnect();")
@@ -81,7 +73,6 @@ const useSocket = (user) =>{
             // socketRef.current = null; // Clear the reference
             // console.log("socketRef.current = null")
             // setConnected(false);
-            
         }
       }, [user]);
 
