@@ -15,8 +15,6 @@ export const MessagesReducer = (state, action) =>{
         case "CREATE_NEW_GROUP":
             return{
                 ...state,
-                roomMessages:[],
-                // rooms: [...state.rooms, {roomID:action.newRoomID, users:[...action.user, {username:action.newUsername, picturePath:action.picturePath}]}],
                 rooms: [...state.rooms, {roomID:action.newRoomID, users:[...action.user, {username:action.newUsername, picturePath:action.picturePath}]}],
             }
         case "SET_ROOM_INFO": //RoomInfo
