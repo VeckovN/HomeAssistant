@@ -135,6 +135,7 @@ server.listen(5000, ()=>{
             
         })
     
+        // Refactored
         socket.on("message", ({data})=>{ 
             try{
                 const roomKey = data.roomKey;
@@ -164,36 +165,35 @@ server.listen(5000, ()=>{
         })
 
         socket.on("createUserGroup", ({data}) =>{
-            console.log("ADD USER TO GROUP DATA ", data);
-
-            //roomID, newRoomID, currentUser, username, newUserPicturePath
-            //emit only to users that's joined the room
-            // const newRoomID = data.newRoomID;
-            const roomKey = `room:${data.roomID}`;
-            io.to(roomKey).emit("createUserGroupChange", data); //change 
-
-            // !!!!! Shouldn't UPDATE  only when is room joined (update when is message page visited)
-
+            //JUST EMIT ON createUSerGroupChange for newUserID
+            //this event is listen on Message page (only when the user enter the page)
+            io.to(`user:${data.newUserID}`).emit('createUserGroupChange', data);
+            
             //notify only new added user
-            console.log("\n " + `io.emit(createUserToGroupNotify-${data.newUserID}, data);`)
-            //THERE IS only one new user (that is added to group)
-            //and sender- client That added user
-            io.emit(`createUserToGroupNotify-${data.newUserID}`, data); 
+            //This event is listen on Socket connection
+            io.to(`user:${data.newUserID}`).emit('createUserToGroupNotify', data);
         })
 
         socket.on("addUserToGroup", ({data}) =>{
             console.log("ADD USER TO GROUP DATA ", data);
+
+            //*UPDATE VIEW
+            //Display new rooms to user that listeninig event when they come to the Message/Chat page
 
             //emit only to users that's joined the room
             const newRoomID = data.newRoomID;
             const roomKey = `room:${newRoomID}`;
             io.to(roomKey).emit("addUserToGroupChange", data); //change 
 
+
+            //*SEND AND STORE NOTIFICATION
+            //Notify new added user that is added to group
+
+            // Notify other people in c
             //notify all users that's exist in the room (exlude the sender)
             //roomKey = 'get id's of users'
             io.emit(`addUserToGroupNotify-${ids}`, data);
         })
-
     
         socket.on('disconnect', async(id)=>{
             console.log("DISCONNECT");

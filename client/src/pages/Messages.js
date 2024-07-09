@@ -162,7 +162,6 @@ const Messages = ({socket,connected}) =>{
 
             const result = await addUserToRoom(roomInfo);
             const {newAddedUserID:newUserID, roomID:newRoomID, isPrivate, newUserPicturePath} = result.data;
-            console.log("Resss : ", result);
 
             if(newRoomID === null){
                 toast.error("The group already exists");
@@ -173,7 +172,7 @@ const Messages = ({socket,connected}) =>{
                 const roomUsers = state.rooms.filter(room => room.roomID == roomID);
                 const currentUser = roomUsers[0].users; 
                 const groupData = {newUserID, roomID, newRoomID, currentUser, username, newUserPicturePath}
-                // dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, user:currentUser, newUsername:username, picturePath:newUserPicturePath})
+
                 emitCreteUserGroup(socket, {data:groupData});
                 toast.info("A Group with "+ username + " has been created");
             }
@@ -183,22 +182,10 @@ const Messages = ({socket,connected}) =>{
                 emitUserAddedToChat(socket, {data:groupData});
                 toast.info("User is added to the room: "+  newRoomID);
             }
-
-            // const userObj ={
-            //     roomID:roomID, //current rooom
-            //     newRoomID:newRoomID, //new created
-            //     newUsername:username, //username that has been added
-            //     picturePath:newUserPicturePath //
-            //     user:currentUser
-            // }
-
-            //notify
-            // emitUserAddedToChat(socket, );
-            
             //show messages of new created group
-            MessagesAfterRoomsAction(newRoomID);
+            // MessagesAfterRoomsAction(newRoomID);
             //joining a room to se new incoming messages
-            emitRoomJoin(socket, newRoomID);
+            // emitRoomJoin(socket, newRoomID);
         });
 
         const onSendMessageHandler = async({message, fromRoomID}) =>{        

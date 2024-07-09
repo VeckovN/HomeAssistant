@@ -81,12 +81,8 @@ export const listenOnMessageInRoom = (socket, dispatch) =>{
 //BUG AFRTER ADDING (ERROR OCURED)
 export const listenOnCreateUserGroup = (socket, dispatch) =>{
     socket.on("createUserGroupChange", (context) =>{
-        console.log("CONTEXTTTTT GROUP: ", context);
         const {roomID, newRoomID, currentUser, username, newUserPicturePath} = context;
-        // dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});    
-        // dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});    
         dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, user:currentUser, newUsername:username, picturePath:newUserPicturePath})
-        //update room view
     })
 }
 
@@ -94,17 +90,14 @@ export const listenOnCreateUserGroup = (socket, dispatch) =>{
 export const listenOnUserAddToGroup = (socket, dispatch) =>{
     socket.on("addUserToGroupChange", (context) =>{
         console.log("CONTEXT ADD TO GROUP: ", context);
-        // dispatch({type:""})
         const {roomID, newRoomID, username, newUserPicturePath} = context;
         // dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});    
         dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});    
-        //update room view
     })
 }
 
-//WORKING (BUG* After removing room (that contans user that is added after removing))
-export const listenOnCreateUserNotification = (socket, self_id) =>{
-    socket.on(`createUserToGroupNotify-${self_id}`, (messageObj) =>{
+export const listenOnCreateUserNotification = socket =>{
+    socket.on(`createUserToGroupNotify`, (messageObj) =>{
         //only one user got notification (new added)
         console.log("MESSA A OBOOBJJBJ : ", messageObj);
         const client = messageObj.currentUser[0].username; 
@@ -117,7 +110,6 @@ export const listenOnCreateUserNotification = (socket, self_id) =>{
             sound.play();
         }
     })
-    
 }
 
 //NOT IMPLEMENTED
