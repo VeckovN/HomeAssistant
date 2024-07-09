@@ -22,17 +22,14 @@ const CommentsList = ({socket, user}) =>{
 
     //listen socket event
     useEffect(() => {
-        console.log("S)");
-        console.log("SOCKET " , socket);
-        console.log("USER: ", user);
         if (socket) { 
-            //trigger with sending comment(same commentNotification emit but different receive data)
-            socket.on(`newComment-${user.userID}`, (data) => {
+            //Its emited to user-{userID} room that user joined and emit on newCommentchange Event of these room
+            socket.on(`newCommentChange`, (data) => {
                 setComments(prevComments => [...prevComments, data.postComment]);
             });
 
             return () => {
-                socket.off(`newComment-${user.userID}`);
+                socket.off(`newCommentChange`);
             };
         }
     }, [socket]);

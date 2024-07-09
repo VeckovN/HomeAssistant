@@ -95,6 +95,7 @@ server.listen(5000, ()=>{
         socket.on("room.join", id =>{ //listen on 'room.join' event
             console.log("CLIENT ENTERED THE ROOM " + id);
             socket.join(`room:${id}`); //join room -> room:1:2 example or group room:1:5:7
+            
         })
     
         socket.on("leave.room", id =>{
@@ -102,11 +103,30 @@ server.listen(5000, ()=>{
             socket.leave(`room:${id}`)
         })
 
+
+        //every user on socket init join the room * used to send end receive data for concrete user
+        //instead of broadcasting with io.emit('dynamicName') because it's less efficient and not good performance
+        socket.on('joinRoom', (userID)=>{
+            socket.join(`user:${userID}`);
+            console.log(`\n User with ID ${userID} joined the room user-${userID} \n`)
+        })
+
+        socket.on('leaveRoom', userID =>{
+            console.log(`User with ID ${userID} left the room user-${userID}`)
+            socket.leave(`user:${userID}`);
+        })
+
+
+        //REFFACTORED
         socket.on("commentNotification", (postComment) =>{
-            //emit notification
-            io.emit(`privateCommentNotify-${postComment.houseworkerID}`, postComment.from);
+            //THESE BROADCAST (NOT EFFICIENT)
+            // io.emit(`privateCommentNotify-${postComment.houseworkerID}`, postComment.from);
             //emit newComment, only when the user is on the comments page
-            io.emit(`newComment-${postComment.houseworkerID}`, {postComment});
+            // io.emit(`newComment-${postComment.houseworkerID}`, {postComment});
+
+            //use JoinedRoom instead of dynamicName emit because it's broadCast the data (unnecessary traffics)
+            io.to(`user:${postComment.houseworkerID}`).emit('privateCommentNotify', postComment.from);
+            io.to(`user:${postComment.houseworkerID}`).emit(`newCommentChange`, {postComment});
         })
 
         socket.on("ratingNotification", ({ratingObj}) =>{
@@ -126,6 +146,45 @@ server.listen(5000, ()=>{
                 console.error("Error Handling message: ", error);
             }
         })
+
+
+        socket.on("addUserToGroupNotification", (data) =>{
+            // const 
+            //notify all users that's exist in the room
+            //roomKey = 'get id's of users'
+        })
+
+        socket.on("createUserGroup", ({data}) =>{
+            console.log("ADD USER TO GROUP DATA ", data);
+
+            //roomID, newRoomID, currentUser, username, newUserPicturePath
+            //emit only to users that's joined the room
+            // const newRoomID = data.newRoomID;
+            const roomKey = `room:${data.roomID}`;
+            io.to(roomKey).emit("createUserGroupChange", data); //change 
+
+            // !!!!! Shouldn't UPDATE  only when is room joined (update when is message page visited)
+
+            //notify only new added user
+            console.log("\n " + `io.emit(createUserToGroupNotify-${data.newUserID}, data);`)
+            //THERE IS only one new user (that is added to group)
+            //and sender- client That added user
+            io.emit(`createUserToGroupNotify-${data.newUserID}`, data); 
+        })
+
+        socket.on("addUserToGroup", ({data}) =>{
+            console.log("ADD USER TO GROUP DATA ", data);
+
+            //emit only to users that's joined the room
+            const newRoomID = data.newRoomID;
+            const roomKey = `room:${newRoomID}`;
+            io.to(roomKey).emit("addUserToGroupChange", data); //change 
+
+            //notify all users that's exist in the room (exlude the sender)
+            //roomKey = 'get id's of users'
+            io.emit(`addUserToGroupNotify-${ids}`, data);
+        })
+
     
         socket.on('disconnect', async(id)=>{
             console.log("DISCONNECT");
