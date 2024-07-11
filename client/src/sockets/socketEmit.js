@@ -20,6 +20,10 @@ export const emitUserAddedToChat = (socket, groupObj) =>{
     socket.emit("addUserToGroup", groupObj)
 }
 
+export const emitUserDeleteRoom = (socket, groupObj) =>{
+    socket.emit("deleteUserRoom", groupObj)
+}
+
 export const emitRoomJoin = (socket, roomID) =>{
     socket.emit('chatRoom.join', roomID);
 }

@@ -89,11 +89,15 @@ export const listenOnCreateUserGroup = (socket, dispatch) =>{
 //NOT IMPLEMENTED
 export const listenOnAddUserToGroup = (socket, dispatch) =>{
     socket.on("addUserToGroupChange", (context) =>{
-        //if(self_id == NewUserName)
-            //dispatch(Create_Group);
-
-        const {newUserID, newUsername, roomID, newRoomID, clientID ,clientUsername, newUserPicturePath} = context;
+        const {newUsername, roomID, newRoomID, newUserPicturePath} = context;
         dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:newUsername, picturePath:newUserPicturePath});    
+    })
+}
+
+export const listenOnDeleteUserFromGroup = (socket, dispatch) =>{
+    socket.on("deleteUserRoomChange", (context) => {
+        const {roomID} = context;
+        dispatch({type:"DELETE_ROOM", data:roomID});
     })
 }
 
@@ -151,7 +155,7 @@ export const listenOnAddUserToGroupNotification = (socket, self_id) =>{
 
 export const listenOnDeleteUserRoomNotification = (socket) =>{
     socket.on("deleteUserRoomNotify", (roomObj) =>{
-        const {roomID, clientID, clientUsername} = roomObj;
+        const {roomID, clientUsername} = roomObj;
 
         //Notification for members(clients) in chat excluded sender and added client
         toast.info(`Client ${clientUsername} delete conversation: ${roomID}`,{

@@ -5,8 +5,8 @@ import Rooms from '../components/Chat/Rooms.js';
 import {toast} from 'react-toastify';
 import {MessagesReducer} from '../components/MessagesReducer.js';
 import {getHouseworkers} from '../services/houseworker.js';
-import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup} from '../sockets/socketListen.js';
-import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat} from '../sockets/socketEmit.js';
+import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnDeleteUserFromGroup} from '../sockets/socketListen.js';
+import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
 import {getUserRooms, deleteRoom, addUserToRoom, getMessagesByRoomID, sendMessageToUser} from '../services/chat.js';
 import Spinner from '../components/UI/Spinner.js';
 
@@ -39,6 +39,7 @@ const Messages = ({socket,connected}) =>{
                 listenOnMessageInRoom(socket, dispatch);
                 listenOnCreateUserGroup(socket, dispatch);
                 listenOnAddUserToGroup(socket, dispatch);
+                listenOnDeleteUserFromGroup(socket, dispatch);
     
                 //when is created new room show it with others
                 socket.on('show.room', (room) =>{
@@ -109,6 +110,9 @@ const Messages = ({socket,connected}) =>{
             try{
                 await deleteRoom(roomID);
                 dispatch({type:"DELETE_ROOM", data:roomID});
+
+                const data = {roomID, clientID:user.userID, clientUsername:user.username};
+                emitUserDeleteRoom(socket, data);
                 
                 toast.success("You have successfully deleted the room",{
                     className:"toast-contact-message"
@@ -167,30 +171,22 @@ const Messages = ({socket,connected}) =>{
                 return;
             }
             
-            console.log("IS PRIVATE: ", isPrivate);
             if(isPrivate){                    
                 const roomUsers = state.rooms.filter(room => room.roomID == roomID);
                 const currentUser = roomUsers[0].users; 
-                const groupData = {newUserID, roomID, newRoomID, currentUser, username, newUserPicturePath}
+                const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath};
                 emitCreteUserGroup(socket, {data:groupData});
                 //update client room view
-                dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, user:currentUser, newUsername:username, picturePath:newUserPicturePath})
+                dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, currentMember:currentUser, newUsername:username, picturePath:newUserPicturePath})
                 toast.info("A Group with "+ username + " has been created");
             }
             else{ 
-                console.log("EE::::FFF");
                 const groupData = {newUserID, newUsername:username, roomID, newRoomID, clientID:user.userID ,clientUsername:user.username, newUserPicturePath};
                 // dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});    
                 emitUserAddedToChat(socket, {data:groupData});
                 dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});
                 toast.info("User is added to the room: "+  newRoomID);
             }
-
-
-            //show messages of new created group
-            // MessagesAfterRoomsAction(newRoomID);
-            //joining a room to se new incoming messages
-            // emitRoomJoin(socket, newRoomID);
         });
 
         const onSendMessageHandler = async({message, fromRoomID}) =>{        

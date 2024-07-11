@@ -159,13 +159,28 @@ server.listen(5000, ()=>{
 
 
         socket.on("createUserGroup", ({data}) =>{
-            //JUST EMIT ON createUSerGroupChange for newUserID
-            //this event is listen on Message page (only when the user enter the page)
-            io.to(`user:${data.newUserID}`).emit('createUserGroupChange', data);
-            
-            //notify only new added user
-            //This event is listen on Socket connection
-            io.to(`user:${data.newUserID}`).emit('createUserToGroupNotify', data);
+            const {newUserID, newUsername, roomID, newRoomID, clientID ,clientUsername, newUserPicturePath} = data;                        
+            //notify users
+            const users = newRoomID.split(':');
+            //exclude the sender from the users notification
+            const notifyUsers = users.filter(el => el!=clientID);
+
+            const notifyObj = {
+                newHouseworkerID:newUserID, 
+                clientUsername: clientUsername, 
+                newHouseworkerUsername:newUsername
+            }
+
+            notifyUsers.forEach(id =>{
+                //notifications
+                // io.to(`user:${id}`).emit("addUserToGroupNotify" , notifyObj);
+                io.to(`user:${id}`).emit('createUserToGroupNotify', notifyObj);
+                console.log(`io.to(user:${id}).emit('createUserToGroupNotify', notifyObj)`);
+
+                //send data for chat room update
+                io.to(`user:${id}`).emit('createUserGroupChange', data);
+                console.log(`io.to(user:${id}).emit('createUserGroupChange', data)`)
+            })
         })
 
         socket.on("addUserToGroup", ({data}) =>{
@@ -189,6 +204,24 @@ server.listen(5000, ()=>{
                 //send data for chat room update
                 io.to(`user:${id}`).emit("addUserToGroupChange" , data);
                 console.log(`io.to(user:${id}).emit("addUserToGroupChange" , data);`)
+            })
+        })
+
+        socket.on("deleteUserRoom", (data) =>{
+            console.log("DEL::::: DARATATA :  ", data);
+            const {roomID, clientID} = data;   
+            const users = roomID.split(':');
+            //exclude the sender from the users notification
+            const notifyUsers = users.filter(el => el!=clientID);
+
+            notifyUsers.forEach(id =>{
+                //notifications
+                io.to(`user:${id}`).emit("deleteUserRoomNotify" , data);
+                console.log(`io.to(user:${id}).emit("deleteUserRoomNotify" , notifyObj)`);
+
+                //send data for chat room update
+                io.to(`user:${id}`).emit("deleteUserRoomChange" , data);
+                console.log(`io.to(user:${id}).emit("deleteUserRoomChange" , data);`)
             })
         })
     
