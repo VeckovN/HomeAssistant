@@ -1,6 +1,6 @@
 import {useState, useRef, useEffect} from 'react';
 import {io} from "socket.io-client";
-import { listenForCommentNotification, listenForRatingNotfication, listenFormMessage, listenOnCreateUserNotification, listenOnAddUserToGroupNotification} from '../sockets/socketListen';
+import { listenForCommentNotification, listenForRatingNotfication, listenFormMessage, listenOnCreateUserNotification, listenOnAddUserToGroupNotification, listenOnDeleteUserRoomNotification} from '../sockets/socketListen';
 
 //user info taken from redux
 const useSocket = (user) =>{
@@ -55,6 +55,7 @@ const useSocket = (user) =>{
             listenForRatingNotfication(socketRef.current, user.userID); // Listen for rating notifications
             listenOnCreateUserNotification(socketRef.current, user.userID); // Listen for create user notifications
             listenOnAddUserToGroupNotification(socketRef.current, user.userID);
+            listenOnDeleteUserRoomNotification(socketRef.current);
 
             // Clean up on unmount
             //logout will trigger this(redirectin to home trigger onMount component)
