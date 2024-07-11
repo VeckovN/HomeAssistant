@@ -5,7 +5,7 @@ import Rooms from '../components/Chat/Rooms.js';
 import {toast} from 'react-toastify';
 import {MessagesReducer} from '../components/MessagesReducer.js';
 import {getHouseworkers} from '../services/houseworker.js';
-import {listenOnMessageInRoom, listenOnUserAddToGroup, listenOnCreateUserGroup} from '../sockets/socketListen.js';
+import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup} from '../sockets/socketListen.js';
 import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat} from '../sockets/socketEmit.js';
 import {getUserRooms, deleteRoom, addUserToRoom, getMessagesByRoomID, sendMessageToUser} from '../services/chat.js';
 import Spinner from '../components/UI/Spinner.js';
@@ -38,8 +38,7 @@ const Messages = ({socket,connected}) =>{
                 //users which looking on chat will receive message 
                 listenOnMessageInRoom(socket, dispatch);
                 listenOnCreateUserGroup(socket, dispatch);
-                listenOnUserAddToGroup(socket, dispatch);
-                // listenOnUserAddToGroupNotification(socket, roomID);
+                listenOnAddUserToGroup(socket, dispatch);
     
                 //when is created new room show it with others
                 socket.on('show.room', (room) =>{
@@ -61,8 +60,8 @@ const Messages = ({socket,connected}) =>{
                 dispatch({type:"SET_ROOM_INFO", ID:roomID, usersArray:users});
                 //join displayed room
 
-                //COMMENTED
-                emitRoomJoin(socket, roomID);
+                //COMMENTED (emit event before socket initialization(connection))
+                // emitRoomJoin(socket, roomID);
                 
                 //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
                 const messages = await getMessagesByRoomID(roomID)
@@ -168,20 +167,26 @@ const Messages = ({socket,connected}) =>{
                 return;
             }
             
+            console.log("IS PRIVATE: ", isPrivate);
             if(isPrivate){                    
                 const roomUsers = state.rooms.filter(room => room.roomID == roomID);
                 const currentUser = roomUsers[0].users; 
                 const groupData = {newUserID, roomID, newRoomID, currentUser, username, newUserPicturePath}
-
                 emitCreteUserGroup(socket, {data:groupData});
+                //update client room view
+                dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, user:currentUser, newUsername:username, picturePath:newUserPicturePath})
                 toast.info("A Group with "+ username + " has been created");
             }
             else{ 
-                const groupData = {newUserID, roomID, newRoomID, username, newUserPicturePath};
+                console.log("EE::::FFF");
+                const groupData = {newUserID, newUsername:username, roomID, newRoomID, clientID:user.userID ,clientUsername:user.username, newUserPicturePath};
                 // dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});    
                 emitUserAddedToChat(socket, {data:groupData});
+                dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});
                 toast.info("User is added to the room: "+  newRoomID);
             }
+
+
             //show messages of new created group
             // MessagesAfterRoomsAction(newRoomID);
             //joining a room to se new incoming messages

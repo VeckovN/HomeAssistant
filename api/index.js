@@ -158,12 +158,6 @@ server.listen(5000, ()=>{
         })
 
 
-        socket.on("addUserToGroupNotification", (data) =>{
-            // const 
-            //notify all users that's exist in the room
-            //roomKey = 'get id's of users'
-        })
-
         socket.on("createUserGroup", ({data}) =>{
             //JUST EMIT ON createUSerGroupChange for newUserID
             //this event is listen on Message page (only when the user enter the page)
@@ -175,24 +169,27 @@ server.listen(5000, ()=>{
         })
 
         socket.on("addUserToGroup", ({data}) =>{
-            console.log("ADD USER TO GROUP DATA ", data);
+            const {newUserID, newUsername, roomID, newRoomID, clientID ,clientUsername, newUserPicturePath} = data;
 
-            //*UPDATE VIEW
-            //Display new rooms to user that listeninig event when they come to the Message/Chat page
+            const users = newRoomID.split(':');
+            //exclude the sender from the users notification
+            const notifyUsers = users.filter(el => el!=clientID);
 
-            //emit only to users that's joined the room
-            const newRoomID = data.newRoomID;
-            const roomKey = `room:${newRoomID}`;
-            io.to(roomKey).emit("addUserToGroupChange", data); //change 
+            const notifyObj = {
+                newHouseworkerID:newUserID, 
+                clientUsername: clientUsername, 
+                newHouseworkerUsername:newUsername
+            }
 
+            notifyUsers.forEach(id =>{
+                //notifications
+                io.to(`user:${id}`).emit("addUserToGroupNotify" , notifyObj);
+                console.log(`io.to(user:${id}).emit("addUserToGroupNotify" , notifyObj)`);
 
-            //*SEND AND STORE NOTIFICATION
-            //Notify new added user that is added to group
-
-            // Notify other people in c
-            //notify all users that's exist in the room (exlude the sender)
-            //roomKey = 'get id's of users'
-            io.emit(`addUserToGroupNotify-${ids}`, data);
+                //send data for chat room update
+                io.to(`user:${id}`).emit("addUserToGroupChange" , data);
+                console.log(`io.to(user:${id}).emit("addUserToGroupChange" , data);`)
+            })
         })
     
         socket.on('disconnect', async(id)=>{

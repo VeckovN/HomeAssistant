@@ -87,12 +87,13 @@ export const listenOnCreateUserGroup = (socket, dispatch) =>{
 }
 
 //NOT IMPLEMENTED
-export const listenOnUserAddToGroup = (socket, dispatch) =>{
+export const listenOnAddUserToGroup = (socket, dispatch) =>{
     socket.on("addUserToGroupChange", (context) =>{
-        console.log("CONTEXT ADD TO GROUP: ", context);
-        const {roomID, newRoomID, username, newUserPicturePath} = context;
-        // dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});    
-        dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});    
+        //if(self_id == NewUserName)
+            //dispatch(Create_Group);
+
+        const {newUserID, newUsername, roomID, newRoomID, clientID ,clientUsername, newUserPicturePath} = context;
+        dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:newUsername, picturePath:newUserPicturePath});    
     })
 }
 
@@ -114,22 +115,24 @@ export const listenOnCreateUserNotification = socket =>{
 
 //NOT IMPLEMENTED
 export const listenOnAddUserToGroupNotification = (socket, self_id) =>{
-    socket.on("", (messageObj) =>{
-        console.log("socket.on(messageResponseNotify)");
-        const {from, roomID, fromUsername} = messageObj;
-        const users = roomID.split(':');
+    socket.on("addUserToGroupNotify", (messageObj) =>{
+        const {newHouseworkerID, clientUsername, newHouseworkerUsername} = messageObj;
 
-        //exclude the sender from users notification
-        const notifyUsers = users.filter(el => el!=from);
-        //if our userID is in array of notifyUsers
-        if(notifyUsers.includes(self_id)){
-            toast.info(`You received Message from ${fromUsername}`,{
+        if(newHouseworkerID == self_id){
+            //Notification for added client
+            toast.info(`Client ${clientUsername} added you to the group`,{
+                className:"toast-contact-message"
+            })
+        }
+        else{
+            //Notification for members(clients) in chat excluded sender and added client
+            toast.info(`Client ${clientUsername} added the ${newHouseworkerUsername} to group`,{
                 className:"toast-contact-message"
             })
         }
 
         if(!document.hasFocus()){
-            const sound = new Audio(messageSound);
+            const sound = new Audio(announcementSound);
             sound.play();
         }
 
