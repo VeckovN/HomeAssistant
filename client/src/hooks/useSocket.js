@@ -1,6 +1,6 @@
 import {useState, useRef, useEffect} from 'react';
 import {io} from "socket.io-client";
-import { listenForCommentNotification, listenForRatingNotfication, listenFormMessage, listenOnCreateUserNotification} from '../sockets/socketListen';
+import { listenForCommentNotification, listenForRatingNotfication, listenFormMessage, listenOnCreateUserNotification, listenOnAddUserToGroupNotification} from '../sockets/socketListen';
 
 //user info taken from redux
 const useSocket = (user) =>{
@@ -10,6 +10,7 @@ const useSocket = (user) =>{
     useEffect(() => {
         // Handle socket connection and disconnection based on user state
         if (user) {
+            console.log("USSERRR : ", user);
           // Create a new socket instance if it doesn't exist
             if (!socketRef.current) {
                 const socket = io('http://127.0.0.1:5000', { withCredentials: true });
@@ -49,11 +50,12 @@ const useSocket = (user) =>{
                 // }
     
             // Listeners for notifications (assuming separate functions for each)
-            listenFormMessage(socketRef.current, user.userID); // Listen for message notifications
+            listenFormMessage(socketRef.current, user.userID); // Listen for message notifications (both users)
             listenForCommentNotification(socketRef.current, user.userID); // Listen for comment notifications
             listenForRatingNotfication(socketRef.current, user.userID); // Listen for rating notifications
             listenOnCreateUserNotification(socketRef.current, user.userID); // Listen for create user notifications
-    
+            listenOnAddUserToGroupNotification(socketRef.current, user.userID);
+
             // Clean up on unmount
             //logout will trigger this(redirectin to home trigger onMount component)
             return () => {
