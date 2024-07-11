@@ -15,7 +15,7 @@ export const MessagesReducer = (state, action) =>{
         case "CREATE_NEW_GROUP":
             return{
                 ...state,
-                rooms: [...state.rooms, {roomID:action.newRoomID, users:[...action.user, {username:action.newUsername, picturePath:action.picturePath}]}],
+                rooms: [...state.rooms, {roomID:action.newRoomID, users:[...action.currentMember, {username:action.newUsername, picturePath:action.picturePath}]}],
             }
         case "SET_ROOM_INFO": //RoomInfo
             return{
@@ -61,7 +61,7 @@ export const MessagesReducer = (state, action) =>{
         case "ADD_USER_TO_GROUP":
             return{
                 ...state,
-                roomMessages:[],
+                // roomMessages:[],
                 rooms: state.rooms.map(room =>{
                     if(room.roomID === action.roomID){ //action-data = roomID
                         return{

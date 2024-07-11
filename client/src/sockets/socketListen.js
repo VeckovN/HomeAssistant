@@ -81,8 +81,8 @@ export const listenOnMessageInRoom = (socket, dispatch) =>{
 //BUG AFRTER ADDING (ERROR OCURED)
 export const listenOnCreateUserGroup = (socket, dispatch) =>{
     socket.on("createUserGroupChange", (context) =>{
-        const {roomID, newRoomID, currentUser, username, newUserPicturePath} = context;
-        dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, user:currentUser, newUsername:username, picturePath:newUserPicturePath})
+        const {newUsername, roomID, newRoomID, currentMember, newUserPicturePath} = context;
+        dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, currentMember:currentMember, newUsername:newUsername, picturePath:newUserPicturePath})
     })
 }
 
@@ -97,14 +97,24 @@ export const listenOnAddUserToGroup = (socket, dispatch) =>{
     })
 }
 
-export const listenOnCreateUserNotification = socket =>{
+export const listenOnCreateUserNotification = (socket, self_id) =>{
+    // setGroupAddingListener(socket, listenerName, messageObj);
     socket.on(`createUserToGroupNotify`, (messageObj) =>{
+        const {newHouseworkerID, clientUsername, newHouseworkerUsername} = messageObj;
+
         //only one user got notification (new added)
-        console.log("MESSA A OBOOBJJBJ : ", messageObj);
-        const client = messageObj.currentUser[0].username; 
-        toast.info(`Client ${client} added you to group`,{
-            className:"toast-contact-message"
-        })
+        if(newHouseworkerID == self_id){
+            //Notification for added client
+            toast.info(`Client ${clientUsername} added you to the group`,{
+                className:"toast-contact-message"
+            })
+        }
+        else{
+            //Notification for members(clients) in chat excluded sender and added client
+            toast.info(`Client ${clientUsername} added the ${newHouseworkerUsername} to group`,{
+                className:"toast-contact-message"
+            })
+        }
 
         if(!document.hasFocus()){
             const sound = new Audio(announcementSound);
@@ -138,6 +148,49 @@ export const listenOnAddUserToGroupNotification = (socket, self_id) =>{
 
       })
 }
+
+export const listenOnDeleteUserRoomNotification = (socket) =>{
+    socket.on("deleteUserRoomNotify", (roomObj) =>{
+        const {roomID, clientID, clientUsername} = roomObj;
+
+        //Notification for members(clients) in chat excluded sender and added client
+        toast.info(`Client ${clientUsername} delete conversation: ${roomID}`,{
+            className:"toast-contact-message"
+        })
+
+        if(!document.hasFocus()){
+            const sound = new Audio(announcementSound);
+            sound.play();
+        }
+      })
+}
+
+
+// const setGroupAddingListener = (socket, listenerName, dateObject, selfID) =>{
+//     socket.on(listenerName, (dateObject) =>{
+//         const {newHouseworkerID, clientUsername, newHouseworkerUsername} = dateObject;
+
+//         //only one user got notification (new added)
+//         if(newHouseworkerID == selfID){
+//             //Notification for added client
+//             toast.info(`Client ${clientUsername} added you to the group`,{
+//                 className:"toast-contact-message"
+//             })
+//         }
+//         else{
+//             //Notification for members(clients) in chat excluded sender and added client
+//             toast.info(`Client ${clientUsername} added the ${newHouseworkerUsername} to group`,{
+//                 className:"toast-contact-message"
+//             })
+//         }
+
+//         if(!document.hasFocus()){
+//             const sound = new Audio(announcementSound);
+//             sound.play();
+//         }
+//     })
+// }
+
 
 // export const listenOnAddedUser = (socket) =>{
 //     //render room view of users that are joined the room
