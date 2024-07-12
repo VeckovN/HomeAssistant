@@ -73,6 +73,20 @@ export const MessagesReducer = (state, action) =>{
                     return room;
                 })
             };
+        case "KICK_USER_FROM_GROUP":
+            return{
+                ...state,
+                rooms: state.rooms.map(room =>{
+                    if(room.roomID === action.roomID){
+                        return{
+                            ...room,
+                            roomID:action.newRoomID, //updated roomID - removed user from chat 
+                            users: room.users.filter(el => el.username != action.username)
+                        }
+                    }
+                    return room;
+                })
+            };
         case "SET_HOUSEWORKERS":
             return{
                 ...state,
