@@ -1,6 +1,6 @@
 import {useState, useRef, useEffect} from 'react';
 import {io} from "socket.io-client";
-import { listenForCommentNotification, listenForRatingNotfication, listenFormMessage, listenOnCreateUserNotification, listenOnAddUserToGroupNotification, listenOnDeleteUserRoomNotification} from '../sockets/socketListen';
+import { listenForCommentNotification, listenForRatingNotfication, listenFormMessage, listenOnCreateUserNotification, listenOnAddUserToGroupNotification, listenOnDeleteUserRoomNotification, listenOnKickUserFromGroupNotification} from '../sockets/socketListen';
 
 //user info taken from redux
 const useSocket = (user) =>{
@@ -43,6 +43,7 @@ const useSocket = (user) =>{
                 // socketRef.current.removeAllListeners(); // Uncomment if necessary
             });
 
+            console.log("user.type: " , user.type);
              // if(user.type === "Houseworker"){
                 //     listenForCommentNotification(socketRef.current);
                 //     listenForRatingNotfication(socketRef.current, user.userID);
@@ -55,6 +56,7 @@ const useSocket = (user) =>{
             listenForRatingNotfication(socketRef.current, user.userID); // Listen for rating notifications
             listenOnCreateUserNotification(socketRef.current, user.userID); // Listen for create user notifications
             listenOnAddUserToGroupNotification(socketRef.current, user.userID);
+            listenOnKickUserFromGroupNotification(socketRef.current, user.userID);
             listenOnDeleteUserRoomNotification(socketRef.current);
 
             // Clean up on unmount

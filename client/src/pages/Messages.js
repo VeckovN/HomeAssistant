@@ -5,8 +5,8 @@ import Rooms from '../components/Chat/Rooms.js';
 import {toast} from 'react-toastify';
 import {MessagesReducer} from '../components/MessagesReducer.js';
 import {getHouseworkers} from '../services/houseworker.js';
-import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnDeleteUserFromGroup} from '../sockets/socketListen.js';
-import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
+import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup} from '../sockets/socketListen.js';
+import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat, emitKickUserFromChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
 import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser} from '../services/chat.js';
 import Spinner from '../components/UI/Spinner.js';
 
@@ -42,6 +42,7 @@ const Messages = ({socket,connected}) =>{
                 listenOnCreateUserGroup(socket, dispatch);
                 listenOnAddUserToGroup(socket, dispatch);
                 listenOnDeleteUserFromGroup(socket, dispatch);
+                listenOnKickUserFromGroup(socket, dispatch, user.userID);
     
                 //when is created new room show it with others
                 socket.on('show.room', (room) =>{
@@ -199,19 +200,14 @@ const Messages = ({socket,connected}) =>{
                 return
             }
 
-            const roomInfo ={ roomID, username};
+            const roomInfo ={roomID, username};
             const result = await removeUserFromGroup(roomInfo);
-            const newRoomID = result.data;
+            const {newRoomID, kickedUserID} = result.data;
 
             dispatch({type:"KICK_USER_FROM_GROUP", roomID, newRoomID, username})
-        
-            // const result = await addUserToRoom(roomInfo);
-            // const {newAddedUserID:newUserID, roomID:newRoomID, isPrivate, newUserPicturePath} = result.data;
 
-            // if(newRoomID === null){
-            //     toast.error("The group already exists");
-            //     return;
-            // }
+            const data = {newRoomID, roomID, kickedUserID, kickedUsername:username, clientID:user.userID, clientUsername:user.username}
+            emitKickUserFromChat(socket, data);
 
             toast.info("The user "+ username + " has been kicked from the chat");
         }
@@ -225,12 +221,10 @@ const Messages = ({socket,connected}) =>{
                 //this will trigger evento on server (in index.js) and send message to room
                 const messageObj = {
                     message:message,
-                    //who send message()
                     from:user.userID,
                     roomID:fromRoomID,
                     fromUsername:user.username
                 }
-
                 try{
                     const result = await sendMessageToUser(messageObj);
                     const {roomKey} = result;

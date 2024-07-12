@@ -78,7 +78,6 @@ export const listenOnMessageInRoom = (socket, dispatch) =>{
     })
 }
 
-//BUG AFRTER ADDING (ERROR OCURED)
 export const listenOnCreateUserGroup = (socket, dispatch) =>{
     socket.on("createUserGroupChange", (context) =>{
         const {newUsername, roomID, newRoomID, currentMember, newUserPicturePath} = context;
@@ -86,11 +85,21 @@ export const listenOnCreateUserGroup = (socket, dispatch) =>{
     })
 }
 
-//NOT IMPLEMENTED
-export const listenOnAddUserToGroup = (socket, dispatch) =>{
+export const listenOnAddUserToGroup = (socket, dispatch, self_id) =>{
     socket.on("addUserToGroupChange", (context) =>{
         const {newUsername, roomID, newRoomID, newUserPicturePath} = context;
         dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:newUsername, picturePath:newUserPicturePath});    
+    })
+}
+
+export const listenOnKickUserFromGroup = (socket, dispatch, self_id) =>{
+    socket.on("kickUserFromGroupChange", (context) =>{
+        const {roomID, newRoomID, kickedUsername, kickedUserID} = context;
+
+        if(kickedUserID === self_id)
+            dispatch({type:"DELETE_ROOM", data:roomID})
+        else
+            dispatch({type:"KICK_USER_FROM_GROUP", roomID, newRoomID, username:kickedUsername})        
     })
 }
 
@@ -127,7 +136,7 @@ export const listenOnCreateUserNotification = (socket, self_id) =>{
     })
 }
 
-//NOT IMPLEMENTED
+
 export const listenOnAddUserToGroupNotification = (socket, self_id) =>{
     socket.on("addUserToGroupNotify", (messageObj) =>{
         const {newHouseworkerID, clientUsername, newHouseworkerUsername} = messageObj;
@@ -152,6 +161,31 @@ export const listenOnAddUserToGroupNotification = (socket, self_id) =>{
 
       })
 }
+
+export const listenOnKickUserFromGroupNotification = (socket, self_id) =>{
+    socket.on("kickUserFromGroupNotify", (dataObj) =>{
+        const {newRoomID, kickedUserID, kickedUsername, clientID, clientUsername} = dataObj;
+        
+        //notify kicked user(if we are) that is removed from chat
+        if(kickedUserID == self_id){
+            toast.info(`Client ${clientUsername} has kicked you from the chat`,{
+                className:"toast-contact-message"
+            })
+        }
+        else{ 
+            toast.info(`Client ${clientUsername} has kicked the ${kickedUsername} from the chat`,{
+                className:"toast-contact-message"
+            })
+        }
+        
+        if(!document.hasFocus()){
+            const sound = new Audio(announcementSound);
+            sound.play();
+        }
+    })
+}
+
+
 
 export const listenOnDeleteUserRoomNotification = (socket) =>{
     socket.on("deleteUserRoomNotify", (roomObj) =>{

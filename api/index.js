@@ -129,7 +129,6 @@ server.listen(5000, ()=>{
         })
 
         socket.on("ratingNotification", ({ratingObj}) =>{
-            console.log("RATING OBJ " + JSON.stringify(ratingObj));
             //emit only to user whom the message is intended
             io.emit(`privateRatingNotify-${ratingObj.houseworkerID}`, ratingObj.client);
             
@@ -173,13 +172,9 @@ server.listen(5000, ()=>{
 
             notifyUsers.forEach(id =>{
                 //notifications
-                // io.to(`user:${id}`).emit("addUserToGroupNotify" , notifyObj);
                 io.to(`user:${id}`).emit('createUserToGroupNotify', notifyObj);
-                console.log(`io.to(user:${id}).emit('createUserToGroupNotify', notifyObj)`);
-
                 //send data for chat room update
                 io.to(`user:${id}`).emit('createUserGroupChange', data);
-                console.log(`io.to(user:${id}).emit('createUserGroupChange', data)`)
             })
         })
 
@@ -199,16 +194,26 @@ server.listen(5000, ()=>{
             notifyUsers.forEach(id =>{
                 //notifications
                 io.to(`user:${id}`).emit("addUserToGroupNotify" , notifyObj);
-                console.log(`io.to(user:${id}).emit("addUserToGroupNotify" , notifyObj)`);
-
                 //send data for chat room update
                 io.to(`user:${id}`).emit("addUserToGroupChange" , data);
-                console.log(`io.to(user:${id}).emit("addUserToGroupChange" , data);`)
             })
         })
 
+        socket.on("kickUserFromGroup", (data) =>{
+            //new roomID without kicked user
+            const {newRoomID, roomID, clientID, clientUsername} = data;
+            // const users = newRoomID.split(":");
+            const users = roomID.split(":");
+            const notifyUsers = users.filter(el => el!=clientID);
+
+            notifyUsers.forEach(id =>{
+                io.to(`user:${id}`).emit("kickUserFromGroupNotify" , data);
+                io.to(`user:${id}`).emit("kickUserFromGroupChange" , data);
+            });
+
+        });
+
         socket.on("deleteUserRoom", (data) =>{
-            console.log("DEL::::: DARATATA :  ", data);
             const {roomID, clientID} = data;   
             const users = roomID.split(':');
             //exclude the sender from the users notification
@@ -217,11 +222,8 @@ server.listen(5000, ()=>{
             notifyUsers.forEach(id =>{
                 //notifications
                 io.to(`user:${id}`).emit("deleteUserRoomNotify" , data);
-                console.log(`io.to(user:${id}).emit("deleteUserRoomNotify" , notifyObj)`);
-
                 //send data for chat room update
                 io.to(`user:${id}`).emit("deleteUserRoomChange" , data);
-                console.log(`io.to(user:${id}).emit("deleteUserRoomChange" , data);`)
             })
         })
     
@@ -230,5 +232,7 @@ server.listen(5000, ()=>{
         })
     })
 
-    console.log("SERVER at 5000 port")
+    console.log("SERVER at 5000 port");
+
+    //CRAETE - dynamic function for listener (socket, io, eventName, data)
 })
