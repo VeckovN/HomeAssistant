@@ -41,7 +41,7 @@ const getAllRooms = async(req,res)=>{
 }
 
 const deleteRoom = async(req, res)=>{
-    const roomID = req.body.roomID
+    const roomID = req.params.roomID;
     console.log("DELETE ROOMID:" + JSON.stringify(roomID));
     try{
         await chatModal.deleteRoomByRoomID(roomID);

@@ -16,7 +16,8 @@ const router = express.Router();
 
 router.get('/room/:id/messages', isLogged, getMessages);
 router.post('/room/message', isLogged, postMessage);
-router.post('/room/delete', checkClient, deleteRoom);
+router.delete('/room/delete/:roomID', checkClient, deleteRoom);
+// router.post('/room/removeUser', checkClient, removeUser);
 router.post('/room/addUser', checkClient, addUserToRoom);
 router.get('/conversationCount/:userID', checkHouseworker, getConversationCount);
 router.get('/rooms/:username', isLogged, getAllRooms);

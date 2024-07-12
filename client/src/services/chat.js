@@ -30,7 +30,7 @@ export const getMessagesByRoomID = async(roomID) =>{
 //BECAUSE THIS SERVICES CATCH ERROR FROM CONTROLLER , THIS ERROR SHOULD BE RE-THROW IN COMPOENNT
 export const deleteRoom = async(roomID) =>{
     try{
-        const result = await axiosSession.post(BASE_URL +'chat/room/delete', {roomID:roomID});
+        const result = await axiosSession.delete(BASE_URL +`chat/room/delete/${roomID}`);
         return result; //message 'Room sucessfully deleted'
     }
     catch(err){
@@ -47,6 +47,16 @@ export const addUserToRoom = async(roomInfo) =>{
         //   newUsername
         //}
         const result = await axiosSession.post( BASE_URL + 'chat/room/addUser',roomInfo);
+        return result;
+    }
+    catch(err){
+        ThrowErorr(err);
+    }
+}
+
+export const removeUserFromGroup = async(roomInfo) =>{
+    try{
+        const result = await axiosSession.delete(BASE_URL + 'chat/room/removeUser',roomInfo);
         return result;
     }
     catch(err){
