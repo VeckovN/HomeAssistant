@@ -56,7 +56,7 @@ export const addUserToRoom = async(roomInfo) =>{
 
 export const removeUserFromGroup = async(roomInfo) =>{
     try{
-        const result = await axiosSession.delete(BASE_URL + 'chat/room/removeUser',roomInfo);
+        const result = await axiosSession.delete(BASE_URL + `chat/room/removeUser/${roomInfo.roomID}/${roomInfo.username}`);
         return result;
     }
     catch(err){

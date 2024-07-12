@@ -7,7 +7,7 @@ import {MessagesReducer} from '../components/MessagesReducer.js';
 import {getHouseworkers} from '../services/houseworker.js';
 import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnDeleteUserFromGroup} from '../sockets/socketListen.js';
 import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
-import {getUserRooms, deleteRoom, addUserToRoom, getMessagesByRoomID, sendMessageToUser} from '../services/chat.js';
+import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser} from '../services/chat.js';
 import Spinner from '../components/UI/Spinner.js';
 
 import '../sass/pages/_messages.scss';
@@ -27,6 +27,8 @@ const Messages = ({socket,connected}) =>{
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
     const [showMenu, setShowMenu] = useState(false);
     const [showMoreRoomUsers, setShowMoreRoomUsers] = useState({});
+
+    console.log("STATE: ", state);
 
     const onShowMenuToggleHandler = () =>  setShowMenu(prev => !prev);
     const onUsersFromChatOutHanlder = () => setShowMoreRoomUsers({});
@@ -189,6 +191,31 @@ const Messages = ({socket,connected}) =>{
             }
         });
 
+        const onKickUserFromGroupHandler = async(roomID, username) =>{
+            if(username == ""){
+                toast.error("Select user that you want to kick from room",{
+                    className:"toast-contact-message"
+                })
+                return
+            }
+
+            const roomInfo ={ roomID, username};
+            const result = await removeUserFromGroup(roomInfo);
+            const newRoomID = result.data;
+
+            dispatch({type:"KICK_USER_FROM_GROUP", roomID, newRoomID, username})
+        
+            // const result = await addUserToRoom(roomInfo);
+            // const {newAddedUserID:newUserID, roomID:newRoomID, isPrivate, newUserPicturePath} = result.data;
+
+            // if(newRoomID === null){
+            //     toast.error("The group already exists");
+            //     return;
+            // }
+
+            toast.info("The user "+ username + " has been kicked from the chat");
+        }
+
         const onSendMessageHandler = async({message, fromRoomID}) =>{        
             if(message != ''){
 
@@ -260,6 +287,7 @@ const Messages = ({socket,connected}) =>{
                         houseworkers={state.houseworkers}
                         onSendMessageHandler={onSendMessageHandler}
                         onAddUserToGroupHanlder={onAddUserToGroupHanlder}
+                        onKickUserFromGroupHandler={onKickUserFromGroupHandler}
                         onDeleteRoomHandler={onDeleteRoomHandler}
                         onShowMenuToggleHandler={onShowMenuToggleHandler}
                     />

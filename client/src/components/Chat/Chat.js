@@ -6,7 +6,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 import '../../sass/components/_chat.scss';
 
-const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSendMessageHandler, onAddUserToGroupHanlder, onDeleteRoomHandler, onShowMenuToggleHandler }) =>{
+const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSendMessageHandler, onAddUserToGroupHanlder, onKickUserFromGroupHandler, onDeleteRoomHandler, onShowMenuToggleHandler }) =>{
     const messageInputRef = useRef();
     const endMessageRef = useRef(null);
 
@@ -50,6 +50,7 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
                         rooms={rooms}
                         roomInfo={roomInfo}
                         onAddUserToGroupHanlder={onAddUserToGroupHanlder}
+                        onKickUserFromGroupHandler={onKickUserFromGroupHandler}
                         onDeleteRoomHandler={onDeleteRoomHandler}
                     /> 
                 </div>

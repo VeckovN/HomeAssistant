@@ -269,6 +269,42 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
     }
 }
 
+const removeUserFromRoomID = async(roomID, username) =>{
+    const user = await get(`username:${username}`);
+    const userID = user.split(":")[1] ; //'user':ID 
+
+    const currentRoomKey = `room:${roomID}` //room:1:2
+    const currentUserIDS = roomID.split(':');
+
+    const newIds = currentUserIDS.filter(id => id !== userID);
+    const newRoomID = newIds.join(":");
+    const newRoomKey = `room:${newRoomID}`
+
+    console.log("\n newIds ", newIds);
+    console.log("newRoomID ", newRoomID);
+    console.log("newRoomKey " , newRoomKey + '\n');
+
+    //(FOR REMOVED USER)
+    //-find set `user:${userID}:rooms` and remove roomID from that set
+    await srem(`user:${userID}:rooms`, roomID);
+
+    //FOR OTHER MEMBERS (replace the old RoomID with new one)
+    newIds.forEach(async(id) =>{ 
+        await srem(`user:${id}:rooms`, roomID);
+        await sadd(`user:${id}:rooms`, newRoomID);
+    })
+
+    //find sorted set and remove user from it (id) room:3:6:22:123 where messages are stored
+    await rename(currentRoomKey, newRoomKey);
+
+    //Store Server message (user {username} is kicked from the chat)
+    const date = Date.now();
+    const messageObj = JSON.stringify({message:`User ${username} has been kicked from the chat`, from:'Server', roomID:newRoomID})
+    await zadd(newRoomKey, date, messageObj);
+
+    return newRoomID;
+}
+ 
 const sendMessage = async(messageObj) =>{
     const {roomID} = messageObj;
 
@@ -364,6 +400,7 @@ module.exports ={
     getAllRooms,
     deleteRoomByRoomID,
     addUserToRoom,
+    removeUserFromRoomID,
     getRoomCount,
     sendMessage,
     deleteUserOnNeo4JFailure,

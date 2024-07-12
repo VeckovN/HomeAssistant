@@ -2,27 +2,41 @@ import {useState} from 'react';
 
 import '../../sass/components/_chatMenu.scss';
 
-const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onDeleteRoomHandler}) =>{
+const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onKickUserFromGroupHandler, onDeleteRoomHandler}) =>{
     
-    const [selectedUsername, setSelectedUsernam] = useState(''); //clicked username form list
+    const [selectedUsername, setSelectedUsername] = useState(''); //clicked username form list
     const [searchTerm, setSearchTerm] = useState(''); // entered houseworker username(not selected)
 
-    const SelectedHandler = (username) =>{
-        setSelectedUsernam(username); 
-    }
+    const [selectedKickUsername , setSelectedKickUsername] = useState('');
+    const [searchKickTerm, setSearchKickTerm] = useState('');
+ 
+    const SelectedHandler = (username) => setSelectedUsername(username); 
+    const SelectedKickUserHandler = (username) => setSelectedKickUsername(username);
 
     const ChangeSearchInputHandler = (e, roomID) =>{
         if(selectedUsername!='')
-            setSelectedUsernam('')
+            setSelectedUsername('')
         setSearchTerm(e.target.value);
     }
 
-    const AddUserToGroupHandler = (roomID, selectedUsername) =>{
-        setSelectedUsernam('');
-        setSearchTerm('');
-        onAddUserToGroupHanlder(roomID, selectedUsername);
+    const ChangeSearchKickInputHandler = (e, roomID) =>{
+        if(selectedKickUsername!='')
+            setSelectedKickUsername('')
+        setSearchKickTerm(e.target.value);
     }
-    
+
+    const AddUserToGroupHandler = (roomID, username) =>{
+        setSelectedUsername('');
+        setSearchTerm('');
+        onAddUserToGroupHanlder(roomID, username);
+    }
+
+    const KickUserFromGroupHandler = (roomID, username) =>{
+        setSelectedKickUsername('');
+        setSearchKickTerm('');
+        onKickUserFromGroupHandler(roomID, username);
+    }
+
     // useEffect(()=>{
     //     //cats users array from room obj
     //     const room = rooms.find(el => el.roomID === roomRef.current.value)
@@ -89,38 +103,38 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onDel
                             className='menu-search-input'
                             placeholder='Enter houseworker username'
                             type='text'
-                            // onChange={}  
-                            // value={}                  
+                            onChange={(e)=> ChangeSearchKickInputHandler(e, roomInfo.roomID)}   
+                            value={selectedKickUsername!='' ? selectedKickUsername : searchKickTerm}                
                         />
                     </div>
                     <div className='dropdown-list'>
                         {
-                            <div>
+                        // show only room members 
+                        roomInfo.users.filter(item => {
+                            const searchInput = searchKickTerm.toLowerCase();
+                            const usernameMatch = item.username.toLowerCase();
+
+                            const usernameStartsWithSerachInput = searchInput && usernameMatch.startsWith(searchInput);
+                            // const isNotInRoomUsers =!roomInfo.users.includes(item.username)
+
+                            // return usernameStartsWithSerachInput && isNotInRoomUsers && selectedUsername==''
+                            return usernameStartsWithSerachInput  && selectedKickUsername ==''
+                        })
+                        .map((item) =>(
+                            <div
+                                key={`user-${item.username}`} 
+                                onClick={() => SelectedKickUserHandler(item.username)}
+                                className='dropdown-row'>{item.username}
                             </div>
-                        // houseworkers.filter(item => {
-                        //     const searchInput = searchTerm.toLowerCase();
-                        //     const usernameMatch = item.username.toLowerCase();
-
-                        //     const usernameStartsWithSerachInput = searchInput && usernameMatch.startsWith(searchInput);
-                        //     const isNotInRoomUsers =!roomInfo.users.includes(item.username)
-
-                        //     return usernameStartsWithSerachInput && isNotInRoomUsers && selectedUsername==''
-                        // })
-                        // .map((item) =>(
-                        //     <div
-                        //         key={item.id} 
-                        //         onClick={() => SelectedHandler(item.username)}
-                        //         className='dropdown-row'>{item.username}
-                        //     </div>
-                        // ))
-                        // .slice(0,5)//render 5 items in list
+                        ))
+                        .slice(0,5)//render 5 items in list
                         }
                     </div>
                     <div className='user-button'>
                         <button 
                             className='kick-user-from-group-btn'
-                            onClick={()=> AddUserToGroupHandler(roomInfo.roomID, selectedUsername)}
-                            disabled={true}
+                            onClick={()=> KickUserFromGroupHandler(roomInfo.roomID, selectedKickUsername)}
+                            disabled={!selectedKickUsername}
                             >Kick user
                         </button>
                 </div>

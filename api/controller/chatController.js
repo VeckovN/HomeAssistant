@@ -53,6 +53,19 @@ const deleteRoom = async(req, res)=>{
     }
 }
 
+const removeUserFromRoom = async(req,res)=>{
+    const { roomID, username } = req.params;
+    try{
+        const result = await chatModal.removeUserFromRoomID(roomID, username);
+        res.status(200).send(result);
+    }
+    catch(err){
+        console.log(err);
+        res.status(400).json({error:"Room can't be deleted"});
+    }
+}
+
+
 const addUserToRoom = async(req,res) =>{
 
     const roomID = req.body.roomID;
@@ -84,6 +97,7 @@ module.exports ={
     postMessage,
     getAllRooms,
     deleteRoom,
+    removeUserFromRoom,
     addUserToRoom,
     getConversationCount
 }
