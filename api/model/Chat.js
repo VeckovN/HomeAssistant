@@ -228,6 +228,9 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
     })
     //this is memeber of users Rooms -> user:{ID}:rooms
     const newRoomID = currentUserIDS.join(":"); 
+    const timestamps = Date.now(); //used for score value (miliseconds)
+    const date = new Date(timestamps); //obj that contains 
+    const dateFormat = formatDate(date);
 
     const newRoomKeyExists = await exists(newRoomKey);
     if(newRoomKeyExists) {
@@ -243,10 +246,8 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
             })
 
             //create new roomKey and store first initial message
-            const roomKey = `room:${newRoomID}`;
-            const date = Date.now();
-            const messageObj = JSON.stringify({message:"Chat Created", from:'Server', roomID:newRoomID})
-            await zadd(roomKey, date, messageObj);
+            const messageObj = JSON.stringify({message:"Chat Created", from:'Server', date:dateFormat, roomID:newRoomID})
+            await zadd(newRoomKey, timestamps, messageObj);
         }
         else{
             //Reinaming Room:ROOMID - sorted set for storing messages
@@ -259,6 +260,10 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
                 await srem(`user:${id}:rooms`, currentRoomID);
                 await sadd(`user:${id}:rooms`, newRoomID);
             })
+
+            // const roomKey = `room:${newRoomID}`;
+            const messageObj = JSON.stringify({message:`User ${newUsername} has been added to the chat`, from:'Server', date:dateFormat, roomID:newRoomID})
+            await zadd(newRoomKey, timestamps, messageObj);
         }
         return {
             newAddedUserID:newUserID,
@@ -280,10 +285,6 @@ const removeUserFromRoomID = async(roomID, username) =>{
     const newRoomID = newIds.join(":");
     const newRoomKey = `room:${newRoomID}`
 
-    console.log("\n newIds ", newIds);
-    console.log("newRoomID ", newRoomID);
-    console.log("newRoomKey " , newRoomKey + '\n');
-
     //(FOR REMOVED USER)
     //-find set `user:${userID}:rooms` and remove roomID from that set
     await srem(`user:${userID}:rooms`, roomID);
@@ -298,9 +299,12 @@ const removeUserFromRoomID = async(roomID, username) =>{
     await rename(currentRoomKey, newRoomKey);
 
     //Store Server message (user {username} is kicked from the chat)
-    const date = Date.now();
-    const messageObj = JSON.stringify({message:`User ${username} has been kicked from the chat`, from:'Server', roomID:newRoomID})
-    await zadd(newRoomKey, date, messageObj);
+    const timestamps = Date.now(); //used for score value (miliseconds)
+    const date = new Date(timestamps); //obj that contains 
+    const dateFormat = formatDate(date);
+    
+    const messageObj = JSON.stringify({message:`User ${username} has been kicked from the chat`, from:'Server', date:dateFormat, roomID:newRoomID})
+    await zadd(newRoomKey, timestamps, messageObj);
 
     return {
         newRoomID, 
