@@ -302,7 +302,10 @@ const removeUserFromRoomID = async(roomID, username) =>{
     const messageObj = JSON.stringify({message:`User ${username} has been kicked from the chat`, from:'Server', roomID:newRoomID})
     await zadd(newRoomKey, date, messageObj);
 
-    return newRoomID;
+    return {
+        newRoomID, 
+        kickedUserID:userID
+    };
 }
  
 const sendMessage = async(messageObj) =>{
