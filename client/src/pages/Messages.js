@@ -36,11 +36,9 @@ const Messages = ({socket,connected}) =>{
     useEffect(() => {
             if(socket && user){
                 console.log("HEEEEEEEEE");
-                //io.to(roomKey).emit("messageRoom", messageObj)
-                //users which looking on chat will receive message 
                 listenOnMessageInRoom(socket, dispatch);
                 listenOnCreateUserGroup(socket, dispatch);
-                listenOnAddUserToGroup(socket, dispatch);
+                listenOnAddUserToGroup(socket, dispatch, user.userID);
                 listenOnDeleteUserFromGroup(socket, dispatch);
                 listenOnKickUserFromGroup(socket, dispatch, user.userID);
     
@@ -173,10 +171,11 @@ const Messages = ({socket,connected}) =>{
                 toast.error("The group already exists");
                 return;
             }
+
+            const roomUsers = state.rooms.filter(room => room.roomID == roomID);
+            const currentUser = roomUsers[0].users; 
             
             if(isPrivate){                    
-                const roomUsers = state.rooms.filter(room => room.roomID == roomID);
-                const currentUser = roomUsers[0].users; 
                 const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath};
                 emitCreteUserGroup(socket, {data:groupData});
                 //update client room view
@@ -184,8 +183,7 @@ const Messages = ({socket,connected}) =>{
                 toast.info("A Group with "+ username + " has been created");
             }
             else{ 
-                const groupData = {newUserID, newUsername:username, roomID, newRoomID, clientID:user.userID ,clientUsername:user.username, newUserPicturePath};
-                // dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});    
+                const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath};
                 emitUserAddedToChat(socket, {data:groupData});
                 dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});
                 toast.info("User is added to the room: "+  newRoomID);
