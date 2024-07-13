@@ -43,6 +43,8 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onKic
     //     setRoomInfo(room);
     //     console.log("ROOMINFO EFFECT, " , roomInfo);
     // },[roomRef]); 
+
+    console.log("roomINFOOSODAODS ", roomInfo)
     
     return (
     <div className='chat-menu-container'>
@@ -66,7 +68,12 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onKic
                         const usernameMatch = item.username.toLowerCase();
 
                         const usernameStartsWithSerachInput = searchInput && usernameMatch.startsWith(searchInput);
-                        const isNotInRoomUsers =!roomInfo.users.includes(item.username)
+                        // const isNotInRoomUsers =!roomInfo.users.includes(item.username)
+                        const isNotInRoomUsers = !roomInfo.users.some(user => user.username === item.username);
+                        console.log("SUUUUUUUUU ", item.username);
+                        console.log("isNotInRoomUsers", isNotInRoomUsers);
+                        //also exclude the users that are memeber of group
+
 
                         return usernameStartsWithSerachInput && isNotInRoomUsers && selectedUsername==''
                     })
