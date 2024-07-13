@@ -344,10 +344,6 @@ const sendMessage = async(messageObj) =>{
         const user1ID = usersID[0]; //1
         const user2ID = usersID[1]; //2
 
-        console.log("user1ID " , user1ID);
-        console.log("user2ID " , user2ID);
-
-
         await sadd(`user:${user1ID}:rooms`, `${roomID}`)
         await sadd(`user:${user2ID}:rooms`, `${roomID}`)
 
@@ -373,7 +369,7 @@ const sendMessage = async(messageObj) =>{
     //ZADD roomKey:1:2 1617197047 { "From": "2", "Date": 1617197047, "Message": "Hello", "RoomId": "1:2" }
     //ZADD Key=room:1:2 Score=1617197047 Value=obj
     await zadd(roomKey, timestamps, JSON.stringify(newMessageObj));
-    return roomKey;
+    return {roomKey, dateFormat};
 }
 
 

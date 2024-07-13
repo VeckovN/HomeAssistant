@@ -21,7 +21,7 @@ const postMessage = async(req,res) =>{
     try{
         const messageObj = req.body;
         const messageResult = await chatModal.sendMessage(messageObj);
-        res.json({roomKey:messageResult});
+        res.json(messageResult);
     }
     catch(err){
         console.error(err);

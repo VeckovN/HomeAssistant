@@ -225,8 +225,8 @@ const Messages = ({socket,connected}) =>{
                 }
                 try{
                     const result = await sendMessageToUser(messageObj);
-                    const {roomKey} = result;
-                    const messageWithRoomKey = {...messageObj, roomKey:roomKey};
+                    const {roomKey, dateFormat} = result;
+                    const messageWithRoomKey = {...messageObj, roomKey:roomKey, date:dateFormat};
 
                     emitMessage(socket, {data:messageWithRoomKey});
                     
