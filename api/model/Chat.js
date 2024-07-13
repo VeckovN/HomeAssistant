@@ -292,9 +292,17 @@ const removeUserFromRoomID = async(roomID, username) =>{
     const currentUserIDS = roomID.split(':');
 
     const newIds = currentUserIDS.filter(id => id !== userID);
-    const newRoomID = newIds.join(":");
-    const newRoomKey = `room:${newRoomID}`
+    let newRoomID = newIds.join(":");
+    let newRoomKey = `room:${newRoomID}`
 
+    //if newRoomKey exist (group with same members)
+    //make newRoomKey to be unique to avoid conflict with same roomID
+    const newRoomKeyExists = await exists(newRoomKey);
+    if(newRoomKeyExists){
+        newRoomKey +=":new1";
+        newRoomID +=":new1";
+    }
+    
     //(FOR REMOVED USER)
     //-find set `user:${userID}:rooms` and remove roomID from that set
     await srem(`user:${userID}:rooms`, roomID);
@@ -312,7 +320,6 @@ const removeUserFromRoomID = async(roomID, username) =>{
     const timestamps = Date.now(); //used for score value (miliseconds)
     const date = new Date(timestamps); //obj that contains 
     const dateFormat = formatDate(date);
-    
     const messageObj = JSON.stringify({message:`User ${username} has been kicked from the chat`, from:'Server', date:dateFormat, roomID:newRoomID})
     await zadd(newRoomKey, timestamps, messageObj);
 
