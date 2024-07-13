@@ -60,12 +60,11 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
             {roomMessages?.length >0 ?   
             <>
                 {roomMessages.map(el =>{
-                    // console.log("Message: " , el);
-                    if(user.userID==el.from){
+                    if(user.userID==el.from || el.from === "Server"){
                         return(
-                        <div className="message text-only">
+                        <div className={`${el.from === "Server" ? "server" : "message text-only"}`}>
                             <div className="response">
-                                {el.date && <p className='date-response'>{`${el.date.day}.${el.date.month}.${el.date.year} ${el.date.time}`}</p>}
+                                {el.date && el.from !== "Server" && <p className='date-response'>{`${el.date.day}.${el.date.month}.${el.date.year} ${el.date.time}`}</p>}
                                 <p className="text"> {el.message}</p>
                             </div>
                         </div>

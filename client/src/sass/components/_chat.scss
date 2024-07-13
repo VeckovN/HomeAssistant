@@ -70,7 +70,7 @@
         margin-bottom: 8px;
         font-family: $font-family-2;
         font-weight: 500;
-        font-size: .9em;
+        font-size: $fs-em-5;
 
         .photo{
             position: relative;
@@ -103,6 +103,29 @@
             }
         }
 
+        .response{
+            display: flex;
+            align-items: center;
+            position:relative;
+            float: right;
+            margin-right: 0px;
+            margin-left:auto;
+    
+            .text{
+                background-color: #e3effd 
+            }
+    
+            .date-response{
+                @extend %chat-date-hidden;
+            }
+    
+            &:hover .date-response{
+                @extend %chat-date-visible;
+            }
+            
+        }
+    
+
         .date{
             @extend %chat-date-hidden;            
         }
@@ -120,7 +143,6 @@
         border-radius: 12px;
 
         &:hover .date{
-            background-color: red;
             visibility: visible;
         }
     }
@@ -128,6 +150,29 @@
     .text-only{
         margin-left: 45px;
     }   
+
+    .server{
+        display:flex;
+        width: 100%;
+        margin-bottom: 8px;
+        font-family: $font-family-2;
+        font-weight: 500;
+        font-size: $fs-em-6;
+
+        .response{
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .text{
+            background-color: #111111;
+            color:$white;
+            padding: 15px;
+            border-radius: 12px;
+        }
+    }
 
     .time{
         font-size: 10px;
@@ -139,30 +184,6 @@
     .response-time {
         float: right;
         margin-right: 40px !important;
-    }
-
-    .response{
-        display: flex;
-        align-items: center;
-        position:relative;
-        float: right;
-        margin-right: 0px !important;
-        margin-left:auto; /* flexbox alignment rule */
-        // background-color: red;
-
-        .text{
-            background-color: #e3effd !important;
-        }
-
-        .date-response{
-            @extend %chat-date-hidden;
-        }
-
-        &:hover .date-response{
-            @extend %chat-date-visible;
-        }
-        
-
     }
 
     .no_conversation{
