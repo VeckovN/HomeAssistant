@@ -2,6 +2,7 @@ import {useRef} from 'react';
 import { emitMessage } from '../../sockets/socketEmit';
 import { sendMessageToUser} from '../../services/chat';
 import { toast } from 'react-toastify';
+import {getRoomIdInOrder} from '../../utils/Helper';
 
 const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
 
@@ -17,14 +18,14 @@ const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
 
             if(messageFromContact!='')
             {
-                const ourID = userID;
-                //props.id from button
+                const currentUserID = userID;
                 const houseworkerID = e.target.value;
 
-                const RoomID = `${ourID}:${houseworkerID}`;
+                const RoomID = getRoomIdInOrder(currentUserID, houseworkerID);
+
                 const messageObj = {
                         message: messageFromContact,
-                        from:ourID,
+                        from:currentUserID,
                         roomID:RoomID,
                         fromUsername:client_username,
                 }

@@ -77,12 +77,12 @@ const getLastMessageFromRoom = async(roomID) =>{
     return lastMessage;
 }
 
-//get roomIDbyUsername
-const RoomId = (firstUserID, secondUserID) =>{
-    //id room has to be minID:maxID --- room:1:2 room:4:9 not room:8:2
+// Format room ID to start with the lower user ID value
+const getRoomIdInOrder = (firstUserID, secondUserID) =>{
+     // The room ID should be formatted as minID:maxID (e.g., room:1:2, room:4:9, not room:8:2)
     const minUserID = firstUserID > secondUserID ? secondUserID : firstUserID;
     const maxUserID = firstUserID > secondUserID ? firstUserID : secondUserID;
-    //get roomID Between 2 users --- user1 and user4 room:1:4
+    // Generate the room ID in the format minID:maxID between two users
     return `${minUserID}:${maxUserID}`
 }
 
@@ -90,15 +90,21 @@ const RoomId = (firstUserID, secondUserID) =>{
 //room between them and communicate in that room
 const createRoom = async(firstUsername, secondUsername)=>{
 
-    const firstUserID = getUserIdByUsername(firstUsername);
-    const secondUserID = getUserIdByUsername(secondUsername);
+    const firstUserID = UserIdByUsername(firstUsername);
+    const secondUserID = UserIdByUsername(secondUsername);
+
+    console.log("FirstUserID: " , firstUserID);
+    console.log("secondUserID: " , secondUserID);
+    
 
     //get iid of users ---- user:1 , user:3  --> roomID is 1:3
-    const usersRoomID = getRoomId(firstUserID, secondUserID);
+    const usersRoomID = getRoomIdInOrder(firstUserID, secondUserID);
+
+    console.log("userRommID : ", usersRoomID);
+
 
     if(usersRoomID === null){
         //users not exists
-        // return [null, true] //no users , 
         return null;
     }
     //create rooms
@@ -233,6 +239,10 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
     const dateFormat = formatDate(date);
 
     const newRoomKeyExists = await exists(newRoomKey);
+    //but this newRoomKey have contain rooms id in order -> 1:42:311 not 1:311:42
+
+    console.log("NEW ROOM KEY ESIXYTS : " , newRoomKeyExists);
+
     if(newRoomKeyExists) {
         return {roomID:null, isPrivate:isPrivateChat};
     }
@@ -333,6 +343,11 @@ const sendMessage = async(messageObj) =>{
         //its same as roomID
         const user1ID = usersID[0]; //1
         const user2ID = usersID[1]; //2
+
+        console.log("user1ID " , user1ID);
+        console.log("user2ID " , user2ID);
+
+
         await sadd(`user:${user1ID}:rooms`, `${roomID}`)
         await sadd(`user:${user2ID}:rooms`, `${roomID}`)
 
@@ -400,7 +415,7 @@ module.exports ={
     UserIdByUsername,
     userInfoByUserID,
     usernameByUserID,
-    RoomId,
+    getRoomIdInOrder,
     createUser,
     createRoom,
     getMessages,
