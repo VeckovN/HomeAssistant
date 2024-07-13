@@ -36,15 +36,6 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onKic
         setSearchKickTerm('');
         onKickUserFromGroupHandler(roomID, username);
     }
-
-    // useEffect(()=>{
-    //     //cats users array from room obj
-    //     const room = rooms.find(el => el.roomID === roomRef.current.value)
-    //     setRoomInfo(room);
-    //     console.log("ROOMINFO EFFECT, " , roomInfo);
-    // },[roomRef]); 
-
-    console.log("roomINFOOSODAODS ", roomInfo)
     
     return (
     <div className='chat-menu-container'>
@@ -68,12 +59,7 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onKic
                         const usernameMatch = item.username.toLowerCase();
 
                         const usernameStartsWithSerachInput = searchInput && usernameMatch.startsWith(searchInput);
-                        // const isNotInRoomUsers =!roomInfo.users.includes(item.username)
                         const isNotInRoomUsers = !roomInfo.users.some(user => user.username === item.username);
-                        console.log("SUUUUUUUUU ", item.username);
-                        console.log("isNotInRoomUsers", isNotInRoomUsers);
-                        //also exclude the users that are memeber of group
-
 
                         return usernameStartsWithSerachInput && isNotInRoomUsers && selectedUsername==''
                     })
@@ -122,9 +108,6 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onKic
                             const usernameMatch = item.username.toLowerCase();
 
                             const usernameStartsWithSerachInput = searchInput && usernameMatch.startsWith(searchInput);
-                            // const isNotInRoomUsers =!roomInfo.users.includes(item.username)
-
-                            // return usernameStartsWithSerachInput && isNotInRoomUsers && selectedUsername==''
                             return usernameStartsWithSerachInput  && selectedKickUsername ==''
                         })
                         .map((item) =>(
