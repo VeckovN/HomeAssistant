@@ -1,10 +1,6 @@
-const { Socket } = require('socket.io');
-const {incr, set, hmset, sadd, hmget, exists, client, zrevrange, zrange, smembers, zadd, srem, del, get, rename, scard} = require('../db/redis');
-const { use } = require('../routes/clients');
+const {incr, set, hmset, sadd, hmget, exists, zrange, smembers, zadd, srem, del, get, rename, scard} = require('../db/redis');
 const formatDate = require('../utils/dateUtils');
 
-
-//persist ChatApp data to Redis database
 
 //With username(same username as in Neo4j) we got userID(same user but in redis)
 //with userKey(user:{userID}) we can access to userINFO in Redis DB ()
@@ -25,7 +21,6 @@ const createUser = async(username, hashedPassword, picturePath) =>{
         console.log("Redis Create user Errror: " + err);
         return {success:false, message:"Error with Creating Redis User"}
     }
-    
 }
 
 //Deleting a freshly created user on neo4j failed to craete the same
@@ -43,7 +38,6 @@ const deleteUserOnNeo4JFailure = async(username, userID) =>{
     }
 
 }
-
 
 const UserIdByUsername = async (username)=>{
     const user = await get(`username:${username}`); //user:{userID}
@@ -292,16 +286,18 @@ const removeUserFromRoomID = async(roomID, username) =>{
     const currentUserIDS = roomID.split(':');
 
     const newIds = currentUserIDS.filter(id => id !== userID);
-    let newRoomID = newIds.join(":");
-    let newRoomKey = `room:${newRoomID}`
+    const newRoomID = newIds.join(":");
+    const newRoomKey = `room:${newRoomID}`
 
     //if newRoomKey exist (group with same members)
     //make newRoomKey to be unique to avoid conflict with same roomID
     const newRoomKeyExists = await exists(newRoomKey);
-    if(newRoomKeyExists){
-        newRoomKey +=":new1";
-        newRoomID +=":new1";
-    }
+    // if(newRoomKeyExists){
+        //DELETE THIS CHAT IF CHAT ALREADY EXIST WITH SAME MEMBERS(remained memebers)
+    //     newRoomKey +=":new1";
+    //     newRoomID +=":new1";
+    // }
+
     
     //(FOR REMOVED USER)
     //-find set `user:${userID}:rooms` and remove roomID from that set
@@ -410,9 +406,6 @@ const deleteRoomByRoomID = async(roomID) =>{
     await del(`room:${roomID}`);
 
 }
-
-
-
 
 module.exports ={
     UserIdByUsername,
