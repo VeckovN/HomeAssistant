@@ -4,6 +4,7 @@ import HouseworkerProfileForm from './HouseworkerProfileForm';
 import {profession_options} from '../../utils/options';
 import {getUserData, getProfessions, updateHouseworker} from '../../services/houseworker.js';
 import {useForm, useController} from 'react-hook-form';
+import { getErrorMessage } from '../../utils/ThrowError.js';
 
 const HouseworkerProfile = () =>{
 
@@ -88,8 +89,12 @@ const HouseworkerProfile = () =>{
             })
         }
         catch(err){
-            const message = (err.response && err.response.data.error) || err.message || err
-            toast.error(message);
+            const error = getErrorMessage(err);
+            const errorMessage = error.messageError || "Please try again later";
+            toast.error(`Failed to update the profile. ${errorMessage}`, {
+                className: 'toast-contact-message'
+            });
+            console.error(error);
         }
     }
 

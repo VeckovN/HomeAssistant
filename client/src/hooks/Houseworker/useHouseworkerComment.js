@@ -3,6 +3,7 @@ import {getComments, postComment} from '../../services/houseworker.js';
 import {deleteComment} from '../../services/client.js';
 import {emitCommentNotification} from '../../sockets/socketEmit.js'
 import { toast } from 'react-toastify';
+import { getErrorMessage } from '../../utils/ThrowError.js';
 
 const useHouseworkerComment = (socket, isClient, client_username) =>{
     
@@ -37,7 +38,6 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
             return 
         }
 
-        console.log("ON COMM EVETN : ", e.target.id)
         setHouseworker({
             username:e.target.value,
             id:e.target.id
@@ -67,7 +67,12 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
             })
         }   
         catch(err){
-            console.error(err);
+            const error = getErrorMessage(err);
+            const errorMessage = error.messageError || "Please try again later";
+            toast.error(`Failed to delete the comment. ${errorMessage}`, {
+                className: 'toast-contact-message'
+            });
+            console.error(error);
         }
     }
 
@@ -119,7 +124,12 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                 postCommentRef.current.value='';
                     
             }catch(err){
-                console.error(err);
+                const error = getErrorMessage(err);
+                const errorMessage = error.messageError || "Please try again later";
+                toast.error(`Failed to post the comment. ${errorMessage}`, {
+                    className: 'toast-contact-message'
+                });
+                console.error(error);
             }
         }
     }

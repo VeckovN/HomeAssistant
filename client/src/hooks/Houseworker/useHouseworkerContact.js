@@ -3,6 +3,7 @@ import { emitMessage } from '../../sockets/socketEmit';
 import { sendMessageToUser} from '../../services/chat';
 import { toast } from 'react-toastify';
 import {getRoomIdInOrder} from '../../utils/Helper';
+import { getErrorMessage } from '../../utils/ThrowError';
 
 const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
 
@@ -42,10 +43,12 @@ const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
                     contactMessageRef.current.value='';
                 }
                 catch(err){
-                    console.log("Error sending the contact message");
-                    toast.error("Failed to send message. Please try again.", {
+                    const error = getErrorMessage(err);
+                    const errorMessage = error.messageError || "Please try again later";
+                    toast.error(`Failed to send message. ${errorMessage}`, {
                         className: 'toast-contact-message'
                     });
+                    console.error(error);
                 }
             }
             else

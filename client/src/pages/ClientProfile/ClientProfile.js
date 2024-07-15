@@ -3,7 +3,8 @@ import {toast} from 'react-toastify';
 import ClientProfileForm from './ClientProfileForm';
 import {getUserData, updateClient} from '../../services/client.js';
 import {useForm, useController} from 'react-hook-form';
-import { city_options } from '../../utils/options.js';
+import {city_options} from '../../utils/options.js';
+import {getErrorMessage} from '../../utils/ThrowError.js';
 
 const ClientProfile = () =>{ 
     const initialState = {
@@ -79,10 +80,12 @@ const ClientProfile = () =>{
 
         }
         catch(err){
-            //sent through return res.status(400).json({error:"User with this email exists"})
-            //catch it with err.response.data.error (error is prop of data-obj in json : "User with this email exists")
-            const message = (err.response && err.response.data.error) || err.message || err
-            toast.error(message);
+            const error = getErrorMessage(err);
+            const errorMessage = error.messageError || "Please try again later";
+            toast.error(`Failed to update the profile. ${errorMessage}`, {
+                className: 'toast-contact-message'
+            });
+            console.error(error);
         }
     }
 

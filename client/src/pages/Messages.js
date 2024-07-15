@@ -8,6 +8,7 @@ import {getHouseworkers} from '../services/houseworker.js';
 import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup} from '../sockets/socketListen.js';
 import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat, emitKickUserFromChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
 import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser} from '../services/chat.js';
+import {getErrorMessage} from '../utils/ThrowError.js';
 import Spinner from '../components/UI/Spinner.js';
 
 import '../sass/pages/_messages.scss';
@@ -27,8 +28,6 @@ const Messages = ({socket,connected}) =>{
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
     const [showMenu, setShowMenu] = useState(false);
     const [showMoreRoomUsers, setShowMoreRoomUsers] = useState({});
-
-    console.log("STATE: ", state);
 
     const onShowMenuToggleHandler = () =>  setShowMenu(prev => !prev);
     const onUsersFromChatOutHanlder = () => setShowMoreRoomUsers({});
@@ -90,16 +89,25 @@ const Messages = ({socket,connected}) =>{
                 return;
 
             setShowMenu(false);
-    
-            if(state.roomInfo.roomID !='' && state.roomInfo.roomID != roomID){
-                emitLeaveRoom(socket, state.roomInfo.roomID);
-                console.log("leave.room : " + state.roomInfo.roomID);
+
+            try{
+                if(state.roomInfo.roomID !='' && state.roomInfo.roomID != roomID){
+                    emitLeaveRoom(socket, state.roomInfo.roomID);
+                    console.log("leave.room : " + state.roomInfo.roomID);
+                }
+                emitRoomJoin(socket, roomID);
+                const messages = await getMessagesByRoomID(roomID)
+                dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
             }
-
-            emitRoomJoin(socket, roomID);
-            const messages = await getMessagesByRoomID(roomID)
-            dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
-
+            catch(err){
+                const error = getErrorMessage(err);
+                const errorMessage = error.messageError || "Please try again later";
+                toast.error(`Room messages can't be dislayed. ${errorMessage}`, {
+                    className: 'toast-contact-message'
+                });
+                console.error(error);
+            }
+    
             // if(showMenu) //useCallback is used and this doesn't make sense to be wrttien
             //useCallback will memoize it as false value(initial) and never changed due to dependecies being empty
             //if(showMenu)    
@@ -119,12 +127,13 @@ const Messages = ({socket,connected}) =>{
                     className:"toast-contact-message"
                 });
             }
-            catch(error){
-                //catch error from service
-                console.error(error);
-                toast.error("The room can't be deleted",{
-                    className:"toast-contact-message"
+            catch(err){
+                const error = getErrorMessage(err);
+                const errorMessage = error.messageError || "Please try again later";
+                toast.error(`The room can't be deleted. ${errorMessage}`, {
+                    className: 'toast-contact-message'
                 });
+                console.error(error);
             }
         },[])
 
@@ -164,29 +173,39 @@ const Messages = ({socket,connected}) =>{
                 newUsername: username
             }
 
-            const result = await addUserToRoom(roomInfo);
-            const {newAddedUserID:newUserID, roomID:newRoomID, isPrivate, newUserPicturePath} = result.data;
-
-            if(newRoomID === null){
-                toast.error("The group already exists");
-                return;
+            try{
+                const result = await addUserToRoom(roomInfo);
+                const {newAddedUserID:newUserID, roomID:newRoomID, isPrivate, newUserPicturePath} = result.data;
+    
+                if(newRoomID === null){
+                    toast.error("The group already exists");
+                    return;
+                }
+    
+                const roomUsers = state.rooms.filter(room => room.roomID == roomID);
+                const currentUser = roomUsers[0].users; 
+                
+                if(isPrivate){                    
+                    const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath};
+                    emitCreteUserGroup(socket, {data:groupData});
+                    //update client room view
+                    dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, currentMember:currentUser, newUsername:username, picturePath:newUserPicturePath})
+                    toast.info("A Group with "+ username + " has been created");
+                }
+                else{ 
+                    const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath};
+                    emitUserAddedToChat(socket, {data:groupData});
+                    dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});
+                    toast.info("User is added to the room: "+  newRoomID);
+                }
             }
-
-            const roomUsers = state.rooms.filter(room => room.roomID == roomID);
-            const currentUser = roomUsers[0].users; 
-            
-            if(isPrivate){                    
-                const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath};
-                emitCreteUserGroup(socket, {data:groupData});
-                //update client room view
-                dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, currentMember:currentUser, newUsername:username, picturePath:newUserPicturePath})
-                toast.info("A Group with "+ username + " has been created");
-            }
-            else{ 
-                const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath};
-                emitUserAddedToChat(socket, {data:groupData});
-                dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});
-                toast.info("User is added to the room: "+  newRoomID);
+            catch(err){
+                const error = getErrorMessage(err);
+                const errorMessage = error.messageError || "Please try again later";
+                toast.error(`Failed to add user to group. ${errorMessage}`, {
+                    className: 'toast-contact-message'
+                });
+                console.error(error);
             }
         });
 
@@ -199,15 +218,25 @@ const Messages = ({socket,connected}) =>{
             }
 
             const roomInfo ={roomID, username};
-            const result = await removeUserFromGroup(roomInfo);
-            const {newRoomID, kickedUserID} = result.data;
-
-            dispatch({type:"KICK_USER_FROM_GROUP", roomID, newRoomID, username})
-
-            const data = {newRoomID, roomID, kickedUserID, kickedUsername:username, clientID:user.userID, clientUsername:user.username}
-            emitKickUserFromChat(socket, data);
-
-            toast.info("The user "+ username + " has been kicked from the chat");
+            try{
+                const result = await removeUserFromGroup(roomInfo);
+                const {newRoomID, kickedUserID} = result.data;
+    
+                dispatch({type:"KICK_USER_FROM_GROUP", roomID, newRoomID, username})
+    
+                const data = {newRoomID, roomID, kickedUserID, kickedUsername:username, clientID:user.userID, clientUsername:user.username}
+                emitKickUserFromChat(socket, data);
+    
+                toast.info("The user "+ username + " has been kicked from the chat");
+            }
+            catch(err){
+                const error = getErrorMessage(err);
+                const errorMessage = error.messageError || "Please try again later";
+                toast.error(`Failed to kick user from chat. ${errorMessage}`, {
+                    className: 'toast-contact-message'
+                });
+                console.error(error);
+            }
         }
 
         const onSendMessageHandler = async({message, fromRoomID}) =>{        
@@ -235,10 +264,12 @@ const Messages = ({socket,connected}) =>{
                         dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:fromRoomID, message:message})
                 }
                 catch(err){
-                    console.log("Error sending the message");
-                    toast.error("Failed to send message. Please try again.", {
+                    const error = getErrorMessage(err);
+                    const errorMessage = error.messageError || "Please try again later";
+                    toast.error(`Failed to send message. ${errorMessage}`, {
                         className: 'toast-contact-message'
                     });
+                    console.error(error); 
                 }
                 
             }

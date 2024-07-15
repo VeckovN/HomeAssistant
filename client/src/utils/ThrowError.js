@@ -1,27 +1,23 @@
 export const ThrowErorr = (error) =>{
     if(error.response){
-        console.error("HTTP RESPONSE ERROR: " , error.response)
         throw error;
-        //in client err.response.data.error
+        //this rethrows the existing error object (HTTP error -{error:''})
+        //error.response know without .data.error etc Request faiuld with status code 404' 
     }
     else if(error.request){
-        // Network error (no response received)
-        console.error("NETWORK ERROR: ", error.request);
         throw new Error("Network error");
+        //this create new error with custom message
     }
-    else {
-        // Other errors
-        console.error("Other error:", error);
+    else 
         throw new Error(error.message);
-      }
+    
 }
 //controllers send res.status(404).json({error:'Comments Count error'});
 //with error.response. we got this json object and send 
 
-export const getErorrMessage = (err) =>{
-    const message = (err.response && err.response.data.error) || err.message || err
-    return message;
+export const getErrorMessage = (err) =>{
+    if(err.response.data && err.response.data.error)
+        return {messageError:err.response.data.error};
+    
+    return err.message || err;
 }
-//When is error.response iot send throw error(rethrowing the error)
-//with error.response.data we access to json object which contains {error:''} or some props
-

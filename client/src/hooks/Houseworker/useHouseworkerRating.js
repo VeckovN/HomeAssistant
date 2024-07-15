@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import {rateUser} from '../../services/houseworker.js'
 import {getProfessionsAndRating} from '../../services/houseworker.js';
 import { emitRatingNotification } from '../../sockets/socketEmit.js';
+import { getErrorMessage } from '../../utils/ThrowError.js';
 
 //Not fatching propertly - one time its good fetched , next time some houseworker doesn;t have rating
 const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsername) =>{
@@ -84,7 +85,12 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
                 onCloseRateHandler();
             }
             catch(err){
-                console.error('RateError: ' + err);
+                const error = getErrorMessage(err);
+                const errorMessage = error.messageError || "Please try again later";
+                toast.error(`Failed to rate the user. ${errorMessage}`, {
+                    className: 'toast-contact-message'
+                });
+                console.error(error);
             }
         }
     }
