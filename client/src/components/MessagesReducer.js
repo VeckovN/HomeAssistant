@@ -58,6 +58,11 @@ export const MessagesReducer = (state, action) =>{
                     users: state.rooms.find(el => el.roomID === action.ID)?.users || []
                 }
             }
+        case "ADD_MORE_ROOM_MESSAGES":
+            return{
+                ...state,
+                roomMessages: [...state.roomMessages, ...action.data]
+            };
         case "ADD_USER_TO_GROUP":
             return{
                 ...state,
