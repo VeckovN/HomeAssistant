@@ -83,6 +83,9 @@ const expire = (key = "key", value = "0") =>
 const zrange = (key, value, value2) => {
     return new Promise((resolve, reject)=> client.zrange(key, value, value2, resolvePromise(resolve, reject)))
 }
+const zrangerev = (key, value, value2) => {
+    return new Promise((resolve, reject)=> client.zrange(key, value, value2, "REV", resolvePromise(resolve, reject)))
+}
 //key, offset, size
 const zrangelimit = (key, value, value2) => {
     const limit = parseInt(value+value2);
@@ -119,6 +122,7 @@ module.exports ={
     smembers,
     srem,
     zrange,
+    zrangerev,
     zrem,
     del,
     expire,
