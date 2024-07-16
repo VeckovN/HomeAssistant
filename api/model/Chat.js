@@ -1,4 +1,4 @@
-const {incr, set, hmset, sadd, hmget, exists, zrange, smembers, zadd, srem, del, get, rename, scard} = require('../db/redis');
+const {incr, set, hmset, sadd, hmget, exists, zrange, smembers, zadd, zrangerev, srem, del, get, rename, scard} = require('../db/redis');
 const formatDate = require('../utils/dateUtils');
 
 
@@ -120,20 +120,54 @@ const createRoom = async(firstUsername, secondUsername)=>{
 
 //get message From ---  ZREVRANGE room:{roomID} {offset_start} {offset_end}
 // ZREVRANGE room:1:2 0 50 (will return 50 messages with 0 offsets for the private room between users with IDs 1 and 2.)
-const getMessages = async(roomID, offset=0, size=50) =>{
+const getMessages = async(roomID, offset, size) =>{
+    // console.log("OFFSET : " + offset + " SIZE: " + size);
+    // const size = 10;
+
+    //from offset to size--> 0 to 10 -> 11 elements
     const roomKey = `room:${roomID}`;
     const roomExists = await exists(roomKey)
     if(!roomExists)
         return null;
 
-    console.log("TTTTTT" + roomID + " " + offset + " " + size);
-    // const ReMessages = await zrevrange(roomKey, offset, size);
-    const messages = await zrange(roomKey, offset, size);
-    // const messages = ReMessages.reverse();
+    const messages = await zrangerev(roomKey, offset, size -1);
+    // const messages = latestMessages.reverse();
 
     const messagesObj = messages.map((mes) => JSON.parse(mes)); //Parsing JSON to obj
     return messagesObj;
 }
+
+//offset calculated based on pageNumber and size(defined)
+const getMoreMessages = async(roomID, pageNumber) =>{
+
+    console.log("ROOOOOOOOOOMMMMMMMMM: " + roomID);
+    console.log("PAGE NUUUUUUMMMMMMMMM: " + pageNumber);
+
+    const size = 10;
+    const offset = size * pageNumber;
+    //od offset do size
+    const endIndex = offset + size -1; 
+
+    //pNUmber =0 => offset = 10 * 0 -> from 0 index element
+    //pNUmber =0 => lastE = 0 + 10 -1 -> to 9 index element
+
+     //pNUmber =1 => offset = 10 * 1 -> from 10 index element
+    //pNUmber =1 => lastE = 10 + 10 -1 -> to 19 index element
+ 
+    const roomKey = `room:${roomID}`;
+    const roomExists = await exists(roomKey)
+    if(!roomExists)
+        return null;
+
+    const messages = await zrangerev(roomKey, offset, endIndex);
+    // const messages = latestMessages.reverse();
+
+    console.log("MWWSSS: ", messages);
+
+    const messagesObj = messages.map((mes) => JSON.parse(mes)); //Parsing JSON to obj
+    return messagesObj;
+}
+
 
 const getAllRooms = async(username)=>{
     let userID = await UserIdByUsername(username);
@@ -415,6 +449,7 @@ module.exports ={
     createUser,
     createRoom,
     getMessages,
+    getMoreMessages,
     getAllRooms,
     deleteRoomByRoomID,
     addUserToRoom,

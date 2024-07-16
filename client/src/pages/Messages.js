@@ -1,4 +1,4 @@
-import {useEffect, useReducer, useState, useCallback} from 'react'; 
+import {useEffect, useReducer, useState, useCallback, useRef} from 'react'; 
 import {useSelector} from 'react-redux';
 import Chat from '../components/Chat/Chat.js';
 import Rooms from '../components/Chat/Rooms.js';
@@ -7,7 +7,7 @@ import {MessagesReducer} from '../components/MessagesReducer.js';
 import {getHouseworkers} from '../services/houseworker.js';
 import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup} from '../sockets/socketListen.js';
 import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat, emitKickUserFromChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
-import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser} from '../services/chat.js';
+import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser, getMoreMessagesByRoomID} from '../services/chat.js';
 import {getErrorMessage} from '../utils/ThrowError.js';
 import Spinner from '../components/UI/Spinner.js';
 
@@ -28,10 +28,12 @@ const Messages = ({socket,connected}) =>{
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
     const [showMenu, setShowMenu] = useState(false);
     const [showMoreRoomUsers, setShowMoreRoomUsers] = useState({});
+    const pageNumberRef = useRef(0); 
 
     const onShowMenuToggleHandler = () =>  setShowMenu(prev => !prev);
     const onUsersFromChatOutHanlder = () => setShowMoreRoomUsers({});
 
+    console.log("ROOOSLQWE QW ", state.roomInfo);
     useEffect(() => {
             if(socket && user){
                 console.log("HEEEEEEEEE");
@@ -48,6 +50,20 @@ const Messages = ({socket,connected}) =>{
             }
         },[socket]) //on socket change (SOCKET WILL CHANGE WHEN IS MESSAGE SEND --- socket.emit)
             
+
+        console.log("CURRENT ROOM MESSAGES: ", state.roomMessages);
+        const fetchMoreMessages  = (async (roomID, pageNumber) =>{
+            const messages = await getMoreMessagesByRoomID(roomID, pageNumber);
+            console.log("messages.lenght: " , messages.length);
+
+            if(messages.length > 0){
+                console.log("MESS FETCH MORE MESSAGES: " , messages);
+                dispatch({type:"ADD_MORE_ROOM_MESSAGES", data:messages});
+                // dispatch({type:"SET_ROOM_MESSAGES", data:messages})
+                // dispatch({type:"SET_LOADING", payload:false})
+            }
+        })
+
         const fetchAllRooms = ( async () =>{   
             const data = await getUserRooms(user.username); //roomID, users{}
             // console.log('DATA ROOMS : \n' + JSON.stringify(data));
@@ -66,6 +82,8 @@ const Messages = ({socket,connected}) =>{
                 
                 //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
                 const messages = await getMessagesByRoomID(roomID)
+                // const messages = await getMoreMessagesByRoomID(roomID, 0);
+                
                 dispatch({type:"SET_ROOM_MESSAGES", data:messages})
                 dispatch({type:"SET_LOADING", payload:false})
             }
@@ -77,6 +95,7 @@ const Messages = ({socket,connected}) =>{
         });
 
         const getAllHouseworkers = async() =>{
+            console.log("\n getAllHouseworkers \n");
             const houseworkerResult = await getHouseworkers();
             dispatch({type:"SET_HOUSEWORKERS", data:houseworkerResult});
         }
@@ -89,6 +108,7 @@ const Messages = ({socket,connected}) =>{
                 return;
 
             setShowMenu(false);
+            pageNumberRef.current = 0; //reset page number on entering new room
 
             try{
                 if(state.roomInfo.roomID !='' && state.roomInfo.roomID != roomID){
@@ -313,6 +333,8 @@ const Messages = ({socket,connected}) =>{
                         onKickUserFromGroupHandler={onKickUserFromGroupHandler}
                         onDeleteRoomHandler={onDeleteRoomHandler}
                         onShowMenuToggleHandler={onShowMenuToggleHandler}
+                        pageNumberRef={pageNumberRef}
+                        fetchMoreMessages={fetchMoreMessages}
                     />
                 </section>
             </div>

@@ -61,8 +61,17 @@
     padding: 25px 35px;
     height: 100%;
     overflow:auto;
+    display: flex;
+
+    //display messages in reverse order to prevent autostrolling to top that trigger
+    //infinity observer action - load all chat messages messages  
+    flex-direction: column-reverse;
+    overflow: auto;
+    overflow-anchor: none;
+    position: sticky;
 
     @extend %scrollbar-chat-style;
+    // position:
 
     .message{
         display:flex;

@@ -16,7 +16,21 @@ export const getUserRooms = async(username) =>{
 
 export const getMessagesByRoomID = async(roomID) =>{
     try{
-        const result = await axiosSession.get(BASE_URL + `chat/room/${roomID}/messages?offset=0&size=50`)
+        const result = await axiosSession.get(BASE_URL + `chat/room/${roomID}/messages?offset=0&size=10`)
+        const messages = result.data;
+        return messages;
+    }
+    catch(err){
+        ThrowErorr(err);
+    }
+}
+
+
+export const getMoreMessagesByRoomID = async(roomID, pageNumber) =>{
+    console.log("\n PAGE NUMBER: " , pageNumber);
+    try{
+        const result = await axiosSession.get(BASE_URL + `chat/room/message/${roomID}/${pageNumber}`)
+        // const result = await axiosSession.get(BASE_URL + `chat/room/message/${roomID}/?pageNum=${pageNumber}`)
         const messages = result.data;
         return messages;
     }

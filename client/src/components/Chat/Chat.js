@@ -1,4 +1,4 @@
-import {useRef, useEffect} from 'react';
+import {useRef, useState, useEffect, useCallback} from 'react';
 import ChatMenu from './ChatMenu'; 
 import PersonIcon from '@mui/icons-material/Person';
 import SendIcon from '@mui/icons-material/Send';
@@ -6,9 +6,11 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 import '../../sass/components/_chat.scss';
 
-const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSendMessageHandler, onAddUserToGroupHanlder, onKickUserFromGroupHandler, onDeleteRoomHandler, onShowMenuToggleHandler }) =>{
+const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSendMessageHandler, onAddUserToGroupHanlder, onKickUserFromGroupHandler, onDeleteRoomHandler, onShowMenuToggleHandler, pageNumberRef, fetchMoreMessages }) =>{
     const messageInputRef = useRef();
-    const endMessageRef = useRef(null);
+    const lastMessageRef = useRef(null);
+    const [loading, setLoading] = useState(true);
+    const observerTarget = useRef(null);
 
     const conversation = roomMessages?.length >0;
     
@@ -19,15 +21,40 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
             messageInputRef.current.value = ''
 
         onSendMessageHandler({message, fromRoomID});
+        lastMessageRef.current?.scrollIntoView({behavior: 'instant', block: 'nearest'});
     }
 
-    const scrollToBottom = () =>{
-        //scrollIntoView without block:'nearest' is affecting scroll to the whole page
-        endMessageRef.current?.scrollIntoView({behavior: 'instant', block: 'nearest'});
-    }
-    useEffect(() =>{
-        scrollToBottom();
-    },[roomMessages]);
+    const options = {
+        threshold: 0.2,
+      };
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            if (entries[0] && entries[0].isIntersecting) {
+                const newPage = pageNumberRef.current + 1; 
+                pageNumberRef.current = newPage;
+                fetchMoreMessages(roomInfo.roomID, newPage);
+                // setTimeout(() => {
+                //     const newPage = pageNumberRef.current + 1;
+                //     pageNumberRef.current = newPage;
+                //     fetchMoreMessages(roomInfo.roomID, newPage);
+                //     setLoading(false);
+                // }, 200); // Wait for 0.5 seconds
+            }
+          }, options)
+      
+        if (observerTarget.current) {
+          observer.observe(observerTarget.current)
+        }
+    
+        return () => {
+          if (observerTarget.current) {
+            observer.unobserve(observerTarget.current)
+          }
+        }
+      }, [observerTarget.current]);
+
 
     return(     
         <>
@@ -56,13 +83,18 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
                 </div>
             }
             
+            {/* infinity message load */}
             <div className={`messages-chat ${showMenu && 'showMenu'}`}>
             {roomMessages?.length >0 ?   
             <>
-                {roomMessages.map(el =>{
+                {roomMessages.map((el,index) =>{
                     if(user.userID==el.from || el.from === "Server"){
                         return(
-                        <div className={`${el.from === "Server" ? "server" : "message text-only"}`}>
+                        <div 
+                            // key={`r-${el.roomID}`}
+                            className={`${el.from === "Server" ? "server" : "message text-only"} ${index == 0 && 'scroll-el'}`}
+                            ref={index === 0 ? lastMessageRef : null}
+                        >
                             <div className="response">
                                 {el.date && el.from !== "Server" && <p className='date-response'>{`${el.date.day}.${el.date.month}.${el.date.year} ${el.date.time}`}</p>}
                                 <p className="text"> {el.message}</p>
@@ -92,7 +124,8 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
                         )
                     }
                 })}
-                <div className='endMessagerefDiv' ref={endMessageRef}></div>
+                <div ref={observerTarget}></div>
+                {/* {loading === true && <p>Loading ... </p>} */}
             </>
             :
             <div className='no_conversation'>

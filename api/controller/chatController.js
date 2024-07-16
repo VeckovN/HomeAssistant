@@ -7,6 +7,7 @@ const getMessages = async(req,res)=>{
     const roomID = req.params.id;
     const offset = req.query.offset;
     const size = req.query.size;
+
     try{
         const messages = await chatModal.getMessages(roomID, offset, size);
         res.json(messages);
@@ -14,6 +15,26 @@ const getMessages = async(req,res)=>{
     catch(err){
         console.log(err);
         res.status(400).json({error:"Message Errors"});
+    }
+}
+
+const getMoreMessages = async(req,res) =>{
+    console.log("REQWWQ : " , req.params);
+    const roomID = req.params.id;
+    const pageNumber = req.params.pageNumber;
+
+    console.log("getMOremessages: " + roomID, + "pn: " + pageNumber);
+    //or
+    //const roomID = req.query.offset;
+    //const pageNUmber = req.query.offset;
+
+    try{
+        const messages = await chatModal.getMoreMessages(roomID, pageNumber);
+        res.json(messages);
+    }
+    catch(err){
+        console.log(err);
+        res.status(400).json({error:"More Messages Fetching Error"});
     }
 }
 
@@ -94,6 +115,7 @@ const getConversationCount = async(req,res)=>{
 
 module.exports ={
     getMessages,
+    getMoreMessages,
     postMessage,
     getAllRooms,
     deleteRoom,
