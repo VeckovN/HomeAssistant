@@ -90,7 +90,7 @@ app.get("/api/", (req,res)=>{
 
 server.listen(5000, ()=>{
     io.on('connection', async(socket)=>{
-        console.log("CONNECTION INITIALIZED");
+        console.log("CONNECTION INITIALIZED : socketID: " + socket.id);
 
         //every user on socket init join the room * used to send end receive data for concrete user
         //instead of broadcasting with io.emit('dynamicName') because it's less efficient and not good performance

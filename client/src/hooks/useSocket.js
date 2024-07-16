@@ -15,6 +15,8 @@ const useSocket = (user) =>{
             if (!socketRef.current) {
                 const socket = io('http://127.0.0.1:5000', { withCredentials: true });
                 socketRef.current = socket;
+                // console.log("SOCKET: ", socket); 
+                //another approach useing socket.id isntead of user.id for emiting/listeninig events
             }
 
           // Connect and handle connection events
