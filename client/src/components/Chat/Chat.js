@@ -25,7 +25,7 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
     }
 
     const options = {
-        threshold: 0.2,
+        threshold: 0.1,
       };
 
     useEffect(() => {
@@ -53,7 +53,8 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
             observer.unobserve(observerTarget.current)
           }
         }
-      }, [observerTarget.current]);
+      }, [observerTarget.current, roomInfo]);
+    //   }, [observerTarget.current]);
 
 
     return(     

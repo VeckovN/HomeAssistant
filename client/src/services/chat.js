@@ -16,7 +16,7 @@ export const getUserRooms = async(username) =>{
 
 export const getMessagesByRoomID = async(roomID) =>{
     try{
-        const result = await axiosSession.get(BASE_URL + `chat/room/${roomID}/messages?offset=0&size=10`)
+        const result = await axiosSession.get(BASE_URL + `chat/room/${roomID}/messages?offset=0&size=16`)
         const messages = result.data;
         return messages;
     }
