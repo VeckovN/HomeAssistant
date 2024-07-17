@@ -101,8 +101,8 @@ export const MessagesReducer = (state, action) =>{
             return{
                 ...state, //return other states
                 roomMessages: [ 
-                    ...state.roomMessages,
-                    action.data
+                    action.data,
+                    ...state.roomMessages
                 ] 
             }
         case "DELETE_ROOM":
