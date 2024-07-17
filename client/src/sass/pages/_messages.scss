@@ -56,8 +56,8 @@
         display: flex;
         flex-direction:column;
 
-        
         height: 100%;
+        width: 50%;
         min-width: 300px;
 
         .room-chat-header{
@@ -81,15 +81,11 @@
         .rooms{
             position: relative;
             height: 90%;
-            // width:23em;
-            max-width: 30em;
+            width:100%;
             display: flex;
-            flex-wrap: wrap;
-
-            justify-items: flex-start;
+            flex-direction: column;
 
             box-shadow: 0px 8px 10px rgba(0,0,0,0.20);
-            //x:hidden
             overflow:hidden scroll;
             @extend %scrollbar-chat-style;
         }
