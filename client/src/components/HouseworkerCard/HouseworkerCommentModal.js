@@ -4,15 +4,6 @@ import CommentItem from "../../components/UI/CommentItem";
 import '../../sass/components/_houseworkerCommentModal.scss';
 
 const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, postCommentRef, onCloseComment, onCommentDelete}) =>{
-    const endMessageRef = useRef(null);
-    
-    const scrollToBottom = () =>{
-        endMessageRef.current?.scrollIntoView({ behavior: "instant" });
-    }
-
-    useEffect(() =>{
-        scrollToBottom();
-    },[comments]);
 
     const commentHeaderContext =
         'Comments';
@@ -22,28 +13,19 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
             <div className='comment-container'>
             {comments ?
                 <>
-                {comments.map(comm => (
-                    (clientUsername === comm.from) ? ( //delete button is only showned to clients that belongs comment
+                {comments.map(comm => {
+                    const isClientComment = clientUsername === comm.from;
+                    return(
                         <CommentItem
-                            onDeleteCommentHandler={onCommentDelete}
+                            onDeleteCommentHandler={isClientComment ? onCommentDelete : undefined}
                             id={comm.commentID}
                             date={comm.date}
                             from={comm.from}
                             comment={comm.comment}
                             new={comm.new}
                         />
-                        ) : (             
-                            <CommentItem
-                                id={comm.commentID}
-                                date={comm.commentDate}
-                                from={comm.from}
-                                comment={comm.comment}
-                                new={comm.new}
-                            />
-                        )
-                    )
+                    )}
                 )}
-                <div ref={endMessageRef}></div>
                 </>
                 : <div className='no-comments-modal'>Client doesn't have comments</div>
                 }
