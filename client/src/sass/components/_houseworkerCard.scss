@@ -183,8 +183,8 @@
             top:-60px;
             margin-top:2rem;
 
-            border-radius: 999px;
-            border: solid rgb(175, 173, 173) 5px;
+            border-radius: 50px;
+            border: solid rgb(175, 173, 173) 4px;
             object-fit: cover;
 
             @include xs-breakpoint{
