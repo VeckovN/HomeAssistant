@@ -28,6 +28,10 @@ const HouseworkerCardContent = ({
     onContactHandler,
     commentClick
 }) =>{
+    const loadDefaultImageOnError = e =>{
+        e.target.onerror = null;
+        e.target.src = `assets/userImages/userDefault.png`;
+    }
     return (
         <>
             {commentClick.current && comments &&
@@ -47,11 +51,17 @@ const HouseworkerCardContent = ({
                 <div className={houseworkerProps.recommended ? 'houseworker-content recommended' : 'houseworker-content'}>
                     
                     <div className="img-box">
-                        <LazyLoadImage
+                        {/* <ImageWithFallback
                             src={`assets/userImages/${houseworkerProps.picturePath}`}
-                            alt='avatar'
+                            fallback={`assets/userImages/userDefault.png`}
+                            loading="lazy"
+                        /> */}
+                        <img
+                            src={`assets/userImages/${houseworkerProps.picturePath}`}
+                            onError={loadDefaultImageOnError}
+                            loading="lazy"
+                            alt="avatar"
                         />
-                        {/* <img src={`assets/userImages/${houseworkerProps.picturePath}`} alt='profile-avatar' loading="lazy"/> */}
                         {/* <img src={`data:image/jpeg;base64, ${houseworkerProps.picturePath}`}></img> */}
                     </div>
 
