@@ -12,8 +12,6 @@ const CommentsList = ({socket, user}) =>{
     const [loading, setLoading] = useState(true);
     const endCommentsRef = useRef(null);
 
-    console.log("COOMENTS: " , comments);
-
     // const {user} = useSelector((state) => state.auth)
 
     useEffect(()=>{
@@ -25,7 +23,7 @@ const CommentsList = ({socket, user}) =>{
         if (socket) { 
             //Its emited to user-{userID} room that user joined and emit on newCommentchange Event of these room
             socket.on(`newCommentChange`, (data) => {
-                setComments(prevComments => [...prevComments, data.postComment]);
+                setComments(prevComments => [data.postComment, ...prevComments]);
             });
 
             return () => {
@@ -40,14 +38,6 @@ const CommentsList = ({socket, user}) =>{
         setComments(comms);
         setLoading(false);
     }
-
-    const scrollToBottom = () =>{
-        endCommentsRef.current?.scrollIntoView({ behavior: "instant", block: 'nearest' });
-    }
-
-    useEffect(() =>{
-        scrollToBottom();
-    },[comments]);
 
     let commentList;
     {comments ?

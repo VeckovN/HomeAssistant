@@ -113,8 +113,8 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                 //this will trigger Comp re-render
                 if(comments){
                     setComments(oldComments =>[
-                        ...oldComments,
-                        newComment
+                        newComment,
+                        ...oldComments
                     ]);
                 }
                 else

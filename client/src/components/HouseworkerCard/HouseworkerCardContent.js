@@ -30,7 +30,8 @@ const HouseworkerCardContent = ({
 }) =>{
     return (
         <>
-            {commentClick.current &&
+            {commentClick.current && comments &&
+            //when the comments is not null show the modal
                 <HouseworkerCommentModal
                     comments ={comments}
                     commentsLoading = {commentClick.current}
