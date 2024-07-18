@@ -47,9 +47,9 @@ export const updateProfessionWorkingHour = async(profession, working_hour) =>{
 }
 
 //user of authenticated user(username taken from  session data)
-export const getAuthenticatedUserComments = async() =>{
+export const getAuthenticatedUserComments = async(pageNumber) =>{
     try{
-        const result = await axiosSession.get(BASE_URL + `houseworker/ourcomments/`);
+        const result = await axiosSession.get(BASE_URL + `houseworker/ourcomments/${pageNumber}`);
         const comms = result.data;
         return comms;
     }
@@ -59,9 +59,9 @@ export const getAuthenticatedUserComments = async() =>{
 }
 
 //get commnets of the user with given username
-export const getComments = async(username) =>{
+export const getComments = async(username, pageNumber) =>{
     try{
-        const result = await axiosSession.get(BASE_URL + `houseworker/comments/${username}`);
+        const result = await axiosSession.get(BASE_URL + `houseworker/comments/${username}/${pageNumber}`);
         const comms = result.data;
         return comms;
     }

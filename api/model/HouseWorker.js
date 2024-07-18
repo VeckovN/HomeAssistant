@@ -393,7 +393,12 @@ const getRatings = async(username)=>{
     return avgRating;
 }
 
-const getComments = async(username)=>{
+// const getComments = async(username)=>{
+const getComments = async(username, pageNumber)=>{
+    //on inital (page visit) thepageNUmber is 0 ->start fetching the comments from start
+    const itemsPerPage = 8;
+    var skipCount = pageNumber * itemsPerPage;
+
     const session = driver.session();
     const result = await session.run(`
         MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(m)
@@ -403,6 +408,16 @@ const getComments = async(username)=>{
         ORDER BY c.timestamp DESC`,
     {houseworker:username}
     )
+    //wiht skit and limit -> load more comments infinity features
+    // const result = await session.run(`
+    //     MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(m)
+    //     MATCH(c:Comment)-[:BELONGS_TO]->(m)
+    //     MATCH(c)<-[:COMMENTED]-(t)
+    //     RETURN ID(c) AS commentID, c.context, t.username, apoc.date.format(c.timestamp, "ms", "dd.MM.yyyy") AS commentTimestamp
+    //     ORDER BY c.timestamp DESC 
+    //     SKIP ${skipCount} LIMIT ${itemsPerPage}`,
+    // {houseworker:username}
+    // )
     //{Comment:context, From:'clientUsername'}
     const comments = result.records.map(rec=>{
         let id = rec.get(0);
@@ -432,7 +447,6 @@ const getCommentsCount = async(username) =>{
     session.close();
     return parseInt(commentsCount);
 }
-
 
 const getProfessions = async (username)=>{
     //Get Professions with working Hours

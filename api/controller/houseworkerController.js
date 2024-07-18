@@ -124,12 +124,12 @@ const getCities = async(req,res)=>{
     }
 }
 
-
-//COmments without parrameters(session based)
 const getOurComments = async(req,res)=>{
     try{
+        console.log("REQQ: " , req.params);
         const username = req.session.user.username
-        const result = await houseworkerModel.getComments(username);
+        const pageNumber = req.params.pageNumber;
+        const result = await houseworkerModel.getComments(username, pageNumber);
         res.json(result);
     }
     catch(err){
@@ -138,11 +138,12 @@ const getOurComments = async(req,res)=>{
     }
 }
 
-//Client click on Houseowrker comment button
+
 const getComments = async(req,res)=>{
     try{
         const username = req.params.username;
-        const result = await houseworkerModel.getComments(username);
+        const pageNumber = req.params.pageNumber;
+        const result = await houseworkerModel.getComments(username, pageNumber);
         res.json(result);
     }
     catch(err){
