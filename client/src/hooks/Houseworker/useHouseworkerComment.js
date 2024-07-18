@@ -1,4 +1,4 @@
-import {useState, useRef, useEffect} from 'react';
+import {useState, useRef, useEffect, useCallback} from 'react';
 import {getComments, postComment} from '../../services/houseworker.js';
 import {deleteComment} from '../../services/client.js';
 import {emitCommentNotification} from '../../sockets/socketEmit.js'
@@ -23,12 +23,17 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
     },[houseworker.username])
 
     const getHouseworkerComments = async(username) =>{
-        const comms = await getComments(username);
+        const pageNumber = 0; 
+        // const comms = await getComments(username);
+        const comms = await getComments(username, pageNumber);
 
         if(comms)
-            if(comms.length > 0)
-                setComments(comms)
+            setComments(comms)
+        else
+            setComments(null);
     }
+
+    
 
     const onCommentHandler = (e) =>{
         if(!isClient){
@@ -51,6 +56,7 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
             username:''
         }))
         commentClick.current = false;
+        // pageNumberRef.current = 0;
     }
 
     const onCommentDelete = async (e, comment_id, from)=>{
@@ -134,7 +140,7 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
         }
     }
 
-    return {comments, postCommentRef, commentClick, houseworkerUsername:houseworker.username, onCommentHandler, onCommentSubmit, onCommentDelete, onCloseComment}
+    return {comments, postCommentRef, commentClick, houseworkerUsername:houseworker.username, onCommentHandler, onCommentSubmit, onCommentDelete, onCloseComment, onLoadMoreComments}
 }
 
 
