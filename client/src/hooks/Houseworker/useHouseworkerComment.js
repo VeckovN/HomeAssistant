@@ -20,14 +20,14 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
     })
 
     useEffect(()=>{
-        if(commentClick.current == true) //if is clicked or newComment added
+        // if(commentClick.current == true && houseworker.username !='') //if is clicked or newComment added
+        if(commentClick.current == true && houseworker.username !='') //if is clicked or newComment added
             getHouseworkerComments();
     },[houseworker.username])
 
-    const getHouseworkerComments = async(username) =>{
+    const getHouseworkerComments = async() =>{
         const pageNumber = 0; 
-        // const comms = await getComments(username);
-        const comms = await getComments(username, pageNumber);
+        const comms = await getComments(houseworker.username, pageNumber);
 
         if(comms)
             setComments(comms)

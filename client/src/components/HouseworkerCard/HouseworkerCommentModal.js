@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 import { useEffect, useRef } from "react";
-=======
->>>>>>> 61d0d3530aebc9f6729734c573625aa8d9dbe987
 import Modal from "../../components/UI/Modal.js";
 import CommentItem from "../../components/UI/CommentItem";
 import '../../sass/components/_houseworkerCommentModal.scss';
@@ -17,7 +14,7 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
         const observer = new IntersectionObserver(
           (entries) => {
               if (entries[0] && entries[0].isIntersecting && !allCommentsLoadedRef.current) {
-                onLoadMoreComments();
+                  onLoadMoreComments();
             }
           }, options)
 
