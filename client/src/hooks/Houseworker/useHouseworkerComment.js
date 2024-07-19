@@ -24,9 +24,10 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
             getHouseworkerComments();
     },[houseworker.username])
 
-    const getHouseworkerComments = async() =>{
+    const getHouseworkerComments = async(username) =>{
         const pageNumber = 0; 
-        const comms = await getComments(houseworker.username, pageNumber);
+        // const comms = await getComments(username);
+        const comms = await getComments(username, pageNumber);
 
         if(comms)
             setComments(comms)
