@@ -1,9 +1,33 @@
-import {useRef, useEffect} from 'react';
+import { useEffect, useRef } from "react";
 import Modal from "../../components/UI/Modal.js";
 import CommentItem from "../../components/UI/CommentItem";
 import '../../sass/components/_houseworkerCommentModal.scss';
 
-const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, postCommentRef, onCloseComment, onCommentDelete}) =>{
+const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, postCommentRef, allCommentsLoadedRef, onCloseComment, onCommentDelete, onLoadMoreComments}) =>{
+    const observerTarget = useRef(null);
+
+    const options = {
+        threshold: 0.3,
+    };
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+          (entries) => {
+              if (entries[0] && entries[0].isIntersecting && !allCommentsLoadedRef.current) {
+                onLoadMoreComments();
+            }
+          }, options)
+
+        if (observerTarget.current) {
+          observer.observe(observerTarget.current)
+        }
+    
+        return () => {
+          if (observerTarget.current) {
+            observer.unobserve(observerTarget.current)
+          }
+        }
+      }, [observerTarget.current, comments]);
 
     const commentHeaderContext =
         'Comments';
@@ -11,7 +35,7 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
     const commentBodyContext = 
         <>
             <div className='comment-container'>
-            {comments ?
+            {comments.length > 0 ?
                 <>
                 {comments.map(comm => {
                     const isClientComment = clientUsername === comm.from;
@@ -29,6 +53,7 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
                 </>
                 : <div className='no-comments-modal'>Client doesn't have comments</div>
                 }
+                <div className='comment-targetOb' ref={observerTarget}>Target</div>
             </div>
             <div className='comment-input'>
                 <input type='text' name="postComment"  ref={postCommentRef} placeholder='Post comment'/>

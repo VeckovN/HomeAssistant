@@ -1,4 +1,4 @@
-import {useState, useRef, useEffect} from 'react';
+import {useState, useRef, useEffect, useCallback} from 'react';
 import {getComments, postComment} from '../../services/houseworker.js';
 import {deleteComment} from '../../services/client.js';
 import {emitCommentNotification} from '../../sockets/socketEmit.js'
@@ -10,6 +10,8 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
     const [comments, setComments] = useState(null);
     const postCommentRef = useRef();
     const commentClick = useRef(false);
+    const pageNumberRef = useRef(0);
+    const allCommentsLoadedRef = useRef(false);
 
     //houseworker which comment modal is showned
     const [houseworker, setHouseworker] = useState({
@@ -19,16 +21,49 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
 
     useEffect(()=>{
         if(commentClick.current == true) //if is clicked or newComment added
-            getHouseworkerComments(houseworker.username)
+            getHouseworkerComments();
     },[houseworker.username])
 
-    const getHouseworkerComments = async(username) =>{
-        const comms = await getComments(username);
+    const getHouseworkerComments = async() =>{
+        const pageNumber = 0; 
+        const comms = await getComments(houseworker.username, pageNumber);
 
         if(comms)
-            if(comms.length > 0)
-                setComments(comms)
+            setComments(comms)
+        else
+            setComments(null)
     }
+
+    const onLoadMoreComments = async() =>{
+        const pageNumber = pageNumberRef.current + 1;
+        pageNumberRef.current = pageNumber;
+        try{
+            const moreComms = await getComments(houseworker.username, pageNumber);
+            
+            if(moreComms.length > 0)
+                setComments(oldComments =>[...oldComments, ...moreComms]);
+            else
+                allCommentsLoadedRef.current = true;
+        }
+        catch(err){
+            console.error(err);
+        }
+    }
+
+    // const onLoadMoreComments = useCallback(async(username) =>{
+    //     //pageNumber is > 0
+    //     const pageNumber = pageNumberRef.current + 1;
+    //     try{
+    //         const moreComms = await getComments(username, pageNumber);
+    //         setComments(oldComments =>[
+    //             moreComms,
+    //             ...oldComments
+    //         ]);
+    //     }
+    //     catch(err){
+    //         console.error(err);
+    //     }
+    // },[])
 
     const onCommentHandler = (e) =>{
         if(!isClient){
@@ -51,6 +86,7 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
             username:''
         }))
         commentClick.current = false;
+        // pageNumberRef.current = 0;
     }
 
     const onCommentDelete = async (e, comment_id, from)=>{
@@ -134,7 +170,18 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
         }
     }
 
-    return {comments, postCommentRef, commentClick, houseworkerUsername:houseworker.username, onCommentHandler, onCommentSubmit, onCommentDelete, onCloseComment}
+    return {
+        comments, 
+        postCommentRef, 
+        commentClick, 
+        allCommentsLoadedRef,
+        houseworkerUsername:houseworker.username, 
+        onCommentHandler, 
+        onCommentSubmit, 
+        onCommentDelete, 
+        onCloseComment, 
+        onLoadMoreComments
+    }
 }
 
 

@@ -20,11 +20,13 @@ const HouseworkersCard = (props) =>{
         comments, 
         postCommentRef, 
         commentClick, 
+        allCommentsLoadedRef,
         houseworkerUsername, 
         onCommentHandler, 
         onCommentSubmit, 
         onCommentDelete,
-        onCloseComment
+        onCloseComment,
+        onLoadMoreComments
     } = useHouseworkerComment(socket, isClient, clientUsername)
     
     //Here the houseworkerProfessions is fetched as well
@@ -52,6 +54,7 @@ const HouseworkersCard = (props) =>{
                 // <LazyHouseworkerCardContent
                     houseworkerUsername ={houseworkerUsername}
                     comments ={comments}
+                    allCommentsLoadedRef={allCommentsLoadedRef}
                     onCommentSubmit ={onCommentSubmit}
                     postCommentRef ={postCommentRef}
                     onCommentDelete={onCommentDelete}
@@ -71,7 +74,7 @@ const HouseworkersCard = (props) =>{
                     contactMessageRef={contactMessageRef}
                     onContactHandler={onContactHandler}
                     commentClick={commentClick}
-
+                    onLoadMoreComments={onLoadMoreComments}
                 />
             </>
         )

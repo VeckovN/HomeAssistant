@@ -11,8 +11,10 @@ const CommentsList = ({socket, user}) =>{
     const [comments, setComments] = useState(null);
     const [loading, setLoading] = useState(true);
     const endCommentsRef = useRef(null);
+    const pageNumberRef = useRef(0);
+    const observerTarget = useRef(null);
+    const allCommentsLoadedRef = useRef(false);
 
-    // const {user} = useSelector((state) => state.auth)
 
     useEffect(()=>{
         fetchComments()
@@ -31,13 +33,6 @@ const CommentsList = ({socket, user}) =>{
             };
         }
     }, [socket]);
-    
-
-    const fetchComments = async() =>{
-        const comms = await getAuthenticatedUserComments();
-        setComments(comms);
-        setLoading(false);
-    }
 
     let commentList;
     {comments ?
@@ -52,6 +47,51 @@ const CommentsList = ({socket, user}) =>{
         : commentList=[];
     }
 
+    const options = {
+        threshold: 0.3,
+    };
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+          (entries) => {
+              if (entries[0] && entries[0].isIntersecting && !allCommentsLoadedRef.current) {
+                fetchMoreComments();
+            }
+          }, options)
+
+        if (observerTarget.current) {
+          observer.observe(observerTarget.current)
+        }
+    
+        return () => {
+          if (observerTarget.current) {
+            observer.unobserve(observerTarget.current)
+          }
+        }
+      }, [observerTarget.current, comments]);
+    
+
+    const fetchComments = async() =>{
+        const pageNumber = 0;
+        const comms = await getAuthenticatedUserComments(pageNumber);
+        setComments(comms);
+        setLoading(false);
+    }
+
+    const fetchMoreComments = async() =>{
+        const pageNumber = pageNumberRef.current + 1;
+        pageNumberRef.current = pageNumber;
+
+        const comms = await getAuthenticatedUserComments(pageNumber);
+
+        if(comms.length > 0)
+            setComments((prev)=>[...prev, ...comms]);   
+        else 
+            allCommentsLoadedRef.current = true;
+        
+    }
+
+
     return (
         <div className='comments-container'>
             {loading ? <Spinner/> : 
@@ -63,7 +103,7 @@ const CommentsList = ({socket, user}) =>{
                             <div className='context-container'>
                                 <div className='comment-list'>
                                     {commentList}
-                                    <div ref={endCommentsRef}></div>
+                                    <div className='target-observer'ref={observerTarget}>T</div>
                                 </div>
                             </div>
                         </div>

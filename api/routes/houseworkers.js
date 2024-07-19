@@ -40,11 +40,8 @@ router.get('/info', checkHouseworker, getHouseworkerInfo )
 router.delete('/:username', checkHouseworker, deleteHouseworker);
 router.get('/rating', checkHouseworker, getRatings);
 router.get('/rating/:username', getRatingUsername);
-
-// router.get('/comments/:username',  getComments);
-router.get('/comments/:username/:pageNumber',  getComments);
+router.get('/comments/:username/:pageNumber', checkClient, getComments);
 router.get('/comments/count/:username', getHouseworkerCommentsCount)
-// router.get('/ourcomments/', checkHouseworker, getOurComments)
 router.get('/ourcomments/:pageNumber', checkHouseworker, getOurComments)
 
 // router.get('/professions/:username', getProfessions);

@@ -10,6 +10,7 @@ const HouseworkerCardContent = ({
     comments,
     onCommentSubmit, 
     postCommentRef, 
+    allCommentsLoadedRef,
     onCommentDelete,
     onCloseComment, 
     houseworkerProps,
@@ -26,7 +27,8 @@ const HouseworkerCardContent = ({
     onCommentHandler,
     contactMessageRef,
     onContactHandler,
-    commentClick
+    commentClick,
+    onLoadMoreComments
 }) =>{
     const loadDefaultImageOnError = e =>{
         e.target.onerror = null;
@@ -42,8 +44,10 @@ const HouseworkerCardContent = ({
                     clientUsername={clientUsername}
                     onCommentSubmit ={onCommentSubmit}
                     postCommentRef ={postCommentRef}
+                    allCommentsLoadedRef={allCommentsLoadedRef}
                     onCommentDelete={onCommentDelete}
                     onCloseComment = {onCloseComment}
+                    onLoadMoreComments={onLoadMoreComments}
                 />
             }
 
