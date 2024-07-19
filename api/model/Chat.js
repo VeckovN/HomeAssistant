@@ -358,6 +358,55 @@ const removeUserFromRoomID = async(roomID, username) =>{
         kickedUserID:userID
     };
 }
+
+// const removeUserFromRoomID = async(roomID, username) =>{
+//     const user = await get(`username:${username}`);
+//     const userID = user.split(":")[1] ; //'user':ID 
+
+//     const currentRoomKey = `room:${roomID}` //room:1:2
+//     const currentUserIDS = roomID.split(':');
+
+//     const newIds = currentUserIDS.filter(id => id !== userID);
+//     const newRoomID = newIds.join(":");
+//     const newRoomKey = `room:${newRoomID}`
+//     let oldRoomFlag = false;
+//     //if newRoomKey exist (group with same members)
+//     //same newRoomKey after kicking user makes confict(can't same members of chat has more then 1 conversations)
+//     const newRoomKeyExists = await exists(newRoomKey);
+//     //send newRoomID same as currentRoomIR
+//     //because of it user will choose one of the options:
+//     //1. remove this chat conversation(after kicking user)
+//     //2. remove other room(that contains same userID as newRoomID -> same users after kicking selected user)
+//     if(newRoomKeyExists){
+//         oldRoomFlag =true
+//     }
+
+//     //(FOR REMOVED USER)
+//     //-find set `user:${userID}:rooms` and remove roomID from that set
+//     await srem(`user:${userID}:rooms`, roomID);
+
+//     //FOR OTHER MEMBERS (replace the old RoomID with new one)
+//     newIds.forEach(async(id) =>{ 
+//         await srem(`user:${id}:rooms`, roomID);
+//         await sadd(`user:${id}:rooms`, newRoomID);
+//     })
+
+//     //find sorted set and remove user from it (id) room:3:6:22:123 where messages are stored
+//     await rename(currentRoomKey, newRoomKey);
+
+//     //Store Server message (user {username} is kicked from the chat)
+//     const timestamps = Date.now(); //used for score value (miliseconds)
+//     const date = new Date(timestamps); //obj that contains 
+//     const dateFormat = formatDate(date);
+//     const messageObj = JSON.stringify({message:`User ${username} has been kicked from the chat`, from:'Server', date:dateFormat, roomID:newRoomID})
+//     await zadd(newRoomKey, timestamps, messageObj);
+
+//     return {
+//         oldRoomFlag:false,
+//         newRoomID:newRoomID, 
+//         kickedUserID:userID
+//     };
+// }
  
 const sendMessage = async(messageObj) =>{
     const {roomID} = messageObj;
