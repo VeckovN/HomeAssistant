@@ -269,8 +269,6 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
     const newRoomKeyExists = await exists(newRoomKey);
     //but this newRoomKey have contain rooms id in order -> 1:42:311 not 1:311:42
 
-    console.log("NEW ROOM KEY ESIXYTS : " , newRoomKeyExists);
-
     if(newRoomKeyExists) {
         return {roomID:null, isPrivate:isPrivateChat};
     }
