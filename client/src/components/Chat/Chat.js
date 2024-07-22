@@ -6,7 +6,21 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 import '../../sass/components/_chat.scss';
 
-const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSendMessageHandler, onAddUserToGroupHanlder, onKickUserFromGroupHandler, onDeleteRoomHandler, onShowMenuToggleHandler, pageNumberRef, fetchMoreMessages }) =>{
+const Chat = ({
+    roomMessages, 
+    rooms, 
+    roomInfo, 
+    user, 
+    showMenu, 
+    houseworkers, 
+    pageNumberRef, 
+    fetchMoreMessages,
+    onSendMessageHandler, 
+    onAddUserToGroupHanlder,
+    onKickUserFromGroupHandler, 
+    onDeleteRoomHandler, 
+    onShowMenuToggleHandler
+ }) =>{
     const messageInputRef = useRef();
     const lastMessageRef = useRef(null);
     const [loading, setLoading] = useState(true);
@@ -72,6 +86,7 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
             </div>
 
             {showMenu &&
+                <>
                 <div className='chat-menu'>
                     <ChatMenu 
                         houseworkers={houseworkers}
@@ -82,6 +97,7 @@ const Chat = ({roomMessages, rooms, roomInfo, user, showMenu, houseworkers, onSe
                         onDeleteRoomHandler={onDeleteRoomHandler}
                     /> 
                 </div>
+                </>
             }
             
             {/* infinity message load */}

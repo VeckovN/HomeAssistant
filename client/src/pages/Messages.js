@@ -51,10 +51,8 @@ const Messages = ({socket,connected}) =>{
         },[socket]) //on socket change (SOCKET WILL CHANGE WHEN IS MESSAGE SEND --- socket.emit)
             
 
-        console.log("CURRENT ROOM MESSAGES: ", state.roomMessages);
         const fetchMoreMessages  = (async (roomID, pageNumber) =>{
             const messages = await getMoreMessagesByRoomID(roomID, pageNumber);
-            console.log("messages.lenght: " , messages.length);
 
             if(messages.length > 0){
                 console.log("MESS FETCH MORE MESSAGES: " , messages);
@@ -241,9 +239,13 @@ const Messages = ({socket,connected}) =>{
             try{
                 const result = await removeUserFromGroup(roomInfo);
                 const {newRoomID, kickedUserID} = result.data;
-    
+                
+                if(newRoomID == null){
+                    toast.error("The user "+ username + " cannot be kicked, as it will create the conversation with the same members");
+                    return;
+                }
+
                 dispatch({type:"KICK_USER_FROM_GROUP", roomID, newRoomID, username})
-    
                 const data = {newRoomID, roomID, kickedUserID, kickedUsername:username, clientID:user.userID, clientUsername:user.username}
                 emitKickUserFromChat(socket, data);
     
@@ -258,6 +260,61 @@ const Messages = ({socket,connected}) =>{
                 console.error(error);
             }
         }
+
+        // const onKickUserFromGroupHandler = async(roomID, username) =>{
+        //     if(username == ""){
+        //         toast.error("Select user that you want to kick from room",{
+        //             className:"toast-contact-message"
+        //         })
+        //         return
+        //     }
+
+        //     const roomInfo ={roomID, username};
+        //     try{
+        //         const result = await removeUserFromGroup(roomInfo);
+        //         console.log("RP<< OMFPP " , result.data);
+        //         const {newRoomID, kickedUserID, oldRoomFlag} = result.data;
+
+        //         console.log("newROOMID : " + newRoomID);
+        //         // console.llog("ROOMID : " + roomID);
+        //         //check does newRoomID conflict with roomID
+        //         if(oldRoomFlag){
+        //             // const {oldRoomID} = result.data;
+        //             //for now, the old chat(roomID) will be deleted and replaced by
+        //             //a conversation(chat) where the user was kicked
+        //             await deleteRoom(newRoomID);
+        //             dispatch({type:"DELETE_ROOM", data:newRoomID});
+
+        //             const data = {newRoomID, clientID:user.userID, clientUsername:user.username};
+        //             emitUserDeleteRoom(socket, data);
+
+        //             dispatch({type:"KICK_USER_FROM_GROUP", roomID, newRoomID, username})   
+        //             const kickUserData = {newRoomID, roomID, kickedUserID, kickedUsername:username, clientID:user.userID, clientUsername:user.username}
+        //             emitKickUserFromChat(socket, kickUserData);
+
+        //             toast.success("Old conversation has deleted and user has kicked",{
+        //                 className:"toast-contact-message"
+        //             });
+
+        //         }
+        //         else{
+        //             console.log("SA");
+        //             dispatch({type:"KICK_USER_FROM_GROUP", roomID, newRoomID, username})   
+        //             const data = {newRoomID, roomID, kickedUserID, kickedUsername:username, clientID:user.userID, clientUsername:user.username}
+        //             emitKickUserFromChat(socket, data);
+
+        //             toast.info("The user "+ username + " has been kicked from the chat");
+        //         }
+        //     }
+        //     catch(err){
+        //         const error = getErrorMessage(err);
+        //         const errorMessage = error.messageError || "Please try again later";
+        //         toast.error(`Failed to kick user from chat. ${errorMessage}`, {
+        //             className: 'toast-contact-message'
+        //         });
+        //         console.error(error);
+        //     }
+        // }
 
         const onSendMessageHandler = async({message, fromRoomID}) =>{        
             if(message != ''){

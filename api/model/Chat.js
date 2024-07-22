@@ -326,7 +326,12 @@ const removeUserFromRoomID = async(roomID, username) =>{
     //if newRoomKey exist (group with same members)
     //make newRoomKey to be unique to avoid conflict with same roomID
     const newRoomKeyExists = await exists(newRoomKey);
-    // if(newRoomKeyExists){
+    if(newRoomKeyExists){
+        return{
+            newRoomID:null, 
+            kickedUserID:userID
+        }
+    }
         //DELETE THIS CHAT IF CHAT ALREADY EXIST WITH SAME MEMBERS(remained memebers)
     //     newRoomKey +=":new1";
     //     newRoomID +=":new1";
