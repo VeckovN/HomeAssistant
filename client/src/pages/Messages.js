@@ -13,7 +13,9 @@ import Spinner from '../components/UI/Spinner.js';
 
 import '../sass/pages/_messages.scss';
 
-const Messages = ({socket,connected}) =>{
+const Messages = ({socket, connected}) =>{
+
+    console.log("Messages Component");
 
     const {user} = useSelector((state) => state.auth)
 
@@ -23,17 +25,19 @@ const Messages = ({socket,connected}) =>{
         roomMessages: [], //current room messages
         roomInfo:{}, //current room Info (roomID, users) AND ictureURL
         houseworkers:'',
-        roomsAction:'' //for handling different state.rooms update actions
+        roomsAction:'', //for handling different state.rooms update actions
+        typingUsers:[], //typing users in chat 
     }
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
     const [showMenu, setShowMenu] = useState(false);
     const [showMoreRoomUsers, setShowMoreRoomUsers] = useState({});
     const pageNumberRef = useRef(0); 
 
+    console.log("MESSSAGE TYPING USERS", state.typingUsers);
+
     const onShowMenuToggleHandler = () =>  setShowMenu(prev => !prev);
     const onUsersFromChatOutHanlder = () => setShowMoreRoomUsers({});
 
-    console.log("ROOOSLQWE QW ", state.roomInfo);
     useEffect(() => {
             if(socket && user){
                 console.log("HEEEEEEEEE");
@@ -42,6 +46,7 @@ const Messages = ({socket,connected}) =>{
                 listenOnAddUserToGroup(socket, dispatch, user.userID);
                 listenOnDeleteUserFromGroup(socket, dispatch);
                 listenOnKickUserFromGroup(socket, dispatch, user.userID);
+                // listenOnStartTypingInGroup(socket, user.userID, user.username);
     
                 //when is created new room show it with others
                 socket.on('show.room', (room) =>{
@@ -50,6 +55,14 @@ const Messages = ({socket,connected}) =>{
             }
         },[socket]) //on socket change (SOCKET WILL CHANGE WHEN IS MESSAGE SEND --- socket.emit)
             
+        const onAddTypingUserHandler = (userInfo) =>{
+            dispatch({type:"SET_TYPING_USER", data:userInfo});
+        }
+
+        const onRemoveTypingUserHandler = (userInfo) =>{
+            dispatch({type:"REMOVE_TYPING_USER", data:userInfo});
+        }
+
 
         const fetchMoreMessages  = (async (roomID, pageNumber) =>{
             const messages = await getMoreMessagesByRoomID(roomID, pageNumber);
@@ -73,7 +86,6 @@ const Messages = ({socket,connected}) =>{
                 const roomID = data[0].roomID;
                 const users = data[0].users;
                 dispatch({type:"SET_ROOM_INFO", ID:roomID, usersArray:users});
-                //join displayed room
 
                 //COMMENTED (emit event before socket initialization(connection))
                 // emitRoomJoin(socket, roomID);
@@ -105,26 +117,38 @@ const Messages = ({socket,connected}) =>{
             if(roomID === state.roomInfo.roomID)
                 return;
 
-            setShowMenu(false);
+            console.log("SA");
             pageNumberRef.current = 0; //reset page number on entering new room
 
-            try{
-                if(state.roomInfo.roomID !='' && state.roomInfo.roomID != roomID){
-                    emitLeaveRoom(socket, state.roomInfo.roomID);
-                    console.log("leave.room : " + state.roomInfo.roomID);
-                }
-                emitRoomJoin(socket, roomID);
-                const messages = await getMessagesByRoomID(roomID)
-                dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
+            if(state.roomInfo.roomID !='' && state.roomInfo.roomID != roomID){
+                console.log("EMMM");
+                emitLeaveRoom(socket, state.roomInfo.roomID);
+                console.log("leave.room : " + state.roomInfo.roomID);
             }
-            catch(err){
-                const error = getErrorMessage(err);
-                const errorMessage = error.messageError || "Please try again later";
-                toast.error(`Room messages can't be dislayed. ${errorMessage}`, {
-                    className: 'toast-contact-message'
-                });
-                console.error(error);
-            }
+            console.log("kpomasdmasmd a");
+            emitRoomJoin(socket, roomID);
+            const messages = await getMessagesByRoomID(roomID)
+            dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
+
+            // try{    
+            //     if(state.roomInfo.roomID !='' && state.roomInfo.roomID != roomID){
+            //         console.log("EMMM");
+            //         emitLeaveRoom(socket, state.roomInfo.roomID);
+            //         console.log("leave.room : " + state.roomInfo.roomID);
+            //     }
+            //     console.log("kpomasdmasmd a");
+            //     emitRoomJoin(socket, roomID);
+            //     const messages = await getMessagesByRoomID(roomID)
+            //     dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
+            // }
+            // catch(err){
+            //     const error = getErrorMessage(err);
+            //     const errorMessage = error.messageError || "Please try again later";
+            //     toast.error(`Room messages can't be dislayed. ${errorMessage}`, {
+            //         className: 'toast-contact-message'
+            //     });
+            //     console.error(error);
+            // }
     
             // if(showMenu) //useCallback is used and this doesn't make sense to be wrttien
             //useCallback will memoize it as false value(initial) and never changed due to dependecies being empty
@@ -379,12 +403,15 @@ const Messages = ({socket,connected}) =>{
 
                 <section className='chat-container'>
                     <Chat 
+                        socket={socket}
                         rooms={state.rooms}
                         roomMessages={state.roomMessages}
                         roomInfo={state.roomInfo}
                         user={user}
                         showMenu={showMenu}
                         houseworkers={state.houseworkers}
+                        typingUsers={state.typingUsers}
+                        // typingUser={state.TypingUser} //obj [{userID, username}, {userID, username}]
                         onSendMessageHandler={onSendMessageHandler}
                         onAddUserToGroupHanlder={onAddUserToGroupHanlder}
                         onKickUserFromGroupHandler={onKickUserFromGroupHandler}
@@ -392,6 +419,8 @@ const Messages = ({socket,connected}) =>{
                         onShowMenuToggleHandler={onShowMenuToggleHandler}
                         pageNumberRef={pageNumberRef}
                         fetchMoreMessages={fetchMoreMessages}
+                        onAddTypingUserHandler={onAddTypingUserHandler}
+                        onRemoveTypingUserHandler={onRemoveTypingUserHandler}
                     />
                 </section>
             </div>

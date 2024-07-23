@@ -1,4 +1,5 @@
-import {useRef, useState, useEffect, useCallback} from 'react';
+import {useRef, useState, useEffect} from 'react';
+import useTyping from '../../hooks/useTyping';
 import ChatMenu from './ChatMenu'; 
 import PersonIcon from '@mui/icons-material/Person';
 import SendIcon from '@mui/icons-material/Send';
@@ -7,26 +8,105 @@ import MenuIcon from '@mui/icons-material/Menu';
 import '../../sass/components/_chat.scss';
 
 const Chat = ({
+    socket,
     roomMessages, 
     rooms, 
     roomInfo, 
     user, 
     showMenu, 
     houseworkers, 
+    typingUsers,
     pageNumberRef, 
     fetchMoreMessages,
     onSendMessageHandler, 
     onAddUserToGroupHanlder,
     onKickUserFromGroupHandler, 
     onDeleteRoomHandler, 
-    onShowMenuToggleHandler
+    onShowMenuToggleHandler,
+    onAddTypingUserHandler,
+    onRemoveTypingUserHandler
  }) =>{
     const messageInputRef = useRef();
     const lastMessageRef = useRef(null);
-    const [loading, setLoading] = useState(true);
     const observerTarget = useRef(null);
-
     const conversation = roomMessages?.length >0;
+
+    const startTypingMessageSendEmit = () =>{
+        if(!socket) return;
+
+        socket.emit("startTypingRoom", {roomID:roomInfo.roomID, user})
+        console.log(`socket.emit("Start_Typing_Event_room", {roomID:roomInfo.roomID, user})`)
+    }
+
+    const stopTypingMessageEmit = () =>{
+        if(!socket) return;
+            socket.emit("stopTypingRoom", {roomID:roomInfo.roomID, user})
+        console.log(` socketRef.current.emit("Stop_Typing_Event_room", {roomID:roomInfo.roomID})`)
+        stopTypingOnSendMessage();
+    }
+
+    const {startTypingHandler, stopTypingOnSendMessage} = useTyping(startTypingMessageSendEmit, stopTypingMessageEmit);
+
+    const listenOnUserTyping = () =>{
+        //listen only for one interval -> Don't reapeat on Interval re-rendering
+            socket.on("typingMessageStart", (sender) =>{
+                const {senderID, senderUsername} = sender;
+    
+                console.log("LISTENN BEFORE : ")
+                if(senderID == user.userID){
+                    //dont add it to arraty
+                    console.log("MEE : ", user.userID);
+                    return;
+                }
+                else{
+                    console.log("LISTENN : " , sender)
+                    //that trigger re-rendering
+                    //SET TYPING USER IN MESSAGE CONTEXT -> and display Typing users animation
+                    
+                    const data = {
+                        userID:senderID, 
+                        username:senderUsername
+                    }
+                    onAddTypingUserHandler(data);                    
+                }
+        
+              })
+    }   
+
+    const listenOnUserStopTyping = () =>{
+        socket.on("typingMessageStop", (sender) =>{
+            const {senderID, senderUsername} = sender;
+
+            console.log("LISTENN STOP BEFORE : ")
+            if(senderID == user.userID){
+                //dont add it to arraty
+                console.log("MEE : ", user.userID);
+                return;
+            }
+            else{
+                console.log("LISTENN STOP : " , sender)
+                const data = {
+                    userID:senderID, 
+                    username:senderUsername
+                }
+                onRemoveTypingUserHandler(data);
+            }
+    
+          })
+    }
+
+    //use UseEffect to listen only once (to avoid to this listen set on component re-rednering)
+    useEffect(() =>{
+        console.log("USE EFFECT TOOO");
+        listenOnUserTyping();
+        listenOnUserStopTyping();
+
+        return () =>{
+            // socket.off("typingMessageStart")
+            console.log("SOCKET OFF");
+        }
+    },[])
+
     
     const onSendHandler = () =>{
         const message = messageInputRef.current.value;
@@ -36,6 +116,7 @@ const Chat = ({
 
         onSendMessageHandler({message, fromRoomID});
         lastMessageRef.current?.scrollIntoView({behavior: 'instant', block: 'nearest'});
+        stopTypingOnSendMessage();
     }
 
     const options = {
@@ -49,12 +130,6 @@ const Chat = ({
                 const newPage = pageNumberRef.current + 1; 
                 pageNumberRef.current = newPage;
                 fetchMoreMessages(roomInfo.roomID, newPage);
-                // setTimeout(() => {
-                //     const newPage = pageNumberRef.current + 1;
-                //     pageNumberRef.current = newPage;
-                //     fetchMoreMessages(roomInfo.roomID, newPage);
-                //     setLoading(false);
-                // }, 200); // Wait for 0.5 seconds
             }
           }, options)
       
@@ -68,8 +143,6 @@ const Chat = ({
           }
         }
       }, [observerTarget.current, roomInfo]);
-    //   }, [observerTarget.current]);
-
 
     return(     
         <>
@@ -102,6 +175,16 @@ const Chat = ({
             
             {/* infinity message load */}
             <div className={`messages-chat ${showMenu && 'showMenu'}`}>
+            {/* don't show typing users when the user typiong in chat */}
+            {typingUsers && 
+                <div className='typing-users'>
+                    {typingUsers.map((el,index) => (
+                        <div className='user-t' key={el.userID + index}>
+                            ...{el.username}
+                        </div>
+                    ))}
+                </div>
+            }
             {roomMessages?.length >0 ?   
             <>
                 {roomMessages.map((el,index) =>{
@@ -153,12 +236,14 @@ const Chat = ({
             </div>
 
             <div className="footer-chat" >
+
                 <input
                     type='text'
                     className={`write-message ${showMenu && 'showMenu'} `}
-                    placeholder="Type your message here"
+                    placeholder={`Type your message here`}
                     name='message-text'
                     ref={messageInputRef}
+                    onKeyDown={startTypingHandler}
                     disabled={showMenu || !conversation}
                 />
                 <button className={`send-icon ${showMenu && 'showMenu'}` } onClick={onSendHandler} disabled={showMenu || !conversation}><SendIcon/></button>

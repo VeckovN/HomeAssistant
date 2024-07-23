@@ -73,6 +73,17 @@
     @extend %scrollbar-chat-style;
     // position:
 
+    .typing-users{
+        display: flex;
+        color:white;
+        font-size: $fs-em-5;
+        padding-top:.4em;
+
+        .user-t{
+            padding-right:.5em;
+        }
+    }
+
     .message{
         display:flex;
         align-items: center;
@@ -237,6 +248,7 @@
     }
 
     .write-message {
+        position:relative;
         width:80%;
         height: 40px;
 
@@ -251,7 +263,7 @@
             border: 2px solid black;
             border-radius: .4em;
         }
-      }
+    }
 
     .clickable{
         cursor: pointer;

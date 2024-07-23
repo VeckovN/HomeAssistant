@@ -9,7 +9,7 @@ const chatRoute = require('./routes/chat');
 const dotenv = require('dotenv');
 const path = require('path');
 const {sendMessage} = require('./model/Chat.js')
-const {client:redisClient, RedisStore} = require('./db/redis');
+const {client:redisClient, RedisStore, } = require('./db/redis');
 const upload = require('./utils/Multer.js');
 const {register, uploadNewPicture} = require('./controller/auth')
 dotenv.config();
@@ -92,6 +92,43 @@ server.listen(5000, ()=>{
     io.on('connection', async(socket)=>{
         console.log("CONNECTION INITIALIZED : socketID: " + socket.id);
 
+        //add it to onlineUsersList
+        //listen on onlineUser event (/thissocket.id could be identifier as well as userID )
+        socket.on("addOnlineUser", (userData) =>{
+            console.log("USERD DATA: ", userData);
+            //cleear distinction between storing user data (Hash) and tracking online users (Set).
+
+            //for every registerd user there is HASH (user:{id} -> usenrame, password, imagePath)
+
+            //add id of online username to set()
+            redisClient.sadd(`onlineUsers`, userData.userID ,(err,res) =>{
+                if(err){
+                    console.log("Error with adding user to onlineUser set");
+                }
+                else{
+                    //broadcast to others that you have become online
+                    // io.emit()
+                    console.log(`User ${userData.userID} hass been added to onlineUser set`);
+                }
+            });
+
+            // client.sadd(`onlineUsers`, userData.userID)
+        })  
+        //should add socket.id as identifier 
+    
+        socket.on("removeOnlineUser", (userData) =>{
+            console.log("ASDQW EQW EQW EQWE QWE QWE QW E");
+            console.log("REMOVE USER DATA ", userData);
+            redisClient.srem("onlineUsers", userData.userID, (err,res)=>{
+                if(err){
+                    console.log("Error with removing user from onlineUser set");
+                }
+                else{
+                    console.log(`User ${userData.userID} hass been removed to onlineUser set`);
+                }
+            });
+        })
+
         //every user on socket init join the room * used to send end receive data for concrete user
         //instead of broadcasting with io.emit('dynamicName') because it's less efficient and not good performance
         socket.on('joinRoom', (userID)=>{
@@ -156,6 +193,41 @@ server.listen(5000, ()=>{
             }
         })
 
+        socket.on("startTypingRoom", ({roomID, user}) =>{
+            try{
+                const {userID, username} = user;
+                const roomKey = `room:${roomID}`
+
+                const sender ={
+                    senderID:userID, 
+                    senderUsername:username
+                }
+                io.to(roomKey).emit("typingMessageStart", sender) 
+                console.log(`io.to(roomKey).emit("typingMessageStart", sender) `)
+            }
+            catch(err){
+                console.error("errpr: " , err);
+            }
+        })
+
+        socket.on("stopTypingRoom", ({roomID, user}) =>{
+            try{
+                const {userID, username} = user;
+                const roomKey = `room:${roomID}`
+                console.log("STOP ROOMKEY: " + roomKey);
+
+                const sender ={
+                    senderID:userID, 
+                    senderUsername:username
+                }
+                //send it in room (sender should check does is he sender userID === senderID and dont show (...))
+                io.to(roomKey).emit("typingMessageStop", sender) 
+                console.log(`io.to(roomKey).emit("typingMessageStop", sender) `)
+            }
+            catch(err){
+                console.error("errpr: " , err);
+            }
+        })
 
         socket.on("createUserGroup", ({data}) =>{
             const {newUserID, newUsername, roomID, newRoomID, clientID ,clientUsername, newUserPicturePath} = data;                        
@@ -226,13 +298,37 @@ server.listen(5000, ()=>{
                 io.to(`user:${id}`).emit("deleteUserRoomChange" , data);
             })
         })
+
+        socket.on("removeOnlineUser", (userData) =>{
+            console.log("ASDQW EQW EQW EQWE QWE QWE QW E");
+            console.log("REMOVE USER DATA ", userData);
+            redisClient.srem("onlineUsers", userData.userID, (err,res)=>{
+                if(err){
+                    console.log("Error with removing user from onlineUser set");
+                }
+                else{
+                    console.log(`User ${userData.userID} hass been removed to onlineUser set`);
+                }
+            });
+        })
     
         socket.on('disconnect', async(id)=>{
             console.log("DISCONNECT");
+            socket.on("removeOnlineUser", (userData) =>{
+                console.log("ASDQW EQW EQW EQWE QWE QWE QW E");
+                console.log("REMOVE USER DATA ", userData);
+                redisClient.srem("onlineUsers", userData.userID, (err,res)=>{
+                    if(err){
+                        console.log("Error with removing user from onlineUser set");
+                    }
+                    else{
+                        console.log(`User ${userData.userID} hass been removed to onlineUser set`);
+                    }
+                });
+            })
         })
     })
-
+    
     console.log("SERVER at 5000 port");
-
     //CRAETE - dynamic function for listener (socket, io, eventName, data)
 })
