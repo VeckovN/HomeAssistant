@@ -56,7 +56,8 @@ export const MessagesReducer = (state, action) =>{
                 roomInfo:{
                     roomID: action.ID,
                     users: state.rooms.find(el => el.roomID === action.ID)?.users || []
-                }
+                },
+                typingUsers:[]
             }
         case "ADD_MORE_ROOM_MESSAGES":
             return{
