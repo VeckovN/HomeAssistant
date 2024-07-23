@@ -116,7 +116,25 @@ export const MessagesReducer = (state, action) =>{
                 ...state,
                 loading:action.payload
             }
-        
+        case "SET_TYPING_USER":
+            return{
+                ...state,
+                typingUsers: [
+                    ...state.typingUsers,
+                    action.data //{userID, username}
+                ]
+            }
+        case "REMOVE_TYPING_USER":
+            return{
+                ...state,
+                typingUsers: state.typingUsers.filter(el => el.userID != action.data.userID)
+            }
+        case "REMOVE_ALL_TYPE_USERS":
+            return{
+                ...state,
+                typingUsers:[]
+            }
+
         default:
             return state;
     }
