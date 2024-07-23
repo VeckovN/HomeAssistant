@@ -8,6 +8,7 @@ const useSocket = (user) =>{
     const [connected, setConnected] = useState(false);
 
     useEffect(() => {
+        console.log("useSocket's useEFFECT");
         // Handle socket connection and disconnection based on user state
         if (user) {
             console.log("USSERRR : ", user);
@@ -25,6 +26,10 @@ const useSocket = (user) =>{
                 console.log('Socket connected');
                 setConnected(true);
 
+                //register it as online user
+                const userData ={userID:user.userID, userUsername:user.username}
+                socketRef.current.emit('addOnlineUser', userData);
+
                 // Emit join request for the user's room
                 socketRef.current.emit('joinRoom', user.userID);
                 console.log(`Joined room user-${user.userID}`);
@@ -35,6 +40,10 @@ const useSocket = (user) =>{
                 //clean up function trigger this disconnect event
                 console.log('Socket disconnected');
                 setConnected(false);
+
+                console.log("removeOnlineUser", user.userID);
+                //unsubscribe it from onlineUserList
+                socketRef.current.emit("removeOnlineUser", user.userID);
 
                 socketRef.current.removeAllListeners(); // Remove all event listeners
                 console.log("socketRef.current.removeAllListeners()")

@@ -19,7 +19,7 @@ const useTyping = (startTypingMessageSendEmit, stopTypingMessageEmit) =>{
                 }
                 const newValue = cooldownRef.current - 1;
                 cooldownRef.current = newValue;
-            },1000)
+            },600)
 
         }
         else if(!isTyping && cooldownRef.current!= 0){
