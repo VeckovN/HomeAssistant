@@ -33,8 +33,6 @@ const Messages = ({socket, connected}) =>{
     const [showMoreRoomUsers, setShowMoreRoomUsers] = useState({});
     const pageNumberRef = useRef(0); 
 
-    console.log("MESSSAGE TYPING USERS", state.typingUsers);
-
     const onShowMenuToggleHandler = () =>  setShowMenu(prev => !prev);
     const onUsersFromChatOutHanlder = () => setShowMoreRoomUsers({});
 
@@ -117,18 +115,17 @@ const Messages = ({socket, connected}) =>{
             if(roomID === state.roomInfo.roomID)
                 return;
 
-            console.log("SA");
             pageNumberRef.current = 0; //reset page number on entering new room
 
             if(state.roomInfo.roomID !='' && state.roomInfo.roomID != roomID){
-                console.log("EMMM");
                 emitLeaveRoom(socket, state.roomInfo.roomID);
                 console.log("leave.room : " + state.roomInfo.roomID);
             }
-            console.log("kpomasdmasmd a");
+
             emitRoomJoin(socket, roomID);
             const messages = await getMessagesByRoomID(roomID)
             dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
+            setShowMenu(false);
 
             // try{    
             //     if(state.roomInfo.roomID !='' && state.roomInfo.roomID != roomID){
