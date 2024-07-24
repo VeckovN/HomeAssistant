@@ -1,0 +1,60 @@
+@use '../abstracts/fonts' as *;
+@use '../abstracts/placeholders' as *;
+@use '../abstracts/colors' as *;
+@use '../base/typography' as *;
+
+.typing-users{
+    display: flex;
+    flex-wrap: wrap;
+    color:white;
+    font-size: $fs-em-6;
+    padding-top:.4em;
+
+    .user-typing-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: .5em;
+        padding:.5em;
+        border-radius: 10px;
+        background-color: rgb(83, 80, 80);
+
+        .dots-container{
+            display: flex;
+            padding-right: .3em;
+            #dot1, #dot2, #dot3{
+                margin:0em .1em;
+                width: 4px;
+                height: 4px;
+                border-radius: 50%;
+                background-color: white;
+                animation: blink 1s infinite;
+            }
+
+            #dot1{
+                animation-delay: .2s;
+            }
+            #dot2{
+                animation-delay: .4s;
+            }
+            #dot3{
+                animation-delay: .6s;
+            }
+
+            @keyframes blink {
+                0%{
+                    opacity: .2;
+                }
+                20%{
+                    opacity: 1;
+                }
+                10%{
+                    opacity: .2;
+                }
+            }
+        }
+    }
+
+
+}
+
