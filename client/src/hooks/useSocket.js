@@ -12,15 +12,19 @@ const useSocket = (user) =>{
         // Handle socket connection and disconnection based on user state
         if (user) {
             console.log("USSERRR : ", user);
-          // Create a new socket instance if it doesn't exist
+            // Create a new socket instance if it doesn't exist
             if (!socketRef.current) {
-                const socket = io('http://127.0.0.1:5000', { withCredentials: true });
+                const socket = io('http://127.0.0.1:5000', { 
+                    withCredentials: true, 
+                    //Handshake
+                    query: {userID: user.userID}  
+                });
                 socketRef.current = socket;
                 // console.log("SOCKET: ", socket); 
                 //another approach useing socket.id isntead of user.id for emiting/listeninig events
             }
 
-          // Connect and handle connection events
+            // Connect and handle connection events
             socketRef.current.on('connect', () => {
                 //this execute a little bit after the exercution (probably asyn think)
                 console.log('Socket connected');
@@ -40,10 +44,6 @@ const useSocket = (user) =>{
                 //clean up function trigger this disconnect event
                 console.log('Socket disconnected');
                 setConnected(false);
-
-                console.log("removeOnlineUser", user.userID);
-                //unsubscribe it from onlineUserList
-                socketRef.current.emit("removeOnlineUser", user.userID);
 
                 socketRef.current.removeAllListeners(); // Remove all event listeners
                 console.log("socketRef.current.removeAllListeners()")

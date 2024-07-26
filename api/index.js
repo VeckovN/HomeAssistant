@@ -91,47 +91,29 @@ app.get("/api/", (req,res)=>{
 server.listen(5000, ()=>{
     io.on('connection', async(socket)=>{
         console.log("CONNECTION INITIALIZED : socketID: " + socket.id);
+        const ID = socket.handshake.query.userID; //use handshake for static data
 
-        //add it to onlineUsersList
+
         //listen on onlineUser event (/thissocket.id could be identifier as well as userID )
         socket.on("addOnlineUser", (userData) =>{
             console.log("USERD DATA: ", userData);
             //cleear distinction between storing user data (Hash) and tracking online users (Set).
-
-            //for every registerd user there is HASH (user:{id} -> usenrame, password, imagePath)
-
-            //add id of online username to set()
+            //for every registerd user there is HASH (user:{id} -> usenrame, password, imagePath)()
             redisClient.sadd(`onlineUsers`, userData.userID ,(err,res) =>{
                 if(err){
                     console.log("Error with adding user to onlineUser set");
                 }
                 else{
-                    //broadcast to others that you have become online
-                    // io.emit()
                     console.log(`User ${userData.userID} hass been added to onlineUser set`);
                 }
             });
-
-            // client.sadd(`onlineUsers`, userData.userID)
         })  
-        //should add socket.id as identifier 
-    
-        socket.on("removeOnlineUser", (userData) =>{
-            console.log("ASDQW EQW EQW EQWE QWE QWE QW E");
-            console.log("REMOVE USER DATA ", userData);
-            redisClient.srem("onlineUsers", userData.userID, (err,res)=>{
-                if(err){
-                    console.log("Error with removing user from onlineUser set");
-                }
-                else{
-                    console.log(`User ${userData.userID} hass been removed to onlineUser set`);
-                }
-            });
-        })
 
         //every user on socket init join the room * used to send end receive data for concrete user
         //instead of broadcasting with io.emit('dynamicName') because it's less efficient and not good performance
         socket.on('joinRoom', (userID)=>{
+            console.log("MY ID: " + ID);
+            console.log("PASSED ID: " + userID);
             socket.join(`user:${userID}`);
             console.log(`\n User with ID ${userID} joined the room user-${userID} \n`)
         })
@@ -299,33 +281,16 @@ server.listen(5000, ()=>{
             })
         })
 
-        socket.on("removeOnlineUser", (userData) =>{
-            console.log("ASDQW EQW EQW EQWE QWE QWE QW E");
-            console.log("REMOVE USER DATA ", userData);
-            redisClient.srem("onlineUsers", userData.userID, (err,res)=>{
+        socket.on('disconnect', async()=>{
+            //handshake query prop (ID) is used for disconnection.
+            redisClient.srem("onlineUsers", ID, (err,res)=>{
                 if(err){
                     console.log("Error with removing user from onlineUser set");
                 }
                 else{
-                    console.log(`User ${userData.userID} hass been removed to onlineUser set`);
+                    console.log(`User ${ID} hass been removed to onlineUser set`);
                 }
             });
-        })
-    
-        socket.on('disconnect', async(id)=>{
-            console.log("DISCONNECT");
-            socket.on("removeOnlineUser", (userData) =>{
-                console.log("ASDQW EQW EQW EQWE QWE QWE QW E");
-                console.log("REMOVE USER DATA ", userData);
-                redisClient.srem("onlineUsers", userData.userID, (err,res)=>{
-                    if(err){
-                        console.log("Error with removing user from onlineUser set");
-                    }
-                    else{
-                        console.log(`User ${userData.userID} hass been removed to onlineUser set`);
-                    }
-                });
-            })
         })
     })
     
