@@ -135,6 +135,25 @@ export const MessagesReducer = (state, action) =>{
                 ...state,
                 typingUsers:[]
             }
+        case "SET_ONLINE_USER":
+            return{
+                ...state,
+                onlineUsers: action.data
+            }
+        case "ADD_ONLINE_USER":
+            return{
+                ...state,
+                onlineUsers: [
+                    ...state.onlineUsers,
+                    action.data
+                ]
+            }
+        case "REMOVE_ONLINE_USER":
+            return{
+                ...state,
+                onlineUsers: state.onlineUsers.filter(el => el != action.data)
+            }
+    
 
         default:
             return state;

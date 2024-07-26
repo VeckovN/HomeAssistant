@@ -7,7 +7,7 @@ import {MessagesReducer} from '../components/MessagesReducer.js';
 import {getHouseworkers} from '../services/houseworker.js';
 import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup} from '../sockets/socketListen.js';
 import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat, emitKickUserFromChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
-import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser, getMoreMessagesByRoomID} from '../services/chat.js';
+import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser, getMoreMessagesByRoomID, getOnlineUsers} from '../services/chat.js';
 import {getErrorMessage} from '../utils/ThrowError.js';
 import Spinner from '../components/UI/Spinner.js';
 
@@ -27,6 +27,7 @@ const Messages = ({socket, connected}) =>{
         houseworkers:'',
         roomsAction:'', //for handling different state.rooms update actions
         typingUsers:[], //typing users in chat 
+        onlineUsers:[], //only importants users() that is necessary for Online flag 
     }
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
     const [showMenu, setShowMenu] = useState(false);
@@ -35,6 +36,8 @@ const Messages = ({socket, connected}) =>{
 
     const onShowMenuToggleHandler = () =>  setShowMenu(prev => !prev);
     const onUsersFromChatOutHanlder = () => setShowMoreRoomUsers({});
+
+    console.log("STATEEEE : " , state);
 
     useEffect(() => {
             if(socket && user){
@@ -45,7 +48,8 @@ const Messages = ({socket, connected}) =>{
                 listenOnDeleteUserFromGroup(socket, dispatch);
                 listenOnKickUserFromGroup(socket, dispatch, user.userID);
                 // listenOnStartTypingInGroup(socket, user.userID, user.username);
-    
+                //LISTEN ON ONLINE USERS TO ADD IT IN ROOM INFO -> OnlineUsers
+
                 //when is created new room show it with others
                 socket.on('show.room', (room) =>{
                     
@@ -74,9 +78,12 @@ const Messages = ({socket, connected}) =>{
         })
 
         const fetchAllRooms = ( async () =>{   
+            console.log("sss");
             const data = await getUserRooms(user.username); //roomID, users{}
             // console.log('DATA ROOMS : \n' + JSON.stringify(data));
             dispatch({type:"SET_ROOMS", data:data}) 
+
+            console.log("GET ALL ROOMS : ", data);
 
             //When user has conversations
             if(data.length > 0){
@@ -106,6 +113,13 @@ const Messages = ({socket, connected}) =>{
             console.log("\n getAllHouseworkers \n");
             const houseworkerResult = await getHouseworkers();
             dispatch({type:"SET_HOUSEWORKERS", data:houseworkerResult});
+        }
+
+        //get only for logged user
+        const getOnlineChatUsers = async() =>{
+            const onlineUsers = await getOnlineUsers(user.userID);
+            console.log("ONLINE USERS CLIENT: " , onlineUsers);
+            dispatch({type:"SET_ONLINE_USER", data:onlineUsers});
         }
 
 
@@ -177,8 +191,9 @@ const Messages = ({socket, connected}) =>{
         },[])
 
         useEffect(() =>{
-            fetchAllRooms()
+            fetchAllRooms();
             getAllHouseworkers();
+            getOnlineChatUsers();
         },[])
 
         //This is bit complex async logic(taking rooms after deleting room from it(async call))
