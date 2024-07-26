@@ -113,6 +113,21 @@ const getConversationCount = async(req,res)=>{
     }
 }
 
+const getOnlineUsers = async(req,res) =>{
+    try{
+        const userID = req.params.userID;
+        const userID2 = req.session.user.userID;
+        console.log("REQ SESSION USER: ", req.session.user);
+        console.log("UserID2: " , userID2);
+
+        const result = await chatModal.getOnlineUsersFromChat(userID);
+        res.status(200).json(result);
+    }
+    catch(err){
+        res.status(400).json({error: 'Conversetion Count error'})
+    }
+}
+
 module.exports ={
     getMessages,
     getMoreMessages,
@@ -121,5 +136,6 @@ module.exports ={
     deleteRoom,
     removeUserFromRoom,
     addUserToRoom,
-    getConversationCount
+    getConversationCount,
+    getOnlineUsers
 }

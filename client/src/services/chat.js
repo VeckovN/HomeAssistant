@@ -25,7 +25,6 @@ export const getMessagesByRoomID = async(roomID) =>{
     }
 }
 
-
 export const getMoreMessagesByRoomID = async(roomID, pageNumber) =>{
     console.log("\n PAGE NUMBER: " , pageNumber);
     try{
@@ -80,4 +79,16 @@ export const sendMessageToUser = async(messageObj) =>{
     }
 }
 
+
+export const getOnlineUsers = async(userID) =>{
+    //How to get it? -> Search for user:{userID}:rooms -> and take all rooms ids "2:5:1 "
+    //there will be redudant ids but return(handle) only unique id's
+    try{
+        const result = await axiosSession.get(BASE_URL + `chat/room/onlineUsers/${userID}`);
+        return result.data;
+    }
+    catch(err){
+        ThrowErorr(err);
+    }
+}
 

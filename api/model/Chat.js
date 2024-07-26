@@ -175,6 +175,7 @@ const getAllRooms = async(username)=>{
     let rooms =[];
     rooms = await smembers(userRoomKey);
 
+
     //through every room read another userID -> 1:7 , 1:3 in this situatin 7 and 3
     var roomsArr = []
     let roomObjectArray =[];
@@ -182,6 +183,8 @@ const getAllRooms = async(username)=>{
         const roomID = room;
         const userIDS = roomID.split(":");
         const otherUsers = userIDS.filter(el => el!= userID)
+        //maybe here get onlineUsers
+
 
          //display only last messages for private rooms
          let lastMessage;
@@ -240,6 +243,30 @@ const getAllRooms = async(username)=>{
 
 //   return roomObjectArray;
 // };
+
+const getOnlineUsersFromChat = async(userID) =>{
+    //set to manage unique users IDs(automatically)
+    const usersFromRoomSet = new Set();
+
+    const usersRoomKey = `user:${userID}:rooms`;
+    const usersRoomsIDS = await smembers(usersRoomKey);
+    usersRoomsIDS.forEach(id => {
+        const membersIds = id.split(':');
+        membersIds.forEach(memberID => {
+            usersFromRoomSet.add(memberID);
+        })
+    })
+
+    // Convert the Set back to an array (IF NEEDED)
+    const uniqueUserIds = Array.from(usersFromRoomSet);
+    // This approach works well even if onlineUsers is massive(with set->filter and has methods)
+    const onlineUsers = await smembers(`onlineUsers`);
+    const onlineUsersSet = new Set(onlineUsers); // O(1) average time complexity
+    const onlineRoomUsers = Array.from(usersFromRoomSet).filter(user => onlineUsersSet.has(user))
+    
+    return onlineRoomUsers
+}
+
 
 
 const addUserToRoom = async(newUsername, currentRoomID)=>{
@@ -493,6 +520,11 @@ const deleteRoomByRoomID = async(roomID) =>{
 
 }
 
+
+//ITS MORE EFFICIENT TO ADD NEW SER FOR EACH USERS -> ChatMembers 
+//After adding users to group(chat) -> add it to this set and every user will have list of theirs users ids
+//INSTEAD OF EXTRACTING memebers from users rooms ids.
+
 module.exports ={
     UserIdByUsername,
     userInfoByUserID,
@@ -509,6 +541,7 @@ module.exports ={
     getRoomCount,
     sendMessage,
     deleteUserOnNeo4JFailure,
-    getUserPicturePath
+    getUserPicturePath,
+    getOnlineUsersFromChat
 }
 
