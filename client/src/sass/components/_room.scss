@@ -77,8 +77,16 @@
             z-index: 12;
 
             .user-chat-label{
+                display: flex;
                 margin:0em .3em;
                 
+                .online-user{
+                    width: 13px;
+                    height: 13px;
+                    background-color: #8BC34A;
+                    border-radius: 13px;
+                    border: 2px solid #a1a1a1;
+                }
             }
         }
 

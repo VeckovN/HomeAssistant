@@ -2,7 +2,7 @@ import {useRef, useState, useEffect} from 'react';
 import useTyping from '../../hooks/useTyping';
 import TypingUsers from './TypingUsers';
 import ChatMenu from './ChatMenu'; 
-import RoomMessages from './RoomMessages';
+import ChatMessages from './ChatMessages';
 import PersonIcon from '@mui/icons-material/Person';
 import SendIcon from '@mui/icons-material/Send';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -155,7 +155,7 @@ const Chat = ({
                 (
                     //prevent to re-render only when the props are changed(memo used in RoomMessages)
                     //(not on typingUser changes)
-                    <RoomMessages
+                    <ChatMessages
                         roomMessages={roomMessages}
                         user={user}
                         roomInfo={roomInfo}

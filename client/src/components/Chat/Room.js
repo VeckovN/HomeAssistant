@@ -21,21 +21,26 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
                             {moreRoomUsers.users.map(el =>{
                                 return(
                                     <div className='user-chat-label'>
-                                        {el.username}
+                                        {el.online && <div className='online-user'></div>}
+                                        <div>{el.username}</div>
+                                        
                                     </div>
                                 )
                             })
                             }
                         </div>
                     }
-                    {info.users.length > 3 ?
-                    <>
+                    {/* for group room display user avatar with name and potential online status  */}
+                    {info.users.length > 3 
+                    ?
+                    <> 
                         {info.users.slice(0,3).map((user) => 
                             {
                                 return(
                                     <Photo
                                         username={user.username}
                                         picturePath={user.picturePath}
+                                        online={user.online}
                                     />
                                 )
                             })}
@@ -53,12 +58,13 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
                                     <Photo
                                         username={user.username}
                                         picturePath={user.picturePath}
+                                        online={user.online}
                                     />
                                 )
-                            })}
+                            }
+                        )}
                     </>
                     }
-                    
                 </div>
                 <div className="timer">3 min </div>
                 {/* <div className="timer">3 min {info.lastMessageTime}</div> */}
@@ -69,9 +75,7 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
                 {/* IF PRIVATE THAT SHOW PROFILE PICTURE WITH NAME DESK */}       
                 <div className='room-info'>
                     <div className="photo" style={{backgroundImage: `url(assets/userImages/${info.users[0].picturePath})`}}>
-                    {/* <div className="photo" src={`assets/userImages/${houseworkerProps.picturePath}`}> */}
-                        {/* Green dot for online user */}
-                        <div className="online"></div> 
+                        {info.users[0].online && <div className="online"></div>} 
                     </div>
                     <div className="room-contact">
                         <p className="name">Name: {info.users[0].username}</p>
@@ -81,7 +85,6 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
                 {/* timer for the last received message */}
                 <div className="timer">12 sec</div>
             </div>
-
         }
         </>
     )

@@ -1,12 +1,11 @@
 
 import {memo} from 'react';
 
-const RoomMessages = memo(({roomMessages, user, lastMessageRef, observerTarget, roomInfo}) => {
+const ChatMessages = memo(({roomMessages, user, lastMessageRef, observerTarget, roomInfo}) => {
 return (
     <>
         {roomMessages.map((el,index) =>{
             if(user.userID==el.from || el.from === "Server"){
-                {console.log('ell : ', el.message)}
                 return(
                     
                 <div 
@@ -49,4 +48,4 @@ return (
     )
 });
 
-export default RoomMessages;
+export default ChatMessages;

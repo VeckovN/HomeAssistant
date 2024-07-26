@@ -168,26 +168,23 @@ const getMoreMessages = async(roomID, pageNumber) =>{
     return messagesObj;
 }
 
-
 const getAllRooms = async(username)=>{
     let userID = await UserIdByUsername(username);
     const userRoomKey = `user:${userID}:rooms`;
-    let rooms =[];
-    rooms = await smembers(userRoomKey);
+    let rooms = await smembers(userRoomKey);
 
+    //Get online users and create set for efficeint lookups(could be massive)
+    const onlineUsers = await smembers(`onlineUsers`);
+    const onlineUsersSet = new Set(onlineUsers);
 
     //through every room read another userID -> 1:7 , 1:3 in this situatin 7 and 3
     var roomsArr = []
-    let roomObjectArray =[];
-    for(const room of rooms){
-        const roomID = room;
+    for(const roomID of rooms){
         const userIDS = roomID.split(":");
         const otherUsers = userIDS.filter(el => el!= userID)
-        //maybe here get onlineUsers
 
-
-         //display only last messages for private rooms
-         let lastMessage;
+         //get last messages for private rooms
+         let lastMessage = null;
          if(otherUsers.length <= 2){
              lastMessage = await getLastMessageFromRoom(roomID);
              console.log("ROOM: " + roomID + " LastMessage: " + lastMessage);
@@ -197,16 +194,58 @@ const getAllRooms = async(username)=>{
 
         //Create promise to be ensure tha user is found and then this user push in array
         //without that this async function could be finished after pushing NOTFOUND user in array
-        for(const id of otherUsers){
+        let roomObjectArray =[];
+        for(const id of otherUsers){ //group users
             const user = await userInfoByUserID(id); 
-            roomObjectArray.push({username:user.username, picturePath:user.picturePath});
+            roomObjectArray.push({
+                username:user.username, 
+                picturePath:user.picturePath,
+                online: onlineUsersSet.has(id)
+            });
         }
 
         roomsArr.push({roomID, lastMessage, users:roomObjectArray}) //add last message
-        roomObjectArray =[];
     }
     return roomsArr;
 }
+// const getAllRooms = async(username)=>{
+//     let userID = await UserIdByUsername(username);
+//     const userRoomKey = `user:${userID}:rooms`;
+//     let rooms =[];
+//     rooms = await smembers(userRoomKey);
+
+
+//     //through every room read another userID -> 1:7 , 1:3 in this situatin 7 and 3
+//     var roomsArr = []
+//     let roomObjectArray =[];
+//     for(const room of rooms){
+//         const roomID = room;
+//         const userIDS = roomID.split(":");
+//         const otherUsers = userIDS.filter(el => el!= userID)
+//         //maybe here get onlineUsers
+
+
+//          //display only last messages for private rooms
+//          let lastMessage;
+//          if(otherUsers.length <= 2){
+//              lastMessage = await getLastMessageFromRoom(roomID);
+//              console.log("ROOM: " + roomID + " LastMessage: " + lastMessage);
+//          } 
+
+//         //DONT USE FOREACH FOR ASYNC/AWAIT ,USE for() because this will wait for async execution
+
+//         //Create promise to be ensure tha user is found and then this user push in array
+//         //without that this async function could be finished after pushing NOTFOUND user in array
+//         for(const id of otherUsers){
+//             const user = await userInfoByUserID(id); 
+//             roomObjectArray.push({username:user.username, picturePath:user.picturePath});
+//         }
+
+//         roomsArr.push({roomID, lastMessage, users:roomObjectArray}) //add last message
+//         roomObjectArray =[];
+//     }
+//     return roomsArr;
+// }
 
 //With PromiseAll usage
 // const getAllRooms = async (username) => {
