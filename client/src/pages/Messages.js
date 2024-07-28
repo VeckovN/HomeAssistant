@@ -123,8 +123,11 @@ const Messages = ({socket, connected}) =>{
         }
 
 
-        const onRoomClickHanlder = ( async e =>{
-            const roomID = e.target.value;
+        //TODO* Craete scroll(not instant) to showned room from chatRooms section
+        const enterRoomAfterAction = async(roomID) =>{
+            console.log("ROOMID: ", roomID);
+            console.log("STATE INFO ROOM ID: ", state.roomInfo);
+
             //don't applie logic if is clicked on the same room
             if(roomID === state.roomInfo.roomID)
                 return;
@@ -139,36 +142,28 @@ const Messages = ({socket, connected}) =>{
             emitRoomJoin(socket, roomID);
             const messages = await getMessagesByRoomID(roomID)
             dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
-            setShowMenu(false);
+            if(showMenu)
+                setShowMenu(false);
+        }
 
-            // try{    
-            //     if(state.roomInfo.roomID !='' && state.roomInfo.roomID != roomID){
-            //         console.log("EMMM");
-            //         emitLeaveRoom(socket, state.roomInfo.roomID);
-            //         console.log("leave.room : " + state.roomInfo.roomID);
-            //     }
-            //     console.log("kpomasdmasmd a");
-            //     emitRoomJoin(socket, roomID);
-            //     const messages = await getMessagesByRoomID(roomID)
-            //     dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
-            // }
-            // catch(err){
-            //     const error = getErrorMessage(err);
-            //     const errorMessage = error.messageError || "Please try again later";
-            //     toast.error(`Room messages can't be dislayed. ${errorMessage}`, {
-            //         className: 'toast-contact-message'
-            //     });
-            //     console.error(error);
-            // }
-    
+        const onRoomClickHanlder = ( async e =>{
+            const roomID = e.target.value;
+            enterRoomAfterAction(roomID);
+
             // if(showMenu) //useCallback is used and this doesn't make sense to be wrttien
             //useCallback will memoize it as false value(initial) and never changed due to dependecies being empty
             //if(showMenu)    
-            
         })
 
-        const onDeleteRoomHandler = useCallback( async(e)=>{ 
+
+        //Due to this useCallback the state.rooms will be empty(The first version of function 
+        //is memoized before the state.rooms is set.) (not use useCallBack, or put state.rooms as dependecies)
+        // const onDeleteRoomHandler = useCallback( async(e)=>{ 
+        const onDeleteRoomHandler = async(e) => {   
             const roomID = e.target.value;
+
+            //take firsr roomID(if exist) to display it after removing targeted room
+            const someRoom = state.rooms[0].roomID;
             try{
                 await deleteRoom(roomID);
                 dispatch({type:"DELETE_ROOM", data:roomID});
@@ -179,6 +174,9 @@ const Messages = ({socket, connected}) =>{
                 toast.success("You have successfully deleted the room",{
                     className:"toast-contact-message"
                 });
+
+                if(someRoom)  
+                    enterRoomAfterAction(someRoom);
             }
             catch(err){
                 const error = getErrorMessage(err);
@@ -188,7 +186,8 @@ const Messages = ({socket, connected}) =>{
                 });
                 console.error(error);
             }
-        },[])
+        }
+        //[room.state]) instead of },[]) 
 
         useEffect(() =>{
             fetchAllRooms();
@@ -252,6 +251,8 @@ const Messages = ({socket, connected}) =>{
                     dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});
                     toast.info("User is added to the room: "+  newRoomID);
                 }
+
+                enterRoomAfterAction(newRoomID);
             }
             catch(err){
                 const error = getErrorMessage(err);
@@ -284,8 +285,10 @@ const Messages = ({socket, connected}) =>{
                 dispatch({type:"KICK_USER_FROM_GROUP", roomID, newRoomID, username})
                 const data = {newRoomID, roomID, kickedUserID, kickedUsername:username, clientID:user.userID, clientUsername:user.username}
                 emitKickUserFromChat(socket, data);
-    
+                enterRoomAfterAction(newRoomID);
+
                 toast.info("The user "+ username + " has been kicked from the chat");
+
             }
             catch(err){
                 const error = getErrorMessage(err);
