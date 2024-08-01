@@ -100,16 +100,16 @@ const register = async (req,res)=>{
 }
 
 const login = async(req,res)=>{
+    //same error message for userNotFound and inncorectPassword
     try{
-        console.log("PREEEE SESSION: " + JSON.stringify(req.session))
         if(req.session.user)
             return res.json({connect:"You are still logged in"});
     
         const {username, password} = req.body;
         const user = await userModal.findByUsername(username);
         if(!user)
-            return res.status(404).json({error: "User not found!!!"});
-        
+            return res.status(404).json({error: "Incorrect username or password, please try again", errorType:'input'});
+
         const userType = user.type;
         const userInfo = user.props;
     
@@ -120,29 +120,22 @@ const login = async(req,res)=>{
             //Take UserID from redisDB for chat purpose
             try{ //because get method return promise (need to be try-catched)
                 const userRedis = await get(`username:${username}`); //user:{userID}
-                console.log("USERRRRR : "  + user);
                 let userID = userRedis.split(':')[1]; //[user, {userID}]        
-                
                 req.session.user = {username:username, type:userType, userID:userID}
-                console.log("SESSSSSLogion22222222: " + JSON.stringify(req.session))
-
+                
                 return res.send(req.session.user)
             }
             catch(error){
-                console.error("Error durring getting user id", error);
                 return res.status(500).json({error: "Can't get the redis ID"})
             }
         }
         else
-            return res.status(401).json({error: "Incorrect username or password"});
+            // return res.status(401).json({error: "Incorrect username or password", errorType:"password"});
+            return res.status(401).json({error: "Incorrect username or password, please try again", errorType:"input"});
             //THIS should be caught as error.response - to get error object
-            //and then error.response.data.error to get this json prop
-
-            //return res.send({error: "Incorrect username or password"});
-            
+            //and then error.response.data.error to get this json prop      
     }
     catch(error){
-        console.error("Error during login: ", error );
         return res.status(500).json({error:"An internal error occurred"});
     }
 }
