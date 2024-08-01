@@ -74,10 +74,11 @@ export const login = createAsyncThunk(
             }
         }
         catch(err){
-            const message = (err.response && err.response.data.error) || err.message || err
-            //err.response.data.error
-            //to get "error" prop - return res.status(401).json({error: "Incorrect username or password"});
-            return thunkAPI.rejectWithValue(message);
+            // const message = (err.response && err.response.data.error) || err.message || err
+            const errorObj = (err.response && err.response.data) || err.message || err
+            //return response.data -> contains {error:'message' errorType:'input'}
+            //to get "error" prop - return res.status(401).json({error: "Incorrect username or password", errorType:true -> for set error input});
+            return thunkAPI.rejectWithValue(errorObj);
         }
     }
 )
@@ -87,7 +88,6 @@ export const logout = createAsyncThunk(
     async (trunkAPI) =>{
         try{
             const response = await axios.get('http://localhost:5000/api/logout');
-
             // //httpOnly:true , cookie cannot be manipulated through JS
             // Cookie.remove('sessionLog'); //
             Cookie.remove('user');
@@ -112,7 +112,6 @@ export const sessionExpired = createAsyncThunk(
         }
     }
 )
-
 
 const authSlice = createSlice({
     name:'auth',
@@ -157,9 +156,10 @@ const authSlice = createSlice({
                 state.message ="You have successfully logged in"
                 state.user = action.payload 
             })
+            //rejectWithValue(errorObj); ->{error:'message', errorType:"user||password"}
             .addCase(login.rejected, (state, action)=>{
                 state.loading =false;
-                state.message = action.payload
+                state.message = action.payload.error
                 state.error = true;
                 state.user = null;
             })
