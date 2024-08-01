@@ -1,4 +1,4 @@
-# HomeAssistant (Still in Progress)
+# HomeAssistant
 
 ## Technology-Stack
 Frontend: HTML5, SCSS, ReactJS, Redux Toolkit<br />
