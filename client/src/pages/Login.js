@@ -14,26 +14,30 @@ const schema = z.object({
     password: string().min(1, {message:"Password is required"})
 })
 
-
 const Login = () =>{
     const initialState ={
         username:'',
         password:'',
     }
-    const {register, handleSubmit, reset, formState, formState:{isSubmitSuccessful}} = useForm({defaultValues:initialState, resolver: zodResolver(schema)});
+    const {register, handleSubmit, reset, setError, setValue ,formState, formState:{isSubmitSuccessful}} = useForm({defaultValues:initialState, resolver: zodResolver(schema)});
     const {errors} = formState; 
-
     const dispatch = useDispatch();   
-    //UseEffect for restarting value of state
-    useEffect(()=>{
-        if(formState.isSubmitSuccessful){
-            const timer = setTimeout(() => reset({username:'', password:''}),500)
-            return () =>clearTimeout(timer);
-        }
-    },[formState, isSubmitSuccessful])
 
     const onSubmitHandler = (formValues) =>{
-        dispatch(login(formValues));
+        //error is taken from trunk in redux -> return thunkAPI.rejectWithValue(message);
+        dispatch(login(formValues))
+            .unwrap()
+            .catch((rejectedValue) => {
+                const errorType = rejectedValue.errorType;
+                if (errorType) {
+                    if(errorType === 'input'){
+                        setError('username', { type: 'manual', message: 'Invalid username or password'});
+                        setError('password', { type: 'manual', message: 'Invalid username or password'});
+                        setValue('username', '', { shouldValidate: false })
+                        setValue('password', '', { shouldValidate: false })
+                    }
+                }
+            });
         dispatch(resetRedux());
     }
 
@@ -63,6 +67,7 @@ const Login = () =>{
                                     placeholder='Enter a username'
                                     //register has (name="username", onChange, onBlur and ref props) 
                                     {...register('username')}
+                                    className={`login_input ${errors.username ? 'error' : ''}`}
                                 />
                                 <div className="input_error">{errors.username?.message}</div>
                             </div>
@@ -73,6 +78,7 @@ const Login = () =>{
                                     placeholder='Enter password'
                                     autoComplete="off"
                                     {...register('password')}
+                                    className={`login_input ${errors.password ? 'error' : ''}`}
                                 />
                                 <div className="input_error">{errors.password?.message}</div>
                             </div>
