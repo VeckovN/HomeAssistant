@@ -89,7 +89,7 @@ const HouseworkerRegister = () =>{
         avatarField.onChange(event.target.files[0]);
     }
 
-    const onRemoveAvatarHanlder = (e) =>{
+    const onRemoveAvatarHandler = (e) =>{
         e.preventDefault();
         avatarField.onChange(null);
     }
@@ -122,7 +122,7 @@ const HouseworkerRegister = () =>{
             cityField={cityField}
             professionField={professionField}
             avatarField={avatarField}
-            onRemoveAvatarHanlder={onRemoveAvatarHanlder}
+            onRemoveAvatarHandler={onRemoveAvatarHandler}
             handleSubmit={handleSubmit}
             onSubmitHandler={onSubmitHandler}
             onChangeHouseworkerProfessionsHandler={onChangeHouseworkerProfessionsHandler}
