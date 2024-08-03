@@ -27,12 +27,11 @@ const {
 const router = express.Router();
 
 router.get('/', getHouseworkers); //client will see all houseworkers
-router.put('/update', checkHouseworker, udpateHouseworker);
+// router.put('/update', checkHouseworker, udpateHouseworker);
 // //or One route for filter and in controller check for existing params end send it to backend
 //http://localhost:5000/api/houseworker/filter?gender=male&city=Beograd  --- "?" between filter and params
 router.get('/filter', getHouseworkerWithFilters);
 router.get('/info', checkHouseworker, getHouseworkerInfo )
-
 
 //IF IS THIS ROUTE (with :username - params) is ABOVE the /rating,comments,professions -get route 
 //will make conflict, this MUST BE BELOWE ALL OF THESE
