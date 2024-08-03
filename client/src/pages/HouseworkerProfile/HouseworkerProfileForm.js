@@ -2,10 +2,9 @@ import { city_options } from '../../utils/options';
 import HouseworkerProfessions from '../../components/HouseworkerProfessions.js';
 import HouseworkerInputs from '../../components/HouseworkerInputs.js';
 import Spinner from '../../components/UI/Spinner.js';
-
 import '../../sass/pages/_houseworkerProfile.scss';
 
-const HouseworkerProfileForm = ({loading, houseworkerData, setHouseworkerData, cityField, register, errors, watch, handleSubmit, getNotOwnedProfessions, onSubmitUpdate, onChangeCityHandler}) =>{
+const HouseworkerProfileForm = ({loading, houseworkerData, setHouseworkerData, cityField, avatarField, register, errors, watch, handleSubmit, getNotOwnedProfessions, onSubmitUpdate, onChangeCityHandler, onChangeAvatarHandler, onRemoveAvatarHandler}) =>{
     return(
         <div className='hs-profile-container'>
                 {loading ? <Spinner className={'profile-spinner'}/> :
@@ -27,8 +26,11 @@ const HouseworkerProfileForm = ({loading, houseworkerData, setHouseworkerData, c
                                 errors={errors}
                                 watch={watch}
                                 cityField={cityField}
+                                avatarField={avatarField}
                                 city_options={city_options}
                                 onChangeCityHandler={onChangeCityHandler}
+                                onChangeAvatarHandler={onChangeAvatarHandler}
+                                onRemoveAvatarHandler={onRemoveAvatarHandler}
                             />
                             <br></br>
 

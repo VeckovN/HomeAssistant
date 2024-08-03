@@ -1,6 +1,10 @@
 import Select from 'react-select';
 
-const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, city_options, onChangeCityHandler}) =>{
+const HouseworkerInputs = ({houseworkerData,register, errors, watch, cityField, avatarField, city_options, onChangeCityHandler, onChangeAvatarHandler, onRemoveAvatarHandler}) =>{
+    const loadDefaultImageOnError = e =>{
+        e.target.onerror = null;
+        e.target.src = `assets/userImages/userDefault.png`;
+    }
     return(
     <>
         <div className='profile-input-card'>
@@ -153,6 +157,47 @@ const HouseworkerInputs = ({houseworkerData,register,errors,watch, cityField, ci
 
             />
             <div className='input-errors'>{errors.description?.message}</div>
+        </div>
+
+        <div className='profile-avatar-container'>
+            <label className='label-input'>Profile Avatar</label>
+            <div className='form-group'>
+                <input 
+                    type="file" 
+                    id="inputFile"
+                    onChange={onChangeAvatarHandler}
+                />
+                <label htmlFor="inputFile" className="custom-file-button">Choose File</label>
+                <div className='avatar-place'>
+                    {/* set avatarField.value on page */}
+                    {(avatarField.value || houseworkerData.picturePath) && (
+                        <div className='avatar-preview-container'>
+                            {avatarField.value ?
+                            <>
+                            <img
+                                //show Choosen Avatar Form
+                                src={URL.createObjectURL(avatarField.value)}
+                                alt="avatar"
+                            />
+                            <button onClick={onRemoveAvatarHandler} className='remove-avatar-btn'>
+                                Remove Image
+                            </button>
+                            </>
+                            :
+                            <img
+                                //Just show stored avatar from file
+                                src={`assets/userImages/${houseworkerData.picturePath}`}
+                                onError={loadDefaultImageOnError}
+                                alt="avatar"
+                            />
+                            }
+                            
+                        </div>
+                    )}
+                </div>
+
+                <div className='input-error'>{errors.avatar?.message}</div>
+            </div>
         </div>
     </>
     )

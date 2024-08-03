@@ -24,6 +24,7 @@ const HouseworkerProfile = () =>{
         defaultValues: initalStateForm
     })
     const {field:cityField} = useController({name:"city", control});
+    const {field:avatarField} = useController({name:"avatar", control});
     const [houseworkerData, setHouseworkerData] = useState({}) //fetched (showned) data
     const [loading, setLoading] = useState(true);
 
@@ -59,9 +60,8 @@ const HouseworkerProfile = () =>{
         try{
             let newData = {};
             Object.keys(submitData).forEach(key =>{
-                //console.log("UPD: " + typeof(key)+ " : " + updatedData[key]);
-                //picture wont store in this object(for it use diferent request)
-                if(submitData[key] != '' && key!='picture' && key!='profession' && key!='working_hour'){
+                console.log("UPD: " + typeof(key)+ " :  VALKUE : " + key );
+                if(submitData[key] != '' && submitData[key] !=undefined){ //undefined for avatar(file)
                     //data object wiht only updated props (for HTTP request)
                     newData[key] = submitData[key];
                 }
@@ -73,10 +73,6 @@ const HouseworkerProfile = () =>{
                 })
                 return;
             }
-            
-            // if(updatedData.picture !=''){
-            //     await axios.put(`http://localhost:5000/api/clients/updateImage/`, updateImage);
-            // }
 
             await updateHouseworker(newData);
             toast.success("Successfully updated")
@@ -105,6 +101,15 @@ const HouseworkerProfile = () =>{
             cityField.onChange("");
     }
 
+    const onChangeAvatarHandler = (event) =>{
+        avatarField.onChange(event.target.files[0]);
+    }
+    
+    const onRemoveAvatarHandler = (event) =>{
+        event.preventDefault();
+        avatarField.onChange(null);
+    }
+
     return(
         <HouseworkerProfileForm 
             loading={loading}
@@ -112,7 +117,10 @@ const HouseworkerProfile = () =>{
             errors={errors}
             watch={watch}
             cityField={cityField}
+            avatarField={avatarField}
             onChangeCityHandler={onChangeCityHandler}
+            onChangeAvatarHandler={onChangeAvatarHandler}
+            onRemoveAvatarHandler={onRemoveAvatarHandler}
             handleSubmit={handleSubmit}
             onSubmitUpdate={onSubmitUpdate}
             houseworkerData={houseworkerData}
