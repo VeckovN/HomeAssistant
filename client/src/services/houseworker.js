@@ -30,7 +30,15 @@ export const getHouseworkers = async() =>{
 
 export const updateHouseworker = async(newData) =>{
     try{
-        await axiosSession.put( BASE_URL + `houseworker/update/`, newData);
+        // await axiosSession.post( BASE_URL + `houseworker/update/`, newData);
+        await axiosSession({
+            method: 'post',
+            url: 'http://localhost:5000/api/houseworkerupdate',
+            data: newData,
+            headers: {
+                'Content-Type': `multipart/form-data`,
+            },
+        });
     }
     catch(err){
         ThrowErorr(err);
