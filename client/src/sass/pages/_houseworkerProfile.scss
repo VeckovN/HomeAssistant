@@ -179,6 +179,12 @@
                 }
             }
 
+            .profile-avatar-container{
+                margin:.4em 0;   
+                @include flex-with-direction-center($direction:column);
+                @extend %avatar-form-style;
+            }
+
             .profile-submit{    
                 display: flex;
                 justify-content: center;
