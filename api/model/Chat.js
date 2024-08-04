@@ -1,6 +1,6 @@
 const {incr, set, hmset, sadd, hmget, exists, zrange, smembers, zadd, zrangerev, srem, del, get, rename, scard} = require('../db/redis');
 const formatDate = require('../utils/dateUtils');
-const { getUserIdByUsername, getUsernameByUserID, getUserInfoByUserID} = require('../db/redisUtils');
+const { getUserIdByUsername, getUserInfoByUserID, getUserPicturePath} = require('../db/redisUtils');
 
 
 //With username(same username as in Neo4j) we got userID(same user but in redis)
@@ -38,13 +38,6 @@ const deleteUserOnNeo4JFailure = async(username, userID) =>{
         return {success:false}
     }
 
-}
-
-
-const getUserPicturePath = async(username) =>{
-    const userID = await getUserIdByUsername(username);
-    const [picturePath] = await hmget(`user:${userID}`, "picturePath");
-    return picturePath;
 }
 
 const getLastMessageFromRoom = async(roomID) =>{
@@ -560,7 +553,6 @@ module.exports ={
     getRoomCount,
     sendMessage,
     deleteUserOnNeo4JFailure,
-    getUserPicturePath,
     getOnlineUsersFromChat
 }
 
