@@ -11,7 +11,9 @@ const path = require('path');
 const {sendMessage} = require('./model/Chat.js')
 const {client:redisClient, RedisStore, } = require('./db/redis');
 const upload = require('./utils/Multer.js');
-const {register, uploadNewPicture} = require('./controller/auth')
+const {register} = require('./controller/auth')
+const { udpateHouseworker} = require('./controller/houseworkerController.js')
+
 dotenv.config();
 
 
@@ -73,6 +75,7 @@ io.use(function(socket, next) {
 //app.post("/api/auth/register", upload.single("picture"), register);
 //app.post('/api/register', upload.any("picture"), register);
 app.post('/api/register', upload.any("avatar"), register);
+app.post('/api/houseworkerupdate', upload.any("avatar"), udpateHouseworker); //route for updating houseworker with avatar
 app.use("/api/clients", clientRoute);
 app.use("/api/houseworker", houseworkerRoute);
 app.use("/api/" , authRoute);

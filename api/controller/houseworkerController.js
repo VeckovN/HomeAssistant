@@ -230,7 +230,7 @@ const deleteProfession = async(req,res)=>{
     }
 }
 
-const udpateHouseworker = async(req,res)=>{
+const udpateHouseworker = async(req, res) =>{
     try{
         const newData = req.body;
         const username = req.session.user.username;
@@ -244,17 +244,15 @@ const udpateHouseworker = async(req,res)=>{
         if(newData.password)
             newData.password = bcrypt.hashSync(newData.password, 12);
 
-
-        const {address, phone_number, description, city, professions, ...newUserInfo} = newData;
-        const newHouseworkerInfo = {address, phone_number, description};
+        //picturePath is part of UserModal 
+        const picturePath = req.files[0]?.filename;
+        const {address, phone_number, description, city, professions, ...userModalInfo} = newData;
+        const newUserInfo ={...userModalInfo, picturePath}; //userModal update info
+        const newHouseworkerInfo = {address, phone_number, description}; //houseworkerModal update info (city and professions seperated request)
         await houseworkerModel.update(username, newUserInfo, newHouseworkerInfo);
-        
+
         if(city)
             await userModel.updateCityRelation(username, city);
-        
-        // if(professions){
-        //     await houseworkerModel.updateProfessions(username,professions);
-        // }
         res.send("Successfuly updated!!!");
     }
     catch(err){

@@ -1,5 +1,8 @@
 const {driver} = require('../db/neo4j');
 const { set ,get, expire} = require('../db/redis');
+const {updateUserPicturePath, getUserPicturePath} = require('../db/redisUtils');
+const path = require('path');
+const fs = require('fs');
 
 //MOST IMPORTANT THING WIHT REACT(AWAIT/ASYNC)-ASYNC CALL
 //Neo4j can only handle single session at the same time, but async makes usually multiple  at same time 
@@ -621,6 +624,20 @@ const update = async(username, newUserValue, newHouseworkerValue)=>{
         RETURN n
     `,{houseworker:username, object:newUserValue}
     )
+
+    //check does picturePath is changing
+    if(newUserValue.picturePath){
+
+        const oldImageFileName = await getUserPicturePath(username);
+        const oldImagePath = path.join(__dirname, '../../../client/public/assets/userImages', oldImageFileName);
+        fs.unlink(oldImagePath, (err) =>{
+            if(err){
+                console.log("Faield to delete old imgage: ", err);
+            }
+        })
+
+        await updateUserPicturePath(username, newUserValue.picturePath);
+    }
 
     const houseworkerResult = await session.run(`
         MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(h)
