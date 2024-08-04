@@ -1,5 +1,6 @@
 const {incr, set, hmset, sadd, hmget, exists, zrange, smembers, zadd, zrangerev, srem, del, get, rename, scard} = require('../db/redis');
 const formatDate = require('../utils/dateUtils');
+const { getUserIdByUsername, getUsernameByUserID, getUserInfoByUserID} = require('../db/redisUtils');
 
 
 //With username(same username as in Neo4j) we got userID(same user but in redis)
@@ -39,27 +40,9 @@ const deleteUserOnNeo4JFailure = async(username, userID) =>{
 
 }
 
-const UserIdByUsername = async (username)=>{
-    const user = await get(`username:${username}`); //user:{userID}
-    console.log("USERRRRR : "  + user);
-    let userID = user.split(':')[1]; //[user, {userID}]
-    return userID
-}
-
-const usernameByUserID = async (userID)=>{
-    //by default hmget returns array , but with [] descruction string will be retunred
-    const [username] = await hmget(`user:${userID}`, "username")
-    return username;
-}
-
-const userInfoByUserID = async(userID) =>{
-    const userInfo = await hmget(`user:${userID}`, ["username","picturePath"]);
-    console.log("USERRRRR INFGOOOOOOOOOO" , userInfo);
-    return {username:userInfo[0], picturePath:userInfo[1]};
-}
 
 const getUserPicturePath = async(username) =>{
-    const userID = await UserIdByUsername(username);
+    const userID = await getUserIdByUsername(username);
     const [picturePath] = await hmget(`user:${userID}`, "picturePath");
     return picturePath;
 }
@@ -84,8 +67,8 @@ const getRoomIdInOrder = (firstUserID, secondUserID) =>{
 //room between them and communicate in that room
 const createRoom = async(firstUsername, secondUsername)=>{
 
-    const firstUserID = UserIdByUsername(firstUsername);
-    const secondUserID = UserIdByUsername(secondUsername);
+    const firstUserID = getUserIdByUsername(firstUsername);
+    const secondUserID = getUserIdByUsername(secondUsername);
 
     console.log("FirstUserID: " , firstUserID);
     console.log("secondUserID: " , secondUserID);
@@ -169,7 +152,7 @@ const getMoreMessages = async(roomID, pageNumber) =>{
 }
 
 const getAllRooms = async(username)=>{
-    let userID = await UserIdByUsername(username);
+    let userID = await getUserIdByUsername(username);
     const userRoomKey = `user:${userID}:rooms`;
     let rooms = await smembers(userRoomKey);
 
@@ -196,7 +179,7 @@ const getAllRooms = async(username)=>{
         //without that this async function could be finished after pushing NOTFOUND user in array
         let roomObjectArray =[];
         for(const id of otherUsers){ //group users
-            const user = await userInfoByUserID(id); 
+            const user = await getUserInfoByUserID(id); 
             roomObjectArray.push({
                 username:user.username, 
                 picturePath:user.picturePath,
@@ -209,7 +192,7 @@ const getAllRooms = async(username)=>{
     return roomsArr;
 }
 // const getAllRooms = async(username)=>{
-//     let userID = await UserIdByUsername(username);
+//     let userID = await getUserIdByUsername(username);
 //     const userRoomKey = `user:${userID}:rooms`;
 //     let rooms =[];
 //     rooms = await smembers(userRoomKey);
@@ -237,7 +220,7 @@ const getAllRooms = async(username)=>{
 //         //Create promise to be ensure tha user is found and then this user push in array
 //         //without that this async function could be finished after pushing NOTFOUND user in array
 //         for(const id of otherUsers){
-//             const user = await userInfoByUserID(id); 
+//             const user = await getUserInfoByUserID(id); 
 //             roomObjectArray.push({username:user.username, picturePath:user.picturePath});
 //         }
 
@@ -249,7 +232,7 @@ const getAllRooms = async(username)=>{
 
 //With PromiseAll usage
 // const getAllRooms = async (username) => {
-//   let userID = await UserIdByUsername(username);
+//   let userID = await getUserIdByUsername(username);
 //   const userRoomKey = `user:${userID}:rooms`;
 //   let rooms = [];
 //   rooms = await smembers(userRoomKey);
@@ -269,7 +252,7 @@ const getAllRooms = async(username)=>{
 
 //     // Use Promise.all to wait for all user info promises to resolve
 //     const usersPromises = otherUsers.map(async (id) => {
-//       const user = await userInfoByUserID(id);
+//       const user = await getUserInfoByUserID(id);
 //       return { username: user.username, picturePath: user.picturePath };
 //     });
 
@@ -565,9 +548,6 @@ const deleteRoomByRoomID = async(roomID) =>{
 //INSTEAD OF EXTRACTING memebers from users rooms ids.
 
 module.exports ={
-    UserIdByUsername,
-    userInfoByUserID,
-    usernameByUserID,
     getRoomIdInOrder,
     createUser,
     createRoom,
