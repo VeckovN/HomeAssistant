@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-const { json } = require('body-parser');
 const {client:redisClient, sub} = require('../db/redis.js');
 // const sharp = require('sharp');
 //express-session
@@ -12,7 +11,7 @@ const houseworkerModal = require('../model/HouseWorker');
 const userModal = require('../model/User');
 const chatModel = require('../model/Chat');
 
-const {get, set, sadd, hset} = require('../db/redis');
+const {getUserIdByUsername} = require('../db/redisUtils.js');
 
 const register = async (req,res)=>{
 
@@ -118,9 +117,8 @@ const login = async(req,res)=>{
         //if(user && match){ //both is unecessery because if match is true then 100% is user true
         if(match){
             //Take UserID from redisDB for chat purpose
-            try{ //because get method return promise (need to be try-catched)
-                const userRedis = await get(`username:${username}`); //user:{userID}
-                let userID = userRedis.split(':')[1]; //[user, {userID}]        
+            try{ //because get method return promise (need to be try-catched) 
+                const userID = await getUserIdByUsername(username);
                 req.session.user = {username:username, type:userType, userID:userID}
                 
                 return res.send(req.session.user)
@@ -156,17 +154,6 @@ const logout = async(req,res)=>{
    
 }
 
-const uploadNewPicture = async(req,res) =>{
-
-    //upload new Picture
-
-    //update newPicturePath (to Redis and Neo4j Database)
-    
-    //delete old picture( base od old picturePath)
-
-} 
-
-
 const putPicturePathToRedisUsers = async(req,res) =>{
 
     const usersInfo = await userModal.getAllUsersnameWithPicturePath();
@@ -195,6 +182,5 @@ module.exports ={
     register,
     login,
     logout,
-    uploadNewPicture,
     putPicturePathToRedisUsers
 }
