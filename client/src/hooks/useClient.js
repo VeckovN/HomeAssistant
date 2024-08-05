@@ -23,7 +23,9 @@ const useClient = (user) =>{
         const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
         //20px above page bottom
         const triggerThreshold = scrollableHeight - 200; 
-        if (window.scrollY >= triggerThreshold) {
+        // if (window.scrollY >= triggerThreshold) {
+        //pageNumberRef.current -1 prevent refetching houseworker after is fetched and there isn't new one.
+        if (window.scrollY >= triggerThreshold && pageNumberRef.current != -1) {
             const newPage =  pageNumberRef.current+ 1;
             pageNumberRef.current = newPage;
 
@@ -49,6 +51,7 @@ const useClient = (user) =>{
 
     //on every serachedData and filterData change reFeatch houseworkers
     useEffect(()=>{
+        console.log("pageNUmberRef. useEffect ", pageNumberRef.current);
         fetchData(pageNumberRef.current);
     },[searchedData, filteredData, user])
     //user because on logout(user change) houseworkers should be fetch again (recommended users removed)
@@ -81,6 +84,7 @@ const useClient = (user) =>{
             // console.log("URL: " + `http://localhost:5000/api/houseworker/filter?/${params}`);
             const houseworkers = await getHouseworkerByFilter(params);
             if(houseworkers.length >0){
+                console.log("HE");
                 //if is new houseworkers fetched then contcatenate it with older houseworkers
                 if(pageNumberRef.current > 0){
                     setData(prev =>([
@@ -103,12 +107,15 @@ const useClient = (user) =>{
             else{
                 //if houseworekrs exist on page then delete scroll event(prevent to go on next page)
                 if(pageNumberRef.current > 0){
+                    //set the PagenubmerRef to -1 to prevent fetching user that doesn't exist
+                    //and showing this messages more times
+                    pageNumberRef.current = -1;
                     toast.info("No more houseworkers",{
                         className:"toast-contact-message"
                     })
                 }
                 else{ //or on first page if there ins't houseworkers
-                    setData(null)
+                    setData(null);
                 }
             }   
             
@@ -130,7 +137,6 @@ const useClient = (user) =>{
     
     const searchDataHanlder = useCallback((searchDataObj) =>{
         //searchData is data from SearchAndSort(Child) component
-        console.log("SEARCH DATA HANDLER");
 ; 
         //This will ensure that the old key is overide with new value and new key added to this object
         setSearchData(prev=>{
@@ -171,8 +177,6 @@ const useClient = (user) =>{
     //On every re-rendering this function will be differentand without using useCallback and Filter component will be re-rendered(unnecessary)
     const filterDataHandler = useCallback((filterData) =>{
         //filteredData is passed data from Children Component (Filter)
-        console.log("FILTER DATA HANDLER");
-
         pageNumberRef.current = 0;
         setFilterData(filterData);        
         localStorage.setItem('filteredData', JSON.stringify(filterData));
