@@ -1,5 +1,5 @@
 const {incr, set, hmset, sadd, hmget, exists, zrange, smembers, zadd, zrangerev, srem, del, get, rename, scard} = require('../db/redis');
-const formatDate = require('../utils/dateUtils');
+const {formatDate, parseFormattedDate, calculateTimeDifference} = require('../utils/dateUtils');
 const { getUserIdByUsername, getUserInfoByUserID, getUserPicturePath} = require('../db/redisUtils');
 
 
@@ -43,7 +43,10 @@ const deleteUserOnNeo4JFailure = async(username, userID) =>{
 const getLastMessageFromRoom = async(roomID) =>{
     const result = await zrange(`room:${roomID}`, -1, -1);
     const parsedObj = JSON.parse(result);
-    const lastMessage = parsedObj.message;
+    const currentDate = parsedObj.date;
+    const difference = calculateTimeDifference(currentDate);
+    // const lastMessage = parsedObj.message;
+    const lastMessage  = {message:parsedObj.message, dateDiff:difference}
     return lastMessage;
 }
 
@@ -159,12 +162,7 @@ const getAllRooms = async(username)=>{
         const userIDS = roomID.split(":");
         const otherUsers = userIDS.filter(el => el!= userID)
 
-         //get last messages for private rooms
-         let lastMessage = null;
-         if(otherUsers.length <= 2){
-             lastMessage = await getLastMessageFromRoom(roomID);
-             console.log("ROOM: " + roomID + " LastMessage: " + lastMessage);
-         } 
+        const lastMessage = await getLastMessageFromRoom(roomID);
 
         //DONT USE FOREACH FOR ASYNC/AWAIT ,USE for() because this will wait for async execution
 
