@@ -66,8 +66,7 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
                     </>
                     }
                 </div>
-                <div className="timer">3 min </div>
-                {/* <div className="timer">3 min {info.lastMessageTime}</div> */}
+                <div className="timer">{info.lastMessage.dateDiff}</div>
             </div>
             :  
             <div className={`room ${isActive}`}>   
@@ -79,11 +78,11 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
                     </div>
                     <div className="room-contact">
                         <p className="name">Name: {info.users[0].username}</p>
-                        <p className="message">{info.lastMessage}</p>
+                        <p className="message">{info.lastMessage.message}</p>
+                        {/* <p className="message">{info.lastMessage}</p> */}
                     </div>
                 </div>
-                {/* timer for the last received message */}
-                <div className="timer">12 sec</div>
+                <div className="timer">{info.lastMessage.dateDiff}</div>
             </div>
         }
         </>

@@ -39,11 +39,11 @@ export const MessagesReducer = (state, action) =>{
                 rooms: state.rooms.map(room =>{
                     if(room.roomID === action.roomID){
                         return { //return updated object in room
-                            ...room, //whole object
-                            //THIS NOT NEEDED
-                            // users:[...room.users],
-                            //roomID: ...roomID
-                            lastMessage: action.message
+                            ...room,
+                            lastMessage: {
+                                message: action.message,
+                                dateDiff: "just now"
+                            }
                         }
                     }
                     return room; //return every room again(new state);

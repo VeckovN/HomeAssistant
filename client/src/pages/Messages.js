@@ -26,7 +26,7 @@ const Messages = ({socket, connected}) =>{
         roomInfo:{}, //current room Info (roomID, users) AND ictureURL
         houseworkers:'',
         roomsAction:'', //for handling different state.rooms update actions
-        typingUsers:[], //typing users in chat 
+        typingUsers:[], 
         onlineUsers:[], //only importants users() that is necessary for Online flag 
     }
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
@@ -175,8 +175,10 @@ const Messages = ({socket, connected}) =>{
                     className:"toast-contact-message"
                 });
 
-                if(someRoom)  
+                if(someRoom){
                     enterRoomAfterAction(someRoom);
+                    //scroll to top ()
+                }  
             }
             catch(err){
                 const error = getErrorMessage(err);
@@ -244,6 +246,7 @@ const Messages = ({socket, connected}) =>{
                     //update client room view
                     dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, currentMember:currentUser, newUsername:username, picturePath:newUserPicturePath})
                     toast.info("A Group with "+ username + " has been created");
+                    //Scroll to bottom(new added room)
                 }
                 else{ 
                     const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath};
@@ -252,7 +255,9 @@ const Messages = ({socket, connected}) =>{
                     toast.info("User is added to the room: "+  newRoomID);
                 }
 
+                console.log("NEWWWW ROOMMMMMMMMMMM :", newRoomID)
                 enterRoomAfterAction(newRoomID);
+                
             }
             catch(err){
                 const error = getErrorMessage(err);
@@ -374,10 +379,7 @@ const Messages = ({socket, connected}) =>{
                     const messageWithRoomKey = {...messageObj, roomKey:roomKey, date:dateFormat};
 
                     emitMessage(socket, {data:messageWithRoomKey});
-                    
-                    //update last message of private room
-                    if(fromRoomID.split(":").length <= 2)
-                        dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:fromRoomID, message:message})
+                    dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:fromRoomID, message:message})
                 }
                 catch(err){
                     const error = getErrorMessage(err);
@@ -408,6 +410,7 @@ const Messages = ({socket, connected}) =>{
                     <Rooms 
                         rooms={state.rooms}
                         roomInfo={state.roomInfo}
+                        // scrollToActiveRoom={scrollToActiveRoom}
                         showMoreRoomUsers={showMoreRoomUsers}
                         onRoomClickHanlder={onRoomClickHanlder}
                         // onRoomClickHanlder={onRoomClickHandlerWithSessionCheck}
@@ -425,8 +428,7 @@ const Messages = ({socket, connected}) =>{
                         user={user}
                         showMenu={showMenu}
                         houseworkers={state.houseworkers}
-                        typingUsers={state.typingUsers}
-                        // typingUser={state.TypingUser} //obj [{userID, username}, {userID, username}]
+                        typingUsers={state.typingUsers} //obj [{userID, username}, {userID, username}]
                         onSendMessageHandler={onSendMessageHandler}
                         onAddUserToGroupHanlder={onAddUserToGroupHanlder}
                         onKickUserFromGroupHandler={onKickUserFromGroupHandler}
