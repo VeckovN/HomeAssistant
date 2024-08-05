@@ -12,7 +12,13 @@ const Search = (prop) =>{
     const onSearchSubmitHandler = () =>{
         prop.search({name:searchName});
     }
-
+    
+    const onEnterPressSubmitHanlder = (e) =>{
+        if(e.key == "Enter"){
+            e.preventDefault();
+            prop.search({name:searchName});
+        }
+    }
     return (
     <>
         <div className='input-search'>
@@ -23,6 +29,7 @@ const Search = (prop) =>{
                     value={searchName}
                     placeholder='Search houseworker (Enter username)'
                     onChange={selectSearchHandler}
+                    onKeyDown={onEnterPressSubmitHanlder}
                 />
                 <button onClick={onSearchSubmitHandler}>Search</button>
             </div>
