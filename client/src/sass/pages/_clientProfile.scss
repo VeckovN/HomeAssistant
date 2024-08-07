@@ -7,9 +7,13 @@
 
 .profile-container{
     @include flex-with-direction-center($direction:column);
-    width: 100%;
-    min-height: 100%;
+    min-height: 90vh;
+    padding:5rem 0em;
     background-color: $background-white-2;
+
+    @include sm-breakpoint{
+        font-size: $fs5;
+    }
 
     .profile-spinner{
         position:absolute;
@@ -20,16 +24,13 @@
         @extend %profile-form-style;
         @include flex-with-direction-center($direction:column);
 
-        @include lg-breakpoint{
-        }
-
         @include sm-breakpoint{
             width: 100%;
             font-size: $fs5;
         }
 
         @include xs-breakpoint{
-            font-size: $fs6;
+            font-size: $fs5;
         }
 
         & h1{
@@ -39,13 +40,6 @@
             font-family: $font-family-3;
             color:$black-2;
             text-align: center;
-    
-            @include sm-breakpoint{
-                // font-size:$fs-em-4;
-            }
-            @include xs-breakpoint{
-                // font-size:$fs-em-5;
-            }    
         }
 
         .input-label-form{
@@ -70,6 +64,7 @@
         
                 @include xs-breakpoint{
                     width: 95%;
+                    height: 5em;
                 }
 
                 .personal-label{
@@ -97,6 +92,9 @@
                     color:$black;
                     width: 70%;     
                     height: 100%;
+                    @include xs-breakpoint{
+
+                    }
                 }
                 .input-errors{
                     @extend %form-input-error;
@@ -113,10 +111,6 @@
                 display: flex;
                 justify-content: center;
                 width: 50%;
-
-                // @include xs-breakpoint{
-                //     width: 40%;
-                // }
 
                 .update-button{
                     @extend %profile-update-button;
