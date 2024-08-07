@@ -10,17 +10,15 @@
     position: relative;
     @include flex-with-direction-center($direction:column);
 
-
     .comment-card{
         width: 80%;
         min-width: 500px;
         max-width: 1000px;
 
-        padding: 1em .5em;
-
-        background-color: rgba(255, 255, 255, 0.753);
-
+        padding: 1em .1em;
         border-radius: .5em;
+        
+        background-color: rgba(236, 236, 236, 0.952);
 
         @include md-breakpoint{
             width: 95%;
@@ -60,7 +58,6 @@
                     font-size:$fs6;
                 }
 
-
                 .target-observer{
                     width: 0px;
                     height: 1px;
@@ -78,7 +75,6 @@
         color:$black;
     }
 }
-
 
 .no_commentsModal{
     font-weight: 600;

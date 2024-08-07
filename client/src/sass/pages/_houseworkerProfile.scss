@@ -15,16 +15,9 @@
         top:40%;
     }
 
-
-    @include sm-breakpoint{
-        // background-color: red;
-    }
-
     @include xs-breakpoint{
         font-size:$fs6;
-        // background-color: green;
     }
-
 
     #title{
         margin:.2em 0 1.5em 0;
@@ -58,7 +51,6 @@
 
         @include xs-breakpoint{
             width: 95%;
-            // padding:1em 0em;
         }
 
         .section-label{
@@ -86,12 +78,11 @@
             flex-direction: column;
             align-items: center;
 
-            // border: 2px solid $black;
             border-radius: 6px;
-            padding:.6em 0em;
+            padding:.2em 0em;
             margin: 1em 2em;
 
-            background-color: $grey-3;
+            background-color: rgba(243, 243, 243, 0.979);
 
             @include sm-breakpoint{
                 width: 100%;
@@ -111,13 +102,13 @@
             width: 90%;
             height: 100%;
 
-            padding:.6em 1em;
+            padding:.3em .5em;
             margin: 2em 2em 0em 2em;
 
             border-radius: 6px;
             font-family: $font-family-1;
 
-            background-color: $grey-3;
+            background-color: rgba(243, 243, 243, 0.979);
 
             @include sm-breakpoint{
                 width: 100%;
@@ -126,6 +117,7 @@
 
             .profile-input-card{
                 width: 100%;
+                margin: 0.2em 0em;
                 @extend %profile-input-card-style;
             
                 @include xs-breakpoint{
@@ -183,12 +175,18 @@
                 margin:.4em 0;   
                 @include flex-with-direction-center($direction:column);
                 @extend %avatar-form-style;
+
+                .label-input{
+                    color:$black;
+                    font-weight: 600;
+                }
             }
 
             .profile-submit{    
                 display: flex;
                 justify-content: center;
                 width: 50%;
+                margin-bottom: .2em;
 
                 @include sm-breakpoint{
                     // width: 40%;
