@@ -70,6 +70,7 @@
     background-color: $bg-color;
     cursor: pointer;
     color:$color;    
+    border-radius: 5px;
 
     &:hover{
         background-color: $bg-hover-color;
