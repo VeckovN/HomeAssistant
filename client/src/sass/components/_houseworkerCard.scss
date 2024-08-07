@@ -25,9 +25,7 @@
     width: 40rem;
     height: 30rem; 
 
-    // margin:1.5rem 1rem;
     padding: .3rem; 
-    /*  border:1px solid black;  */                  /*Ovo je klasa za celu karticu*/
     
     margin:1.5em 1em 4em 1em;
 
@@ -39,7 +37,6 @@
 .houseworker-card{
     @include flex-with-direction-center($direction:column);
 
-    /*  border:1px solid black;  */                  /*Ovo je klasa za celu karticu*/
     width: 40em;
     height: 34em; 
 
@@ -51,7 +48,6 @@
     top:150px;
     
     margin:1.5em 1em 4em 1em;
-    //margin:35px 25px 35px 25px;
 
     animation: fadeIn .3s;
 
@@ -140,8 +136,6 @@
             }
         }
     }
-    ////////////////////////////////
-
 
 
     .houseworker-content{
@@ -160,6 +154,10 @@
         background-color: $background-black-4;
     
        /* transition:all 1s; */
+       @include xs-breakpoint{
+        height: unset;
+       }
+
     }
     .recommended{
         background-color: $background-black-1;
@@ -335,6 +333,10 @@
                 justify-content: left;
                 margin-bottom: .5em;
 
+                @include sm-breakpoint{
+                    margin-bottom: .1em;
+                }
+
                 & button{
                     width: 4rem;
                     height: 1.6rem;
@@ -352,6 +354,10 @@
                     font-size: $fs5;
                     color:$color-hs-4;
 
+                    @include sm-breakpoint{
+                        padding: 0.2em;
+                    }
+
                     & a{
                         color:rgb(221, 221, 255);
                         text-decoration:underline;
@@ -366,6 +372,12 @@
                     width: 100%;
                     display: flex;
                     justify-content: space-evenly;
+
+                    @include sm-breakpoint{
+                        // font-size: $fs-em-1;
+                        width: 80%;
+                        gap:0em .2em;
+                    }
 
                     @include xs-breakpoint{
                         flex-direction: column;
@@ -425,9 +437,9 @@
                     .open-rate-button{
                         @include rating-button($bg-color:rgb(203, 216, 82), $bg-hover-color:rgb(147, 160, 29), $color:$black, $hover-color:$white);
                     
-                        @include xs-breakpoint{
-                            width: 35%;
-                            height: 1.3rem;
+                        @include sm-breakpoint{
+                            width: 3rem;
+                            height: 1.5rem;
                             border-radius: .4em;
                             font-size: $fs7;
                         }
@@ -453,9 +465,13 @@
                 justify-content: center;
                 padding:.7em .3em;
 
-                @include xs-breakpoint{
+                @include sm-breakpoint{
                     padding:.2em .3em;
                 }
+
+                // @include xs-breakpoint{
+                //     padding:.2em .3em;
+                // }
 
                 .comment-btn{
                     width: 6rem;
@@ -472,16 +488,20 @@
                     cursor: pointer;
 
                     @include sm-breakpoint{
-                        width: 5.8rem;
-                        height: 1.9rem;
+                        width: 5.4rem;
+                        height: 1.7rem;
+
+                        border-radius: 5px;
+                        font-size: $fs7;
+                        font-weight: 500;
                     }
 
                     @include xs-breakpoint{
                         width: 5rem;
-                        // width: 60%;
                         height: 1.5rem;
+                        // border-radius: 5px;
 
-                        font-size: $fs7;
+                        // font-size: $fs7;
                         font-weight: 500;
                     }
 
