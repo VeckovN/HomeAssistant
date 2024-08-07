@@ -14,7 +14,8 @@
     left:50%;
     transform: translateX(-50%);
 
-    background-color: rgba(7, 7, 7, 0.911);
+    // background-color: rgba(7, 7, 7, 0.911);
+    background-color: rgba(0, 0, 0, 0.822);
 
     @include xl-breakpoint{
         position:unset;
