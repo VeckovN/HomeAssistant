@@ -37,7 +37,7 @@
 
     .more-user{
         display: flex;
-        margin-left:20px;
+        margin-left:.2em;
         width:3em;
         height: 3em;
         align-items: center;
@@ -153,12 +153,12 @@
     }
 
     .timer{
-        height: 2em;
-        width: 5em;
-        margin-left: 10%;
+        // height: 2em;
+        // width: 5em;
+        // margin-left: 10%;
         font-family:'Open Sans', sans-serif;
         font-size: 11px;
-        white-space: nowrap;
+        // white-space: nowrap;
         padding: 3px 8px;
         color:white;
         background-color: #515151 ;
