@@ -37,17 +37,17 @@ const calculateTimeDifference = (formattedDate) =>{
     if (diffInSeconds < 60) {
         return 'just now';
     } else if (diffInMinutes < 60) {
-        return `${diffInMinutes} minutes ago`;
+        return `${diffInMinutes} minutes`;
     } else if (diffInHours < 24) {
-        return `${diffInHours} hours ago`;
+        return `${diffInHours} hours`;
     } else if (diffInDays < 7) {
-        return `${diffInDays} days ago`;
+        return `${diffInDays} days`;
     } else if (diffInWeeks < 4) {
-        return `${diffInWeeks} weeks ago`;
+        return `${diffInWeeks} weeks`;
     } else if (diffInMonths < 12) {
-        return `${diffInMonths} months ago`;
+        return `${diffInMonths} months`;
     } else {
-        return `${diffInYears} years ago`;
+        return `${diffInYears} years`;
     }
 }
 
