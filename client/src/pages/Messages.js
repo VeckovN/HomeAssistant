@@ -31,6 +31,7 @@ const Messages = ({socket, connected}) =>{
     }
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
     const [showMenu, setShowMenu] = useState(false);
+    const [showChatView, setShowChatView] = useState(false);
     const [showMoreRoomUsers, setShowMoreRoomUsers] = useState({});
     const pageNumberRef = useRef(0); 
 
@@ -149,6 +150,7 @@ const Messages = ({socket, connected}) =>{
         const onRoomClickHanlder = ( async e =>{
             const roomID = e.target.value;
             enterRoomAfterAction(roomID);
+            setShowChatView(true);
 
             // if(showMenu) //useCallback is used and this doesn't make sense to be wrttien
             //useCallback will memoize it as false value(initial) and never changed due to dependecies being empty
@@ -179,6 +181,9 @@ const Messages = ({socket, connected}) =>{
                     enterRoomAfterAction(someRoom);
                     //scroll to top ()
                 }  
+
+                if(showChatView)
+                    showRoomsHandler();
             }
             catch(err){
                 const error = getErrorMessage(err);
@@ -398,11 +403,22 @@ const Messages = ({socket, connected}) =>{
         }
 
         const onShowMoreUsersFromChatHandler = ({roomID, users}) => setShowMoreRoomUsers({roomID, users});
-    return (
+        const showRoomsHandler = () => {setShowChatView(false)}
+
+        return (
         <div className={`container-${user.type === "Houseworker" ? "houseworker" : "client"}`}> 
             {state.loading ? <Spinner className='profile-spinner'/> :
             <div className='messages-container'>
-                <section className='rooms-container'>
+                {showChatView &&
+                <section className='rooms-container-chat-view'>
+                    <div className='button-cont'>
+                        <button onClick={showRoomsHandler}>Rooms</button>
+                    </div>
+                </section>
+                }
+
+                {/* <section className='rooms-container no-display'> */}
+                <section className={`rooms-container ${showChatView ? 'no-display' : ''}`}>
                     <div className='room-chat-header'>
                         <div className='header-label'>Chat Rooms</div>
                     </div>
@@ -419,7 +435,8 @@ const Messages = ({socket, connected}) =>{
                     />
                 </section>
 
-                <section className='chat-container'>
+                {/* <section className='chat-container display'> */}
+                <section className={`chat-container ${showChatView ? 'display' : ''}`}>
                     <Chat 
                         socket={socket}
                         rooms={state.rooms}
