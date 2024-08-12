@@ -8,6 +8,7 @@ import SendIcon from '@mui/icons-material/Send';
 import MenuIcon from '@mui/icons-material/Menu';
 
 import '../../sass/components/_chat.scss';
+import Spinner from '../UI/Spinner';
 
 const Chat = ({
     socket,
@@ -17,6 +18,7 @@ const Chat = ({
     user, 
     showMenu, 
     houseworkers, 
+    isLoadingMessages,
     typingUsers,
     pageNumberRef, 
     fetchMoreMessages,
@@ -151,23 +153,31 @@ const Chat = ({
             {/* infinity message load */}
             <div className={`messages-chat ${showMenu && 'showMenu'}`}>
                 <TypingUsers typingUsers={typingUsers}/>
-                {roomMessages?.length >0 ?   
-                (
-                    //prevent to re-render only when the props are changed(memo used in RoomMessages)
-                    //(not on typingUser changes)
-                    <ChatMessages
-                        roomMessages={roomMessages}
-                        user={user}
-                        roomInfo={roomInfo}
-                        lastMessageRef={lastMessageRef}
-                        observerTarget={observerTarget}
-                    />
-                )
-                :
-                <div className='no_conversation'>
-                    You have no conversation. Contact a houseworker!
-                </div>
-            }
+                {isLoadingMessages ?
+                    <div className='message-chat-spinner'>
+                        <Spinner/>
+                    </div>
+                    :
+                    <>
+                    {roomMessages?.length >0 ?   
+                    (
+                        //prevent to re-render only when the props are changed(memo used in RoomMessages)
+                        //(not on typingUser changes)
+                        <ChatMessages
+                            roomMessages={roomMessages}
+                            user={user}
+                            roomInfo={roomInfo}
+                            lastMessageRef={lastMessageRef}
+                            observerTarget={observerTarget}
+                        />
+                    )
+                    :
+                    <div className='no_conversation'>
+                        You have no conversation. Contact a houseworker!
+                    </div>
+                    }
+                    </>
+                }
             </div>
 
             <div className="footer-chat" >

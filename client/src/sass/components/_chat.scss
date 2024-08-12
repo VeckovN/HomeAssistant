@@ -86,6 +86,13 @@
         background-color: $chat-mobile-background;
     }
 
+    .message-chat-spinner{
+        position: absolute;
+        top:20%;
+        left:45%;
+        transform:translateX(-50%, -50%);
+    }
+
     .message{
         display:flex;
         align-items: center;
