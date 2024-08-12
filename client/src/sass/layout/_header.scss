@@ -17,7 +17,6 @@
     background-color: c.$nav-background-color;
     z-index:15;
 
-
     .logo{
         position:absolute;
         top:1rem;
@@ -58,11 +57,8 @@
         }
     }
 
-
     .burger{
-
         display: none;
-
         cursor: pointer;
 
         .bar{
@@ -74,7 +70,6 @@
             -webkit-transition: 0.2s ease-in-out;
             transition: 0.2s ease-in-out;
         }
-
 
         @include sm-breakpoint{
             display: flex;
@@ -112,7 +107,7 @@
         @include sm-breakpoint{
             visibility: hidden;
             right:.5em;
-            font-size: .8em;
+            font-size: $fs-em-6;
         }
 
         .nav-link{
@@ -151,7 +146,11 @@
         @include flex-with-direction-center($direction:column);
 
         margin: 4em 0em;
-        font-size: $fs1;
+        font-size: $fs-em-2;
+
+        @include xs-breakpoint{
+            font-size: $fs-em-3;
+        }
 
         .nav-link, .nav-link-button{
             width: 110%;
