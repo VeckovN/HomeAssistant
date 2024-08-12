@@ -31,6 +31,7 @@ const Messages = ({socket, connected}) =>{
     }
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
     const [showMenu, setShowMenu] = useState(false);
+    const [isLoadingMessages, setIsLoadingMessages] = useState(false);
     const [showChatView, setShowChatView] = useState(false);
     const [showMoreRoomUsers, setShowMoreRoomUsers] = useState({});
     const pageNumberRef = useRef(0); 
@@ -39,6 +40,7 @@ const Messages = ({socket, connected}) =>{
     const onUsersFromChatOutHanlder = () => setShowMoreRoomUsers({});
 
     console.log("STATEEEE : " , state);
+    console.log("isLoadingMessages: :", isLoadingMessages);
 
     useEffect(() => {
             if(socket && user){
@@ -141,15 +143,19 @@ const Messages = ({socket, connected}) =>{
             }
 
             emitRoomJoin(socket, roomID);
+
+            setIsLoadingMessages(true);
             const messages = await getMessagesByRoomID(roomID)
             dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
+            setIsLoadingMessages(false);
+
             if(showMenu)
                 setShowMenu(false);
         }
 
         const onRoomClickHanlder = ( async e =>{
             const roomID = e.target.value;
-            enterRoomAfterAction(roomID);
+            await enterRoomAfterAction(roomID);
             setShowChatView(true);
 
             // if(showMenu) //useCallback is used and this doesn't make sense to be wrttien
@@ -403,19 +409,19 @@ const Messages = ({socket, connected}) =>{
         }
 
         const onShowMoreUsersFromChatHandler = ({roomID, users}) => setShowMoreRoomUsers({roomID, users});
-        const showRoomsHandler = () => {setShowChatView(false)}
+        const onShowRoomsButtonHandler = () => {setShowChatView(false)}
 
         return (
         <div className={`container-${user.type === "Houseworker" ? "houseworker" : "client"}`}> 
             {state.loading ? <Spinner className='profile-spinner'/> :
             <div className='messages-container'>
-                {showChatView &&
+                {/* {showChatView && 
                 <section className='rooms-container-chat-view'>
-                    <div className='button-cont'>
-                        <button onClick={showRoomsHandler}>Rooms</button>
+                    <div className='chat-view-button-container'>
+                        <button onClick={onShowRoomsButtonHandler}>Rooms</button>
                     </div>
                 </section>
-                }
+                } */}
 
                 {/* <section className='rooms-container no-display'> */}
                 <section className={`rooms-container ${showChatView ? 'no-display' : ''}`}>
@@ -444,8 +450,11 @@ const Messages = ({socket, connected}) =>{
                         roomInfo={state.roomInfo}
                         user={user}
                         showMenu={showMenu}
+                        showChatView={showChatView}
+                        isLoadingMessages={isLoadingMessages}
                         houseworkers={state.houseworkers}
                         typingUsers={state.typingUsers} //obj [{userID, username}, {userID, username}]
+                        onShowRoomsButtonHandler={onShowRoomsButtonHandler}
                         onSendMessageHandler={onSendMessageHandler}
                         onAddUserToGroupHanlder={onAddUserToGroupHanlder}
                         onKickUserFromGroupHandler={onKickUserFromGroupHandler}
@@ -456,6 +465,7 @@ const Messages = ({socket, connected}) =>{
                         onAddTypingUserHandler={onAddTypingUserHandler}
                         onRemoveTypingUserHandler={onRemoveTypingUserHandler}
                     />
+                    
                 </section>
             </div>
             }

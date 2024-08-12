@@ -33,13 +33,6 @@
     justify-content: center;
 
     padding-bottom:3em;
-
-    // border: 4px solid $grey-2;
-
-    // @include xs-breakpoint{
-    //     background-color: blue;
-    //     flex-direction: row;
-    // }
 }
 
 .profile-spinner{
@@ -59,13 +52,11 @@
     background-color: $black-6; 
     box-shadow: 1px 1px 10px 1px rgba(104, 104, 104, 0.87), 0 6px 6px rgba(0,0,0,0.23);
 
-
     @include lg-breakpoint{
         width: 100%;
     }
 
     @include sm-breakpoint{
-        // background-color: red;
         flex-direction: column;
         width:100%;
 
@@ -87,11 +78,11 @@
         }
 
         @include sm-breakpoint{
-            height: 90%;
+            height: 100%;
             min-height: 400px;
             // max-height: 600px;
             width: 70%;
-            min-width: 300px;
+            min-width: 350px;
 
             &.no-display{
                 display:none;
@@ -100,6 +91,7 @@
 
         @include xs-breakpoint{
             width: 90%;
+            min-width: 250px;
         }
 
         .room-chat-header{
@@ -111,6 +103,10 @@
             display:flex;
             align-items: center;
             justify-content: center;
+
+            @include sm-breakpoint{
+                height: 5em;
+            }
 
             .header-label{
                 font-size: $fs1;
@@ -130,6 +126,10 @@
             box-shadow: 0px 8px 10px rgba(0,0,0,0.20);
             overflow:hidden scroll;
             @extend %scrollbar-chat-style;
+
+            @include sm-breakpoint{
+                background-color: $chat-mobile-header;
+            }
         }
     }
 
@@ -143,7 +143,6 @@
         // min-width: 500px;
 
         // display:none;
-        
 
         @include sm-breakpoint{
             height: 70%;

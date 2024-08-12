@@ -18,6 +18,39 @@
         background-color: $chat-mobile-header;
     }
 
+    .rooms-container-chat-view{
+        display: none;
+
+        .chat-view-button-container{
+            position: relative;
+            // top:-2em;
+            left:.7em;
+            
+            button{
+                height: 2em;
+                background-color: $grey-1;
+                border:none;
+                padding:0 .2em;
+                font-family: $font-family-2;
+        
+                border-radius:.2em;
+        
+                color:$black;
+                font-weight: 600;
+
+                cursor: pointer;
+
+                &:hover{
+                    background-color: $grey-4;
+                }
+            }
+        }
+
+        @include sm-breakpoint{
+            display: unset;
+        }
+    }
+
     .menu-icon{
         margin-left: auto;
         margin-right:1em;

@@ -17,10 +17,12 @@ const Chat = ({
     roomInfo, 
     user, 
     showMenu, 
+    showChatView,
     houseworkers, 
     isLoadingMessages,
     typingUsers,
     pageNumberRef, 
+    onShowRoomsButtonHandler,
     fetchMoreMessages,
     onSendMessageHandler, 
     onAddUserToGroupHanlder,
@@ -123,7 +125,14 @@ const Chat = ({
 
     return(     
         <>
-            <div className="header-chat">                  
+            <div className="header-chat">    
+                {showChatView && 
+                <section className='rooms-container-chat-view'>
+                    <div className='chat-view-button-container'>
+                        <button onClick={onShowRoomsButtonHandler}>Rooms</button>
+                    </div>
+                </section>
+                }         
                 <div className="names">
                     {roomInfo?.users?.map((room) =>(
                         <div className='user'>
