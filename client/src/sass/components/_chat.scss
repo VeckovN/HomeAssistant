@@ -2,6 +2,7 @@
 @use '../abstracts/placeholders' as *;
 @use '../abstracts/colors' as *;
 @use '../base/typography' as *;
+@use '../abstracts/brakepoints' as *;
 
 .header-chat{
     background-color: $black-4;
@@ -11,6 +12,11 @@
     display:flex;
     align-items: center;
     position:relative;
+
+    @include sm-breakpoint{
+        height: 5em;
+        background-color: $chat-mobile-header;
+    }
 
     .menu-icon{
         margin-left: auto;
@@ -30,8 +36,13 @@
         text-transform: uppercase;
         font-family: $font-family-2;
         font-weight: 600;
-        font-size: $fs5;
+        font-size: $fs-em-5;
         color:$white;
+
+        @include sm-breakpoint{
+            font-size: $fs-em-6;
+            gap:.2em;
+        }
 
         .user{  
             display: flex;
@@ -69,8 +80,11 @@
     overflow-anchor: none;
     position: sticky;
 
-
     @extend %scrollbar-chat-style;
+
+    @include sm-breakpoint{
+        background-color: $chat-mobile-background;
+    }
 
     .message{
         display:flex;
@@ -214,6 +228,11 @@
     position:relative;
     background-color: transparent;
     border-top: 2px solid #EEE;
+
+    @include sm-breakpoint{
+        background-color: $chat-mobile-background;
+        border-top: 2px solid #747474;
+    }
 
     .icon {
         margin-left: 30px;
