@@ -12,15 +12,11 @@ import Spinner from '../UI/Spinner';
 
 const Chat = ({
     socket,
-    roomMessages, 
-    rooms, 
-    roomInfo, 
+    state,
     user, 
     showMenu, 
-    showChatView,
-    houseworkers, 
+    showChatView, 
     isLoadingMessages,
-    typingUsers,
     pageNumberRef, 
     onShowRoomsButtonHandler,
     fetchMoreMessages,
@@ -32,6 +28,9 @@ const Chat = ({
     onAddTypingUserHandler,
     onRemoveTypingUserHandler
  }) =>{
+
+    const {rooms, roomMessages, roomInfo, houseworkers, typingUsers} = state;
+
     const messageInputRef = useRef();
     const lastMessageRef = useRef(null);
     const observerTarget = useRef(null);
