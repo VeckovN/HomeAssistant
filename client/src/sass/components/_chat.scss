@@ -119,6 +119,11 @@
         background-color: $chat-mobile-background;
     }
 
+    @include xs-breakpoint{
+        padding: 15px 10px;
+    }
+
+
     .message-chat-spinner{
         position: absolute;
         top:20%;
