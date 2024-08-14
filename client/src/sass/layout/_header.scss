@@ -28,6 +28,8 @@
 
         @include xs-breakpoint{
             font-size:$fs6;
+            top:1.1rem;
+            // font-size:.85rem;
         }
     
         & a{
@@ -69,6 +71,10 @@
 
             -webkit-transition: 0.2s ease-in-out;
             transition: 0.2s ease-in-out;
+
+            @include xs-breakpoint{
+                height:2px;
+            }
         }
 
         @include sm-breakpoint{
@@ -78,6 +84,12 @@
             right:1em;
             top:1.2em;
         }
+
+        @include xs-breakpoint{
+            top:1.4em;
+        }
+
+
 
         &:hover >* {
             background-color: c.$nav-hover-color;
