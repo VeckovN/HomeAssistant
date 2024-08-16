@@ -4,6 +4,14 @@ import '../../sass/pages/_clientProfile.scss';
 
 const ClientProfileForm = ({loading, clientData, cityField, errors, register, watch, city_options,handleSubmit ,onSubmitUpdate,onSubmitUpdateHandler, onCityChangeHandler }) =>{
 
+    const customStyles = {
+        control: base => ({
+          ...base,
+          height: 30,
+        //   minHeight: 40,
+          maxHeight:35
+        })
+      };
     return(
         <div className='profile-container'>
             {loading ? <Spinner className='profile-spinner'/> :
@@ -108,6 +116,7 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                             <div className='selector'>
                                 <Select 
                                     className='dropdown'
+                                    styles={customStyles}
                                     placeholder="Select a city"
                                     value={city_options.find(({value}) => value === cityField.value)}
                                     options={city_options}
