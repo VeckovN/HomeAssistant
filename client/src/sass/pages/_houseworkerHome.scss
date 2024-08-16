@@ -65,9 +65,13 @@
                     font-weight: 500;
                     letter-spacing: .05em;
 
+                    @include xs-breakpoint{
+                        font-size: 1.5em;
+                    }
+
                     & span{
                         font-weight: 700;
-                        font-size: 1.1em;
+                        font-size: $fs-em-3;
                     }
                 }
 
@@ -132,6 +136,7 @@
 
                         font-size:$fs-em-4;
                         position: relative;
+                        
 
                         #rate-label{
                             position:absolute;
@@ -151,7 +156,13 @@
                             background-color: $color-hs-6;
                             border-radius: 8px;
 
-                            font-size: $fs1;
+                            font-size: $fs-em-1;
+
+                            @include xs-breakpoint{
+                                height: 2.2rem;
+                                width: 4.2rem;
+                                font-size: $fs-em-2;
+                            }
                             
                             .rate{
                                 text-align: center;
@@ -225,6 +236,7 @@
                 display: flex;
                 // align-items: center;
                 justify-content: center;
+                text-align: center;
 
                 font-family: $font-family-3;
                 font-size: $fs1;
