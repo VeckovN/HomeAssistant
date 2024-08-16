@@ -60,11 +60,12 @@
 
             .profile-input-card{
                 width: 90%;
+                margin:.2em 0em;
                 @extend %profile-input-card-style;
         
                 @include xs-breakpoint{
                     width: 95%;
-                    height: 5em;
+                    height: 4.7em;
                 }
 
                 .personal-label{
@@ -86,15 +87,10 @@
                     @extend %input-style;
                 }
 
-    
-                //select
                 .dropdown{
                     color:$black;
                     width: 70%;     
                     height: 100%;
-                    @include xs-breakpoint{
-
-                    }
                 }
                 .input-errors{
                     @extend %form-input-error;
