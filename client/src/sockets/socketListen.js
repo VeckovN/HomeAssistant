@@ -174,3 +174,24 @@ export const listenOnDeleteUserRoomNotification = (socket) =>{
         }
       })
 }
+
+
+export const listenNewOnlineUser = (socket, dispatch, self_id) =>{
+    socket.on("newOnlineUser", (userData) =>{
+        const {userID, username} = userData;
+        console.log("USERDATA ONLINEEE: ", userData);
+
+        //check does new online users is your friend
+        //if it is add online user
+        dispatch({type:"ADD_ONLINE_USER", data:userID});
+
+        toast.info(`User ${username} is online now: ${userID}`,{
+            className:"toast-contact-message"
+        })
+
+        if(!document.hasFocus()){
+            const sound = new Audio(announcementSound);
+            sound.play();
+        }
+      })
+}
