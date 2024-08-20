@@ -4,7 +4,7 @@ import {MessagesReducer} from '../components/MessagesReducer.js';
 
 import {toast} from 'react-toastify';
 import {getHouseworkers} from '../services/houseworker.js';
-import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup} from '../sockets/socketListen.js';
+import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup, listenNewOnlineUser} from '../sockets/socketListen.js';
 import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat, emitKickUserFromChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
 import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser, getMoreMessagesByRoomID, getOnlineUsers} from '../services/chat.js';
 import {getErrorMessage} from '../utils/ThrowError.js';
@@ -17,8 +17,8 @@ const useMessages = (socket, user) =>{
         roomInfo:{}, //current room Info (roomID, users) AND ictureURL
         houseworkers:'',
         roomsAction:'', //for handling different state.rooms update actions
-        typingUsers:[], 
-        onlineUsers:[], //only importants users() that is necessary for Online flag 
+        typingUsers:[],
+        onlineUsers:[] //only importants users() that is necessary for Online flag 
     }
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
     const [showMenu, setShowMenu] = useState(false);
@@ -27,9 +27,10 @@ const useMessages = (socket, user) =>{
     const [showMoreRoomUsers, setShowMoreRoomUsers] = useState({});
     const pageNumberRef = useRef(0); 
 
+    console.log("ONLINS LLL", state.onlineUsers);
+
     const onShowMenuToggleHandler = () =>  setShowMenu(prev => !prev);
     const onUsersFromChatOutHanlder = () => setShowMoreRoomUsers({});
-
 
     const onAddTypingUserHandler = (userInfo) =>{
         dispatch({type:"SET_TYPING_USER", data:userInfo});
@@ -49,6 +50,8 @@ const useMessages = (socket, user) =>{
             listenOnKickUserFromGroup(socket, dispatch, user.userID);
             // listenOnStartTypingInGroup(socket, user.userID, user.username);
             //LISTEN ON ONLINE USERS TO ADD IT IN ROOM INFO -> OnlineUsers
+            // listenOnUserOnline(socket, dispatch);
+            listenNewOnlineUser(socket, dispatch, user.userID);
 
             //when is created new room show it with others
             socket.on('show.room', (room) =>{
@@ -185,6 +188,12 @@ const useMessages = (socket, user) =>{
         getAllHouseworkers();
         getOnlineChatUsers();
     },[])
+
+    // useEffect(() =>{
+    //     //updateRoomsView the user became online
+    //     // console.log("FETCH ALL ROOMS");
+    // },[state.onlineUsers])
+
 
     const MessagesAfterRoomsAction = async(roomID)=>{
         const messages = await getMessagesByRoomID(roomID)
