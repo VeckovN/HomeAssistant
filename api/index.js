@@ -108,6 +108,7 @@ server.listen(5000, ()=>{
                 }
                 else{
                     console.log(`User ${userData.userID} hass been added to onlineUser set`);
+                    io.emit('newOnlineUser', userData);
                 }
             });
         })  
