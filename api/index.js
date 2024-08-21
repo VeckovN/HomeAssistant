@@ -100,6 +100,7 @@ server.listen(5000, ()=>{
         //listen on onlineUser event (/thissocket.id could be identifier as well as userID )
         socket.on("addOnlineUser", (userData) =>{
             console.log("USERD DATA: ", userData);
+            const data ={type:"Add", ...userData.userID};
             //cleear distinction between storing user data (Hash) and tracking online users (Set).
             //for every registerd user there is HASH (user:{id} -> usenrame, password, imagePath)()
             redisClient.sadd(`onlineUsers`, userData.userID ,(err,res) =>{
@@ -108,7 +109,7 @@ server.listen(5000, ()=>{
                 }
                 else{
                     console.log(`User ${userData.userID} hass been added to onlineUser set`);
-                    io.emit('newOnlineUser', userData);
+                    io.emit('newOnlineUser', data);
                 }
             });
         })  
@@ -293,6 +294,8 @@ server.listen(5000, ()=>{
                 }
                 else{
                     console.log(`User ${ID} hass been removed to onlineUser set`);
+                    const data ={type:"Remove", userID:ID};
+                    io.emit('newOnlineUser', data);
                 }
             });
         })

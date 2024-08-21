@@ -176,18 +176,40 @@ export const listenOnDeleteUserRoomNotification = (socket) =>{
 }
 
 
-export const listenNewOnlineUser = (socket, dispatch, self_id) =>{
-    socket.on("newOnlineUser", (userData) =>{
-        const {userID, username} = userData;
+export const listenNewOnlineUser = async(socket, dispatch, self_id) =>{
+    socket.on("newOnlineUser", async(userData) =>{
+
+        //get friends
+        const friendList = await getFriendsList(self_id);
+
+        //found all friends -> take all IDS That are inlcuded in rooms (exclude self_Id)
+        
+        //if newOnline user match the friend list then trigger
+
+
+        const {type, userID} = userData;
         console.log("USERDATA ONLINEEE: ", userData);
 
-        //check does new online users is your friend
-        //if it is add online user
-        dispatch({type:"ADD_ONLINE_USER", data:userID});
+        if(type==="Add"){
+            //check does new online users is your friend
+            //if it is add online user
+            dispatch({type:"ADD_ONLINE_USER", data:userID});
 
-        toast.info(`User ${username} is online now: ${userID}`,{
-            className:"toast-contact-message"
-        })
+            toast.info(`User ${userID} is online now`,{
+                className:"toast-contact-message"
+            })
+        }
+        else if(type==="Remove"){
+            //check does new online users is your friend
+            //if it is add online user
+            dispatch({type:"REMOVE_ONLINE_USER", data:userID});
+            toast.info(`User ${userID} is gone offline`,{
+                className:"toast-contact-message"
+            })
+        }
+        else
+            return
+
 
         if(!document.hasFocus()){
             const sound = new Audio(announcementSound);

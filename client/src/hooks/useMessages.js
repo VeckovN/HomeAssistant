@@ -189,10 +189,22 @@ const useMessages = (socket, user) =>{
         getOnlineChatUsers();
     },[])
 
-    // useEffect(() =>{
-    //     //updateRoomsView the user became online
-    //     // console.log("FETCH ALL ROOMS");
-    // },[state.onlineUsers])
+
+    //all user rooms re-rendering //not efficient
+    //IMPROVE:fetch and re-render only rooms that the newOnline user is member 
+    const showNewOnlineUsers = async() =>{
+        const data = await getUserRooms(user.username); //roomID, users{}
+        dispatch({type:"SET_ROOMS", data:data}) 
+
+        //Change online status on user ->(current displayed room) roomInfo if the room user match onlineUser
+        //SET_ROOM_INFO
+    }
+
+    useEffect(() =>{
+        //triger re-rendering the rooms (only when the new online user exist) and chat view but   
+        //don't override roomInfo: current visited chat
+        showNewOnlineUsers()
+    },[state.onlineUsers])
 
 
     const MessagesAfterRoomsAction = async(roomID)=>{
