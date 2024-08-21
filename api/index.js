@@ -100,7 +100,7 @@ server.listen(5000, ()=>{
         //listen on onlineUser event (/thissocket.id could be identifier as well as userID )
         socket.on("addOnlineUser", (userData) =>{
             console.log("USERD DATA: ", userData);
-            const data ={type:"Add", ...userData.userID};
+            const data ={type:"Add", userID: userData.userID};
             //cleear distinction between storing user data (Hash) and tracking online users (Set).
             //for every registerd user there is HASH (user:{id} -> usenrame, password, imagePath)()
             redisClient.sadd(`onlineUsers`, userData.userID ,(err,res) =>{
