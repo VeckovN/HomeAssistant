@@ -3,6 +3,7 @@
 @use '../abstracts/colors' as *;
 @use '../base/typography' as *;
 @use '../abstracts/brakepoints' as *;
+@use '../abstracts/mixins' as *;
 
 .header-chat{
     background-color: $black-4;
@@ -87,11 +88,7 @@
 
             .online-dot{
                 margin-right: .2em;
-                width: 13px;
-                height: 13px;
-                background-color: #8BC34A;
-                border-radius: 13px;
-                border: 3px solid #FAFAFA;
+                @include online-dot();
             }
         }
     }
