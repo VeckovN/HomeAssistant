@@ -128,6 +128,17 @@ const getOnlineUsers = async(req,res) =>{
     }
 }
 
+const getFriendsList = async(req,res) =>{
+    try{
+        const userID = req.params.userID;
+        const result = await chatModal.getFriendsListByUserID(userID);
+        res.status(200).json(result);
+    }
+    catch(err){
+        res.status(400).json({error: 'Friends list error'})
+    }
+}
+
 module.exports ={
     getMessages,
     getMoreMessages,
@@ -137,5 +148,6 @@ module.exports ={
     removeUserFromRoom,
     addUserToRoom,
     getConversationCount,
-    getOnlineUsers
+    getOnlineUsers,
+    getFriendsList
 }

@@ -152,7 +152,7 @@ const getAllRooms = async(username)=>{
     const userRoomKey = `user:${userID}:rooms`;
     let rooms = await smembers(userRoomKey);
 
-    //Get online users and create set for efficeint lookups(could be massive)
+    //Get online users and create 6set for efficeint lookups(could be massive)
     const onlineUsers = await smembers(`onlineUsers`);
     const onlineUsersSet = new Set(onlineUsers);
 
@@ -278,6 +278,23 @@ const getOnlineUsersFromChat = async(userID) =>{
     const onlineRoomUsers = Array.from(usersFromRoomSet).filter(user => onlineUsersSet.has(user))
     
     return onlineRoomUsers
+}
+
+const getFriendsListByUserID = async(userID) =>{
+    const usersFromRoomSet = new Set();
+
+    const usersRoomKey = `user:${userID}:rooms`;
+    const usersRoomsIDS = await smembers(usersRoomKey);
+    usersRoomsIDS.forEach(id => {
+        const membersIds = id.split(':');
+        membersIds.forEach(memberID => {
+            usersFromRoomSet.add(memberID);
+        })
+    })
+
+    // const uniqueUserIds = Array.from(usersFromRoomSet);
+    const friendsList = Array.from(usersFromRoomSet);
+    return friendsList;
 }
 
 
@@ -551,6 +568,7 @@ module.exports ={
     getRoomCount,
     sendMessage,
     deleteUserOnNeo4JFailure,
-    getOnlineUsersFromChat
+    getOnlineUsersFromChat,
+    getFriendsListByUserID
 }
 

@@ -92,3 +92,13 @@ export const getOnlineUsers = async(userID) =>{
     }
 }
 
+export const getFriendsList = async(userID) =>{
+    try{
+        const result = await axiosSession.get(BASE_URL + `chat/room/friends/${userID}`);
+        return result.data;
+    }
+    catch(err){
+        ThrowErorr(err);
+    }
+}
+
