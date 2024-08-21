@@ -64,6 +64,13 @@
 
 }
 
+@mixin online-dot($width:13px, $height:13px, $radius:13px, $border-w:3px) {
+    width: $width;
+    height: $height;
+    background-color: #8BC34A;
+    border-radius: $radius;
+    border: $border-w solid #FAFAFA;
+}
 
 @mixin rating-button($bg-color, $bg-hover-color, $color:$white, $hover-color:$black) {
 
