@@ -79,9 +79,19 @@
 
         .user{  
             display: flex;
+            align-items: center;
             
             span{   
                 padding-left:.2em;
+            }
+
+            .online-dot{
+                margin-right: .2em;
+                width: 13px;
+                height: 13px;
+                background-color: #8BC34A;
+                border-radius: 13px;
+                border: 3px solid #FAFAFA;
             }
         }
     }

@@ -134,9 +134,21 @@ const Chat = ({
                 }         
                 <div className="names">
                     {roomInfo?.users?.map((room) =>(
+                        <>
+                        {console.log("Userroom: ", room)}
                         <div className='user'>
-                            <PersonIcon fontSize='small'/><span>{room.username}</span>
+                            {room.online ?
+                            <>
+                                <div className='online-dot'></div>
+                                <div>{room.username} </div>
+                            </>
+                            :
+                            <>
+                                <PersonIcon fontSize='small'/><span>{room.username}</span>
+                            </>
+                            }
                         </div>
+                        </>
                     ))}
                 </div>
                 {user.type=="Client" && roomInfo.roomID!=null && <div className='menu-icon' onClick={onShowMenuToggleHandler} aria-hidden="true"><MenuIcon/></div>}
