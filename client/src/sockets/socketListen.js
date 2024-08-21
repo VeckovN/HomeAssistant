@@ -1,6 +1,7 @@
 import {toast} from "react-toastify"
 import messageSound from '../assets/sounds/message-sound.mp3'
 import announcementSound from '../assets/sounds/announcement-sound.mp3'
+import {getFriendsList} from '../services/chat.js';
 
 
 export const listenForCommentNotification = async(socket) => {
@@ -178,21 +179,15 @@ export const listenOnDeleteUserRoomNotification = (socket) =>{
 
 export const listenNewOnlineUser = async(socket, dispatch, self_id) =>{
     socket.on("newOnlineUser", async(userData) =>{
-
-        //get friends
-        const friendList = await getFriendsList(self_id);
-
-        //found all friends -> take all IDS That are inlcuded in rooms (exclude self_Id)
-        
-        //if newOnline user match the friend list then trigger
-
-
         const {type, userID} = userData;
-        console.log("USERDATA ONLINEEE: ", userData);
+
+         //found all friends -> take all IDS That are inlcuded in rooms (exclude self_Id)
+        const friendsList = await getFriendsList(self_id);
+        //if newOnline user match the friend list then trigger
+        if(!friendsList.includes(userID))
+            return;
 
         if(type==="Add"){
-            //check does new online users is your friend
-            //if it is add online user
             dispatch({type:"ADD_ONLINE_USER", data:userID});
 
             toast.info(`User ${userID} is online now`,{
@@ -200,8 +195,6 @@ export const listenNewOnlineUser = async(socket, dispatch, self_id) =>{
             })
         }
         else if(type==="Remove"){
-            //check does new online users is your friend
-            //if it is add online user
             dispatch({type:"REMOVE_ONLINE_USER", data:userID});
             toast.info(`User ${userID} is gone offline`,{
                 className:"toast-contact-message"
