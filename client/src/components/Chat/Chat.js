@@ -136,8 +136,9 @@ const Chat = ({
                     {roomInfo?.users?.map((room) =>(
                         <>
                         {console.log("Userroom: ", room)}
+                        {console.log("onlineSS: ", state.onlineUsers)}
                         <div className='user'>
-                            {room.online ?
+                            {state.onlineUsers.includes(room.userID) ?
                             <>
                                 <div className='online-dot'></div>
                                 <div>{room.username} </div>
