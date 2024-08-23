@@ -140,6 +140,9 @@ const getMoreMessages = async(roomID, pageNumber) =>{
 
     const messages = await zrangerev(roomKey, offset, endIndex);
     // const messages = latestMessages.reverse();
+
+    console.log("MWWSSS: ", messages);
+
     const messagesObj = messages.map((mes) => JSON.parse(mes)); //Parsing JSON to obj
     return messagesObj;
 }
@@ -160,7 +163,6 @@ const getAllRooms = async(username)=>{
         const otherUsers = userIDS.filter(el => el!= userID)
 
         const lastMessage = await getLastMessageFromRoom(roomID);
-
         //DONT USE FOREACH FOR ASYNC/AWAIT ,USE for() because this will wait for async execution
         //Create promise to be ensure tha user is found and then this user push in array
         //without that this async function could be finished after pushing NOTFOUND user in array
