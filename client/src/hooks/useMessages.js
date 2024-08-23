@@ -27,8 +27,6 @@ const useMessages = (socket, user) =>{
     const [showMoreRoomUsers, setShowMoreRoomUsers] = useState({});
     const pageNumberRef = useRef(0); 
 
-    console.log("ONLINS LLL", state.onlineUsers);
-
     const onShowMenuToggleHandler = () =>  setShowMenu(prev => !prev);
     const onUsersFromChatOutHanlder = () => setShowMoreRoomUsers({});
 
@@ -195,16 +193,18 @@ const useMessages = (socket, user) =>{
     const showNewOnlineUsers = async() =>{
         const data = await getUserRooms(user.username); //roomID, users{}
         dispatch({type:"SET_ROOMS", data:data}) 
-
-        //Change online status on user ->(current displayed room) roomInfo if the room user match onlineUser
-        //SET_ROOM_INFO
     }
+    //roomID, lastMessage, users:roomObjectArray
+    // users:
+    //     username:user.username, 
+    //     picturePath:user.picturePath,
+    //     online: onlineUsersSet.has(id) --- CHANGE THIS 
 
     useEffect(() =>{
         //triger re-rendering the rooms (only when the new online user exist) and chat view but   
         //don't override roomInfo: current visited chat
         showNewOnlineUsers()
-    },[state.onlineUsers])
+    },[state.onlineUsers]) //has changed in socketListener
 
 
     const MessagesAfterRoomsAction = async(roomID)=>{
