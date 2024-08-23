@@ -161,8 +161,8 @@ const getAllRooms = async(username)=>{
     for(const roomID of rooms){
         const userIDS = roomID.split(":");
         const otherUsers = userIDS.filter(el => el!= userID)
-
         const lastMessage = await getLastMessageFromRoom(roomID);
+        
         //DONT USE FOREACH FOR ASYNC/AWAIT ,USE for() because this will wait for async execution
         //Create promise to be ensure tha user is found and then this user push in array
         //without that this async function could be finished after pushing NOTFOUND user in array
