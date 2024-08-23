@@ -140,9 +140,6 @@ const getMoreMessages = async(roomID, pageNumber) =>{
 
     const messages = await zrangerev(roomKey, offset, endIndex);
     // const messages = latestMessages.reverse();
-
-    console.log("MWWSSS: ", messages);
-
     const messagesObj = messages.map((mes) => JSON.parse(mes)); //Parsing JSON to obj
     return messagesObj;
 }
@@ -165,16 +162,16 @@ const getAllRooms = async(username)=>{
         const lastMessage = await getLastMessageFromRoom(roomID);
 
         //DONT USE FOREACH FOR ASYNC/AWAIT ,USE for() because this will wait for async execution
-
         //Create promise to be ensure tha user is found and then this user push in array
         //without that this async function could be finished after pushing NOTFOUND user in array
         let roomObjectArray =[];
         for(const id of otherUsers){ //group users
             const user = await getUserInfoByUserID(id); 
             roomObjectArray.push({
+                userID:id,
                 username:user.username, 
                 picturePath:user.picturePath,
-                online: onlineUsersSet.has(id)
+                online: onlineUsersSet.has(id) //not required for chat component -> replaced by checking onlineUsers state
             });
         }
 
