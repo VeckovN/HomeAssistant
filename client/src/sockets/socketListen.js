@@ -181,7 +181,6 @@ export const listenNewOnlineUser = async(socket, dispatch, self_id) =>{
     socket.on("newOnlineUser", async(userData) =>{
         const {type, userID} = userData;
 
-         //found all friends -> take all IDS That are inlcuded in rooms (exclude self_Id)
         const friendsList = await getFriendsList(self_id);
         //if newOnline user match the friend list then trigger
         if(!friendsList.includes(userID))
@@ -189,24 +188,12 @@ export const listenNewOnlineUser = async(socket, dispatch, self_id) =>{
 
         if(type==="Add"){
             dispatch({type:"ADD_ONLINE_USER", data:userID});
-
-            toast.info(`User ${userID} is online now`,{
-                className:"toast-contact-message"
-            })
         }
         else if(type==="Remove"){
             dispatch({type:"REMOVE_ONLINE_USER", data:userID});
-            toast.info(`User ${userID} is gone offline`,{
-                className:"toast-contact-message"
-            })
         }
         else
             return
 
-
-        if(!document.hasFocus()){
-            const sound = new Audio(announcementSound);
-            sound.play();
-        }
       })
 }
