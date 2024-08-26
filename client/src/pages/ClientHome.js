@@ -21,12 +21,11 @@ const ClientHome = ({socket}) =>{
         let houseworkerList;
         data ? 
         houseworkerList = data.map(user =>
-            <>
-            {console.log("ID::: " + user.id)}
+            (
             <HouseworkerCard
+                key={`iw-${user.id}`}
                 recommended={user.recommended}
                 socket={socket}
-                key={user.id}
                 id={user.id}
                 username={user.username}
                 email={user.email}
@@ -41,7 +40,7 @@ const ClientHome = ({socket}) =>{
                 phone_number={user.phone_number}
                 professions={user.professions}
             />
-            </>
+            )
         )
         : houseworkerList =[]       
             setHouseworkerData(houseworkerList)
@@ -77,7 +76,9 @@ const ClientHome = ({socket}) =>{
                     <div className="houseworker-list">    
                         {loading ? <Spinner/> :
                         <>
-                            {houseworkerData.length > 0 ? houseworkerData : <h3 id='no-matches'>No Found Housewokrers</h3> }
+                            {houseworkerData &&
+                                houseworkerData.length > 0 ? houseworkerData : <h3 id='no-matches'>No Found Housewokrers</h3> 
+                            }
                         </>
                         }   
                     </div>   

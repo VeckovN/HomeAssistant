@@ -3,7 +3,7 @@ import '../../sass/components/_commnetItem.scss';
 const CommentItem = (props) =>{
 
     return(
-        <div className={`comment ${props.new ? 'new-comment' : ''}`} key={props.id} >
+        <div className={`comment ${props.new ? 'new-comment' : ''}`}>
             {props.onDeleteCommentHandler && 
                 <button className='comment-delete-btn' onClick={(e) => props.onDeleteCommentHandler(e, props.id, props.from)}>X</button>
             }
