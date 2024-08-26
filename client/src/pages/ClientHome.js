@@ -23,7 +23,7 @@ const ClientHome = ({socket}) =>{
         houseworkerList = data.map(user =>
             (
             <HouseworkerCard
-                key={`iw-${user.id}`}
+                key={`card-${user.id}`}
                 recommended={user.recommended}
                 socket={socket}
                 id={user.id}
