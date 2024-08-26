@@ -134,10 +134,7 @@ const Chat = ({
                 }         
                 <div className="names">
                     {roomInfo?.users?.map((room) =>(
-                        <>
-                        {console.log("Userroom: ", room)}
-                        {console.log("onlineSS: ", state.onlineUsers)}
-                        <div className='user'>
+                        <div className='user' key={`u-${room.userID}`}>
                             {state.onlineUsers.includes(room.userID) ?
                             <>
                                 <div className='online-dot'></div>
@@ -149,7 +146,6 @@ const Chat = ({
                             </>
                             }
                         </div>
-                        </>
                     ))}
                 </div>
                 {user.type=="Client" && roomInfo.roomID!=null && <div className='menu-icon' onClick={onShowMenuToggleHandler} aria-hidden="true"><MenuIcon/></div>}

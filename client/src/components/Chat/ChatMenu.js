@@ -64,9 +64,8 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onKic
                         return usernameStartsWithSerachInput && isNotInRoomUsers && selectedUsername==''
                     })
                     .map((item) =>(
-                        <div className='dropdown-row'>
+                        <div className='dropdown-row' key={item.id} >
                             <div
-                                key={item.id} 
                                 onClick={() => SelectedHandler(item.username)}
                                 className='dropdown-row-item'>{item.username}
                             </div>

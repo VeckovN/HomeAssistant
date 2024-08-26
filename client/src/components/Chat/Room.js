@@ -20,7 +20,7 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
                         <div className='more-user-chat-container'>
                             {moreRoomUsers.users.map(el =>{
                                 return(
-                                    <div className='user-chat-label'>
+                                    <div className='user-chat-label' key={`e-${el.username}`}>
                                         {el.online && <div className='online-user'></div>}
                                         <div>{el.username}</div>
                                         
@@ -38,6 +38,7 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
                             {
                                 return(
                                     <Photo
+                                        key={`u-${user.username}`}
                                         username={user.username}
                                         picturePath={user.picturePath}
                                         online={user.online}
@@ -56,6 +57,7 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
                             {
                                 return(
                                     <Photo
+                                        key={`u-${user.username}`}
                                         username={user.username}
                                         picturePath={user.picturePath}
                                         online={user.online}

@@ -7,9 +7,8 @@ return (
         {roomMessages.map((el,index) =>{
             if(user.userID==el.from || el.from === "Server"){
                 return(
-                    
                 <div 
-                    // key={`r-${el.roomID}`}
+                    key={`r-${index}`}
                     className={`${el.from === "Server" ? "server" : "message text-only"} ${index == 0 && 'scroll-el'}`}
                     ref={index === 0 ? lastMessageRef : null}
                 >
