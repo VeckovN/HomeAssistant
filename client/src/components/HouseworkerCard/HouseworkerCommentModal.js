@@ -41,6 +41,7 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
                     const isClientComment = clientUsername === comm.from;
                     return(
                         <CommentItem
+                            key={`comm-${comm.commentID}`}
                             onDeleteCommentHandler={isClientComment ? onCommentDelete : undefined}
                             id={comm.commentID}
                             date={comm.date}
