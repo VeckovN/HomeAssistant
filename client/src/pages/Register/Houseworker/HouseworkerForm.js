@@ -19,9 +19,9 @@ const HouseworkerForm = ({register, errors, getValues, cityField, professionFiel
                     <div className='register-box inputs'>
                         {inputs.map(el => {
                             return(
-                            <div className='register-box-input'>
+                            <div className='register-box-input' key={el.id}>
                                 <label className='input-lab'>{el.label}</label>
-                                <div className='register-input-container' key={el.id}>
+                                <div className='register-input-container'>
                                     <FormInput 
                                         type={el.type}
                                         name={el.name}

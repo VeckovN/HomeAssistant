@@ -101,9 +101,9 @@ const ClientRegister = () =>{
                     <div className='register-box client-inputs'>
                         {inputs.map(el => {
                             return(
-                            <div className='register-box-input'>
+                            <div className='register-box-input' key={el.id}>
                                 <label className='input-lab'>{el.label}</label>
-                                <div className='register-input-container' key={el.id}>
+                                <div className='register-input-container'>
                                     <FormInput 
                                         className='register-input'
                                         type={el.type}
