@@ -120,7 +120,7 @@ const HouseworkerHome = () =>{
                     <div className='profile-professions-container'>
                         {/* make component for each profession */}
                             {homeInfo.professions?.map( el => (
-                                <HouseworkerProfessionItem professionTitle={el}/>
+                                <HouseworkerProfessionItem professionTitle={el} key={`pr-${el}`}/>
                             ))}
                     </div>
                 </section>

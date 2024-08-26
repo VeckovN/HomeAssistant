@@ -38,7 +38,7 @@ const CommentsList = ({socket, user}) =>{
     {comments ?
         commentList = comments.map(comm =>(
             <CommentItem
-                // key={}
+                key={comm.commentID}
                 from={comm.from}
                 comment = {comm.comment}
                 date={comm.date}
