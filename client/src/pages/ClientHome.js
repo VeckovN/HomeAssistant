@@ -10,8 +10,6 @@ import ScrollToTopHome from '../utils/ScrollToTopHome.js';
 import '../sass/pages/_clientHome.scss';
 
 const ClientHome = ({socket}) =>{
-    //LIMIT IF IS GUEST 
-    // console.log("SOCKET " + socket);
     const {user} = useSelector((state) => state.auth);
     const {data, loading, searchDataHanlder, filterDataHandler } = useClient(user);
     const [houseworkerData, setHouseworkerData] = useState([]); //List of HouseworkerCard
