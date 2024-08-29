@@ -9,8 +9,7 @@ const createUser = async(username, hashedPassword, picturePath) =>{
     try{
         const usernameKey = `username:${username}`;
         const freeID = await incr("total_users"); //total_users is data in Redis(number of users)
-       
-        console.log("FERTEEE IUD: " + freeID);
+    
         const userKey = `user:${freeID}`;
     
         await set(usernameKey, userKey) //username:Novak user:1
@@ -19,7 +18,7 @@ const createUser = async(username, hashedPassword, picturePath) =>{
         return {success:true, id:freeID, username};
     }
     catch(err){
-        console.log("Redis Create user Errror: " + err);
+        console.error("Redis Create user Errror: " + err);
         return {success:false, message:"Error with Creating Redis User"}
     }
 }
@@ -45,7 +44,6 @@ const getLastMessageFromRoom = async(roomID) =>{
     const parsedObj = JSON.parse(result);
     const currentDate = parsedObj.date;
     const difference = calculateTimeDifference(currentDate);
-    // const lastMessage = parsedObj.message;
     const lastMessage  = {message:parsedObj.message, dateDiff:difference}
     return lastMessage;
 }
@@ -62,19 +60,11 @@ const getRoomIdInOrder = (firstUserID, secondUserID) =>{
 //When Client want to send message to Houseworker ,we have to create
 //room between them and communicate in that room
 const createRoom = async(firstUsername, secondUsername)=>{
-
     const firstUserID = getUserIdByUsername(firstUsername);
     const secondUserID = getUserIdByUsername(secondUsername);
 
-    console.log("FirstUserID: " , firstUserID);
-    console.log("secondUserID: " , secondUserID);
-    
-
     //get iid of users ---- user:1 , user:3  --> roomID is 1:3
     const usersRoomID = getRoomIdInOrder(firstUserID, secondUserID);
-
-    console.log("userRommID : ", usersRoomID);
-
 
     if(usersRoomID === null){
         //users not exists
@@ -118,10 +108,6 @@ const getMessages = async(roomID, offset, size) =>{
 
 //offset calculated based on pageNumber and size(defined)
 const getMoreMessages = async(roomID, pageNumber) =>{
-
-    console.log("ROOOOOOOOOOMMMMMMMMM: " + roomID);
-    console.log("PAGE NUUUUUUMMMMMMMMM: " + pageNumber);
-
     const size = 10;
     const offset = size * pageNumber;
     //od offset do size
@@ -140,9 +126,6 @@ const getMoreMessages = async(roomID, pageNumber) =>{
 
     const messages = await zrangerev(roomKey, offset, endIndex);
     // const messages = latestMessages.reverse();
-
-    console.log("MWWSSS: ", messages);
-
     const messagesObj = messages.map((mes) => JSON.parse(mes)); //Parsing JSON to obj
     return messagesObj;
 }
@@ -313,7 +296,6 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
 
     let newRoomKey = "room";
     currentUserIDS.forEach(id =>{
-        console.log("el: " + id);
         newRoomKey+=`:${id}`
     })
     //this is memeber of users Rooms -> user:{ID}:rooms
@@ -334,7 +316,6 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
             //add newRoomID in their rooms(set collection)
             currentUserIDS.forEach(async(id) =>{ 
                 await sadd(`user:${id}:rooms`, newRoomID);
-                console.log("ID NEWWWWWWWW: " + id);
             })
 
             //create new roomKey and store first initial message
@@ -495,7 +476,6 @@ const sendMessage = async(messageObj) =>{
         //for more then 2 userIDs
         usersID.forEach(async(id)=>{
             await sadd(`user:${id}:rooms`, roomID);
-            console.log(`user:${id}:rooms`, roomID);
         })
 
         // const roomNotification={
@@ -539,9 +519,7 @@ const deleteRoomByRoomID = async(roomID) =>{
     const roomKey = `room:${roomID}`;
     //find users with this ids and delete room from theri rooms set
     const usersID = roomID.split(':');
-    usersID.forEach(async id =>{
-        console.log("USER KEY : " + `user:${id}:rooms` + "ROOMID: " + roomID);
-        //delete memeber(RoomID) from user set user:{USERID}:rooms
+    usersID.forEach(async id =>{s
        await srem(`user:${id}:rooms`, roomID); //delte example memeber 1:2 in user:1:rooms 
     })
     //Delete sorted Set which contains all messages in ROOM
