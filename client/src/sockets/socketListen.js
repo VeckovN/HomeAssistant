@@ -1,8 +1,7 @@
 import {toast} from "react-toastify"
-import messageSound from '../assets/sounds/message-sound.mp3'
-import announcementSound from '../assets/sounds/announcement-sound.mp3'
+import messageSound from '../assets/sounds/livechat-m.mp3'
+import announcementSound from '../assets/sounds/new-notification.mp3'
 import {getFriendsList} from '../services/chat.js';
-
 
 export const listenForCommentNotification = async(socket) => {
     socket.on(`privateCommentNotify`, (client_username) =>{
