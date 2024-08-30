@@ -8,6 +8,8 @@ const useClient = (user) =>{
     //fetched(houseworker) Data based on filtered and searched Data
     const [data, setData] = useState([]);
     const [showRecommended, setShowRecommended] = useState(false);
+    // const [recommendedData, setRecommendedDate] = useState([]);
+    const [recommendedData, setRecommendedDate] = useState([]);
     const [loading, setLoading] = useState(true);
 
     //filtered data will be reset on compoent re-rendering(on every scroll )
@@ -87,6 +89,11 @@ const useClient = (user) =>{
                 console.log("HE");
                 //if is new houseworkers fetched then contcatenate it with older houseworkers
                 if(pageNumberRef.current > 0){
+                    console.log("Recoomme: ", recommendedData);
+                    console.log("\n hos: ", houseworkers);
+
+                    console.log("SHW :" , showRecommended);
+
                     setData(prev =>([
                         ...prev,
                         ...houseworkers
@@ -94,8 +101,10 @@ const useClient = (user) =>{
                 }
                 else{
                     if(user!== null && !showRecommended){
-                        const recommendedData = await fetchRecommended(houseworkers);
-                        setData([...recommendedData, ...houseworkers]);
+                        const recommendedDataRes = await fetchRecommended(houseworkers);
+                        setRecommendedDate({daa:"ASAS"});
+                        console.log("SSSSSSSSSSSSSS: ", recommendedDataRes);
+                        setData([...recommendedDataRes, ...houseworkers]);
                         setShowRecommended(true);
                     }
                     else{
@@ -127,8 +136,8 @@ const useClient = (user) =>{
 
     const fetchRecommended = async(houseworkers) =>{
         try{
-            const recommendedData = await getRecommended(user.username);
-            return recommendedData;
+            const recommendedData1 = await getRecommended(user.username);
+            return recommendedData1;
         }
         catch(err){
             console.error("Error wiht recommended fetch user " + err);
