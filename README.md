@@ -13,6 +13,7 @@ Session store, Cache recent filtered users, cache recommended users(for clients)
 
 ### Neo4j
 Persistent user storage, comments and rates, recommended users (based on client interests, city) 
+*neo4j connection file is gitignored (password and username can't be taken from env file as parameter of connection method)
 
 ## User Types 
 Client <br />
