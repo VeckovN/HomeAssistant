@@ -8,6 +8,9 @@ node_modules/
 logs/
 *.log
 
+#neo4j Connetion File(pass and user are showned)
+neo4j.js
+
 # Output of npm
 npm-debug.log
 
