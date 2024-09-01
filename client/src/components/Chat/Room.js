@@ -81,7 +81,6 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
                     <div className="room-contact">
                         <p className="name">Name: {info.users[0].username}</p>
                         <p className="message">{info.lastMessage.message}</p>
-                        {/* <p className="message">{info.lastMessage}</p> */}
                     </div>
                 </div>
                 <div className="timer">{info.lastMessage.dateDiff}</div>

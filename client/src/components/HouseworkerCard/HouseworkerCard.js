@@ -51,7 +51,6 @@ const HouseworkersCard = (props) =>{
         return (
             <>
                 <HouseworkerCardContent 
-                // <LazyHouseworkerCardContent
                     houseworkerUsername ={houseworkerUsername}
                     comments ={comments}
                     allCommentsLoadedRef={allCommentsLoadedRef}
@@ -81,8 +80,7 @@ const HouseworkersCard = (props) =>{
     }
 }
 
-//optimization
 //memo ensures that houseworker that exist(rendered) are not re-render again(because their context(props) are not changing) 
-//AFTER TESTING 'memo' CAUSES MORE LOADING TIME THAN WITHOUT IT
+//AFTER TESTING 'memo' CAUSES MORE LOAD TIMES THAN WITHOUT IT
 // export default memo(HouseworkersCard);
 export default HouseworkersCard;

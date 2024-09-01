@@ -1,4 +1,3 @@
-//Compnent with different selection choice
 import {useState, useEffect, useMemo, memo} from 'react';
 import {getProfessionsAndCities} from '../../services/houseworker.js'
 import useUser from '../../hooks/useUser.js';
@@ -26,7 +25,7 @@ const Filter = (prop) =>{
         prop.filterOptions(filters);
     }
 
-    //cities_options will be only recalcuated when is cities changed
+    //cities_options will be only recalcualted when cities are changed
     const city_options = useMemo(() => cities?.map(city =>({ value: city, label: city })), [cities]);
     const professions_options = useMemo(()=>professions?.map(profession => ({
         value:profession.title,
