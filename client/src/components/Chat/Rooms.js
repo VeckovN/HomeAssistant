@@ -7,7 +7,7 @@ const Rooms = ({rooms, roomInfo, showMoreRoomUsers, onRoomClickHanlder, onShowMo
                 {rooms ?
                     rooms.map(el =>(      
                         <Room
-                            key={el.roomID}
+                            key={`room-${el.roomID}`}
                             info={el}
                             roomInfo={roomInfo}
                             moreRoomUsers={showMoreRoomUsers}

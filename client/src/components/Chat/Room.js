@@ -57,7 +57,7 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
                             {
                                 return(
                                     <Photo
-                                        key={`u-${user.username}`}
+                                        key={`us-${user.username}`}
                                         username={user.username}
                                         picturePath={user.picturePath}
                                         online={user.online}

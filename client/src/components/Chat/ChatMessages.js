@@ -28,7 +28,7 @@ return (
                 });
 
                 return(
-                <div className="message">
+                <div className="message" key={`msg-${index}`}>
                     <div className="photo" style={{ backgroundImage: `url(assets/userImages/${userPicturePath})` }}>
                         <div className='photo-hover-username'>{el.fromUsername}</div>
                         <div className="online"></div>
