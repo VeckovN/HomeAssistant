@@ -5,12 +5,11 @@ import {getProfessionsAndRating} from '../../services/houseworker.js';
 import { emitRatingNotification } from '../../sockets/socketEmit.js';
 import { getErrorMessage } from '../../utils/ThrowError.js';
 
-//Not fatching propertly - one time its good fetched , next time some houseworker doesn;t have rating
 const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsername) =>{
 
     const [rate, setRate] = useState(''); //value from input
     const [showRateInput, setShowRateInput] = useState();
-    const [houseworkerRating, setHouseworkerRating] = useState(''); //hosueworker current ranking value
+    const [houseworkerRating, setHouseworkerRating] = useState(''); //houseworker current ranking value
     const [houseworkerProfessions, setHouseworkerProfessions] = useState('');
     const [loadingRating, setLoadingRating] = useState(true);
 

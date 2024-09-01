@@ -20,7 +20,7 @@ const Sort = (prop) =>{
             return 
         }
 
-        //toggle effect
+        //toggle
         if(selectedOption === opt)
             setSelectedOption('')
         else
@@ -62,15 +62,6 @@ const Sort = (prop) =>{
                     selectSortHandler={selectSortHandler}
                     selectedOption={selectedOption}
                 />
-
-                {/* <button 
-                    // id='sort-4' 
-                    value="RatingDown" 
-                    onClick={e => selectSortHandler(e.target.value)}
-                    className={selectedOption === 'RatingDown' ? 'selected sort' : 'sort'}
-                >
-                    Rating 🠓
-                </button> */}
             </div>
         </div>     
     </>

@@ -27,8 +27,7 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
     }
 
     const onChangeProfessionHandler = async(e) =>{
-        //without that this button function will re-triger form onSubmit
-        e.preventDefault();
+        e.preventDefault(); //without it, func will re-trigger from onSubmit
         try{
             if(updatedData.profession){
                 if(updatedData.working_hour){
@@ -76,11 +75,11 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
                 //Wait for all promises to resolve using Promise.all
                 await Promise.all(addProfessionPromises);
 
-                // for the current user's selection profeesions
+                //current users selection profeesions
                 const merged_houseworkers = [...houseworkerData.professions, ...new_houseworker_professions];
 
                 const remained_professions = profession_options.filter((option) =>{
-                    //return only not same object
+                    //different object only
                     return !merged_houseworkers.some((mine) => mine.value === option.value)
                 })
                 
@@ -177,12 +176,9 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
                             <br/>
                             
                             <div className='action-buttons'>
-                                {
-                                // updatedData.working_hour != "" &&
                                 <div className="change-profession">
                                     <button onClick={onChangeProfessionHandler} disabled={!updatedData.working_hour}>Change</button>
                                 </div>
-                                }
                                 
                                 <div className = "delete-profession">
                                     {/* without ()=> this function will be executed immediately , also pass the e(event) for e.preventDefault*/}
@@ -198,7 +194,6 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
                         className='dropdown-select'
                         placeholder="Select a profession"
                         options={houseworkerData.not_owned_professions}
-                        //value={houseworkerData.profession}
                         onChange={onChangeProffesions}
                         ref={addProffesionRef}
                         isClearable
