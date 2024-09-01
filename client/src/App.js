@@ -28,7 +28,6 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import './toastify.css'
 
 function App() {
-
   const {user} = useSelector((state) => state.auth) 
   const [socket, connected] = useSocket(user);
   const dispatch = useDispatch();
@@ -39,8 +38,6 @@ function App() {
     <NotificationWrapper>
       <ScrollToTopWrapper>
         <Routes>
-
-        {console.log("User", user)}
 
         {(user?.type === "Client" || user == null) && (
           <Route element={<ClientLayout/>}>
