@@ -40,7 +40,6 @@ const useMessages = (socket, user) =>{
 
     useEffect(() => {
         if(socket && user){
-            console.log("HEEEEEEEEE");
             listenOnMessageInRoom(socket, dispatch);
             listenOnCreateUserGroup(socket, dispatch);
             listenOnAddUserToGroup(socket, dispatch, user.userID);
@@ -62,20 +61,13 @@ const useMessages = (socket, user) =>{
         const messages = await getMoreMessagesByRoomID(roomID, pageNumber);
 
         if(messages.length > 0){
-            console.log("MESS FETCH MORE MESSAGES: " , messages);
             dispatch({type:"ADD_MORE_ROOM_MESSAGES", data:messages});
-            // dispatch({type:"SET_ROOM_MESSAGES", data:messages})
-            // dispatch({type:"SET_LOADING", payload:false})
         }
     })
 
     const fetchAllRooms = ( async () =>{   
-        console.log("sss");
         const data = await getUserRooms(user.username); //roomID, users{}
-        // console.log('DATA ROOMS : \n' + JSON.stringify(data));
         dispatch({type:"SET_ROOMS", data:data}) 
-
-        console.log("GET ALL ROOMS : ", data);
 
         //When user has conversations
         if(data.length > 0){
@@ -89,7 +81,6 @@ const useMessages = (socket, user) =>{
             
             //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
             const messages = await getMessagesByRoomID(roomID)
-            // const messages = await getMoreMessagesByRoomID(roomID, 0);
             
             dispatch({type:"SET_ROOM_MESSAGES", data:messages})
             dispatch({type:"SET_LOADING", payload:false})
@@ -102,7 +93,6 @@ const useMessages = (socket, user) =>{
     });
 
     const getAllHouseworkers = async() =>{
-        console.log("\n getAllHouseworkers \n");
         const houseworkerResult = await getHouseworkers();
         dispatch({type:"SET_HOUSEWORKERS", data:houseworkerResult});
     }
@@ -110,14 +100,10 @@ const useMessages = (socket, user) =>{
     //get only for logged user
     const getOnlineChatUsers = async() =>{
         const onlineUsers = await getOnlineUsers(user.userID);
-        console.log("ONLINE USERS CLIENT: " , onlineUsers);
         dispatch({type:"SET_ONLINE_USER", data:onlineUsers});
     }
 
     const enterRoomAfterAction = async(roomID) =>{
-        console.log("ROOMID: ", roomID);
-        console.log("STATE INFO ROOM ID: ", state.roomInfo);
-
         //don't applie logic if is clicked on the same room
         if(roomID === state.roomInfo.roomID)
             return;
@@ -125,8 +111,7 @@ const useMessages = (socket, user) =>{
         pageNumberRef.current = 0; //reset page number on entering new room
 
         if(state.roomInfo.roomID !='' && state.roomInfo.roomID != roomID){
-            emitLeaveRoom(socket, state.roomInfo.roomID);
-            console.log("leave.room : " + state.roomInfo.roomID);
+            emitLeaveRoom(socket, state.roomInfo.roomID);;
         }
 
         emitRoomJoin(socket, roomID);
@@ -263,7 +248,6 @@ const useMessages = (socket, user) =>{
                 toast.info("User is added to the room: "+  newRoomID);
             }
 
-            console.log("NEWWWW ROOMMMMMMMMMMM :", newRoomID)
             enterRoomAfterAction(newRoomID);
             
         }
@@ -316,7 +300,6 @@ const useMessages = (socket, user) =>{
     const onSendMessageHandler = async({message, fromRoomID}) =>{        
         if(message != ''){
 
-            console.log("MEESSAGEGEG : " , message);
             // messageRef.current.value = ''
             //emit io.socket event for sending mesasge
             //this will trigger evento on server (in index.js) and send message to room

@@ -47,8 +47,6 @@ const ClientRegister = () =>{
     // }
 
     const onSubmitHandler = (data) =>{
-        // console.log("Form DATA: \n " + JSON.stringify(data) )
-
         const formData = new FormData();
         for(const key in data){
             formData.append(key, data[key]);
@@ -64,8 +62,6 @@ const ClientRegister = () =>{
     }
 
     const onCityChangeHandler = (option) =>{
-        console.log("Option: " , option);
-
         if(option !== null)
             cityField.onChange(option.value);
         else
@@ -74,7 +70,6 @@ const ClientRegister = () =>{
 
     const onChangeImageHandler = (event) =>{
         avatarField.onChange(event.target.files[0]);
-        console.log("avatarField: ", avatarField)
     }
 
     const onRemoveAvatarHanlder = (e) =>{

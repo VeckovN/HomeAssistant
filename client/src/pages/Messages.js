@@ -7,8 +7,7 @@ import Spinner from '../components/UI/Spinner.js';
 import '../sass/pages/_messages.scss';
 
 const Messages = ({socket, connected}) =>{
-    console.log("Messages Component");
-
+    
     const {user} = useSelector((state) => state.auth)
     const {
         state, 

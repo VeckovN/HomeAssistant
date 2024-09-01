@@ -10,7 +10,6 @@ const useTyping = (startTypingMessageSendEmit, stopTypingMessageEmit) =>{
         let interval;
         if(isTyping){
             interval = setInterval(() =>{
-                console.log("CURRENT COLLDOWN: " + cooldownRef.current);
                 if(cooldownRef.current == 0){
                     clearInterval(interval);
                     setIsTyping(false);
@@ -25,7 +24,6 @@ const useTyping = (startTypingMessageSendEmit, stopTypingMessageEmit) =>{
         else if(!isTyping && cooldownRef.current!= 0){
             //triggered on sendMessage
             clearInterval(interval);
-            // stopTypingMessageEmit();
         }
 
         return () => clearInterval(interval);
@@ -34,7 +32,6 @@ const useTyping = (startTypingMessageSendEmit, stopTypingMessageEmit) =>{
     const startTypingHandler = () =>{
         //inovoked on every key press
         if(!isKeyPressed && !isTyping){
-            console.log("IS PRESSED NOW");
             setIsKeyPressed(true);
             cooldownRef.current = 5;
             setIsTyping(true);

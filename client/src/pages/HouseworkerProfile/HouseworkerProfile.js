@@ -60,7 +60,6 @@ const HouseworkerProfile = () =>{
         try{
             let newData = {};
             Object.keys(submitData).forEach(key =>{
-                console.log("UPD: " + typeof(key)+ " :  VALKUE : " + key );
                 if(submitData[key] != '' && submitData[key] !=undefined){ //undefined for avatar(file)
                     //data object wiht only updated props (for HTTP request)
                     newData[key] = submitData[key];

@@ -47,8 +47,6 @@ const HouseworkerRegister = () =>{
 
     const onSubmitHandler = async (data,event ) =>{
         event.preventDefault();
-        // console.log("Form DATA: \n " + JSON.stringify(data))
-
         //check does profession working hours entered
         if(getValues('professions') && houseworkerProfessionsFields.length == 0){
             toast.error("You have to enter working hour for profession",{

@@ -8,10 +8,8 @@ const useSocket = (user) =>{
     const [connected, setConnected] = useState(false);
 
     useEffect(() => {
-        console.log("useSocket's useEFFECT");
         // Handle socket connection and disconnection based on user state
         if (user) {
-            console.log("USSERRR : ", user);
             // Create a new socket instance if it doesn't exist
             if (!socketRef.current) {
                 const socket = io('http://127.0.0.1:5000', { 
@@ -27,7 +25,6 @@ const useSocket = (user) =>{
             // Connect and handle connection events
             socketRef.current.on('connect', () => {
                 //this execute a little bit after the exercution (probably asyn think)
-                console.log('Socket connected');
                 setConnected(true);
 
                 //register it as online user
@@ -36,20 +33,15 @@ const useSocket = (user) =>{
 
                 // Emit join request for the user's room
                 socketRef.current.emit('joinRoom', user.userID);
-                console.log(`Joined room user-${user.userID}`);
             });
     
             // Handle disconnection events (optional)
             socketRef.current.on('disconnect', () => {
                 //clean up function trigger this disconnect event
-                console.log('Socket disconnected');
                 setConnected(false);
-
                 socketRef.current.removeAllListeners(); // Remove all event listeners
-                console.log("socketRef.current.removeAllListeners()")
-
                 socketRef.current = null; // Clear the reference
-                console.log("socketRef.current = null")
+
                 // Clean up event listeners (optional)
                 // socketRef.current.removeAllListeners(); // Uncomment if necessary
             });
@@ -75,7 +67,6 @@ const useSocket = (user) =>{
             return () => {
                 if (socketRef.current) {
                     socketRef.current.disconnect(); // Disconnect the socket
-                    console.log("socketRef.current.disconnect()");
                     // socketRef.current.removeAllListeners(); // Remove all event listeners
                     // console.log("socketRef.current.removeAllListeners()")
                 }   
@@ -84,11 +75,6 @@ const useSocket = (user) =>{
             //this executed then the seesion expired(user doesn't exist) but socketRef is still present
             // Disconnect socket if user is no longer present
             socketRef.current.disconnect();
-            console.log(" socketRef.current.disconnect();")
-
-            // socketRef.current = null; // Clear the reference
-            // console.log("socketRef.current = null")
-            // setConnected(false);
         }
       }, [user]);
 
