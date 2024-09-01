@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import Rating from '@mui/material/Rating';
 import StarIcon from '@mui/icons-material/Star';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
 import HouseworkerCommentModal from './HouseworkerCommentModal';
 
 import '../../sass/components/_houseworkerCard.scss';
@@ -55,18 +54,12 @@ const HouseworkerCardContent = ({
                 <div className={houseworkerProps.recommended ? 'houseworker-content recommended' : 'houseworker-content'}>
                     
                     <div className="img-box">
-                        {/* <ImageWithFallback
-                            src={`assets/userImages/${houseworkerProps.picturePath}`}
-                            fallback={`assets/userImages/userDefault.png`}
-                            loading="lazy"
-                        /> */}
                         <img
                             src={`assets/userImages/${houseworkerProps.picturePath}`}
                             onError={loadDefaultImageOnError}
                             loading="lazy"
                             alt="avatar"
                         />
-                        {/* <img src={`data:image/jpeg;base64, ${houseworkerProps.picturePath}`}></img> */}
                     </div>
 
                     {houseworkerProps.recommended && 
