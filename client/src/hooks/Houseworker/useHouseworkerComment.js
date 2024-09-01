@@ -1,4 +1,4 @@
-import {useState, useRef, useEffect, useCallback} from 'react';
+import {useState, useRef, useEffect} from 'react';
 import {getComments, postComment} from '../../services/houseworker.js';
 import {deleteComment} from '../../services/client.js';
 import {emitCommentNotification} from '../../sockets/socketEmit.js'
@@ -96,7 +96,6 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
             await deleteComment(from, comment_id);
             const newComments = comments.filter(comm => comm.commentID!=comment_id)
 
-            //also trigger
             setComments(newComments);
 
             toast.success("Comment successfully deleted",{
@@ -139,7 +138,7 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                 const newComment = {
                     commentID:commentResult.commentID,
                     date:commentResult.commentDate,
-                    from: client_username, //client
+                    from: client_username,
                     houseworkerID: houseworker.id,
                     comment:newCommentContext,
                     new:true //animation flag for entering modal 
