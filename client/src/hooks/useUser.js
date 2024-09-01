@@ -1,10 +1,8 @@
 import {useState} from 'react'
 
-//This handlers are repated in differt components
+//These handlers are repated in different components
 const useUser =(initialState)=>{
-    
     const [data, setData] = useState(initialState);
-    const [errors, setErrors] = useState({});
     
     const onChange = (event) =>{
         const name = event.target.name;
@@ -35,7 +33,6 @@ const useUser =(initialState)=>{
             }
         ))
     }
-
 
     const onChangeCity = (e) =>{
         if(e !== null){
@@ -149,7 +146,7 @@ const useUser =(initialState)=>{
         setData(prev=> (
             {
                 ...prev,
-                [name]:value // example first_name:"Novak"
+                [name]:value
             }
         ))
     }
@@ -164,10 +161,8 @@ const useUser =(initialState)=>{
             }
         ))
     }
-
-
-    return {data, errors, onChange, onChangeWorkingHour,onChangeHouseworker, onChangeHouseworkerProfessions, onImageChange, onChangeProfession, onChangeCity, onChangeProffesions, onChangeInterest, resetProfessions, resetWorkingHour}
-
+    
+    return {data, onChange, onChangeWorkingHour,onChangeHouseworker, onChangeHouseworkerProfessions, onImageChange, onChangeProfession, onChangeCity, onChangeProffesions, onChangeInterest, resetProfessions, resetWorkingHour}
 }
 
 export default useUser
