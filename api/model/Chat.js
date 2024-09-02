@@ -449,7 +449,7 @@ const removeUserFromRoomID = async(roomID, username) =>{
 // }
  
 const sendMessage = async(messageObj) =>{
-    const {roomID} = messageObj;
+    const {roomID, from} = messageObj;
 
     //ZADD {room:1:3} 1615480369 {user:1, date:formattedDate, message:'Hello"}
     const roomKey = `room:${roomID}`;
@@ -487,12 +487,24 @@ const sendMessage = async(messageObj) =>{
         //         })
         //     ]
         // }
-
-        // //To all connected clients except the sender 
-        // socket.broadcast.emit('show.room', roomNotification);
     }
-    //ZADD roomKey:1:2 1617197047 { "From": "2", "Date": 1617197047, "Message": "Hello", "RoomId": "1:2" }
-    //ZADD Key=room:1:2 Score=1617197047 Value=obj
+
+    const usersID = roomID.split(":");
+    //get last unread count if exist
+    usersID.forEach(async(id)=>{
+        const unreadMessKey = `user${id}:room:${roomID}:unread`
+        const count = await hmget(unreadMessKey, "count");
+        const countNumber = Number(count);
+        let newCount;
+        if(count)
+            newCount = countNumber + 1;
+        else
+            newCount = 0
+
+        await hmset(unreadMessKey, ["last_received_timestamp", timestamps, "count", newCount, "sender", from]);
+        console.log(`unreadMessKey: ${unreadMessKey}  timestamp: ${timestamps} count: ${newCount} sender: ${from}`);
+    })
+
     await zadd(roomKey, timestamps, JSON.stringify(newMessageObj));
     return {roomKey, dateFormat};
 }
