@@ -511,7 +511,7 @@ const sendMessage = async(messageObj) =>{
     }
 
     const usersID = roomID.split(":").filter(id => id != from);
-    console.log("UsersID" , usersID , "\n");
+
     //get last unread count if exist
     usersID.forEach(async(id)=>{
         const unreadMessKey = `user${id}:room:${roomID}:unread`
