@@ -15,7 +15,6 @@ const getUsernameByUserID = async (userID)=>{
 
 const getUserInfoByUserID = async(userID) =>{
     const userInfo = await hmget(`user:${userID}`, ["username","picturePath"]);
-    console.log("USERRRRR INFGOOOOOOOOOO" , userInfo);
     return {username:userInfo[0], picturePath:userInfo[1]};
 }
 
