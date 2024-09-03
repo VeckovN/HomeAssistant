@@ -7,12 +7,21 @@ import '../../sass/components/_room.scss';
 const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUsersFromChatHandler, onUsersFromChatOutHanlder}) =>{
 
     const isActive = info.roomID == roomInfo.roomID ? 'active' : "";
+    const unreadCount = info.unread?.count ? info.unread.count : ""; 
+
+    console.log("info: ", info);
+    console.log("\n unreadCount:", unreadCount);
 
     return(
         <>
             {info.users.length > 1 
             ?
-            <div className={`room group ${isActive}`} >
+            <div className={`room group ${isActive} ${unreadCount ? 'unread' : ''}`} >
+            {unreadCount &&     
+            <div className='unread-mess'>
+                <div className='unread-mess-count'>{unreadCount}</div>
+            </div>
+            }
             <div className={`group-sign ${isActive}-icon`}><GroupsIcon/></div>
             <button className='handler-surface' value={info.roomID} onClick={onRoomClickHanlder} />
                 <div className ='user-photo-container'>
@@ -23,7 +32,6 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
                                     <div className='user-chat-label' key={`e-${el.username}`}>
                                         {el.online && <div className='online-user'></div>}
                                         <div>{el.username}</div>
-                                        
                                     </div>
                                 )
                             })
@@ -69,10 +77,16 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
                     }
                 </div>
                 <div className="timer">{info.lastMessage.dateDiff}</div>
+                {/* <div className='unread-mess-count'>{unreadCount}</div> */}
             </div>
             :  
-            <div className={`room ${isActive}`}>   
+            <div className={`room ${isActive} ${unreadCount ? 'unread' : ''}`}>   
                 <button className='handler-surface' value={info.roomID} onClick={onRoomClickHanlder} />
+                {unreadCount &&
+                <div className='unread-mess'>
+                    <div className='unread-mess-count'>{unreadCount}</div>
+                </div>
+                }
                 {/* IF PRIVATE THAT SHOW PROFILE PICTURE WITH NAME DESK */}       
                 <div className='room-info'>
                     <div className="photo" style={{backgroundImage: `url(assets/userImages/${info.users[0].picturePath})`}}>
@@ -84,6 +98,7 @@ const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUser
                     </div>
                 </div>
                 <div className="timer">{info.lastMessage.dateDiff}</div>
+                {/* <div>{unreadCount}</div> */}
             </div>
         }
         </>
