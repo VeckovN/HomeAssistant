@@ -141,10 +141,29 @@ const getAllRooms = async(username)=>{
 
     //through every room read another userID -> 1:7 , 1:3 in this situatin 7 and 3
     var roomsArr = []
+    var unreadRoomMessages;
+    // console.log("\n rooms: ", rooms);
     for(const roomID of rooms){
+        unreadRoomMessages = {};
+        // console.log("RoomMMMMMM: ", roomID);
+        // console.log("userID: ", userID);
         const userIDS = roomID.split(":");
         const otherUsers = userIDS.filter(el => el!= userID)
         const lastMessage = await getLastMessageFromRoom(roomID);
+
+        //get unread messages if exists
+        const unreadObjKey =`user${userID}:room:${roomID}:unread`
+        const unreadCount = await hmget(unreadObjKey, "count");
+        const countNumber = Number(unreadCount);
+
+        if(countNumber)
+        {
+            unreadRoomMessages = {
+                roomID:roomID,
+                count:countNumber
+            }
+        }
+        // console.log("unreadOBJ: ", countNumber + "\n");
         
         //DONT USE FOREACH FOR ASYNC/AWAIT ,USE for() because this will wait for async execution
         //Create promise to be ensure tha user is found and then this user push in array
@@ -160,7 +179,9 @@ const getAllRooms = async(username)=>{
             });
         }
 
-        roomsArr.push({roomID, lastMessage, users:roomObjectArray}) //add last message
+        // roomsArr.push({roomID, lastMessage, users:roomObjectArray}) //add last message
+        roomsArr.push({roomID, lastMessage, users:roomObjectArray, unread:unreadRoomMessages})
+        // console.log("ROOMARRRR : ", unreadRoomMessages);
     }
     return roomsArr;
 }
@@ -489,7 +510,8 @@ const sendMessage = async(messageObj) =>{
         // }
     }
 
-    const usersID = roomID.split(":");
+    const usersID = roomID.split(":").filter(id => id != from);
+    console.log("UsersID" , usersID , "\n");
     //get last unread count if exist
     usersID.forEach(async(id)=>{
         const unreadMessKey = `user${id}:room:${roomID}:unread`
