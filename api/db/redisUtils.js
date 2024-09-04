@@ -30,10 +30,19 @@ const updateUserPicturePath = async(username, picturePath) =>{
     await hmset(userKey, ['picturePath', picturePath]);
 }
 
+const getUnreadMessageCountByRoomID = async(userID, roomID) =>{
+    const unreadObjKey =`user${userID}:room:${roomID}:unread`
+    const unreadCount = await hmget(unreadObjKey, "count");
+    const countNumber = Number(unreadCount);
+
+    return countNumber;
+}
+
 module.exports = {
     getUserIdByUsername, 
     getUsernameByUserID,
     getUserInfoByUserID,
     getUserPicturePath,
-    updateUserPicturePath
+    updateUserPicturePath,
+    getUnreadMessageCountByRoomID
 }
