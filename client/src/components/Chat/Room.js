@@ -4,13 +4,18 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 import '../../sass/components/_room.scss';
 
-const Room = ({info, roomInfo, moreRoomUsers, onRoomClickHanlder, onShowMoreUsersFromChatHandler, onUsersFromChatOutHanlder}) =>{
+const Room = ({info, roomInfo, unread, moreRoomUsers, onRoomClickHanlder, onShowMoreUsersFromChatHandler, onUsersFromChatOutHanlder}) =>{
 
     const isActive = info.roomID == roomInfo.roomID ? 'active' : "";
-    const unreadCount = info.unread?.count ? info.unread.count : ""; 
+    const unreadCount = info.unread?.count ? info.unread.count : "";
 
-    console.log("info: ", info);
-    console.log("\n unreadCount:", unreadCount);
+    //unread:
+    //0: {roomID:'32:, count:1}
+    //1: {roomID:"2:5:10:12", count:2}
+    //check does unread has same roomID as roomInfo.roomID
+    // const unreadC = unread.has(roomID) ? unread.count : "";
+
+    console.log("\n unread NOWW: ", unread);
 
     return(
         <>

@@ -6,7 +6,7 @@ import {toast} from 'react-toastify';
 import {getHouseworkers} from '../services/houseworker.js';
 import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup, listenNewOnlineUser} from '../sockets/socketListen.js';
 import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat, emitKickUserFromChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
-import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser, getMoreMessagesByRoomID, getOnlineUsers} from '../services/chat.js';
+import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser, getMoreMessagesByRoomID, getOnlineUsers, getUnreadTotalCountMessages} from '../services/chat.js';
 import {getErrorMessage} from '../utils/ThrowError.js';
 
 const useMessages = (socket, user) =>{
@@ -18,7 +18,8 @@ const useMessages = (socket, user) =>{
         houseworkers:'',
         roomsAction:'', //for handling different state.rooms update actions
         typingUsers:[],
-        onlineUsers:[] //only importants users() that is necessary for Online flag 
+        onlineUsers:[], //only importants users() that is necessary for Online flag 
+        unreadMessages:[],
     }
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
     const [showMenu, setShowMenu] = useState(false);
@@ -67,19 +68,23 @@ const useMessages = (socket, user) =>{
 
     const fetchAllRooms = ( async () =>{   
         const data = await getUserRooms(user.username); //roomID, users{}
-        dispatch({type:"SET_ROOMS", data:data}) 
+        // dispatch({type:"SET_ROOMS", data:data}) 
+        dispatch({type:"SET_ROOMS", data:data.rooms}) 
+        dispatch({type:"SET_UNREAD_MESSAGES", data:data.unread});
 
         //When user has conversations
-        if(data.length > 0){
+        // if(data.length > 0){
+        if(data.rooms.length > 0){
                 //display first room as active
-            const roomID = data[0].roomID;
-            const users = data[0].users;
+            // const roomID = data[0].roomID;
+            // const users = data[0].users;
+            const roomID = data.rooms[0].roomID;
+            const users = data.rooms[0].users;
             dispatch({type:"SET_ROOM_INFO", ID:roomID, usersArray:users});
 
             //COMMENTED (emit event before socket initialization(connection))
             // emitRoomJoin(socket, roomID);
             
-            //MUST PARSE TO JSON BECASE WE GOT MESSAGES AS STRING JSON
             const messages = await getMessagesByRoomID(roomID)
             
             dispatch({type:"SET_ROOM_MESSAGES", data:messages})
@@ -117,7 +122,13 @@ const useMessages = (socket, user) =>{
         emitRoomJoin(socket, roomID);
 
         setIsLoadingMessages(true);
-        const messages = await getMessagesByRoomID(roomID)
+        const messages = await getMessagesByRoomID(roomID);
+
+        // if(roomInfo.unread === roomID){
+            // await resetUnreadMessagesCount(user.userID, roomID);
+            // dispatch({type:"REMOVE_UNREAD_MESSAGE_FROM_USER", roomID});
+        // }
+
         dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
         setIsLoadingMessages(false);
 
@@ -177,7 +188,8 @@ const useMessages = (socket, user) =>{
     //IMPROVE:fetch and re-render only rooms that the newOnline user is member 
     const showNewOnlineUsers = async() =>{
         const data = await getUserRooms(user.username); //roomID, users{}
-        dispatch({type:"SET_ROOMS", data:data}) 
+        // dispatch({type:"SET_ROOMS", data:data}) 
+        dispatch({type:"SET_ROOMS", data:data.rooms}) 
     }
     //roomID, lastMessage, users:roomObjectArray
     // users:
@@ -285,7 +297,6 @@ const useMessages = (socket, user) =>{
             enterRoomAfterAction(newRoomID);
 
             toast.info("The user "+ username + " has been kicked from the chat");
-
         }
         catch(err){
             const error = getErrorMessage(err);
@@ -299,10 +310,6 @@ const useMessages = (socket, user) =>{
 
     const onSendMessageHandler = async({message, fromRoomID}) =>{        
         if(message != ''){
-
-            // messageRef.current.value = ''
-            //emit io.socket event for sending mesasge
-            //this will trigger evento on server (in index.js) and send message to room
             const messageObj = {
                 message:message,
                 from:user.userID,

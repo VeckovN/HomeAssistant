@@ -30,7 +30,6 @@ const Messages = ({socket, connected}) =>{
         onShowRoomsButtonHandler
     } = useMessages(socket, user);
 
-
     return (
     <div className={`container-${user.type === "Houseworker" ? "houseworker" : "client"}`}> 
         {state.loading ? <Spinner className='profile-spinner'/> :
@@ -43,6 +42,7 @@ const Messages = ({socket, connected}) =>{
                 <Rooms 
                     rooms={state.rooms}
                     roomInfo={state.roomInfo}
+                    unread={state.unreadMessages}
                     showMoreRoomUsers={showMoreRoomUsers}
                     onRoomClickHanlder={onRoomClickHanlder}
                     onShowMoreUsersFromChatHandler={onShowMoreUsersFromChatHandler}

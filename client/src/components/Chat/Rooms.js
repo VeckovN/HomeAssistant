@@ -1,7 +1,7 @@
 import Spinner from '../../components/UI/Spinner.js';
 import Room from "./Room.js";
 
-const Rooms = ({rooms, roomInfo, showMoreRoomUsers, onRoomClickHanlder, onShowMoreUsersFromChatHandler, onUsersFromChatOutHanlder}) =>{
+const Rooms = ({rooms, roomInfo, unread, showMoreRoomUsers, onRoomClickHanlder, onShowMoreUsersFromChatHandler, onUsersFromChatOutHanlder}) =>{
     return (
             <div className='rooms'>
                 {rooms ?
@@ -9,6 +9,7 @@ const Rooms = ({rooms, roomInfo, showMoreRoomUsers, onRoomClickHanlder, onShowMo
                         <Room
                             key={`room-${el.roomID}`}
                             info={el}
+                            unread={unread}
                             roomInfo={roomInfo}
                             moreRoomUsers={showMoreRoomUsers}
                             onRoomClickHanlder={onRoomClickHanlder}
