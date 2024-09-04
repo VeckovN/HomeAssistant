@@ -1,6 +1,6 @@
 const {incr, set, hmset, sadd, hmget, exists, zrange, smembers, zadd, zrangerev, srem, del, get, rename, scard} = require('../db/redis');
 const {formatDate, parseFormattedDate, calculateTimeDifference} = require('../utils/dateUtils');
-const { getUserIdByUsername, getUserInfoByUserID, getUserPicturePath} = require('../db/redisUtils');
+const { getUserIdByUsername, getUserInfoByUserID, getUserPicturePath, getUnreadMessageCountByRoomID} = require('../db/redisUtils');
 
 
 //With username(same username as in Neo4j) we got userID(same user but in redis)
@@ -142,6 +142,7 @@ const getAllRooms = async(username)=>{
     //through every room read another userID -> 1:7 , 1:3 in this situatin 7 and 3
     var roomsArr = []
     var unreadRoomMessages;
+    var unreadMess = [];
     // console.log("\n rooms: ", rooms);
     for(const roomID of rooms){
         unreadRoomMessages = {};
@@ -152,16 +153,24 @@ const getAllRooms = async(username)=>{
         const lastMessage = await getLastMessageFromRoom(roomID);
 
         //get unread messages if exists
-        const unreadObjKey =`user${userID}:room:${roomID}:unread`
-        const unreadCount = await hmget(unreadObjKey, "count");
-        const countNumber = Number(unreadCount);
-
+        // const unreadObjKey =`user${userID}:room:${roomID}:unread`
+        // const unreadCount = await hmget(unreadObjKey, "count");
+        // const countNumber = Number(unreadCount);
+        const countNumber = await getUnreadMessageCountByRoomID(userID, roomID);
         if(countNumber)
         {
+            console.log("!!!!!!!");
             unreadRoomMessages = {
                 roomID:roomID,
                 count:countNumber
             }
+            const obj ={
+                roomID:roomID,
+                count:countNumber,
+
+            }
+            unreadMess.push(obj);
+            console.log("unreadMess:", unreadMess , "\n");
         }
         // console.log("unreadOBJ: ", countNumber + "\n");
         
@@ -179,11 +188,16 @@ const getAllRooms = async(username)=>{
             });
         }
 
-        // roomsArr.push({roomID, lastMessage, users:roomObjectArray}) //add last message
-        roomsArr.push({roomID, lastMessage, users:roomObjectArray, unread:unreadRoomMessages})
-        // console.log("ROOMARRRR : ", unreadRoomMessages);
+
+        roomsArr.push({roomID, lastMessage, users:roomObjectArray}) //add last message
+        // roomsArr.push({roomID, lastMessage, users:roomObjectArray, unread:unreadRoomMessages})
+        console.log("ROOMARRRR : ", unreadRoomMessages);
     }
-    return roomsArr;
+
+    const roomsObj = {rooms:[...roomsArr], unread:unreadMess}
+    console.log("\n newObj: ", roomsObj);
+    return roomsObj;
+    // return roomsArr;
 }
 // const getAllRooms = async(username)=>{
 //     let userID = await getUserIdByUsername(username);
@@ -419,60 +433,9 @@ const removeUserFromRoomID = async(roomID, username) =>{
         kickedUserID:userID
     };
 }
-
-// const removeUserFromRoomID = async(roomID, username) =>{
-//     const user = await get(`username:${username}`);
-//     const userID = user.split(":")[1] ; //'user':ID 
-
-//     const currentRoomKey = `room:${roomID}` //room:1:2
-//     const currentUserIDS = roomID.split(':');
-
-//     const newIds = currentUserIDS.filter(id => id !== userID);
-//     const newRoomID = newIds.join(":");
-//     const newRoomKey = `room:${newRoomID}`
-//     let oldRoomFlag = false;
-//     //if newRoomKey exist (group with same members)
-//     //same newRoomKey after kicking user makes confict(can't same members of chat has more then 1 conversations)
-//     const newRoomKeyExists = await exists(newRoomKey);
-//     //send newRoomID same as currentRoomIR
-//     //because of it user will choose one of the options:
-//     //1. remove this chat conversation(after kicking user)
-//     //2. remove other room(that contains same userID as newRoomID -> same users after kicking selected user)
-//     if(newRoomKeyExists){
-//         oldRoomFlag =true
-//     }
-
-//     //(FOR REMOVED USER)
-//     //-find set `user:${userID}:rooms` and remove roomID from that set
-//     await srem(`user:${userID}:rooms`, roomID);
-
-//     //FOR OTHER MEMBERS (replace the old RoomID with new one)
-//     newIds.forEach(async(id) =>{ 
-//         await srem(`user:${id}:rooms`, roomID);
-//         await sadd(`user:${id}:rooms`, newRoomID);
-//     })
-
-//     //find sorted set and remove user from it (id) room:3:6:22:123 where messages are stored
-//     await rename(currentRoomKey, newRoomKey);
-
-//     //Store Server message (user {username} is kicked from the chat)
-//     const timestamps = Date.now(); //used for score value (miliseconds)
-//     const date = new Date(timestamps); //obj that contains 
-//     const dateFormat = formatDate(date);
-//     const messageObj = JSON.stringify({message:`User ${username} has been kicked from the chat`, from:'Server', date:dateFormat, roomID:newRoomID})
-//     await zadd(newRoomKey, timestamps, messageObj);
-
-//     return {
-//         oldRoomFlag:false,
-//         newRoomID:newRoomID, 
-//         kickedUserID:userID
-//     };
-// }
  
 const sendMessage = async(messageObj) =>{
     const {roomID, from} = messageObj;
-
-    //ZADD {room:1:3} 1615480369 {user:1, date:formattedDate, message:'Hello"}
     const roomKey = `room:${roomID}`;
     const roomExists = await exists(roomKey);
 
@@ -498,39 +461,66 @@ const sendMessage = async(messageObj) =>{
         usersID.forEach(async(id)=>{
             await sadd(`user:${id}:rooms`, roomID);
         })
-
-        // const roomNotification={
-        //     id: message.roomID,
-        //     names:[
-        //         //name of users in room
-        //         usersID.forEach(async(id)=>{
-        //             await hmget(`user:${id}`, "username");
-        //         })
-        //     ]
-        // }
     }
 
-    const usersID = roomID.split(":").filter(id => id != from);
+    const userIDFromRoom = roomID.split(":").filter(id => id != from);
 
     //get last unread count if exist
-    usersID.forEach(async(id)=>{
-        const unreadMessKey = `user${id}:room:${roomID}:unread`
-        const count = await hmget(unreadMessKey, "count");
-        const countNumber = Number(count);
-        let newCount;
-        if(count)
-            newCount = countNumber + 1;
-        else
-            newCount = 0
+    userIDFromRoom.forEach(async(id)=>{
 
-        await hmset(unreadMessKey, ["last_received_timestamp", timestamps, "count", newCount, "sender", from]);
-        console.log(`unreadMessKey: ${unreadMessKey}  timestamp: ${timestamps} count: ${newCount} sender: ${from}`);
+        const unreadMessKey =`user${id}:room:${roomID}:unread`
+        let countNumber = await getUnreadMessageCountByRoomID(id, roomID);
+        console.log("\n unreaDMESSKEYT: ", unreadMessKey);
+        console.log("\n COUNT NUMBER: " , countNumber);
+        
+        if(countNumber)
+            countNumber = countNumber + 1;
+        else
+            countNumber = 1;
+
+        console.log("AFTER COUNT NUM INCREASING OR SETING ON 1 : " , countNumber)
+
+        await hmset(unreadMessKey, ["last_received_timestamp", timestamps, "count", countNumber, "sender", from]);
     })
 
     await zadd(roomKey, timestamps, JSON.stringify(newMessageObj));
     return {roomKey, dateFormat};
 }
 
+//when user click on room with unread messages
+const resetUnreadMessagesCount = async(userID, roomID) =>{
+    try{
+        const unreadMessKey = `user${userID}:room:${roomID}:unread`
+        //clear hmget
+        await del(unreadMessKey);
+        return {status:"success"};
+    }
+    catch(err){
+        console.error("Redis reset unread message count Errror: " + err);
+        return {success:false, message:"Error with reseting unread message"}
+    }
+}
+
+const getUnreadMessagesTotalCount = async(userID) =>{
+    try{
+        //get all userID rooms
+        const userRoomKey = `user:${userID}:rooms`;
+        let rooms = await smembers(userRoomKey);
+        let totalCount = 0;
+        for(const roomID of rooms){
+            const countNumber = await getUnreadMessageCountByRoomID(userID, roomID);
+            console.log("RoomID: ", roomID, "userID: ", userID ,"CountNUmber: " , countNumber);
+            if(countNumber)
+                totalCount += countNumber;
+        }
+        console.log("COUNT NUMBER TOTAL: " , totalCount);
+        return totalCount;
+    }
+    catch(err){
+        console.error("Redis get unread messages count Errror: " + err);
+        return {success:false, message:"Error with reseting unread message"}
+    }
+}
 
 const getRoomCount = async(userID)=>{
     const userKey = `user:${userID}:rooms`;
@@ -580,6 +570,8 @@ module.exports ={
     sendMessage,
     deleteUserOnNeo4JFailure,
     getOnlineUsersFromChat,
-    getFriendsListByUserID
+    getFriendsListByUserID,
+    resetUnreadMessagesCount,
+    getUnreadMessagesTotalCount
 }
 
