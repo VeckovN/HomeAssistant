@@ -139,6 +139,17 @@ const getFriendsList = async(req,res) =>{
     }
 }
 
+const getUnreadMessagesTotalCount = async(req,res) =>{
+    try{
+        const userID = req.params.userID;
+        const result = await chatModal.getUnreadMessagesTotalCount(userID)
+        res.status(200).json(result);
+    }
+    catch(err){
+        res.status(400).json({error: 'UnreadMessage TotalCount error'})
+    }
+}
+
 module.exports ={
     getMessages,
     getMoreMessages,
@@ -149,5 +160,6 @@ module.exports ={
     addUserToRoom,
     getConversationCount,
     getOnlineUsers,
-    getFriendsList
+    getFriendsList,
+    getUnreadMessagesTotalCount
 }

@@ -10,7 +10,8 @@ const {
     addUserToRoom,
     getConversationCount,
     getOnlineUsers,
-    getFriendsList
+    getFriendsList,
+    getUnreadMessagesTotalCount
 } = require('../controller/chatController'); 
 const router = express.Router();
 
@@ -28,7 +29,9 @@ router.delete('/room/removeUser/:roomID/:username', checkClient, removeUserFromR
 router.post('/room/addUser', checkClient, addUserToRoom);
 router.get('/room/onlineUsers/:userID', isLogged, getOnlineUsers)
 router.get('/room/friends/:userID', isLogged, getFriendsList);
+router.get('/room/unread/:userID', isLogged, getUnreadMessagesTotalCount);
 router.get('/conversationCount/:userID', checkHouseworker, getConversationCount);
 router.get('/rooms/:username', isLogged, getAllRooms);
+
 
 module.exports = router;
