@@ -1,19 +1,31 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
 import {logout} from '../../store/auth-slice';
+import {getUnreadTotalCountMessages} from '../../services/chat.js'
 
 import '../../sass/layout/_header.scss';
 
 const Header = () =>{
     const dispatch = useDispatch();
     const [showMenu, setShowMenu] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
 
     const {user} = useSelector((state) => state.auth)
     let houseworker;
 
     if(user)
         houseworker = user.type === 'Houseworker' ? true : false;
+
+     //get unread notifications (comments,rates(neo4j) and messages(redis))
+    const getUnreadCount = async() =>{
+        const count = await getUnreadTotalCountMessages(user.userID);
+        setUnreadCount(count)
+    }
+
+    useEffect(() =>{
+        getUnreadCount();
+    },[])
 
     const logoutHandler = () =>{
         dispatch(logout());
@@ -58,7 +70,7 @@ const Header = () =>{
                 !showMenu ?
                 <>
                     <Link to='/profile' className='nav-link' >Profile</Link>
-                    <Link to='/messages' className='nav-link' >Messages</Link>
+                    <Link to='/messages' className='nav-link' ><span className='unread-header-message'>{unreadCount !=0 ? unreadCount : ""}</span>Messages</Link>
                     <button onClick={logoutHandler} className='nav-link-button '>Logout</button>
                 </>
                 :

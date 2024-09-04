@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import { NavLink, Outlet} from "react-router-dom";
 import {useDispatch} from 'react-redux';
 import {logout} from '../../store/auth-slice'
+import {getUnreadTotalCountMessages} from '../../services/chat.js';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHouse } from '@fortawesome/free-solid-svg-icons';
@@ -18,9 +19,22 @@ import KeyboardArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardArrowLeft
 import '../../sass/layout/_sidebar.scss';
 
  
-const Sidebar = () => {
+const Sidebar = ({user}) => {
     const dispatch = useDispatch();
     const [isOpen, setIsOpen] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(null);
+    
+    const getUnreadCount = async() =>{
+        const count = await getUnreadTotalCountMessages(user.userID);
+        if(count > 0)
+            setUnreadCount(count)
+    }
+
+    useEffect(() =>{
+        getUnreadCount();
+    },[])
+
+    console.log("unreadCount : ", unreadCount);
 
     const logoutHandler = () =>{
         dispatch(logout());
@@ -35,6 +49,7 @@ const Sidebar = () => {
         {
             path:"/messages",
             name:"Messages",
+            unreadMessageCount:unreadCount,
             icon:<FontAwesomeIcon icon={faMessage}/>,
         },
         {
@@ -87,6 +102,7 @@ const Sidebar = () => {
                                 }>
                                     <div className='sidebar-menu-icon'>{el.icon}</div>
                                     <div className='sidebar-menu-name'>{el.name}</div>
+                                    {el.unreadMessageCount && <div className='sidebar-menu-unread'>{el.unreadMessageCount}</div>}
                                 </NavLink>
                             ))
                         }
