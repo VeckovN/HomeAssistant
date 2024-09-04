@@ -503,17 +503,16 @@ const resetUnreadMessagesCount = async(userID, roomID) =>{
 
 const getUnreadMessagesTotalCount = async(userID) =>{
     try{
-        //get all userID rooms
         const userRoomKey = `user:${userID}:rooms`;
         let rooms = await smembers(userRoomKey);
+
         let totalCount = 0;
         for(const roomID of rooms){
             const countNumber = await getUnreadMessageCountByRoomID(userID, roomID);
-            console.log("RoomID: ", roomID, "userID: ", userID ,"CountNUmber: " , countNumber);
             if(countNumber)
                 totalCount += countNumber;
         }
-        console.log("COUNT NUMBER TOTAL: " , totalCount);
+
         return totalCount;
     }
     catch(err){
