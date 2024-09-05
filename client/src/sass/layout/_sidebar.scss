@@ -177,6 +177,20 @@
                             display:none;
                         }
                     }
+                    .sidebar-menu-unread{
+                        width: 25px;
+                        height: 25px;
+                        margin-left:auto;
+                        margin-right:.5em;
+
+                        font-weight: 500;
+                        font-size:$fs-em-4;
+                        font-family: $font-family-2;
+                        color:$grey-2;
+                        background-color: $color-hs-6;
+                        text-align: center;
+                        border-radius: 10%;
+                    }
                 }
 
                 .logout{

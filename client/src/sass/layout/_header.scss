@@ -121,6 +121,27 @@
             right:.5em;
             font-size: $fs-em-6;
         }
+        .message{
+            position:relative;
+
+            &:hover .unread-header-message{
+                color:c.$nav-hover-color;
+            }
+        }
+
+        .unread-header-message{
+            position:absolute;
+            top:-1.4em;
+            right:.4em;
+
+            color:rgb(179, 7, 7);
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            text-align: center;
+            border:none;
+            border-radius: 10%;
+        }
 
         .nav-link{
             @extend %nav-link-styles;
