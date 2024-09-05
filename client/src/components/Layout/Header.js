@@ -12,6 +12,7 @@ const Header = () =>{
     const [unreadCount, setUnreadCount] = useState(0);
 
     const {user} = useSelector((state) => state.auth)
+    //useSelectro for unread Messages to provide real-time unread count changing(when the user read message)
     let houseworker;
 
     if(user)
@@ -24,8 +25,9 @@ const Header = () =>{
     }
 
     useEffect(() =>{
-        getUnreadCount();
-    },[])
+        if(user)
+            getUnreadCount();
+    },[user])
 
     const logoutHandler = () =>{
         dispatch(logout());
@@ -70,7 +72,7 @@ const Header = () =>{
                 !showMenu ?
                 <>
                     <Link to='/profile' className='nav-link' >Profile</Link>
-                    <Link to='/messages' className='nav-link' ><span className='unread-header-message'>{unreadCount !=0 ? unreadCount : ""}</span>Messages</Link>
+                    <Link to='/messages' className='nav-link message' ><span className='unread-header-message'>{unreadCount !=0 ? unreadCount : ""}</span>Messages</Link>
                     <button onClick={logoutHandler} className='nav-link-button '>Logout</button>
                 </>
                 :
