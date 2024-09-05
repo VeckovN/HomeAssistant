@@ -6,7 +6,7 @@ import {toast} from 'react-toastify';
 import {getHouseworkers} from '../services/houseworker.js';
 import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup, listenNewOnlineUser} from '../sockets/socketListen.js';
 import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat, emitKickUserFromChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
-import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser, getMoreMessagesByRoomID, getOnlineUsers, getUnreadTotalCountMessages} from '../services/chat.js';
+import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser, getMoreMessagesByRoomID, getOnlineUsers, resetUnreadMessagesCount} from '../services/chat.js';
 import {getErrorMessage} from '../utils/ThrowError.js';
 
 const useMessages = (socket, user) =>{
@@ -124,10 +124,13 @@ const useMessages = (socket, user) =>{
         setIsLoadingMessages(true);
         const messages = await getMessagesByRoomID(roomID);
 
-        // if(roomInfo.unread === roomID){
-            // await resetUnreadMessagesCount(user.userID, roomID);
-            // dispatch({type:"REMOVE_UNREAD_MESSAGE_FROM_USER", roomID});
-        // }
+        const unreadExists = Object.values(state.unreadMessages).some(
+            (item) => item.roomID === roomID
+        )
+        if(unreadExists){
+            await resetUnreadMessagesCount(roomID, user.userID);
+            dispatch({type:"REMOVE_UNREAD_MESSAGE_FROM_USER", data:roomID});
+        }
 
         dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
         setIsLoadingMessages(false);

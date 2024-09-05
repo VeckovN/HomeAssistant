@@ -4,24 +4,18 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 import '../../sass/components/_room.scss';
 
-const Room = ({info, roomInfo, unread, moreRoomUsers, onRoomClickHanlder, onShowMoreUsersFromChatHandler, onUsersFromChatOutHanlder}) =>{
+const Room = ({info, roomInfo, unreadItem, moreRoomUsers, onRoomClickHanlder, onShowMoreUsersFromChatHandler, onUsersFromChatOutHanlder}) =>{
 
+    //FIX
+    //THIS ROOM IS RENDERED 3 times(FIX IT)-> Probably some state that is again settet trigger that effect (could be parrent state)
     const isActive = info.roomID == roomInfo.roomID ? 'active' : "";
-    const unreadCount = info.unread?.count ? info.unread.count : "";
-
-    //unread:
-    //0: {roomID:'32:, count:1}
-    //1: {roomID:"2:5:10:12", count:2}
-    //check does unread has same roomID as roomInfo.roomID
-    // const unreadC = unread.has(roomID) ? unread.count : "";
-
-    console.log("\n unread NOWW: ", unread);
+    const unreadCount = unreadItem ? unreadItem.count : null;
 
     return(
         <>
             {info.users.length > 1 
             ?
-            <div className={`room group ${isActive} ${unreadCount ? 'unread' : ''}`} >
+            <div className={`room group ${isActive} ${unreadItem? 'unread' : ''}`} >
             {unreadCount &&     
             <div className='unread-mess'>
                 <div className='unread-mess-count'>{unreadCount}</div>
