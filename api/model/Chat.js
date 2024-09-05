@@ -192,10 +192,10 @@ const getAllRooms = async(username)=>{
         roomsArr.push({roomID, lastMessage, users:roomObjectArray}) //add last message
         // roomsArr.push({roomID, lastMessage, users:roomObjectArray, unread:unreadRoomMessages})
         console.log("ROOMARRRR : ", unreadRoomMessages);
+        
     }
 
     const roomsObj = {rooms:[...roomsArr], unread:unreadMess}
-    console.log("\n newObj: ", roomsObj);
     return roomsObj;
     // return roomsArr;
 }
@@ -488,10 +488,9 @@ const sendMessage = async(messageObj) =>{
 }
 
 //when user click on room with unread messages
-const resetUnreadMessagesCount = async(userID, roomID) =>{
+const resetUnreadMessagesCount = async(roomID, userID) =>{
     try{
         const unreadMessKey = `user${userID}:room:${roomID}:unread`
-        //clear hmget
         await del(unreadMessKey);
         return {status:"success"};
     }

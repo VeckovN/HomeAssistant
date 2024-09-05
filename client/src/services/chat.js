@@ -105,8 +105,17 @@ export const getFriendsList = async(userID) =>{
 export const getUnreadTotalCountMessages = async(userID) =>{
     try{
         const result = await axiosSession.get(BASE_URL + `chat/room/unread/${userID}`);
-        console.log("Service Unread Data: ", result.data);
         return result.data;
+    }
+    catch(err){
+        ThrowErorr(err);
+    }
+}
+
+export const resetUnreadMessagesCount = async(roomID, userID) =>{
+    try{
+        const res = await axiosSession.delete(BASE_URL + `chat/room/unread/delete/${roomID}/${userID}`);
+        console.log("Resss: ", res);
     }
     catch(err){
         ThrowErorr(err);
