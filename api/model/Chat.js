@@ -463,11 +463,15 @@ const sendMessage = async(messageObj) =>{
         })
     }
 
-    const userIDFromRoom = roomID.split(":").filter(id => id != from);
+    await postUnreadMessagesToUser(roomID, from);
+    await zadd(roomKey, timestamps, JSON.stringify(newMessageObj));
+    return {roomKey, dateFormat};
+}
 
-    //get last unread count if exist
+const postUnreadMessagesToUser = async(roomID, senderUserID) =>{
+    const userIDFromRoom = roomID.split(":").filter(id => id != senderUserID);
+    
     userIDFromRoom.forEach(async(id)=>{
-
         const unreadMessKey =`user${id}:room:${roomID}:unread`
         let countNumber = await getUnreadMessageCountByRoomID(id, roomID);
         console.log("\n unreaDMESSKEYT: ", unreadMessKey);
@@ -480,11 +484,9 @@ const sendMessage = async(messageObj) =>{
 
         console.log("AFTER COUNT NUM INCREASING OR SETING ON 1 : " , countNumber)
 
-        await hmset(unreadMessKey, ["last_received_timestamp", timestamps, "count", countNumber, "sender", from]);
+        // await hmset(unreadMessKey, ["last_received_timestamp", timestamps, "count", countNumber, "sender", from]);
+        await hmset(unreadMessKey, ["count", countNumber, "sender", senderUserID]);
     })
-
-    await zadd(roomKey, timestamps, JSON.stringify(newMessageObj));
-    return {roomKey, dateFormat};
 }
 
 //when user click on room with unread messages
