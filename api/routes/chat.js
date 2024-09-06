@@ -11,6 +11,7 @@ const {
     getConversationCount,
     getOnlineUsers,
     getFriendsList,
+    getAllUnreadMessages,
     getUnreadMessagesTotalCount,
     removeUnreadMessagesFromRoom
 } = require('../controller/chatController'); 
@@ -30,7 +31,7 @@ router.delete('/room/removeUser/:roomID/:username', checkClient, removeUserFromR
 router.post('/room/addUser', checkClient, addUserToRoom);
 router.get('/room/onlineUsers/:userID', isLogged, getOnlineUsers)
 router.get('/room/friends/:userID', isLogged, getFriendsList);
-// router.get('/room/unread/:userID', isLogged, getUnreadMessages);
+router.get('/room/unread/:username', isLogged, getAllUnreadMessages);
 router.get('/room/unread/count/:userID', isLogged, getUnreadMessagesTotalCount);
 router.delete('/room/unread/delete/:roomID/:userID', isLogged, removeUnreadMessagesFromRoom);
 router.get('/conversationCount/:userID', checkHouseworker, getConversationCount);

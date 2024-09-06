@@ -102,6 +102,15 @@ export const getFriendsList = async(userID) =>{
     }
 }
 
+export const getAllUnreadMessages = async(username) =>{
+    try{
+        const result = await axiosSession.get(BASE_URL + `chat/room/unread/${username}`);
+        return result.data;
+    }
+    catch(err){
+        ThrowErorr(err);
+    }
+}
 
 export const getUnreadTotalCountMessages = async(userID) =>{
     try{

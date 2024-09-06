@@ -486,7 +486,44 @@ const postUnreadMessagesToUser = async(roomID, senderUserID) =>{
 
         // await hmset(unreadMessKey, ["last_received_timestamp", timestamps, "count", countNumber, "sender", from]);
         await hmset(unreadMessKey, ["count", countNumber, "sender", senderUserID]);
+
     })
+}
+
+const getUnreadMessages = async(username) =>{
+    let userID = await getUserIdByUsername(username);
+    const userRoomKey = `user:${userID}:rooms`;
+    let rooms = await smembers(userRoomKey);
+
+    var unreadRoomMessages;
+    var unreadMessageArray = [];
+    let totalCount = 0;
+    for(const roomID of rooms){
+        unreadRoomMessages = {};
+        // console.log("RoomMMMMMM: ", roomID);
+        // console.log("userID: ", userID);
+
+        //get unread messages if exists
+        // const unreadObjKey =`user${userID}:room:${roomID}:unread`
+        // const unreadCount = await hmget(unreadObjKey, "count");
+        // const countNumber = Number(unreadCount);
+        const countNumber = await getUnreadMessageCountByRoomID(userID, roomID);
+        if(countNumber)
+        {
+            const obj ={
+                roomID:roomID,
+                count:countNumber,
+                // sender:userID
+            }
+            unreadMessageArray.push(obj);
+            totalCount += countNumber;
+            console.log("unreadMess:", unreadMessageArray , "\n");
+        }
+        console.log("ROOMARRRR : ", unreadRoomMessages);
+    }
+
+    const unreadMessageObj = {unread:unreadMessageArray, totalUnread:totalCount}
+    return unreadMessageObj;
 }
 
 //when user click on room with unread messages
@@ -571,6 +608,8 @@ module.exports ={
     deleteUserOnNeo4JFailure,
     getOnlineUsersFromChat,
     getFriendsListByUserID,
+    getUnreadMessages,
+    postUnreadMessagesToUser,
     resetUnreadMessagesCount,
     getUnreadMessagesTotalCount
 }
