@@ -530,8 +530,9 @@ const getUnreadMessages = async(username) =>{
 const resetUnreadMessagesCount = async(roomID, userID) =>{
     try{
         const unreadMessKey = `user${userID}:room:${roomID}:unread`
+        const countNumber = await getUnreadMessageCountByRoomID(userID, roomID);
         await del(unreadMessKey);
-        return {status:"success"};
+        return {status:"success", removedCount:countNumber};
     }
     catch(err){
         console.error("Redis reset unread message count Errror: " + err);

@@ -124,8 +124,8 @@ export const getUnreadTotalCountMessages = async(userID) =>{
 
 export const resetUnreadMessagesCount = async(roomID, userID) =>{
     try{
-        const res = await axiosSession.delete(BASE_URL + `chat/room/unread/delete/${roomID}/${userID}`);
-        console.log("Resss: ", res);
+        const result = await axiosSession.delete(BASE_URL + `chat/room/unread/delete/${roomID}/${userID}`);
+        return result.data;
     }
     catch(err){
         ThrowErorr(err);
