@@ -3,6 +3,7 @@
 import {useDispatch} from 'react-redux';
 import { useEffect } from 'react';
 import {login, reset as resetRedux} from '../store/auth-slice.js';
+import {getUserUnreadMessages} from '../store/unreadMessagesSlice.js'
 import { useForm } from 'react-hook-form';
 import {zodResolver} from "@hookform/resolvers/zod";
 import { string, z } from "zod";
@@ -27,6 +28,10 @@ const Login = () =>{
         //error is taken from trunk in redux -> return thunkAPI.rejectWithValue(message);
         dispatch(login(formValues))
             .unwrap()
+            .then(()=>{
+                //If login is successful, get all unread messages
+                dispatch(getUserUnreadMessages(formValues.username));
+            })
             .catch((rejectedValue) => {
                 const errorType = rejectedValue.errorType;
                 if (errorType) {
@@ -39,6 +44,8 @@ const Login = () =>{
                 }
             });
         dispatch(resetRedux());
+
+        // dispatch(getUserUnreadMessages(formValues.username));
     }
 
     return (
