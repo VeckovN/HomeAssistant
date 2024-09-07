@@ -1,12 +1,15 @@
 import Spinner from '../../components/UI/Spinner.js';
 import Room from "./Room.js";
+import {useSelector} from 'react-redux';
 
-const Rooms = ({rooms, roomInfo, unread, showMoreRoomUsers, onRoomClickHanlder, onShowMoreUsersFromChatHandler, onUsersFromChatOutHanlder}) =>{
+const Rooms = ({rooms, roomInfo, showMoreRoomUsers, onRoomClickHanlder, onShowMoreUsersFromChatHandler, onUsersFromChatOutHanlder}) =>{
+    const {unreadMessages} = useSelector((state) => state.unreadMessages);
+    
     return(
             <div className='rooms'>
                 {rooms ?
                     rooms.map(el =>{      
-                        const unreadItem = Object.values(unread).find(
+                        const unreadItem = Object.values(unreadMessages).find(
                             (item) => item.roomID === el.roomID
                         );
                         return(

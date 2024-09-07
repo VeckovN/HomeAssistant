@@ -1,33 +1,20 @@
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import {Link} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
 import {logout} from '../../store/auth-slice';
-import {getUnreadTotalCountMessages} from '../../services/chat.js'
+import {getUserUnreadMessages} from '../../store/unreadMessagesSlice.js';
 
 import '../../sass/layout/_header.scss';
 
 const Header = () =>{
     const dispatch = useDispatch();
     const [showMenu, setShowMenu] = useState(false);
-    const [unreadCount, setUnreadCount] = useState(0);
-
     const {user} = useSelector((state) => state.auth)
-    //useSelectro for unread Messages to provide real-time unread count changing(when the user read message)
+    const {unreadCount} = useSelector((state) => state.unreadMessages);
+    
     let houseworker;
-
     if(user)
         houseworker = user.type === 'Houseworker' ? true : false;
-
-     //get unread notifications (comments,rates(neo4j) and messages(redis))
-    const getUnreadCount = async() =>{
-        const count = await getUnreadTotalCountMessages(user.userID);
-        setUnreadCount(count)
-    }
-
-    useEffect(() =>{
-        if(user)
-            getUnreadCount();
-    },[user])
 
     const logoutHandler = () =>{
         dispatch(logout());

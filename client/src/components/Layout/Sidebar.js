@@ -1,8 +1,7 @@
-import { useState, useEffect} from "react";
+import { useState} from "react";
 import { NavLink, Outlet} from "react-router-dom";
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {logout} from '../../store/auth-slice'
-import {getUnreadTotalCountMessages} from '../../services/chat.js';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHouse } from '@fortawesome/free-solid-svg-icons';
@@ -22,18 +21,7 @@ import '../../sass/layout/_sidebar.scss';
 const Sidebar = ({user}) => {
     const dispatch = useDispatch();
     const [isOpen, setIsOpen] = useState(false);
-    const [unreadCount, setUnreadCount] = useState(null);
-    
-    const getUnreadCount = async() =>{
-        const count = await getUnreadTotalCountMessages(user.userID);
-        if(count > 0)
-            setUnreadCount(count)
-    }
-
-    useEffect(() =>{
-        getUnreadCount();
-    },[])
-
+    const {unreadCount} = useSelector((state) => state.unreadMessages);
     console.log("unreadCount : ", unreadCount);
 
     const logoutHandler = () =>{
