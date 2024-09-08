@@ -153,18 +153,6 @@ export const MessagesReducer = (state, action) =>{
                 ...state,
                 onlineUsers: state.onlineUsers.filter(el => el != action.data)
             }
-        case "SET_UNREAD_MESSAGES":
-            return{
-                ...state,
-                unreadMessages:action.data
-            }
-        case "REMOVE_UNREAD_MESSAGE_FROM_USER":
-            return{
-                ...state,
-                unreadMessages: state.unreadMessages.filter(
-                    (el) => el.roomID !== action.data 
-                ),
-            }
 
         default:
             return state;
