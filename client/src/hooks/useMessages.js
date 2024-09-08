@@ -1,13 +1,15 @@
 import { useReducer, useState, useRef, useEffect } from "react";
-
-import {MessagesReducer} from '../components/MessagesReducer.js';
-
+import {useDispatch} from 'react-redux';
 import {toast} from 'react-toastify';
+import {getErrorMessage} from '../utils/ThrowError.js';
+import {MessagesReducer} from '../components/MessagesReducer.js';
 import {getHouseworkers} from '../services/houseworker.js';
 import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup, listenNewOnlineUser} from '../sockets/socketListen.js';
 import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat, emitKickUserFromChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
-import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser, getMoreMessagesByRoomID, getOnlineUsers, resetUnreadMessagesCount} from '../services/chat.js';
-import {getErrorMessage} from '../utils/ThrowError.js';
+import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser, getMoreMessagesByRoomID, getOnlineUsers} from '../services/chat.js';
+import {resetUserUnreadMessagesCount} from '../store/unreadMessagesSlice.js';
+
+
 
 const useMessages = (socket, user) =>{
     const initialState = {
@@ -20,6 +22,7 @@ const useMessages = (socket, user) =>{
         typingUsers:[],
         onlineUsers:[], //only importants users() that is necessary for Online flag 
         unreadMessages:[],
+        unreadCount:0
     }
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
     const [showMenu, setShowMenu] = useState(false);
@@ -27,6 +30,13 @@ const useMessages = (socket, user) =>{
     const [showChatView, setShowChatView] = useState(false);
     const [showMoreRoomUsers, setShowMoreRoomUsers] = useState({});
     const pageNumberRef = useRef(0); 
+
+    const reduxDispatch = useDispatch();
+
+    //UNRAD MESSAGES MUST BE FETCH ON FIRST PAGE LOAD (not on /message load, due to unreadCOunt)
+    //or JUST FETCH unreadCOunt for notification (coutn indicator)
+    console.log("STATAAAAAAAAAAAAAA", state.unreadMessages);
+    console.log("SSSSSSC OUNT :" , state.unreadCount);
 
     const onShowMenuToggleHandler = () =>  setShowMenu(prev => !prev);
     const onUsersFromChatOutHanlder = () => setShowMoreRoomUsers({});
@@ -70,7 +80,6 @@ const useMessages = (socket, user) =>{
         const data = await getUserRooms(user.username); //roomID, users{}
         // dispatch({type:"SET_ROOMS", data:data}) 
         dispatch({type:"SET_ROOMS", data:data.rooms}) 
-        dispatch({type:"SET_UNREAD_MESSAGES", data:data.unread});
 
         //When user has conversations
         // if(data.length > 0){
@@ -123,16 +132,9 @@ const useMessages = (socket, user) =>{
 
         setIsLoadingMessages(true);
         const messages = await getMessagesByRoomID(roomID);
-
-        const unreadExists = Object.values(state.unreadMessages).some(
-            (item) => item.roomID === roomID
-        )
-        if(unreadExists){
-            await resetUnreadMessagesCount(roomID, user.userID);
-            dispatch({type:"REMOVE_UNREAD_MESSAGE_FROM_USER", data:roomID});
-        }
-
         dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
+
+        reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:user.userID}))
         setIsLoadingMessages(false);
 
         if(showMenu)
