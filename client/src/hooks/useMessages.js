@@ -21,8 +21,6 @@ const useMessages = (socket, user) =>{
         roomsAction:'', //for handling different state.rooms update actions
         typingUsers:[],
         onlineUsers:[], //only importants users() that is necessary for Online flag 
-        unreadMessages:[],
-        unreadCount:0
     }
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
     const [showMenu, setShowMenu] = useState(false);
@@ -32,11 +30,6 @@ const useMessages = (socket, user) =>{
     const pageNumberRef = useRef(0); 
 
     const reduxDispatch = useDispatch();
-
-    //UNRAD MESSAGES MUST BE FETCH ON FIRST PAGE LOAD (not on /message load, due to unreadCOunt)
-    //or JUST FETCH unreadCOunt for notification (coutn indicator)
-    console.log("STATAAAAAAAAAAAAAA", state.unreadMessages);
-    console.log("SSSSSSC OUNT :" , state.unreadCount);
 
     const onShowMenuToggleHandler = () =>  setShowMenu(prev => !prev);
     const onUsersFromChatOutHanlder = () => setShowMoreRoomUsers({});
@@ -323,9 +316,14 @@ const useMessages = (socket, user) =>{
             }
             try{
                 const result = await sendMessageToUser(messageObj);
-                const {roomKey, dateFormat} = result;
-                const messageWithRoomKey = {...messageObj, roomKey:roomKey, date:dateFormat};
-
+                console.log("res: SendMessageToUser", result);
+                // const {roomKey, dateFormat} = result;
+                //pass and roomInfo.roomID //the current room the one of user is in //but whichi user is in it?
+                const {roomKey, dateFormat, unreadMessArray} = result;
+                console.log("UNEEEEEEEEMM : ", unreadMessArray);
+                const messageWithRoomKey = {...messageObj, roomKey:roomKey, date:dateFormat, unreadMessArray:unreadMessArray};
+                
+                //emit also unreadStatusUpdate:update or not.
                 emitMessage(socket, {data:messageWithRoomKey});
                 dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:fromRoomID, message:message})
             }

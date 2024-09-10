@@ -2,6 +2,7 @@ import {toast} from "react-toastify"
 import messageSound from '../assets/sounds/livechat-m.mp3'
 import announcementSound from '../assets/sounds/new-notification.mp3'
 import {getFriendsList} from '../services/chat.js';
+import {updateUnreadMessages} from '../store/unreadMessagesSlice.js';
 
 export const listenForCommentNotification = async(socket) => {
     socket.on(`privateCommentNotify`, (client_username) =>{
@@ -29,11 +30,19 @@ export const listenForRatingNotfication = async(socket, self_id) =>{
     })
 }
 
-export const listenFormMessage = async(socket) =>{
-    socket.on("messageResponseNotify", (fromUsername) =>{
+export const listenFormMessage = async(socket, reduxDispatch) =>{
+    //Maybe solution:
+    //check is the user in room(conversation) than don't display notification
+    //if(roomID == currentRoomID)
+
+    socket.on("messageResponseNotify", (notifyObj) =>{
+        const {roomID, userID, fromUsername, fromUserID, unreadUpdateStatus} = notifyObj;
+        console.log("notifyObj: ", notifyObj);
         toast.info(`You received Message from ${fromUsername}`,{
             className:"toast-contact-message"
         })
+        
+        reduxDispatch(updateUnreadMessages({roomID, unreadUpdateStatus}))
 
         if(!document.hasFocus()){
             const sound = new Audio(messageSound);
@@ -41,6 +50,7 @@ export const listenFormMessage = async(socket) =>{
         }
       })
 }
+
 
 //users Joined in room (room.join(io.to(roomKey).emit()) listen for these events
 export const listenOnMessageInRoom = (socket, dispatch) =>{

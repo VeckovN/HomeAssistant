@@ -96,7 +96,6 @@ server.listen(5000, ()=>{
         console.log("CONNECTION INITIALIZED : socketID: " + socket.id);
         const ID = socket.handshake.query.userID; //use handshake for static data
 
-
         //listen on onlineUser event (/thissocket.id could be identifier as well as userID )
         socket.on("addOnlineUser", (userData) =>{
             console.log("USERD DATA: ", userData);
@@ -140,7 +139,6 @@ server.listen(5000, ()=>{
             socket.leave(`room:${id}`)
         })
 
-        //REFFACTORED
         socket.on("commentNotification", (postComment) =>{
             //THESE BROADCAST (NOT EFFICIENT)
             // io.emit(`privateCommentNotify-${postComment.houseworkerID}`, postComment.from);
@@ -158,20 +156,32 @@ server.listen(5000, ()=>{
             
         })
     
-        // Refactored
+
         socket.on("message", ({data})=>{ 
             try{
+                console.log("MESSAGE INDEX DATA: ", data);
                 const roomKey = data.roomKey;
+
+                //THIS APPEND MESSAGE TO CHAT IF THE USER(RECIPIENT) IS IN CHAT 
                 //add message to chat(users that enter the chat room(room:ID) will listen this event ro)
                 io.to(roomKey).emit("messageRoom", data) //entered chat page(view)
 
                 //Notify message recipients
-                const {from, roomID, fromUsername} = data;
+                const {from, roomID, fromUsername, unreadMessArray} = data;
                 const users = roomID.split(':');
                 //exclude the sender from users notification
                 const notifyUsers = users.filter(el => el!=from);
+
+                //The user is in conversation when is this message sent -> 
+                //SHOULDN'T RECEIVE NOTIFICATION AND
                 notifyUsers.forEach(id =>{
-                    io.to(`user:${id}`).emit("messageResponseNotify" , fromUsername);
+                    const unreadUser = unreadMessArray.find(el => el.recipientID == id);
+                    const unreadUpdateStatus = unreadUser ? unreadUser.updateStatus : null;
+                    console.log("unreadUser norifyUUU: ", unreadUser);
+
+                    const notificationData ={roomID, fromUsername, fromUserID:from, userID:id, unreadUpdateStatus:unreadUpdateStatus}
+                    console.log("notificationData:", notificationData)
+                    io.to(`user:${id}`).emit("messageResponseNotify" , notificationData);
                 })
 
             }

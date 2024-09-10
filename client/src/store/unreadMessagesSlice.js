@@ -3,6 +3,16 @@ import {resetUnreadMessagesCount, getAllUnreadMessages} from '../services/chat.j
 import Cookie from 'js-cookie';
 
 
+//CONCLUSION USING COOKIE OR LOCALSTORAGE INSTAED OF REDUX  PERSIST:
+//1.Upon sucessful user login, unread messages are fetched and memoized in Cookie("unreadMEssages");
+//which prevents loos of state when reloading page or closing the browser
+//That causes more potential problems:
+//Problem -> if the state changes and the page is reloaded, the state value won't be the last modified, but will be the same as when the user logged in(read from the cookie)
+//How to solve it? -> I have to write to the Cookie after every state change
+//example: If i decrenent the unreadCount for some user who changes unreadCount state and this value MUST BE written to the COOKIE to have last modified value
+
+//BETTER SOLUTON -> use Redux Persist that automatcally saves your Redux store's states to a storage engine (like 'LocalStorage - cookie')
+
 //get unreadMessagesCookie(if avilable) on page reload(because the redux state is restarted on page reload)
 const unreadMessagesCookie = Cookie.get("unreadMessages");
 
@@ -44,53 +54,27 @@ export const getUserUnreadMessages = createAsyncThunk(
     }
 )
 
-// export const resetUserUnreadMessagesCount = createAsyncThunk(
-//     'unreadMessages/resetUserUnreadMessagesCount',
-//     async({roomID, userID}, thunkAPI) =>{ //user passed from register ( dispatch(register(userData) ))
-//         try{
-//             await resetUnreadMessagesCount(roomID, userID);
-//             // return response.data; //An array of unread messages
-//             return roomID; //use this in extraReducer to filter unreadMessages(remove unread messages from current array)
-//         }catch(err){
-//             console.log("resetUnreadMEssagesCoutn : ", err);
-//             // const message = (err.response && err.response.data.error) || err.message || err
-//             return thunkAPI.rejectWithValue(err.message); //that will actualy reject and send the message as payload:message
-//         }
-//     }
-// )
-
 export const resetUserUnreadMessagesCount = createAsyncThunk(
     'unreadMessages/resetUserUnreadMessagesCount',
     async({roomID, userID}, thunkAPI) =>{ //user passed from register ( dispatch(register(userData) ))
         try{
-            //HOW TO ACCESS to STATE.unreadMessage FROM HERE (after the .addCase is )
-            //something thrynApi.getStates -> RESEARCH WITH CHATGPT
-            const state = thunkAPI.getState();
+            const state = thunkAPI.getState().unreadMessages;
             console.log("ThunkAPI STATE: ", state);
+
+            console.log("roomID: ", roomID);
 
             //need to check does roomID is inlcuded in unreadMessages array
             const unreadExists = Object.values(state.unreadMessages).some(
                 (item) => item.roomID === roomID
             )
 
-            //return null when unreadDoesn'tExist or use rejectWithValue
-            // if(!unreadExists){
-            //     return; 
-            // }
-
             if(!unreadExists){
                 return thunkAPI.rejectWithValue('Room ID not found in unread messages');
             }
 
-            await resetUnreadMessagesCount(roomID, userID);
-            return roomID
-            // return {roomID, removedCount}
-
-            // if(unreadExists){
-            //     await resetUnreadMessagesCount(roomID, userID);
-            //     // dispatch(resetUnreadMM(roomID, user.userID));
-            //     return roomID
-            // }
+            const response = await resetUnreadMessagesCount(roomID, userID);
+            console.log("response", response);
+            return {roomID:roomID, removedCount:response.removedCount}
         }catch(err){
             console.log("resetUnreadMEssagesCoutn : ", err);
             // const message = (err.response && err.response.data.error) || err.message || err
@@ -99,11 +83,35 @@ export const resetUserUnreadMessagesCount = createAsyncThunk(
     }
 )
 
-
 const unreadMessagesSlice = createSlice({
     name:'unreadMessages',
     initialState,
-    reducers:{},
+    reducers:{
+        //this is Sync action to update totalUnread and unread.count prop without calling Async
+        updateUnreadMessages: (state, action) =>{
+            const {unreadUpdateStatus, roomID} = action.payload;
+            console.log("updateUnreadMessages action.payload", action.payload);
+
+            //check this updating unread.count based on updateStatus (doesn't work properly)
+
+            if(unreadUpdateStatus){
+                //and unread count prop that have roomID = action.payload.roomID
+                const index = state.unreadMessages.findIndex(el => el.roomID = roomID);
+                console.log("Index of obj: ", index);
+                if(index !== -1){
+                    const currentCount = state.unreadMessages[index].count
+                    console.log("CuuretCoutn: " , currentCount);
+                    state.unreadMessages[index].count = currentCount + 1;
+                }
+            }
+            else{
+                //add new unread to unreadMessages
+                state.unreadMessages.push({roomID:roomID, count:1})
+            }
+            //update totalCount in both situations
+            state.unreadCount += 1;
+        }
+    },
     extraReducers: (builder) =>{
         builder
             .addCase(getUserUnreadMessages.pending, (state)=>{
@@ -142,11 +150,11 @@ const unreadMessagesSlice = createSlice({
                 // }
                 
                 state.unreadMessages = state.unreadMessages.filter(
-                    (el) => el.roomID !== action.payload //action.payload => roomID
-                    // (el) => el.roomID !== action.payload.roomID //action.payload => roomID
+                    // (el) => el.roomID !== action.payload //action.payload => roomID
+                    (el) => el.roomID !== action.payload.roomID //action.payload => roomID
                 ),
                 // state.unreadCount = ;
-                // state.unreadCount = state.unreadCount - action.payload.removedCount;
+                state.unreadCount = state.unreadCount - action.payload.removedCount;
 
                 state.loading = false;
             })
@@ -159,11 +167,8 @@ const unreadMessagesSlice = createSlice({
     }
 })
 
-//export all actions (in other compoennt take it from )
-// export const authActions = authSlice.actions;
 export const unreadMessagesActions = unreadMessagesSlice.actions;
-//or export only this reset func
-// export const {reset} =  authSlice.actions;
-
+//also export sync function
+export const {updateUnreadMessages} =  unreadMessagesSlice.actions;
 //and also export 
 export default unreadMessagesSlice;
