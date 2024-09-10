@@ -41,6 +41,9 @@ const deleteUserOnNeo4JFailure = async(username, userID) =>{
 
 const getLastMessageFromRoom = async(roomID) =>{
     const result = await zrange(`room:${roomID}`, -1, -1);
+    if(result == 0){
+        return {message:"", dateDiff:null};
+    }
     const parsedObj = JSON.parse(result);
     const currentDate = parsedObj.date;
     const difference = calculateTimeDifference(currentDate);
@@ -141,33 +144,18 @@ const getAllRooms = async(username)=>{
 
     //through every room read another userID -> 1:7 , 1:3 in this situatin 7 and 3
     var roomsArr = []
-    var unreadRoomMessages;
     var unreadMess = [];
-    // console.log("\n rooms: ", rooms);
     for(const roomID of rooms){
-        unreadRoomMessages = {};
-        // console.log("RoomMMMMMM: ", roomID);
-        // console.log("userID: ", userID);
         const userIDS = roomID.split(":");
         const otherUsers = userIDS.filter(el => el!= userID)
+        console.log("ROOOOOOOOMMMMM ID: ", roomID);
         const lastMessage = await getLastMessageFromRoom(roomID);
-
-        //get unread messages if exists
-        // const unreadObjKey =`user${userID}:room:${roomID}:unread`
-        // const unreadCount = await hmget(unreadObjKey, "count");
-        // const countNumber = Number(unreadCount);
         const countNumber = await getUnreadMessageCountByRoomID(userID, roomID);
         if(countNumber)
         {
-            console.log("!!!!!!!");
-            unreadRoomMessages = {
-                roomID:roomID,
-                count:countNumber
-            }
             const obj ={
                 roomID:roomID,
                 count:countNumber,
-
             }
             unreadMess.push(obj);
             console.log("unreadMess:", unreadMess , "\n");
@@ -188,16 +176,12 @@ const getAllRooms = async(username)=>{
             });
         }
 
-
-        roomsArr.push({roomID, lastMessage, users:roomObjectArray}) //add last message
-        // roomsArr.push({roomID, lastMessage, users:roomObjectArray, unread:unreadRoomMessages})
-        console.log("ROOMARRRR : ", unreadRoomMessages);
-        
+        roomsArr.push({roomID, lastMessage, users:roomObjectArray})        
     }
 
     const roomsObj = {rooms:[...roomsArr], unread:unreadMess}
+    console.log("RoomS OBJ L :" , roomsObj);
     return roomsObj;
-    // return roomsArr;
 }
 // const getAllRooms = async(username)=>{
 //     let userID = await getUserIdByUsername(username);
@@ -463,31 +447,36 @@ const sendMessage = async(messageObj) =>{
         })
     }
 
-    await postUnreadMessagesToUser(roomID, from);
+    const unreadMessArray = await postUnreadMessagesToUser(roomID, from);
     await zadd(roomKey, timestamps, JSON.stringify(newMessageObj));
-    return {roomKey, dateFormat};
+    return {roomKey, dateFormat, unreadMessArray};
 }
 
 const postUnreadMessagesToUser = async(roomID, senderUserID) =>{
     const userIDFromRoom = roomID.split(":").filter(id => id != senderUserID);
     
+    let unreadMessagesArray = [];
     userIDFromRoom.forEach(async(id)=>{
         const unreadMessKey =`user${id}:room:${roomID}:unread`
         let countNumber = await getUnreadMessageCountByRoomID(id, roomID);
         console.log("\n unreaDMESSKEYT: ", unreadMessKey);
         console.log("\n COUNT NUMBER: " , countNumber);
         
-        if(countNumber)
+        let updateStatus = false;
+        //the unreadMessagesExist
+        if(countNumber){
             countNumber = countNumber + 1;
-        else
+            updateStatus = true;
+        }
+        else{
             countNumber = 1;
-
-        console.log("AFTER COUNT NUM INCREASING OR SETING ON 1 : " , countNumber)
-
+        }
+        unreadMessagesArray.push({roomID, recipientID:id, countNumber, updateStatus});
         // await hmset(unreadMessKey, ["last_received_timestamp", timestamps, "count", countNumber, "sender", from]);
         await hmset(unreadMessKey, ["count", countNumber, "sender", senderUserID]);
-
     })
+
+    return unreadMessagesArray;
 }
 
 const getUnreadMessages = async(username) =>{
@@ -495,18 +484,9 @@ const getUnreadMessages = async(username) =>{
     const userRoomKey = `user:${userID}:rooms`;
     let rooms = await smembers(userRoomKey);
 
-    var unreadRoomMessages;
     var unreadMessageArray = [];
     let totalCount = 0;
     for(const roomID of rooms){
-        unreadRoomMessages = {};
-        // console.log("RoomMMMMMM: ", roomID);
-        // console.log("userID: ", userID);
-
-        //get unread messages if exists
-        // const unreadObjKey =`user${userID}:room:${roomID}:unread`
-        // const unreadCount = await hmget(unreadObjKey, "count");
-        // const countNumber = Number(unreadCount);
         const countNumber = await getUnreadMessageCountByRoomID(userID, roomID);
         if(countNumber)
         {
@@ -519,7 +499,6 @@ const getUnreadMessages = async(username) =>{
             totalCount += countNumber;
             console.log("unreadMess:", unreadMessageArray , "\n");
         }
-        console.log("ROOMARRRR : ", unreadRoomMessages);
     }
 
     const unreadMessageObj = {unread:unreadMessageArray, totalUnread:totalCount}
@@ -581,7 +560,7 @@ const deleteRoomByRoomID = async(roomID) =>{
     const roomKey = `room:${roomID}`;
     //find users with this ids and delete room from theri rooms set
     const usersID = roomID.split(':');
-    usersID.forEach(async id =>{s
+    usersID.forEach(async id =>{
        await srem(`user:${id}:rooms`, roomID); //delte example memeber 1:2 in user:1:rooms 
     })
     //Delete sorted Set which contains all messages in ROOM
