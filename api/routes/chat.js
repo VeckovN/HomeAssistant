@@ -13,7 +13,8 @@ const {
     getFriendsList,
     getAllUnreadMessages,
     getUnreadMessagesTotalCount,
-    removeUnreadMessagesFromRoom
+    removeUnreadMessagesFromRoom,
+    setUnreadMessagesForUser
 } = require('../controller/chatController'); 
 const router = express.Router();
 

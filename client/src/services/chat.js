@@ -68,7 +68,6 @@ export const removeUserFromGroup = async(roomInfo) =>{
     }
 }
 
-
 export const sendMessageToUser = async(messageObj) =>{
     try{
         const result = await axiosSession.post(BASE_URL + 'chat/room/message', messageObj);
@@ -78,7 +77,6 @@ export const sendMessageToUser = async(messageObj) =>{
         ThrowErorr(err);
     }
 }
-
 
 export const getOnlineUsers = async(userID) =>{
     //How to get it? -> Search for user:{userID}:rooms -> and take all rooms ids "2:5:1 "
@@ -101,6 +99,7 @@ export const getFriendsList = async(userID) =>{
         ThrowErorr(err);
     }
 }
+
 
 export const getAllUnreadMessages = async(username) =>{
     try{

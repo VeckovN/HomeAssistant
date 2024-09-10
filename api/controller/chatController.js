@@ -86,7 +86,6 @@ const removeUserFromRoom = async(req,res)=>{
     }
 }
 
-
 const addUserToRoom = async(req,res) =>{
 
     const roomID = req.body.roomID;
@@ -139,6 +138,7 @@ const getFriendsList = async(req,res) =>{
     }
 }
 
+
 const getAllUnreadMessages = async(req,res) =>{
     try{
         const username = req.params.username;
@@ -186,5 +186,5 @@ module.exports ={
     getFriendsList,
     getAllUnreadMessages,
     getUnreadMessagesTotalCount,
-    removeUnreadMessagesFromRoom
+    removeUnreadMessagesFromRoom,
 }
