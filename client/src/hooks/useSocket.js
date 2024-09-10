@@ -1,10 +1,12 @@
 import {useState, useRef, useEffect} from 'react';
 import {io} from "socket.io-client";
 import { listenForCommentNotification, listenForRatingNotfication, listenFormMessage, listenOnCreateUserNotification, listenOnAddUserToGroupNotification, listenOnDeleteUserRoomNotification, listenOnKickUserFromGroupNotification} from '../sockets/socketListen';
+import {useDispatch} from 'react-redux';
 
 //user info taken from redux
 const useSocket = (user) =>{
     const socketRef = useRef(null);
+    const reduxDispatch = useDispatch();
     const [connected, setConnected] = useState(false);
 
     useEffect(() => {
@@ -54,7 +56,8 @@ const useSocket = (user) =>{
                 // }
     
             // Listeners for notifications (assuming separate functions for each)
-            listenFormMessage(socketRef.current, user.userID); // Listen for message notifications (both users)
+            // listenFormMessage(socketRef.current, user.userID); // Listen for message notifications (both users)
+            listenFormMessage(socketRef.current, reduxDispatch); // Listen for message notifications and update unreadCount with redux
             listenForCommentNotification(socketRef.current, user.userID); // Listen for comment notifications
             listenForRatingNotfication(socketRef.current, user.userID); // Listen for rating notifications
             listenOnCreateUserNotification(socketRef.current, user.userID); // Listen for create user notifications
