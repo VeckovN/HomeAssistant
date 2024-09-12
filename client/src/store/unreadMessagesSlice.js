@@ -34,6 +34,8 @@ const initialState ={
 //     loading: null
 // }
 
+console.log("UnreadKKKDSSAD AS :", initialState.unreadMessages);
+
 export const getUserUnreadMessages = createAsyncThunk(
     'unreadMessages/getUserUnreadMessages',
     async(username, thunkAPI) =>{ //user passed from register ( dispatch(register(userData) ))
@@ -90,22 +92,20 @@ const unreadMessagesSlice = createSlice({
         //this is Sync action to update totalUnread and unread.count prop without calling Async
         updateUnreadMessages: (state, action) =>{
             const {unreadUpdateStatus, roomID} = action.payload;
-            console.log("updateUnreadMessages action.payload", action.payload);
-
-            //check this updating unread.count based on updateStatus (doesn't work properly)
-
+            //unreadUpdateStatus will be true if the user have already
             if(unreadUpdateStatus){
-                //and unread count prop that have roomID = action.payload.roomID
-                const index = state.unreadMessages.findIndex(el => el.roomID = roomID);
-                console.log("Index of obj: ", index);
-                if(index !== -1){
+                const index = state.unreadMessages.findIndex(el => el.roomID == roomID);
+                
+                if(index !== -1){ //double check (safety check for found index)
                     const currentCount = state.unreadMessages[index].count
-                    console.log("CuuretCoutn: " , currentCount);
                     state.unreadMessages[index].count = currentCount + 1;
+                }
+                else{
+                    //if unread messages with matching room aren't found
+                    state.unreadMessages.push({ roomID: roomID, count: 1 });
                 }
             }
             else{
-                //add new unread to unreadMessages
                 state.unreadMessages.push({roomID:roomID, count:1})
             }
             //update totalCount in both situations
@@ -120,6 +120,7 @@ const unreadMessagesSlice = createSlice({
                 state.error = null;
             })
             .addCase(getUserUnreadMessages.fulfilled, (state, action)=>{
+                console.log("getUserUnreadMessages");
                 state.loading = false;
                 state.unreadMessages = action.payload.unread;
                 state.unreadCount = action.payload.totalUnread;
