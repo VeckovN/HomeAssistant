@@ -1,25 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import Cookie from 'js-cookie';
 // /https://stackoverflow.com/questions/43002444/make-axios-send-cookies-in-its-requests-automatically
 // TO SEND COOKIE force credentials to every Axios requests
 axios.defaults.withCredentials = true
 
-
-//Persist-state-redux is another solution for this problem 
-
-//On initial i have to check does session exist (because i can left the page(app)(redux will be restarted)
-//and session stiill exist and after again entering the page this redux should store user)
-const userCookie = Cookie.get('user')
-let user;
-if(userCookie){
-    user = JSON.parse(userCookie);
-}
-
-
 const initialState ={
-    user: user ? user : null,
-    // user:null,
+    user:null,
     message:'',
     success:false,
     error: false,
@@ -65,7 +51,6 @@ export const login = createAsyncThunk(
             const response = await axios.post('http://localhost:5000/api/login', user);       
             if(response.data){
                 if(!response.data.error){
-                    Cookie.set('user', JSON.stringify(response.data))
                     return response.data;
                 }
                 else
@@ -88,9 +73,7 @@ export const logout = createAsyncThunk(
     async (trunkAPI) =>{
         try{
             const response = await axios.get('http://localhost:5000/api/logout');
-            // //httpOnly:true , cookie cannot be manipulated through JS
-            // Cookie.remove('sessionLog'); //
-            Cookie.remove('user');
+            // // //httpOnly:true , cookie cannot be manipulated through JS
          }
          catch(error){
             const message =  error.message || error || (error.response.data.error && error.response.data && error.response)
@@ -104,7 +87,6 @@ export const sessionExpired = createAsyncThunk(
     async(trunkAPI) =>{
         try{
             await axios.get('http://localhost:5000/api/logout');
-            Cookie.remove('user');
         }
         catch(error){
             const message =  error.message || error || (error.response.data.error && error.response.data && error.response)
@@ -177,10 +159,5 @@ const authSlice = createSlice({
     }
 })
 
-
-//export all actions (in other compoennt take it from )
-export const authActions = authSlice.actions;
-//or export only this reset func
-export const {reset} =  authSlice.actions;
-//and also export 
+export const {reset} = authSlice.actions;
 export default authSlice;

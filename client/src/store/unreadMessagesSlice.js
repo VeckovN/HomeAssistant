@@ -1,9 +1,8 @@
-import {createAsyncThunk, createSlice, isFulfilled} from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {resetUnreadMessagesCount, getAllUnreadMessages} from '../services/chat.js';
-import Cookie from 'js-cookie';
 
 
-//CONCLUSION USING COOKIE OR LOCALSTORAGE INSTAED OF REDUX  PERSIST:
+//USING COOKIE OR LOCALSTORAGE INSTAED OF REDUX  PERSIST:
 //1.Upon sucessful user login, unread messages are fetched and memoized in Cookie("unreadMEssages");
 //which prevents loos of state when reloading page or closing the browser
 //That causes more potential problems:
@@ -13,28 +12,12 @@ import Cookie from 'js-cookie';
 
 //BETTER SOLUTON -> use Redux Persist that automatcally saves your Redux store's states to a storage engine (like 'LocalStorage - cookie')
 
-//get unreadMessagesCookie(if avilable) on page reload(because the redux state is restarted on page reload)
-const unreadMessagesCookie = Cookie.get("unreadMessages");
-
-if(unreadMessagesCookie){
-    console.log("\n JSON.parse(unreadMessagesCookie).unread", JSON.parse(unreadMessagesCookie).unread);
-    console.log("JSON.parse(unreadMessagesCookie).unreadCount", JSON.parse(unreadMessagesCookie).unreadCount);
-}
-
 const initialState ={
-    unreadMessages: unreadMessagesCookie ? JSON.parse(unreadMessagesCookie).unread : [],
-    unreadCount: unreadMessagesCookie ? JSON.parse(unreadMessagesCookie).totalUnread : 0,
+    unreadMessages:[],
+    unreadCount:0,
     error: false,
     loading: null
 }
-// const initialState ={
-//     unreadMessages:[],
-//     unreadCount:0,
-//     error: false,
-//     loading: null
-// }
-
-console.log("UnreadKKKDSSAD AS :", initialState.unreadMessages);
 
 export const getUserUnreadMessages = createAsyncThunk(
     'unreadMessages/getUserUnreadMessages',
@@ -125,15 +108,10 @@ const unreadMessagesSlice = createSlice({
                 state.unreadMessages = action.payload.unread;
                 state.unreadCount = action.payload.totalUnread;
 
-                Cookie.set('unreadMessages', JSON.stringify(action.payload));
-
-                // state.message = "Unread Messages successfully featched"
             })
             .addCase(getUserUnreadMessages.rejected, (state,action) =>{
                 state.loading = false;
-                // state.error = true;
                 state.error = action.payload; //passed error from thunkAPI.rejectWithValue
-                // state.error = action.payload.error; //pass error message 
             })    
 
             //We will see, but .fulfiled is enought 
@@ -168,8 +146,12 @@ const unreadMessagesSlice = createSlice({
     }
 })
 
-export const unreadMessagesActions = unreadMessagesSlice.actions;
-//also export sync function
-export const {updateUnreadMessages} =  unreadMessagesSlice.actions;
-//and also export 
+
+export const {updateUnreadMessages} = unreadMessagesSlice.actions;
 export default unreadMessagesSlice;
+
+// export const unreadMessagesActions = unreadMessagesSlice.actions;
+// //also export sync function
+// export const {updateUnreadMessages} =  unreadMessagesSlice.actions;
+// //and also export 
+// export default unreadMessagesSlice;
