@@ -36,13 +36,15 @@ export const listenFormMessage = async(socket, reduxDispatch) =>{
     //if(roomID == currentRoomID)
 
     socket.on("messageResponseNotify", (notifyObj) =>{
-        const {roomID, userID, fromUsername, fromUserID, unreadUpdateStatus} = notifyObj;
+        const {roomID, userID, fromUsername, fromUserID, lastMessage, unreadUpdateStatus} = notifyObj;
         console.log("notifyObj: ", notifyObj);
         toast.info(`You received Message from ${fromUsername}`,{
             className:"toast-contact-message"
         })
         
         reduxDispatch(updateUnreadMessages({roomID, unreadUpdateStatus}))
+        //put last message in chat (for private conversation())
+        //update last message date received(just now)
 
         if(!document.hasFocus()){
             const sound = new Audio(messageSound);
@@ -57,6 +59,15 @@ export const listenOnMessageInRoom = (socket, dispatch) =>{
     socket.on("messageRoom", (contextObj) =>{
         dispatch({type:"SEND_MESSAGE", data:contextObj})
         //this updates messages of room(adding new message)
+    })
+}
+//when the user is in the Message page 
+export const listenOnMessageReceive = (socket, dispatch) =>{
+    socket.on("messagePage", (contextObj) =>{
+        //updating lastMessage and date on message recieve
+        console.log("LISTE ON MESSAGE, ", contextObj );
+        const {roomID, lastMessage} = contextObj;
+        dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:roomID, message:lastMessage})
     })
 }
 

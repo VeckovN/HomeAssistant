@@ -167,7 +167,7 @@ server.listen(5000, ()=>{
                 io.to(roomKey).emit("messageRoom", data) //entered chat page(view)
 
                 //Notify message recipients
-                const {from, roomID, fromUsername, unreadMessArray} = data;
+                const {from, roomID, fromUsername, lastMessage, unreadMessArray} = data;
                 const users = roomID.split(':');
                 //exclude the sender from users notification
                 const notifyUsers = users.filter(el => el!=from);
@@ -179,9 +179,11 @@ server.listen(5000, ()=>{
                     const unreadUpdateStatus = unreadUser ? unreadUser.updateStatus : null;
                     console.log("unreadUser norifyUUU: ", unreadUser);
 
-                    const notificationData ={roomID, fromUsername, fromUserID:from, userID:id, unreadUpdateStatus:unreadUpdateStatus}
+                    const notificationData ={roomID, fromUsername, fromUserID:from, userID:id, lastMessage, unreadUpdateStatus:unreadUpdateStatus}
                     console.log("notificationData:", notificationData)
                     io.to(`user:${id}`).emit("messageResponseNotify" , notificationData);
+                    //emit for listener on MessagePage(update last messages and date)
+                    io.to(`user:${id}`).emit("messagePage" , data);
                 })
 
             }

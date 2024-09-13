@@ -4,7 +4,7 @@ import {toast} from 'react-toastify';
 import {getErrorMessage} from '../utils/ThrowError.js';
 import {MessagesReducer} from '../components/MessagesReducer.js';
 import {getHouseworkers} from '../services/houseworker.js';
-import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup, listenNewOnlineUser} from '../sockets/socketListen.js';
+import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup, listenNewOnlineUser, listenOnMessageReceive} from '../sockets/socketListen.js';
 import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat, emitKickUserFromChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
 import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser, getMoreMessagesByRoomID, getOnlineUsers} from '../services/chat.js';
 import {resetUserUnreadMessagesCount} from '../store/unreadMessagesSlice.js';
@@ -45,6 +45,7 @@ const useMessages = (socket, user) =>{
     useEffect(() => {
         if(socket && user){
             listenOnMessageInRoom(socket, dispatch);
+            listenOnMessageReceive(socket, dispatch);
             listenOnCreateUserGroup(socket, dispatch);
             listenOnAddUserToGroup(socket, dispatch, user.userID);
             listenOnDeleteUserFromGroup(socket, dispatch);
@@ -53,6 +54,7 @@ const useMessages = (socket, user) =>{
             //LISTEN ON ONLINE USERS TO ADD IT IN ROOM INFO -> OnlineUsers
             // listenOnUserOnline(socket, dispatch);
             listenNewOnlineUser(socket, dispatch, user.userID);
+
 
             //when is created new room show it with others
             socket.on('show.room', (room) =>{
@@ -88,6 +90,7 @@ const useMessages = (socket, user) =>{
             // emitRoomJoin(socket, roomID);
             
             const messages = await getMessagesByRoomID(roomID)
+            console.log("MESSSSSSS:" , messages);
             
             dispatch({type:"SET_ROOM_MESSAGES", data:messages})
             dispatch({type:"SET_LOADING", payload:false})
@@ -317,13 +320,9 @@ const useMessages = (socket, user) =>{
             try{
                 const result = await sendMessageToUser(messageObj);
                 console.log("res: SendMessageToUser", result);
-                // const {roomKey, dateFormat} = result;
-                //pass and roomInfo.roomID //the current room the one of user is in //but whichi user is in it?
-                const {roomKey, dateFormat, unreadMessArray} = result;
-                console.log("UNEEEEEEEEMM : ", unreadMessArray);
-                const messageWithRoomKey = {...messageObj, roomKey:roomKey, date:dateFormat, unreadMessArray:unreadMessArray};
+                const {roomKey, dateFormat, lastMessage, unreadMessArray} = result;
+                const messageWithRoomKey = {...messageObj, roomKey:roomKey, date:dateFormat, lastMessage:lastMessage, unreadMessArray:unreadMessArray};
                 
-                //emit also unreadStatusUpdate:update or not.
                 emitMessage(socket, {data:messageWithRoomKey});
                 dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:fromRoomID, message:message})
             }
