@@ -428,12 +428,12 @@ const sendMessage = async(messageObj) =>{
     const dateFormat = formatDate(date);
     const newMessageObj = {...messageObj, date:dateFormat};
 
+    const usersID = roomID.split(":");//[1,2]
+    let lastMessage = null;
+
     if(!roomExists){
     //or we have to create room and then send message
     //ROOM WILL BE ONLY CREATED WHEN Client send message TO HOUSEWORKER and this houseworker doesn't have room 
-        //get usersID from roomID => roomID->1:2
-        const usersID = roomID.split(":");//[1,2]
-        // const usersMemeber = usersID.join(":"); //1:2
         //its same as roomID
         const user1ID = usersID[0]; //1
         const user2ID = usersID[1]; //2
@@ -447,9 +447,15 @@ const sendMessage = async(messageObj) =>{
         })
     }
 
+    if(usersID.length == 2){
+        //only for private conversation the last message is displayed
+        lastMessage = messageObj.message;
+    }
+
     const unreadMessArray = await postUnreadMessagesToUser(roomID, from);
     await zadd(roomKey, timestamps, JSON.stringify(newMessageObj));
-    return {roomKey, dateFormat, unreadMessArray};
+    // return {roomKey, dateFormat, unreadMessArray};
+    return {roomKey, dateFormat, lastMessage, unreadMessArray};
 }
 
 const postUnreadMessagesToUser = async(roomID, senderUserID) =>{
