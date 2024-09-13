@@ -1,4 +1,4 @@
-import {useRef, useState, useEffect} from 'react';
+import {useRef, useEffect} from 'react';
 import useTyping from '../../hooks/useTyping';
 import TypingUsers from './TypingUsers';
 import ChatMenu from './ChatMenu'; 
@@ -190,7 +190,11 @@ const Chat = ({
                     )
                     :
                     <div className='no_conversation'>
-                        You have no conversation. Contact a houseworker!
+                        {user.type == "Client" ? 
+                        'You have no conversation. Contact a houseworker to start a conversation!'
+                        :
+                        'You have no conversations. Please wait for a client to contact you!'
+                        }
                     </div>
                     }
                     </>
