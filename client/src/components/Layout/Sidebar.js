@@ -22,7 +22,6 @@ const Sidebar = ({user}) => {
     const dispatch = useDispatch();
     const [isOpen, setIsOpen] = useState(false);
     const {unreadCount} = useSelector((state) => state.unreadMessages);
-    console.log("unreadCount : ", unreadCount);
 
     const logoutHandler = () =>{
         dispatch(logout());
@@ -90,7 +89,7 @@ const Sidebar = ({user}) => {
                                 }>
                                     <div className='sidebar-menu-icon'>{el.icon}</div>
                                     <div className='sidebar-menu-name'>{el.name}</div>
-                                    {el.unreadMessageCount && <div className='sidebar-menu-unread'>{el.unreadMessageCount}</div>}
+                                    {el.unreadMessageCount >0 && <div className='sidebar-menu-unread'>{el.unreadMessageCount}</div>}
                                 </NavLink>
                             ))
                         }

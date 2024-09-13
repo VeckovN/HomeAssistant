@@ -2,7 +2,6 @@ import {useState} from 'react';
 import {Link} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
 import {logout} from '../../store/auth-slice';
-import {getUserUnreadMessages} from '../../store/unreadMessagesSlice.js';
 
 import '../../sass/layout/_header.scss';
 
@@ -59,7 +58,7 @@ const Header = () =>{
                 !showMenu ?
                 <>
                     <Link to='/profile' className='nav-link' >Profile</Link>
-                    <Link to='/messages' className='nav-link message' ><span className='unread-header-message'>{unreadCount !=0 ? unreadCount : ""}</span>Messages</Link>
+                    <Link to='/messages' className='nav-link message' >{unreadCount !=0 && <span className='unread-header-message'>{unreadCount}</span>}Messages</Link>
                     <button onClick={logoutHandler} className='nav-link-button '>Logout</button>
                 </>
                 :
