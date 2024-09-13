@@ -18,7 +18,7 @@ import KeyboardArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardArrowLeft
 import '../../sass/layout/_sidebar.scss';
 
  
-const Sidebar = ({user}) => {
+const Sidebar = () => {
     const dispatch = useDispatch();
     const [isOpen, setIsOpen] = useState(false);
     const {unreadCount} = useSelector((state) => state.unreadMessages);

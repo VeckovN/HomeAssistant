@@ -54,7 +54,7 @@ function App() {
         )}
 
         {user?.type === "Houseworker" && (
-          <Route element={<Sidebar user={user}/>} >
+          <Route element={<Sidebar/>} >
             <Route index path="/" element={<PrivateRoute><HouseworkerHome/></PrivateRoute>} />
             <Route path="/messages" element={<PrivateRoute><Messages socket={socket} connected={connected}/></PrivateRoute>} />
             <Route path="/comments" element={<PrivateRoute privacy='houseworker'><Comments socket={socket} user={user}/></PrivateRoute>} />
