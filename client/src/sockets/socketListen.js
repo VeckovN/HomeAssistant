@@ -4,16 +4,20 @@ import announcementSound from '../assets/sounds/new-notification.mp3'
 import {getFriendsList} from '../services/chat.js';
 import {updateUnreadMessages} from '../store/unreadMessagesSlice.js';
 
+const playSound = (soundName) =>{
+    if(!document.hasFocus()){
+        const sound = new Audio(soundName);
+        sound.play();
+    }
+}
+
 export const listenForCommentNotification = async(socket) => {
     socket.on(`privateCommentNotify`, (client_username) =>{
         toast.info(`You received Comment from ${client_username} `,{
             className:"toast-contact-message"
         })
 
-        if(!document.hasFocus()){
-            const sound = new Audio(announcementSound);
-            sound.play();
-        }
+        playSound(announcementSound);
     })
 }
 
@@ -23,10 +27,7 @@ export const listenForRatingNotfication = async(socket, self_id) =>{
             className:"toast-contact-message"
         })
 
-        if(!document.hasFocus()){
-            const sound = new Audio(announcementSound);
-            sound.play();
-        }
+        playSound(announcementSound);
     })
 }
 
@@ -37,19 +38,12 @@ export const listenFormMessage = async(socket, reduxDispatch) =>{
 
     socket.on("messageResponseNotify", (notifyObj) =>{
         const {roomID, userID, fromUsername, fromUserID, lastMessage, unreadUpdateStatus} = notifyObj;
-        console.log("notifyObj: ", notifyObj);
         toast.info(`You received Message from ${fromUsername}`,{
             className:"toast-contact-message"
         })
         
         reduxDispatch(updateUnreadMessages({roomID, unreadUpdateStatus}))
-        //put last message in chat (for private conversation())
-        //update last message date received(just now)
-
-        if(!document.hasFocus()){
-            const sound = new Audio(messageSound);
-            sound.play();
-        }
+        playSound(messageSound);
       })
 }
 
@@ -58,14 +52,11 @@ export const listenFormMessage = async(socket, reduxDispatch) =>{
 export const listenOnMessageInRoom = (socket, dispatch) =>{
     socket.on("messageRoom", (contextObj) =>{
         dispatch({type:"SEND_MESSAGE", data:contextObj})
-        //this updates messages of room(adding new message)
     })
 }
 //when the user is in the Message page 
 export const listenOnMessageReceive = (socket, dispatch) =>{
     socket.on("messagePage", (contextObj) =>{
-        //updating lastMessage and date on message recieve
-        console.log("LISTE ON MESSAGE, ", contextObj );
         const {roomID, lastMessage} = contextObj;
         dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:roomID, message:lastMessage})
     })
@@ -81,10 +72,6 @@ export const listenOnCreateUserGroup = (socket, dispatch) =>{
 export const listenOnAddUserToGroup = (socket, dispatch, self_id) =>{
     socket.on("addUserToGroupChange", (context) =>{
         const {newUserID, newUsername, roomID, newRoomID, currentMember, newUserPicturePath} = context;
-
-        console.log("NEW ADDE DUSER ID : " + newUserID);
-        console.log("SELF ID:")
-
         //If the newly added user is the current user, create a new group and display it
         if(newUserID == self_id)
             dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, currentMember:currentMember, newUsername:newUsername, picturePath:newUserPicturePath})
@@ -129,10 +116,7 @@ export const listenOnCreateUserNotification = (socket, self_id) =>{
             })
         }
 
-        if(!document.hasFocus()){
-            const sound = new Audio(announcementSound);
-            sound.play();
-        }
+        playSound(announcementSound);
     })
 }
 
@@ -151,11 +135,7 @@ export const listenOnAddUserToGroupNotification = (socket, self_id) =>{
             })
         }
 
-        if(!document.hasFocus()){
-            const sound = new Audio(announcementSound);
-            sound.play();
-        }
-
+        playSound(announcementSound);
       })
 }
 
@@ -174,10 +154,7 @@ export const listenOnKickUserFromGroupNotification = (socket, self_id) =>{
             })
         }
         
-        if(!document.hasFocus()){
-            const sound = new Audio(announcementSound);
-            sound.play();
-        }
+        playSound(announcementSound);
     })
 }
 
@@ -189,10 +166,7 @@ export const listenOnDeleteUserRoomNotification = (socket) =>{
             className:"toast-contact-message"
         })
 
-        if(!document.hasFocus()){
-            const sound = new Audio(announcementSound);
-            sound.play();
-        }
+        playSound(announcementSound);
       })
 }
 
