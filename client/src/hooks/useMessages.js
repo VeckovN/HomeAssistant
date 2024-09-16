@@ -8,7 +8,7 @@ import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, 
 import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat, emitKickUserFromChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
 import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser, getMoreMessagesByRoomID, getOnlineUsers} from '../services/chat.js';
 import {resetUserUnreadMessagesCount} from '../store/unreadMessagesSlice.js';
-
+import {sendMessage} from "../utils/MessageUtils/handleMessage.js";
 
 
 const useMessages = (socket, user) =>{
@@ -318,12 +318,7 @@ const useMessages = (socket, user) =>{
                 fromUsername:user.username
             }
             try{
-                const result = await sendMessageToUser(messageObj);
-                console.log("res: SendMessageToUser", result);
-                const {roomKey, dateFormat, lastMessage, unreadMessArray} = result;
-                const messageWithRoomKey = {...messageObj, roomKey:roomKey, date:dateFormat, lastMessage:lastMessage, unreadMessArray:unreadMessArray};
-                
-                emitMessage(socket, {data:messageWithRoomKey});
+                sendMessage(socket, messageObj);
                 dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:fromRoomID, message:message})
             }
             catch(err){

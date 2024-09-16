@@ -3,6 +3,7 @@ import { emitMessage } from '../../sockets/socketEmit';
 import { sendMessageToUser} from '../../services/chat';
 import { toast } from 'react-toastify';
 import {getRoomIdInOrder} from '../../utils/Helper';
+import {sendMessage} from '../../utils/MessageUtils/handleMessage.js';
 import { getErrorMessage } from '../../utils/ThrowError';
 
 const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
@@ -31,12 +32,7 @@ const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
                         fromUsername:client_username,
                 }
                 try{
-                    const result = await sendMessageToUser(messageObj);
-                    const {roomKey} = result;
-                    const messageWithRoomKey = {...messageObj, roomKey:roomKey};
-
-                    emitMessage(socket, {data:messageWithRoomKey});
-                    
+                    sendMessage(socket, messageObj);
                     toast.success("The message is send",{
                         className:'toast-contact-message'
                     })
