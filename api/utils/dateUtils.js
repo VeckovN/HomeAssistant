@@ -31,8 +31,10 @@ const calculateTimeDifference = (formattedDate) =>{
     const diffInHours = Math.floor(diffInMinutes / 60);
     const diffInDays = Math.floor(diffInHours / 24);
     const diffInWeeks = Math.floor(diffInDays / 7);
-    const diffInMonths = Math.floor(diffInDays / 30); // Rough estimate of months
-    const diffInYears = Math.floor(diffInDays / 365); // Rough estimate of years
+    // const diffInMonths = Math.floor(diffInDays / 30); // Rough estimate of months
+    // const diffInYears = Math.floor(diffInDays / 365); // Rough estimate of years
+    const diffInYears = now.getFullYear() - date.getFullYear();
+    const diffInMonths = now.getMonth() - date.getMonth() + (diffInYears * 12);
 
     if (diffInSeconds < 60) {
         return 'just now';
