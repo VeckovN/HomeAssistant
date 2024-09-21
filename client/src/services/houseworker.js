@@ -66,7 +66,6 @@ export const getAuthenticatedUserComments = async(pageNumber) =>{
     }
 }
 
-//get commnets of the user with given username
 export const getComments = async(username, pageNumber) =>{
     try{
         const result = await axiosSession.get(BASE_URL + `houseworker/comments/${username}/${pageNumber}`);
@@ -101,7 +100,6 @@ export const rateUser = async(rateObject) =>{
         ThrowErorr(err);
     }
 }
-
 
 //axios default
 export const getRating = async(username) =>{
@@ -142,11 +140,9 @@ export const getProfessionsByUsername = async(username)=>{
 }
 
 export const addProfession = async(label, working_hour) =>{
-    //profession object  
-    //professionObject. 
     try{
         const result = await axios.post(BASE_URL +'houseworker/professions/add', {profession:label, working_hour:working_hour});
-        return result; //message 'Room sucessfully deleted'
+        return result;
     }
     catch(err){
         ThrowErorr(err);
@@ -155,8 +151,6 @@ export const addProfession = async(label, working_hour) =>{
 
 export const deleteProfession = async(profession) =>{
     try{
-        // const result = await axios.delete(BASE_URL +'houseworker/professions', {profession:profession});
-        //for delete method data should be send as query params
         const result = await axios.delete(BASE_URL +`houseworker/professions/${profession}`);
         return result;
     }
@@ -164,7 +158,6 @@ export const deleteProfession = async(profession) =>{
         ThrowErorr(err);
     }
 }
-
 
 export const getCommentsCount = async(username) =>{
     try{
@@ -189,7 +182,6 @@ export const getConversationCount = async(userRedisID) =>{
 }
 
 //axios default
-//get all houseworkers cities
 export const getAllCities = async() =>{
     try{
         const result = await axios.get( BASE_URL + `houseworker/cities`);
@@ -200,6 +192,7 @@ export const getAllCities = async() =>{
         ThrowErorr(err);
     }
 }
+
 //get all professions that exist(provided by houseworkers)
 export const getAllProfessions = async() =>{
     try{
@@ -224,7 +217,6 @@ export const getHouseworkerByFilter = async(params) =>{
     }
 }
 
-
 export const getHomeInfo= async(username) =>{
     try{
         const result = await axiosSession.get(BASE_URL + `houseworker/home/${username}`)
@@ -237,9 +229,7 @@ export const getHomeInfo= async(username) =>{
     }
 }
 
-
 //This is equivalent to Promise.All(for both request )
-
 export const getProfessionsAndCities = async() =>{
     try{
         const response = await axios.all([

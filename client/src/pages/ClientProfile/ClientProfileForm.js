@@ -18,7 +18,6 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
             <>
                 <form className='cl-profile-form' onSubmit={handleSubmit(onSubmitUpdate)}>
                     {/* left side */}
-                    {/* <h1>You can edit your profile information</h1> */}
                     <div className='input-label-form'>
                         <div className='profile-input-card'>
                             <div className='personal-label'>Personal Informations</div>
@@ -134,7 +133,6 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                         <div className='profile-submit'>
                             <button type='submit' className='update-button'>Update</button>
                         </div>
-                        {/* button for submit Above inputs  */}
                         
                     </div>
                 </form>

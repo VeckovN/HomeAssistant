@@ -29,11 +29,6 @@ const ClientProfile = () =>{
     }, [])
 
     useEffect( () =>{
-        //restaring entered input value
-        // const values = {...watch()}
-        // const resetElements = Object.keys(values).filter(key => values[key])
-        // const resetObj = Object.fromEntries(resetElements.map(el => [el, ""]));
-        //reset({...resetObj})
         reset({...initialState})
     },[isSubmitSuccessful])
 
@@ -45,12 +40,9 @@ const ClientProfile = () =>{
 
     const onSubmitUpdate = async(updatedData) =>{
         try{
-            //only props wiht updated data( !='') for HTTP request
             let newData = {};
             //without re-fetching just override ClientData with updatedData
             Object.keys(updatedData).forEach(key =>{
-                //console.log("UPD: " + typeof(key)+ " : " + updatedData[key]);
-                //picture wont store in this object(for it use diferent request)
                 if(updatedData[key] != '' && key!='picture'){
                     newData[key] = updatedData[key];
                 }
@@ -62,10 +54,6 @@ const ClientProfile = () =>{
                 })
                 return;
             }
-
-            // if(updatedData.picture !=''){
-            //     await axios.put(`http://localhost:5000/api/clients/updateImage/`, updateImage);
-            // }
 
             await updateClient(newData);
             toast.success("Successfuly updated!")

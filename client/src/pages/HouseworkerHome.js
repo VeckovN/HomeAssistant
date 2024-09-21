@@ -129,49 +129,6 @@ const HouseworkerHome = () =>{
         </div>
     )
 
-
-
- 
-    // return (
-    //     <div className='houseworker-container'>
-    //         {loading ? <Spinner className='profile-spinner'/> :
-    //         <>
-    //             <div className='houseworker-one'>
-    //                 <HouseworkerItem 
-    //                     title='Rating'
-    //                     icon={<GradeIcon fontSize='inherit'/>}
-    //                     count={homeInfo.avgRating}
-    //                 />
-    //             </div>
-
-    //             <div className ='houseworker-item-container'>
-    //                 <div id='houseworker-item-label'>Profile Insights</div>
-    //                     <HouseworkerItem 
-    //                         title='Conversations'
-    //                         icon={<QuestionAnswerIcon fontSize='inherit'/>}
-    //                         count={conversationCount}
-    //                         link={'/messages'}
-    //                     />
-
-    //                     <HouseworkerItem 
-    //                         title='Comments'
-    //                         icon={<CommentIcon fontSize='inherit'/>}
-    //                         count={homeInfo.commentCount}
-    //                         link={'/comments'}
-    //                     />
-
-    //                     <HouseworkerItem 
-    //                         title='Professions'
-    //                         icon={<BadgeIcon fontSize='inherit'/>}
-    //                         count={homeInfo.professionCount}
-    //                         link={'/profile'}
-    //                     />
-    //             </div>
-
-    //         </>
-    //         }
-    //     </div>
-    // )
 }
 
 export default HouseworkerHome

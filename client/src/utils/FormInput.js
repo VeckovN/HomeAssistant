@@ -13,7 +13,6 @@ const FormInput = ({type, name, register, errors, placeholder, autoComplete, cla
                 {...register(name)}
                 autoComplete={autoComplete && autoComplete}
             />
-            {/* <div className='input_errors'>{errors.errorsname?.message}</div> */}
             <div className='input-errors'>{errors[name]?.message}</div>
         </div>
     )

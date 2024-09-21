@@ -44,8 +44,6 @@ const Login = () =>{
                 }
             });
         dispatch(resetRedux());
-
-        // dispatch(getUserUnreadMessages(formValues.username));
     }
 
     return (
@@ -98,7 +96,6 @@ const Login = () =>{
                     </div>
                 </div>
             </div>
-
         </>
     )
 }

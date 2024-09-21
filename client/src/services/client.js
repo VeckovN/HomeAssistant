@@ -7,7 +7,6 @@ import { axiosSession } from '../utils/AxiosInterceptors'
 
 export const getUserData = async() =>{
     try{
-        //const result = await axios.get(BASE_URL + `clients/info`)
         const result = await axiosSession.get(BASE_URL + `clients/info`)
         const client_data = result.data;
         return client_data;
