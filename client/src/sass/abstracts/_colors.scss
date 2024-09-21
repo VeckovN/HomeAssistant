@@ -1,12 +1,3 @@
-//houseworker comp
-//saturation
-//#7E82A9
-//#6e74b9 - rgb(110,116,185)
-//#6069c7
-//#545ed3
-//#4753e0
-//#3a48ed
-
 //Houseworker card ligher/darker
 $color-hs-6:#42488a;
 $color-hs-5:#535aac;
@@ -59,13 +50,10 @@ $chat-mobile-background: rgba(59, 59, 59, 0.315);
 
 
 //nav
-// $nav-background-color: black;
 $nav-background-color:$black;
 $nav-hover-color: #13a7ec;
 
-// $color-hs-label:rgb(110,116,185);
 $color-hs-label: $color-hs-4;
 $color-hs-background:rgba(0,0,0,0.75);
 
-//error
 $color-error: rgb(206, 33, 33, 1);

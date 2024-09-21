@@ -10,18 +10,6 @@
     background-repeat: no-repeat;
 }
 
-// image-one {
-//     @extend %bg-image;
-//     background-image:url(/img/image-one.jpg");
-// }
-
-// .image-two {
-//     @extend %bg-image;
-//     background-image:url(/img/image-two.jpg");
-// }
-
-
-//Header links
 %nav-link-styles{
     font-family: $font-family-2;
     margin:.3rem;
@@ -37,8 +25,6 @@
     }
 }
 
-
-//Profile 
 %profile-container{
     display: flex;
     flex-direction: column;
@@ -59,8 +45,6 @@
     color:#ffff;
 
     z-index: 10;
-
-
 }
 
 %profile-input-card-style{
@@ -189,7 +173,7 @@
 }
 
 
-//////////////
+
 %form-input-error{
     font-size: $fs6;
     color:rgba(196, 0, 0, 0.842);
@@ -259,9 +243,6 @@
     }
 }
 
-
-
-
 %chat-menu-item{
     display: flex;
     flex-direction: column;
@@ -297,7 +278,6 @@
         cursor: pointer;
     }
 }
-
 
 %chat-date-hidden{
     text-align: center;

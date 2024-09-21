@@ -5,23 +5,19 @@
     padding:0;
   }
   
+body {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  // width: 100%;
   
-  body {
-    margin: 0;
-    height: 100%;
-    width: 100%;
-    // width: 100%;
-    
-
-    @include bg-image(url("../../../public/assets/clientPage1New.jpg"));
-    background-attachment: fixed;
-    // z-index: 100;
-  }
+  @include bg-image(url("../../../public/assets/clientPage1New.jpg"));
+  background-attachment: fixed;
+}
   
-  //This modes in _root.scss
-  /* set a div's haight to cover the full screen */
-    //   #root{
-    //     height: 100%;
-    //     width: 100%;
-    //   }
-  
+//This modes in _root.scss
+/* set a div's haight to cover the full screen */
+  //   #root{
+  //     height: 100%;
+  //     width: 100%;
+  //   }

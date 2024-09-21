@@ -12,41 +12,6 @@ $lgBrakepoint: 992px;
 $xlBrakepoint: 1200px;
 $xxlBrakepoint: 1400px;
 
-// @mixin xs-breakpoint {
-//     @media only screen and (max-width: $xsBrakepoint){
-//         @content;
-//     }
-// }
-
-// @mixin sm-breakpoint {
-//     @media only screen and (min-width: $smBrakepoint){
-//         @content;
-//     }
-// }
-
-// @mixin md-breakpoint {
-//     @media only screen and (min-width: $mdBrakepoint){
-//         @content;
-//     }
-// }
-
-// @mixin lg-breakpoint {
-//     @media only screen and (min-width: $lgBrakepoint){
-//         @content;
-//     }
-// }
-
-// @mixin xl-breakpoint {
-//     @media only screen and (min-width: $xlBrakepoint){
-//         @content;
-//     }
-// }
-
-// @mixin xxl-breakpoint {
-//     @media only screen and (min-width: $xxlBrakepoint){
-//         @content;
-//     }
-// }
 
 @mixin xs-breakpoint {
     @media only screen and (max-width: $xsBrakepoint){
@@ -83,6 +48,42 @@ $xxlBrakepoint: 1400px;
         @content;
     }
 }
+
+// @mixin xs-breakpoint {
+//     @media only screen and (max-width: $xsBrakepoint){
+//         @content;
+//     }
+// }
+
+// @mixin sm-breakpoint {
+//     @media only screen and (min-width: $smBrakepoint){
+//         @content;
+//     }
+// }
+
+// @mixin md-breakpoint {
+//     @media only screen and (min-width: $mdBrakepoint){
+//         @content;
+//     }
+// }
+
+// @mixin lg-breakpoint {
+//     @media only screen and (min-width: $lgBrakepoint){
+//         @content;
+//     }
+// }
+
+// @mixin xl-breakpoint {
+//     @media only screen and (min-width: $xlBrakepoint){
+//         @content;
+//     }
+// }
+
+// @mixin xxl-breakpoint {
+//     @media only screen and (min-width: $xxlBrakepoint){
+//         @content;
+//     }
+// }
 
 
 // // overview
