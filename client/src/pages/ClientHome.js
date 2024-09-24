@@ -80,16 +80,13 @@ const ClientHome = ({socket}) =>{
                 <div className='search-box'>
                     <Search search={searchDataHanlderWithScroll}></Search>
                     <Sort search={searchDataHanlderWithScroll}></Sort>
-                    {/* <Search search={searchDataHanlder}></Search>
-                    <Sort search={searchDataHanlder}></Sort> */}
                 </div>
                 <div className='filter-houseworkers-container'>
                     <div className='filter-options'>
                         <Filter 
                         //This FilterDataHandler is different on every render by default - so memo(Filter) won't work to prevent Filter unnecessary re-rendering
                         //so i had to this filterDataHandler made unique (frize on first fucntion creating -> useCallback on filterDataHandler in useClient )
-                            // filterOptions={filterDataHandler}
-                            filterOptions={filterDataHanlderWithScroll}
+                        filterOptions={filterDataHanlderWithScroll}
                         />
                     </div>
                     
