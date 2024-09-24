@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useRef} from 'react'
 import { useSelector } from 'react-redux';
 import useClient from '../hooks/useClient.js';
 import HouseworkerCard from '../components/HouseworkerCard/HouseworkerCard.js'
@@ -13,12 +13,31 @@ const ClientHome = ({socket}) =>{
     const {user} = useSelector((state) => state.auth);
     const {data, loading, searchDataHanlder, filterDataHandler } = useClient(user);
     const [houseworkerData, setHouseworkerData] = useState([]); //List of HouseworkerCard
- 
+    const scrollElemenetRef = useRef(null);
+
+    const scrollToElemementHandler = ()=>{
+        if(scrollElemenetRef.current){
+            scrollElemenetRef.current.scrollIntoView({
+                top:0,
+                behavior:'smooth'
+            });
+        }
+    }
+
+    const searchDataHanlderWithScroll = (prop) =>{
+        scrollToElemementHandler();
+        searchDataHanlder(prop)
+    }
+    const filterDataHanlderWithScroll = (prop) =>{
+        scrollToElemementHandler();
+        filterDataHandler(prop)
+    }
+
     //THIS CAUSED RE_RENDERING ON EVERY DATA CHANGE ITS CHANGE  setHouseworkerData(houseworkerList); THAT AGAIN CAUSE RE_REDNERING
     useEffect(()=>{
         let houseworkerList;
         data ? 
-        houseworkerList = data.map(user =>
+        houseworkerList = data.map((user,index) =>
             (
             <HouseworkerCard
                 // key={`card-${user.id}`}
@@ -59,19 +78,22 @@ const ClientHome = ({socket}) =>{
 
             <section className='houseworker-content-section'>
                 <div className='search-box'>
-                    <Search search={searchDataHanlder}></Search>
-                    <Sort search={searchDataHanlder}></Sort>
+                    <Search search={searchDataHanlderWithScroll}></Search>
+                    <Sort search={searchDataHanlderWithScroll}></Sort>
+                    {/* <Search search={searchDataHanlder}></Search>
+                    <Sort search={searchDataHanlder}></Sort> */}
                 </div>
                 <div className='filter-houseworkers-container'>
                     <div className='filter-options'>
                         <Filter 
                         //This FilterDataHandler is different on every render by default - so memo(Filter) won't work to prevent Filter unnecessary re-rendering
                         //so i had to this filterDataHandler made unique (frize on first fucntion creating -> useCallback on filterDataHandler in useClient )
-                            filterOptions={filterDataHandler}
+                            // filterOptions={filterDataHandler}
+                            filterOptions={filterDataHanlderWithScroll}
                         />
                     </div>
                     
-                    <div className="houseworker-list">    
+                    <div ref={scrollElemenetRef} className="houseworker-list">   
                         {loading ? <Spinner/> :
                         <>
                             {houseworkerData &&
