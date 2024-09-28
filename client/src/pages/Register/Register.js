@@ -12,8 +12,8 @@ const Register = () =>{
                     <Link to='/clientRegister' className='register-link'>
                         <div className='avatar-container'>
                             <picture>
-                                <source srcSet="assets/client.webp"/>
-                                <img className='avatar' src='assets/client.png'></img>
+                                <source srcSet="assets/c5.webp"/>
+                                <img className='avatar' src='assets/c5.jpg'></img>
                             </picture>
                         </div>
                         <div className='register-label'>Client</div>
@@ -24,8 +24,8 @@ const Register = () =>{
                     <Link to='/houseworkerRegister' className='register-link'>
                         <div className='avatar-container'>
                             <picture>
-                                <source srcSet="assets/houseworker.webp"/>
-                                <img className='avatar'src='assets/houseworker.png'></img>
+                                <source srcSet="assets/hs6.webp"/>
+                                <img className='avatar'src='assets/hs6.jpg'></img>
                             </picture>
                         </div>
                         <div className='register-label'>Houseworker</div>
