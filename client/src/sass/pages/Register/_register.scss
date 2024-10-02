@@ -13,7 +13,7 @@
     .register-options{
         width: 100%;
         position:absolute;
-        top:45%;
+        top:40%;
         left:50%;
         transform: translate(-50% , -50%);
         @include flex-with-direction-center();
@@ -48,7 +48,7 @@
                 }
 
                 .avatar-container{
-                    padding:1em 0;
+                    padding:1.5em 0;
                 
                     & picture{
                         @include flex-with-direction-center($direction:column);
@@ -56,7 +56,7 @@
                         height: 100%;
 
                         .avatar{
-                            // opacity: .85;
+                            opacity: .85;
                             width: 80%;
                             height: 80%;
                             object-fit: cover;
