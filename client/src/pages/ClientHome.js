@@ -14,14 +14,17 @@ const ClientHome = ({socket}) =>{
     const {data, loading, searchDataHanlder, filterDataHandler } = useClient(user);
     const [houseworkerData, setHouseworkerData] = useState([]); //List of HouseworkerCard
     const scrollElemenetRef = useRef(null);
+    const scrollTimeoutRef = useRef(null);
 
     const scrollToElemementHandler = ()=>{
-        if(scrollElemenetRef.current){
-            scrollElemenetRef.current.scrollIntoView({
-                top:0,
-                behavior:'smooth'
-            });
-        }
+        scrollTimeoutRef.current = setTimeout(()=>{
+            if(scrollElemenetRef.current){
+                scrollElemenetRef.current.scrollIntoView({
+                    top:0,
+                    behavior:'smooth'
+                });
+            }
+        },300)
     }
 
     const searchDataHanlderWithScroll = (prop) =>{
@@ -62,6 +65,14 @@ const ClientHome = ({socket}) =>{
         : houseworkerList =[]       
             setHouseworkerData(houseworkerList)
     },[data]);
+
+    useEffect(()=>{
+        return() =>{
+            if(scrollTimeoutRef.current){
+                clearTimeout(scrollTimeoutRef.current);
+            }
+        }
+    },[])
 
     return (
         <main className='home-container'>
