@@ -21,7 +21,8 @@ const {
     getHouseworkerInfo,
     getHouseworkerCommentsCount,
     getHomeInfo,
-    getHouseworkerProfessionsAndRating
+    getHouseworkerProfessionsAndRating,
+    getHouseworkerUsersCount
 } = require('../controller/houseworkerController');
 
 const router = express.Router();
@@ -32,6 +33,7 @@ router.get('/', getHouseworkers); //client will see all houseworkers
 //http://localhost:5000/api/houseworker/filter?gender=male&city=Beograd  --- "?" between filter and params
 router.get('/filter', getHouseworkerWithFilters);
 router.get('/info', checkHouseworker, getHouseworkerInfo )
+router.get('/count', getHouseworkerUsersCount)
 
 //IF IS THIS ROUTE (with :username - params) is ABOVE the /rating,comments,professions -get route 
 //will make conflict, this MUST BE BELOWE ALL OF THESE

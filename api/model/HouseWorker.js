@@ -528,6 +528,17 @@ const updateWorkingHour = async(username, profession, working_hour)=>{
     return {profession:result.records[0].get(0) , working_hour:result.records[0].get(1)}
 }
 
+const getHouseworkersCount = async() =>{
+    const session = driver.session();
+    const result = await session.run(`
+        MATCH (n:User)-[:IS_HOUSEWORKER]->(h)
+        RETURN count(h)`
+    )
+    const count = parseInt(result.records[0].get(0));
+    session.close()
+    return {count:count}
+}
+
 
 //creating Houseworker without professions
 const create = async(houseworkerObject)=>{
@@ -757,5 +768,6 @@ module.exports ={
     findCities,
     getCommentsCount,
     getHomeInfo,
-    getProfessionsAndRating
+    getProfessionsAndRating,
+    getHouseworkersCount
 }

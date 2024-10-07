@@ -50,6 +50,16 @@ const getHouseworkers = async(req,res)=>{
     }
 }
 
+const getHouseworkerUsersCount = async(req, res) =>{
+    try{
+        const result = await houseworkerModel.getHouseworkersCount();
+        res.json(result);
+    }
+    catch(err){
+        res.status(404).json({error:'Houseworkers Count Error'});
+    }
+}
+
 
 const getHouseworkerInfo = async(req,res)=>{
     //logged user session
@@ -294,6 +304,7 @@ const getHouseworkerProfessionsAndRating = async(req,res) =>{
 module.exports ={
     getHouseworkerByUsername,
     getHouseworkers,
+    getHouseworkerUsersCount,
     deleteHouseworker,
     getRatings,
     getComments,
