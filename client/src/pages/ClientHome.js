@@ -2,6 +2,7 @@ import {useState, useEffect, useRef} from 'react'
 import { useSelector } from 'react-redux';
 import useClient from '../hooks/useClient.js';
 import HouseworkerCard from '../components/HouseworkerCard/HouseworkerCard.js'
+import { getHouseworkersCount } from '../services/houseworker.js';
 import Filter from '../components/Filter/Filter.js';
 import Search from '../components/Search.js';
 import Sort from '../components/Sort.js';
@@ -13,6 +14,7 @@ const ClientHome = ({socket}) =>{
     const {user} = useSelector((state) => state.auth);
     const {data, loading, searchDataHanlder, filterDataHandler } = useClient(user);
     const [houseworkerData, setHouseworkerData] = useState([]); //List of HouseworkerCard
+    const [houseworkerCount, setHouseworkerCount] = useState([]);
     const scrollElemenetRef = useRef(null);
     const scrollTimeoutRef = useRef(null);
 
@@ -34,6 +36,12 @@ const ClientHome = ({socket}) =>{
     const filterDataHanlderWithScroll = (prop) =>{
         scrollToElemementHandler();
         filterDataHandler(prop)
+    }
+
+    const fetchHouseworkerCount = async() =>{
+        const houseworkerResult = await getHouseworkersCount();
+        const count = houseworkerResult.count;
+        setHouseworkerCount(count);
     }
 
     //THIS CAUSED RE_RENDERING ON EVERY DATA CHANGE ITS CHANGE  setHouseworkerData(houseworkerList); THAT AGAIN CAUSE RE_REDNERING
@@ -67,6 +75,7 @@ const ClientHome = ({socket}) =>{
     },[data]);
 
     useEffect(()=>{
+        fetchHouseworkerCount();
         return() =>{
             if(scrollTimeoutRef.current){
                 clearTimeout(scrollTimeoutRef.current);
@@ -83,7 +92,7 @@ const ClientHome = ({socket}) =>{
                 </div>
                 
                 <div className='users-count-message'>
-                 <span>1029</span> Currently Users registerd That Offer Jobs
+                    <span>{houseworkerCount}</span> Currently Users registerd That Offer Jobs
                 </div>
             </section>
 
