@@ -28,6 +28,17 @@ export const getHouseworkers = async() =>{
     }
 }
 
+export const getHouseworkersCount = async() =>{
+    try{
+        const result = await axiosSession.get(BASE_URL + `houseworker/count`)
+        const count = result.data;
+        return count;
+    }
+    catch(err){
+        ThrowErorr(err);
+    }
+}
+
 export const updateHouseworker = async(newData) =>{
     try{
         // await axiosSession.post( BASE_URL + `houseworker/update/`, newData);
