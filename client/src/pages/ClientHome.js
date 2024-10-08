@@ -66,7 +66,6 @@ const ClientHome = ({socket}) =>{
                 address={user.address}
                 age={user.age}
                 phone_number={user.phone_number}
-                professions={user.professions}
             />
             )
         )
