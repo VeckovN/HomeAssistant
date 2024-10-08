@@ -296,7 +296,7 @@ const getHouseworkerProfessionsAndRating = async(req,res) =>{
     }
     catch(err){
         console.log("Error updateProfessionWorkingHour: " + err);
-        res.status(500).json({error:`Working hour update error`});
+        res.status(500).json({error:`HouseworkerProfessions and rating error`});
     }
 }
 
