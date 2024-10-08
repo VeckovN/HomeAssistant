@@ -9,7 +9,7 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
 
     const [rate, setRate] = useState(''); //value from input
     const [showRateInput, setShowRateInput] = useState();
-    const [houseworkerRating, setHouseworkerRating] = useState(''); //houseworker current ranking value
+    const [houseworkerRating, setHouseworkerRating] = useState(null); //houseworker current ranking value
     const [houseworkerProfessions, setHouseworkerProfessions] = useState('');
     const [loadingRating, setLoadingRating] = useState(true);
 
@@ -22,28 +22,8 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
 
     useEffect(()=>{
         fetchProfessionAndRating();
-    },[])
+    },[houseworkerUsername])
 
-    // //solution wiht promiseALl instead of axios.all
-    // const fetchData2 = async() =>{
-    //     const response = await Promise.all([
-    //         getRating(houseworkerUsername),
-    //         getProfessionsByUsername(houseworkerUsername)
-    //     ]);
-
-    //     return {rating:response[0], professions:response[1]};
-    // }
-
-    // useEffect(()=>{
-    //     const fethDataAndSet = async() =>{
-    //         const data = await fetchData2();
-    //         console.log("DATA:" , data);
-    //         setRate(data.rating);
-    //         setProfessions(data.professions);
-    //     }
-
-    //     fethDataAndSet();
-    // },[])
 
     var showRateInputCssClass =''
     if(!showRateInput)

@@ -33,6 +33,7 @@ const HouseworkerCardContent = ({
         e.target.onerror = null;
         e.target.src = `assets/userImages/userDefault.png`;
     }
+    const ratingValue = houseworkerRating !=null ? houseworkerRating : 0;
     return (
         <>
             {commentClick.current && comments &&
@@ -135,7 +136,8 @@ const HouseworkerCardContent = ({
                                         <Rating 
                                             name="half-rating-read" 
                                             size="small"
-                                            defaultValue={parseFloat(houseworkerRating)} 
+                                            defaultValue={ratingValue} 
+                                            value={ratingValue}
                                             emptyIcon={<StarIcon style={{ color: 'grey' }} fontSize="inherit" />}
                                             precision={0.5} 
                                             readOnly 
