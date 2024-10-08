@@ -101,8 +101,12 @@ const register = async (req,res)=>{
 const login = async(req,res)=>{
     //same error message for userNotFound and inncorectPassword
     try{
-        if(req.session.user)
-            return res.json({connect:"You are still logged in"});
+        if(req.session.user){
+            console.log("REQ SESSIUN USER EXIST: ", req.session.user);
+            return res.send(req.session.user)
+             // //return same user
+            // return res.json({connect:"You are still logged in"});
+        }
     
         const {username, password} = req.body;
         const user = await userModal.findByUsername(username);
