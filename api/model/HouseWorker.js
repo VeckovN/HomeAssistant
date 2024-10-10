@@ -402,6 +402,9 @@ const getComments = async(username, pageNumber)=>{
     const itemsPerPage = 10;
     var skipCount = pageNumber * itemsPerPage;
 
+    //read comments
+    //change comment.read to true
+
     const session = driver.session();
     const result = await session.run(`
         MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(m)
@@ -431,6 +434,47 @@ const getCommentsCount = async(username) =>{
     const result = await session.run(`
         MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(h)
         MATCH(h)<-[b:BELONGS_TO]-(c:Comment)
+        RETURN COUNT(c)
+        `,
+    {houseworker:username}
+    )
+    //{Comment:context, From:'clientUsername'}
+    const commentsCount = result.records[0].get(0);
+
+    session.close();
+    return parseInt(commentsCount);
+}
+
+const getUnreadComments = async(username) =>{
+    const session = driver.session();
+    const result = await session.run(`
+        MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(m)
+        MATCH(c:Comment)-[:BELONGS_TO]->(m)
+        MATCH(c)<-[:COMMENTED]-(t)
+        WHERE c.read = false
+        RETURN ID(c) AS commentID, c.context, t.username, apoc.date.format(c.timestamp, "ms", "dd.MM.yyyy") AS commentTimestamp
+        ORDER BY c.timestamp DESC`,
+    {houseworker:username}
+    )
+    const comments = result.records.map(rec=>{
+        let id = rec.get(0);
+        let comment_id_integer = id.low + id.high;
+        let commentProp = rec.get(1);
+        let clientProp = rec.get(2);
+        let commentDate = rec.get(3);
+        return {commentID:comment_id_integer, comment:commentProp, from:clientProp, date:commentDate}
+    }) 
+    session.close();
+
+    return comments;
+}
+
+const getUnreadCommentsCount = async(username) =>{
+    const session = driver.session();
+    const result = await session.run(`
+        MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(h)
+        MATCH(h)<-[b:BELONGS_TO]-(c:Comment)
+        WHERE c.read = false
         RETURN COUNT(c)
         `,
     {houseworker:username}
@@ -756,6 +800,8 @@ module.exports ={
     getAge,
     getRatings,
     getComments,
+    getUnreadComments,
+    getUnreadCommentsCount,
     getProfessions,
     getAllProffesions,
     addProfession,
@@ -769,5 +815,6 @@ module.exports ={
     getCommentsCount,
     getHomeInfo,
     getProfessionsAndRating,
-    getHouseworkersCount
+    getHouseworkersCount,
+    
 }
