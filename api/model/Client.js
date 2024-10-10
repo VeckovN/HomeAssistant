@@ -177,7 +177,7 @@ const commentHouseworker = async(client, houseworker, comment)=>{
     const result = await session.run(`
     MATCH (n:Client {username:$client})
     MATCH (m:HouseWorker {username:$houseworker})
-    CREATE (c:Comment {context:$comment, timestamp: timestamp()} )
+    CREATE (c:Comment {context:$comment, read:false, timestamp: timestamp()} )
     CREATE (n)-[:COMMENTED]->(c)
     CREATE (c)-[:BELONGS_TO]->(m)
     RETURN ID(c) AS commentID, apoc.date.format(c.timestamp, "ms", "dd.MM.yyyy") AS commentTimestamp`
@@ -188,7 +188,7 @@ const commentHouseworker = async(client, houseworker, comment)=>{
     const commentDate = result.records[0].get(1);
     session.close();
 
-    return {commentID, commentDate};
+    return {commentID, read:false, commentDate};
 }
 
 
