@@ -486,6 +486,30 @@ const getUnreadCommentsCount = async(username) =>{
     return parseInt(commentsCount);
 }
 
+const markCommentAsRead = async(commentID) =>{
+    const session = driver.session();
+    await session.run(`
+        MATCH (comment:Comment {id: $commentID})
+        SET comment.read = true
+      `, {
+        commentID,
+      });
+    session.close();
+}
+
+// const markAllCommentsAsRead = async(username) =>{
+//     const session = driver.session();
+//     await session.run(`
+//         MATCH (c:Comment)
+//         WHERE ID(c) = '327'
+//         SET c.read = true
+//         RETURN ID(c) AS commentID, c.context, c.read
+//       `, {
+//         commentID,
+//       });
+//     session.close();
+// }
+
 const getProfessions = async (username)=>{
     //Get Professions with working Hours
     const session = driver.session();
