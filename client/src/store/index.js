@@ -3,6 +3,7 @@ import { persistStore, persistReducer, createTransform} from 'redux-persist'
 import storage from 'redux-persist/lib/storage';
 import authSlice from './auth-slice';
 import unreadMessagesSlice from './unreadMessagesSlice';
+import unreadCommentsSlice from './unreadCommentSlice';
 
 const authPersistConfig = {
     key:'auth',
@@ -28,6 +29,17 @@ const conditionalTransform = createTransform(
     { whitelist: ['unreadMessages', 'unreadCount']}
   );
 
+const conditionalCommentsTransform = createTransform(
+    (inboundState, key, state) => {
+      if (state.auth && state.auth.user) {
+        return inboundState;
+      }
+      return { unreadComments: [], unreadCommentsCount: 0, error: false, loading: null };
+    },
+    (outboundState, key) => outboundState,
+    { whitelist: ['unreadComments', 'unreadCommentsCount']}
+  );
+
 const unreadMessagesPersistConfig = {
     key:'unreadMessages',
     storage,
@@ -35,13 +47,21 @@ const unreadMessagesPersistConfig = {
     transform:[conditionalTransform]
 }
 
+const unreadCommentsPersistConfig = {
+    key:'unreadComments',
+    storage,
+    transform:[conditionalCommentsTransform]
+}
+
 const persistedAuthReducer = persistReducer(authPersistConfig, authSlice.reducer)
 const persistedUnreadMessagesReducer = persistReducer(unreadMessagesPersistConfig, unreadMessagesSlice.reducer);
+const persistedUnreadCommentsReducer = persistReducer(unreadCommentsPersistConfig, unreadCommentsSlice.reducer);
 
 const store = configureStore({
     reducer:{
         auth: persistedAuthReducer,
         unreadMessages:persistedUnreadMessagesReducer,
+        unreadComments:persistedUnreadCommentsReducer
         //other slices...
     },
 
