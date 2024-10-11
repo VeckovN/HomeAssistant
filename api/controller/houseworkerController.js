@@ -193,8 +193,20 @@ const getHouseworkerUnreadCommentsCount = async(req,res)=>{
         res.json(result);
     }
     catch(err){
-        console.log("ERROR Comments: " + err);
+        console.log("ERROR Unread Comments: " + err);
         res.status(404).json({error:'Unread Comments Count error'});
+    }
+}
+
+const markHouseworkerUnreadComments = async(req,res) =>{
+    try{
+        const username = req.params.username;
+        const result = await houseworkerModel.markAllCommentsAsRead(username);
+        res.status(200).json(result);
+    }
+    catch(err){
+        console.log("ERROR Mark Comments: " + err);
+        res.status(404).json({error:'Unread Comments Mark error'});
     }
 }
 
@@ -348,5 +360,6 @@ module.exports ={
     getHomeInfo,
     getHouseworkerProfessionsAndRating,
     getHouseworkerUnreadComments,
-    getHouseworkerUnreadCommentsCount
+    getHouseworkerUnreadCommentsCount,
+    markHouseworkerUnreadComments
 }

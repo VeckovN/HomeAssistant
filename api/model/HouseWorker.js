@@ -410,7 +410,7 @@ const getComments = async(username, pageNumber)=>{
         MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(m)
         MATCH(c:Comment)-[:BELONGS_TO]->(m)
         MATCH(c)<-[:COMMENTED]-(t)
-        RETURN ID(c) AS commentID, c.context, t.username, apoc.date.format(c.timestamp, "ms", "dd.MM.yyyy") AS commentTimestamp
+        RETURN ID(c) AS commentID, c.context, t.username, c.read, apoc.date.format(c.timestamp, "ms", "dd.MM.yyyy") AS commentTimestamp
         ORDER BY c.timestamp DESC 
         SKIP ${skipCount} LIMIT ${itemsPerPage}`,
     {houseworker:username}
@@ -421,8 +421,9 @@ const getComments = async(username, pageNumber)=>{
         let comment_id_integer = id.low + id.high;
         let commentProp = rec.get(1);
         let clientProp = rec.get(2);
-        let commentDate = rec.get(3);
-        return {commentID:comment_id_integer, comment:commentProp, from:clientProp, date:commentDate}
+        let commentRead = rec.get(3)
+        let commentDate = rec.get(4);
+        return {commentID:comment_id_integer, comment:commentProp, from:clientProp, read:commentRead, date:commentDate}
     }) 
     session.close();
 
@@ -486,29 +487,22 @@ const getUnreadCommentsCount = async(username) =>{
     return parseInt(commentsCount);
 }
 
-const markCommentAsRead = async(commentID) =>{
+
+const markAllCommentsAsRead = async(username) =>{
     const session = driver.session();
     await session.run(`
-        MATCH (comment:Comment {id: $commentID})
-        SET comment.read = true
-      `, {
-        commentID,
-      });
-    session.close();
-}
+        MATCH (n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(h)
+        WITH h
+        MATCH (h)<-[b:BELONGS_TO]-(c:Comment)
+        WHERE c.read = false
+        SET c.read = true
+        RETURN c
+      `,
+      {houseworker:username});
 
-// const markAllCommentsAsRead = async(username) =>{
-//     const session = driver.session();
-//     await session.run(`
-//         MATCH (c:Comment)
-//         WHERE ID(c) = '327'
-//         SET c.read = true
-//         RETURN ID(c) AS commentID, c.context, c.read
-//       `, {
-//         commentID,
-//       });
-//     session.close();
-// }
+    session.close();
+    return true;
+}
 
 const getProfessions = async (username)=>{
     //Get Professions with working Hours
@@ -826,6 +820,7 @@ module.exports ={
     getComments,
     getUnreadComments,
     getUnreadCommentsCount,
+    markAllCommentsAsRead,
     getProfessions,
     getAllProffesions,
     addProfession,
