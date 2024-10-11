@@ -141,6 +141,7 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                     from: client_username,
                     houseworkerID: houseworker.id,
                     comment:newCommentContext,
+                    read:false,
                     new:true //animation flag for entering modal 
                 }
 
