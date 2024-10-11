@@ -22,7 +22,9 @@ const {
     getHouseworkerCommentsCount,
     getHomeInfo,
     getHouseworkerProfessionsAndRating,
-    getHouseworkerUsersCount
+    getHouseworkerUsersCount,
+    getHouseworkerUnreadComments,
+    getHouseworkerUnreadCommentsCount
 } = require('../controller/houseworkerController');
 
 const router = express.Router();
@@ -41,11 +43,11 @@ router.get('/count', getHouseworkerUsersCount)
 router.delete('/:username', checkHouseworker, deleteHouseworker);
 router.get('/rating', checkHouseworker, getRatings);
 router.get('/rating/:username', getRatingUsername);
+router.get('/comments/unread/:username', checkHouseworker, getHouseworkerUnreadComments);
 router.get('/comments/:username/:pageNumber', checkClient, getComments);
 router.get('/comments/count/:username', getHouseworkerCommentsCount)
 router.get('/ourcomments/:pageNumber', checkHouseworker, getOurComments)
-
-// router.get('/professions/:username', getProfessions);
+// router.get('comments/count/unread:username', checkHouseworker, getHouseworkerUnreadCommentsCount);
 router.get('/professions/', checkHouseworker, getProfessions)
 router.get('/professions/all', getAllProfessions)
 router.get('/professions/:username', getProfessionsByUsername)

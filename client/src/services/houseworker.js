@@ -88,6 +88,18 @@ export const getComments = async(username, pageNumber) =>{
     }
 }
 
+export const getUnreadComments = async(username) =>{
+    try{
+        console.log("USS NA", username);
+        const result = await axiosSession.get(BASE_URL + `houseworker/comments/unread/${username}`);
+        const comms = result.data;
+        return comms;
+    }
+    catch(err){
+        ThrowErorr(err);
+    }
+}
+
 export const postComment = async(newComment) =>{
     try{
         const result = await axiosSession.post(BASE_URL + `clients/comment`, newComment);
@@ -173,6 +185,16 @@ export const deleteProfession = async(profession) =>{
 export const getCommentsCount = async(username) =>{
     try{
         const result = await axios.get(BASE_URL + `houseworker/comments/count/${username}`)
+        const count = result.data;
+        return count;
+    }catch(err){
+        ThrowErorr(err);
+    }
+}
+
+export const getUnreadCommentsCount = async(username) =>{
+    try{
+        const result = await axios.get(BASE_URL + `houseworker/comments/count/unread/${username}`)
         const count = result.data;
         return count;
     }catch(err){

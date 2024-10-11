@@ -174,6 +174,30 @@ const getHouseworkerCommentsCount = async(req,res)=>{
     }
 }
 
+const getHouseworkerUnreadComments = async(req,res)=>{
+    try{
+        const username = req.params.username;
+        const result = await houseworkerModel.getUnreadComments(username);
+        res.status(200).json(result);
+    }
+    catch(err){
+        console.error("ERROR Comments: " + err);
+        res.status(404).json({error:'Unread Comments Error'});
+    }
+}
+
+const getHouseworkerUnreadCommentsCount = async(req,res)=>{
+    try{
+        const username = req.params.username;
+        const result = await houseworkerModel.getUnreadCommentsCount(username);
+        res.json(result);
+    }
+    catch(err){
+        console.log("ERROR Comments: " + err);
+        res.status(404).json({error:'Unread Comments Count error'});
+    }
+}
+
 const getAllProfessions = async(req,res) => {
     try{
         const result = await houseworkerModel.getAllProffesions();
@@ -322,5 +346,7 @@ module.exports ={
     getHouseworkerInfo,
     getHouseworkerCommentsCount,
     getHomeInfo,
-    getHouseworkerProfessionsAndRating
+    getHouseworkerProfessionsAndRating,
+    getHouseworkerUnreadComments,
+    getHouseworkerUnreadCommentsCount
 }
