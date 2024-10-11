@@ -4,6 +4,7 @@ import {useDispatch} from 'react-redux';
 import { useEffect } from 'react';
 import {login, reset as resetRedux} from '../store/auth-slice.js';
 import {getUserUnreadMessages} from '../store/unreadMessagesSlice.js'
+import {getHouseworkerUnreadComments} from '../store/unreadCommentSlice.js';
 import { useForm } from 'react-hook-form';
 import {zodResolver} from "@hookform/resolvers/zod";
 import { string, z } from "zod";
@@ -28,9 +29,11 @@ const Login = () =>{
         //error is taken from trunk in redux -> return thunkAPI.rejectWithValue(message);
         dispatch(login(formValues))
             .unwrap()
-            .then(()=>{
-                //If login is successful, get all unread messages
-                dispatch(getUserUnreadMessages(formValues.username));
+            .then((res)=>{ //res -> response of login dispatch 
+                //If login is successful, get all unread messages,comments
+                dispatch(getUserUnreadMessages(formValues.username));          
+                if(res.type === "Houseworker")
+                    dispatch(getHouseworkerUnreadComments(formValues.username));
             })
             .catch((rejectedValue) => {
                 const errorType = rejectedValue.errorType;
