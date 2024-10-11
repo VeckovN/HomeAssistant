@@ -58,7 +58,7 @@ const useSocket = (user) =>{
             // Listeners for notifications (assuming separate functions for each)
             // listenFormMessage(socketRef.current, user.userID); // Listen for message notifications (both users)
             listenFormMessage(socketRef.current, reduxDispatch); // Listen for message notifications and update unreadCount with redux
-            listenForCommentNotification(socketRef.current, user.userID); // Listen for comment notifications
+            listenForCommentNotification(socketRef.current, reduxDispatch); // Listen for comment notifications
             listenForRatingNotfication(socketRef.current, user.userID); // Listen for rating notifications
             listenOnCreateUserNotification(socketRef.current, user.userID); // Listen for create user notifications
             listenOnAddUserToGroupNotification(socketRef.current, user.userID);

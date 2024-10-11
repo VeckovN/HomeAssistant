@@ -146,7 +146,7 @@ server.listen(5000, ()=>{
             // io.emit(`newComment-${postComment.houseworkerID}`, {postComment});
 
             //use JoinedRoom instead of dynamicName emit because it's broadCast the data (unnecessary traffics)
-            io.to(`user:${postComment.houseworkerID}`).emit('privateCommentNotify', postComment.from);
+            io.to(`user:${postComment.houseworkerID}`).emit('privateCommentNotify', {postComment});
             io.to(`user:${postComment.houseworkerID}`).emit(`newCommentChange`, {postComment});
         })
 

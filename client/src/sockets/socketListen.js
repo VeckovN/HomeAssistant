@@ -3,6 +3,7 @@ import messageSound from '../assets/sounds/livechat-m.mp3'
 import announcementSound from '../assets/sounds/new-notification.mp3'
 import {getFriendsList} from '../services/chat.js';
 import {updateUnreadMessages} from '../store/unreadMessagesSlice.js';
+import {updateUnreadComments } from "../store/unreadCommentSlice.js";
 
 const playSound = (soundName) =>{
     if(!document.hasFocus()){
@@ -11,12 +12,19 @@ const playSound = (soundName) =>{
     }
 }
 
-export const listenForCommentNotification = async(socket) => {
-    socket.on(`privateCommentNotify`, (client_username) =>{
-        toast.info(`You received Comment from ${client_username} `,{
+// export const listenForCommentNotification = async(socket) => {
+export const listenForCommentNotification = async(socket, reduxDispatch) => {
+    // socket.on(`privateCommentNotify`, (client_username) =>{
+    socket.on(`privateCommentNotify`, (comm) =>{
+        const newComment = comm.postComment;
+        const {commentID, comment, from, date} = newComment;
+        console.log("newComment Arrived : ", newComment)
+        toast.info(`You received Comment from ${from} `,{
             className:"toast-contact-message"
         })
 
+        const newUpdateComment ={commentID, comment, from, date}
+        reduxDispatch(updateUnreadComments({newUpdateComment}));
         playSound(announcementSound);
     })
 }

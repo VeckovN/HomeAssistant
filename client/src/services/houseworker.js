@@ -100,6 +100,17 @@ export const getUnreadComments = async(username) =>{
     }
 }
 
+export const markUnreadComments = async(username) =>{
+    try{
+        const result = await axiosSession.get(BASE_URL + `houseworker/comments/unread/mark/${username}`);
+        const comms = result.data;
+        return comms;
+    }
+    catch(err){
+        ThrowErorr(err);
+    }
+}
+
 export const postComment = async(newComment) =>{
     try{
         const result = await axiosSession.post(BASE_URL + `clients/comment`, newComment);
