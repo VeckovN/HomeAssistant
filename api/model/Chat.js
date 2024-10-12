@@ -354,7 +354,7 @@ const addUserToRoom = async(newUsername, currentRoomID)=>{
             })
 
             // const roomKey = `room:${newRoomID}`;
-            const messageObj = JSON.stringify({message:`User ${newUsername} has been added to the chat`, from:'Server', date:dateFormat, roomID:newRoomID})
+            const messageObj = {message:`User ${newUsername} has been added to the chat`, from:'Server', date:dateFormat, roomID:newRoomID};
             await zadd(newRoomKey, timestamps, messageObj);
         }
         return {
