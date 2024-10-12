@@ -22,7 +22,7 @@ export const getHouseworkerUnreadComments = createAsyncThunk(
 
         }catch(err){
             const message = (err.response && err.response.data.error) || err.message || err
-            //using thinkApi (passed in this function)
+
             return thunkAPI.rejectWithValue(message); //that will actualy reject and send the message as payload:message
         }
     }
@@ -61,7 +61,6 @@ const unreadCommentsSlice = createSlice({
     extraReducers: (builder) =>{
         builder
             .addCase(getHouseworkerUnreadComments.pending, (state)=>{
-                //what we wanna do when the state goes on the register actions  pending
                 state.loading = true;
                 state.error = null;
             })
@@ -76,7 +75,6 @@ const unreadCommentsSlice = createSlice({
             })    
 
             .addCase(markCommentsAsRead.pending, (state)=>{
-                //what we wanna do when the state goes on the register actions  pending
                 state.loading = true;
                 state.error = null;
             })
@@ -88,11 +86,10 @@ const unreadCommentsSlice = createSlice({
             })
             .addCase(markCommentsAsRead.rejected, (state,action) =>{
                 state.loading = false;
-                state.error = action.payload; //passed error from thunkAPI.rejectWithValue
+                state.error = action.payload;
             })    
     }
 })
-
 
 export const {updateUnreadComments, resetUnreadComments} = unreadCommentsSlice.actions;
 export default unreadCommentsSlice;
