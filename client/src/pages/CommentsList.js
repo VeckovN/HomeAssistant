@@ -1,5 +1,6 @@
 import {useEffect, useState, useRef} from 'react';
-// import {useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
+import {markCommentsAsRead} from '../store/unreadCommentSlice.js';
 import CommentItem  from '../components/UI/CommentItem.js';
 import {getAuthenticatedUserComments} from '../services/houseworker.js';
 import Spinner from '../components/UI/Spinner.js';
@@ -7,7 +8,7 @@ import Spinner from '../components/UI/Spinner.js';
 import '../sass/pages/_commentsList.scss';
 
 const CommentsList = ({socket, user}) =>{
-    //{comment:commentProp, from:clientProp}
+    const dispatch = useDispatch();
     const [comments, setComments] = useState(null);
     const [loading, setLoading] = useState(true);
     const endCommentsRef = useRef(null);
@@ -15,10 +16,16 @@ const CommentsList = ({socket, user}) =>{
     const observerTarget = useRef(null);
     const allCommentsLoadedRef = useRef(false);
 
-
+    //unmark unred messagers when the user visit it
     useEffect(()=>{
-        fetchComments()
+        fetchComments();
+        dispatch(markCommentsAsRead(user.username));
     },[])
+
+    //if the user is in the comments page, mark recivied comment as read
+    useEffect(()=>{
+        dispatch(markCommentsAsRead(user.username));
+    },[comments])
 
     //listen socket event
     useEffect(() => {
@@ -41,6 +48,7 @@ const CommentsList = ({socket, user}) =>{
                 key={comm.commentID}
                 from={comm.from}
                 comment = {comm.comment}
+                read={comm.read}
                 date={comm.date}
             />
         ))
@@ -87,10 +95,8 @@ const CommentsList = ({socket, user}) =>{
         if(comms.length > 0)
             setComments((prev)=>[...prev, ...comms]);   
         else 
-            allCommentsLoadedRef.current = true;
-        
+            allCommentsLoadedRef.current = true;   
     }
-
 
     return (
         <div className='comments-container'>

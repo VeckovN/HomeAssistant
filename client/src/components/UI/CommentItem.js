@@ -1,9 +1,11 @@
 import '../../sass/components/_commnetItem.scss';
 
 const CommentItem = (props) =>{
-
+    //unread-comment when the read prop is true or when the read doesn't exist
+    const unread = props.read === false ? 'unread-comment' : '';
+    const newAdded = props.new ? 'new-comment' : '';
     return(
-        <div className={`comment ${props.new ? 'new-comment' : ''}`}>
+        <div className={`comment ${unread} ${newAdded}`}>
             {props.onDeleteCommentHandler && 
                 <button className='comment-delete-btn' onClick={(e) => props.onDeleteCommentHandler(e, props.id, props.from)}>X</button>
             }
@@ -16,7 +18,6 @@ const CommentItem = (props) =>{
             <div className='context-container'>
                 <div className='context'>{props.comment}</div>
             </div>
-            
         </div>
     )
 }
