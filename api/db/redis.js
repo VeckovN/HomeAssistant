@@ -83,6 +83,10 @@ const expire = (key = "key", value = "0") =>
 const zrange = (key, value, value2) => {
     return new Promise((resolve, reject)=> client.zrange(key, value, value2, resolvePromise(resolve, reject)))
 }
+const zrangescores = (key, value, value2) => {
+    return new Promise((resolve, reject)=> client.zrange(key, value, value2, "WITHSCORES", resolvePromise(resolve, reject)))
+}
+
 const zrangerev = (key, value, value2) => {
     return new Promise((resolve, reject)=> client.zrange(key, value, value2, "REV", resolvePromise(resolve, reject)))
 }
@@ -128,5 +132,6 @@ module.exports ={
     expire,
     rename,
     scard,
-    zrangelimit
+    zrangelimit,
+    zrangescores
 }
