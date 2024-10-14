@@ -305,3 +305,48 @@ export const getProfessionsAndRating = async(username) =>{
         ThrowErorr(err);
     }
 }
+
+export const getNotifications = async(username) =>{
+    try{
+        const result = await axiosSession.get(BASE_URL + `houseworker/notifications/${username}?offset=0&size=5`)
+        const notifications = result.data;
+        return notifications;
+    }
+    catch(err){
+        ThrowErorr(err);
+    }
+}
+
+export const getMoreNotifications = async(username, batchNumber) =>{
+    try{
+        const result = await axiosSession.get(BASE_URL + `houseworker/notifications/${username}/${batchNumber}`)
+        const notifications = result.data;
+        return notifications;
+    }
+    catch(err){
+        ThrowErorr(err);
+    }
+}
+
+//Not yet implemented
+export const markNotificationAsRead = async(username, notificationID) =>{
+    try{
+        await axiosSession.get(BASE_URL + `houseworker/notifications/mark/${username}/${notificationID}`)
+        console.log(`The notification ID:${notificationID} IS READ`);
+        return true;
+    }
+    catch(err){
+        ThrowErorr(err);
+    }
+}
+
+export const markAllNotificationsAsRead = async(username) =>{
+    try{
+        await axiosSession.get(BASE_URL + `houseworker/notifications/mark/${username}`)
+        console.log("ALL NOTIFICATIONS IS READ: ")
+        return true;
+    }
+    catch(err){
+        ThrowErorr(err);
+    }
+}

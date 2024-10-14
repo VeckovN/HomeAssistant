@@ -336,6 +336,46 @@ const getHouseworkerProfessionsAndRating = async(req,res) =>{
     }
 }
 
+//GET /notifications/userID?offset=10&size=20
+const getNotifications = async(req,res) =>{
+        const username = req.params.username;
+        const offset = req.query.offset;
+        const size = req.query.size;
+    try{
+        const result = await houseworkerModel.getRecordedNotifications(username, offset, size);        
+        res.status(200).json(result);
+    }
+    catch(err){
+        console.log("Error getNotifications: " + err);
+        res.status(500).json({error:`HouseworkerProfessions and rating error`});
+    }
+}
+
+const getMoreNotifications = async(req,res) =>{
+    const username = req.params.username;
+    const batchNumber = req.params.batchNumber;
+
+    try{
+        const messages = await houseworkerModel.getMoreRecordedNotifications(username , batchNumber);
+        res.status(200).res.json(messages);
+    }
+    catch(err){
+        console.log(err);
+        res.status(400).json({error:"More Messages Fetching Error"});
+    }
+}
+
+const markUnreadNotifications = async(req,res) =>{
+    const username = req.params.username;
+    try{
+        await houseworkerModel.markAllCommentsAsRead(username);
+        res.status(200); //is true return value as default
+    }
+    catch(err){
+        console.log(err);
+        res.status(400).json({error:"More Messages Fetching Error"});
+    }
+}
 
 module.exports ={
     getHouseworkerByUsername,
@@ -361,5 +401,8 @@ module.exports ={
     getHouseworkerProfessionsAndRating,
     getHouseworkerUnreadComments,
     getHouseworkerUnreadCommentsCount,
-    markHouseworkerUnreadComments
+    markHouseworkerUnreadComments,
+    getNotifications,
+    getMoreNotifications,
+    markUnreadNotifications
 }
