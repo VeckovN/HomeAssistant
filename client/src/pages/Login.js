@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import {login, reset as resetRedux} from '../store/auth-slice.js';
 import {getUserUnreadMessages} from '../store/unreadMessagesSlice.js'
 import {getHouseworkerUnreadComments} from '../store/unreadCommentSlice.js';
+import {getHouseworkerNotifications} from '../store/notificationsSlice.js';
 import { useForm } from 'react-hook-form';
 import {zodResolver} from "@hookform/resolvers/zod";
 import { string, z } from "zod";
@@ -32,8 +33,10 @@ const Login = () =>{
             .then((res)=>{ //res -> response of login dispatch 
                 //If login is successful, get all unread messages,comments
                 dispatch(getUserUnreadMessages(formValues.username));          
-                if(res.type === "Houseworker")
+                if(res.type === "Houseworker"){
                     dispatch(getHouseworkerUnreadComments(formValues.username));
+                    dispatch(getHouseworkerNotifications(formValues.username));
+                }
             })
             .catch((rejectedValue) => {
                 const errorType = rejectedValue.errorType;
