@@ -1,6 +1,6 @@
 const {driver} = require('../db/neo4j');
-const { set ,get, expire} = require('../db/redis');
-const {updateUserPicturePath, getUserPicturePath} = require('../db/redisUtils');
+const { set ,get, expire, zadd, zrangescores} = require('../db/redis');
+const {getUserIdByUsername, updateUserPicturePath, getUserPicturePath, getNotificationsByOffset} = require('../db/redisUtils');
 const path = require('path');
 const fs = require('fs');
 
@@ -808,6 +808,58 @@ const getProfessionsAndRating = async(username) =>{
     return {professions:professions, avgRating:avgRating}
 }
 
+
+//redis usage
+
+//get message From ---  ZREVRANGE room:{roomID} {offset_start} {offset_end}
+// ZREVRANGE room:1:2 0 50 (will return 50 messages with 0 offsets for the private room between users with IDs 1 and 2.)
+const getRecordedNotifications = async(username, offset, size) =>{
+    const userID = await getUserIdByUsername(username);
+
+    //on initial get first 5 or 6 notifications based on offset and size,
+    const notifications = await getNotificationsByOffset(userID, offset, size-1);
+    console.log("notifications get Recorded: ", notifications);
+
+    return notifications;
+}
+
+// const getMoreRecordedNotifications = async(userID, pageNumber) =>{
+const getMoreRecordedNotifications = async(username, batchNumber) =>{
+    const userID = await getUserIdByUsername(username);
+
+    const size = 10;
+    const offset = size * batchNumber;
+    const endIndex = offset + size -1; 
+    
+    const notifications = await getNotificationsByOffset(userID, offset, endIndex);
+    return notifications;
+}
+
+// const getUnreadNotificationCount = async(userID) =>{
+    
+// }
+
+const markNotificationsAsRead = async(username) =>{ 
+    const userID = await getUserIdByUsername(username);
+    const notifications = await zrangescores(`user:${userID}:notifications`, 0, -1); // -1 ->last element
+    //WITHSCORE -> [0] -objectData ,[1] - SCORE VALUE, [2] - next obj, [3] -SCORE VALUE 
+    // that means +2 for new set data
+    for(let i = 0; i< notifications.length; i +=2){
+        const notificationStr = notifications[i];
+        const score = notifications[i+1];
+
+        const notificationObj = JSON.parse(notificationStr);
+
+        if(notificationObj.read === false){
+            notificationObj.read = true;
+        }
+
+        //overwrite the notification in the sorted set with the same score  
+        await zadd(`user:${userID}:notifications`, score, JSON.stringify(notificationObj));
+    }
+    // return true;
+}
+
 module.exports ={
     findByUsername,
     findAll,
@@ -835,5 +887,7 @@ module.exports ={
     getHomeInfo,
     getProfessionsAndRating,
     getHouseworkersCount,
-    
+    getRecordedNotifications,
+    getMoreRecordedNotifications,
+    markNotificationsAsRead
 }
