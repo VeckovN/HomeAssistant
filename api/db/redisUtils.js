@@ -1,4 +1,5 @@
-const {hmset, hmget, get} = require('../db/redis');
+const {hmset, hmget, get, zadd, zrangerev, incr} = require('../db/redis');
+const {formatDate} = require('../utils/dateUtils');
 
 const getUserIdByUsername = async (username)=>{
     const user = await get(`username:${username}`); //user:{userID}
@@ -38,11 +39,55 @@ const getUnreadMessageCountByRoomID = async(userID, roomID) =>{
     return countNumber;
 }
 
+
+const recordNotification = async(userID, type, message) =>{
+    const timestamps = Date.now(); //used for score value (miliseconds)
+    const dateFormat = formatDate(new Date(timestamps));
+
+    const notificationID = await incr(`notificationCount`);
+
+    const notification = { 
+        id:notificationID,
+        from:userID,
+        type:type, //comment, rate, chatGroup
+        date:dateFormat,
+        message:message,
+        read:false
+    }
+    await zadd(`user:${userID}:notifications`, timestamps, JSON.stringify(notification));
+
+    return notificationID;
+}
+
+const recordNotificationbyUsername = async(username, type, message) =>{
+    const userID = await getUserIdByUsername(username);
+    console.log("usriD DI:" , userID);
+    return await recordNotification(userID, type, message);
+}
+
+const getNotificationsByOffset = async(userID, offset, endIndex) =>{
+    const notifications = await zrangerev(`user:${userID}:notifications`, offset, endIndex);
+    const notificationsObj = notifications.map((mes) => JSON.parse(mes)); //Parsing JSON to obj
+    
+    const unreadNotifications = notificationsObj.filter(notification => notification.read === false);
+    // const unreadNotificationCount = unreadNotifications.length;
+
+    //wihout unreadNotifications array
+    const unreadNotificationCount = notificationsObj.reduce((count, notification) =>{
+        return count + (notification.read === false ? 1 : 0);
+    },0);
+    
+    return {notifications: notificationsObj, unreadCount:unreadNotificationCount};
+}
+
 module.exports = {
     getUserIdByUsername, 
     getUsernameByUserID,
     getUserInfoByUserID,
     getUserPicturePath,
     updateUserPicturePath,
-    getUnreadMessageCountByRoomID
+    getUnreadMessageCountByRoomID,
+    recordNotification,
+    recordNotificationbyUsername,
+    getNotificationsByOffset
 }
