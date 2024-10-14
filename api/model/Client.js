@@ -1,13 +1,16 @@
-const { response } = require('express');
 const {session,driver} = require('../db/neo4j');
-const { use } = require('../routes/clients');
 const { set, get, expire } = require('../db/redis');
+const {recordNotificationbyUsername} = require('../db/redisUtils');
 
 //When is important to return all properties of Node
 //we can return whole node with RETURN node and return records[0].get(0).properties
 
 //But when we want to reture some properties not all of them
 //we  can return those properties Return node.property1, node.property2
+
+
+//for notification record
+const notificationType="comment";
 
 
 const findByUsername = async (username)=>{
@@ -184,6 +187,9 @@ const commentHouseworker = async(client, houseworker, comment)=>{
     , {client:client, houseworker:houseworker, comment:comment}
     )
 
+    const message = `You’ve got comment from ${client}`;
+    const notificationID = await recordNotificationbyUsername(houseworker, notificationType, message);
+
     const commentID = parseInt(result.records[0].get(0));
     const commentDate = result.records[0].get(1);
     session.close();
@@ -206,6 +212,11 @@ const deleteComment = async(username, commentID)=>{
     , {client:username, id:comment_id}
     )
 
+    //get username of deleted User comment -> (Belongs to 'm' than his/her username)
+    // const houseworker = 
+    // const message = `The user ${username} has been deleted the comment`;
+    // const notificationID = await recordNotificationbyUsername(houseworker, notificationType, message);
+
     session.close();
     return result.records[0];
 }
@@ -223,12 +234,16 @@ const rateHouseworker= async(client, houseworker, rating)=>{
         RETURN r.rating
     `,{client:client, houseworker:houseworker, rating:rating}
     );
+    
+    const rateValue = result.records[0].get(0);
+
+    const message = `The user ${client} has been rated you with ${rateValue} `;
+    const notificationID = await recordNotificationbyUsername(houseworker, notificationType, message);
 
     //records[0] is record of n(Node Client)
     //records[2] is the r(relationship:RATED w)
-    console.log("RATING : " + result.records[0].get(0))
     session.close();
-    return result.records[0].get(0);
+    return rateValue;
     //or return n,m,r.rating
     //return result.records[2].get(0)
 }
@@ -404,7 +419,6 @@ const checkRecommendedInCache = async(username) =>{
     else
         return null
 }
-
 
 const recomendedByCityAndInterest = async(username,city) =>{
     const session = driver.session();
