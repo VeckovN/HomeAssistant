@@ -187,14 +187,15 @@ const commentHouseworker = async(client, houseworker, comment)=>{
     , {client:client, houseworker:houseworker, comment:comment}
     )
 
-    const message = `You’ve got comment from ${client}`;
-    const notificationID = await recordNotificationbyUsername(houseworker, notificationType, message);
+    const message = `You've got comment from ${client}`;
+    const notification = await recordNotificationbyUsername(houseworker, notificationType, message);
 
     const commentID = parseInt(result.records[0].get(0));
     const commentDate = result.records[0].get(1);
     session.close();
 
     return {commentID, read:false, commentDate};
+    // return {commentID, read:false, commentDate, notification:notification};
 }
 
 
@@ -219,6 +220,7 @@ const deleteComment = async(username, commentID)=>{
 
     session.close();
     return result.records[0];
+    // return {deletedClient: result.records[0], notification:notification};
 }
 
 
@@ -238,14 +240,11 @@ const rateHouseworker= async(client, houseworker, rating)=>{
     const rateValue = result.records[0].get(0);
 
     const message = `The user ${client} has been rated you with ${rateValue} `;
-    const notificationID = await recordNotificationbyUsername(houseworker, notificationType, message);
+    const notification = await recordNotificationbyUsername(houseworker, notificationType, message);
 
-    //records[0] is record of n(Node Client)
-    //records[2] is the r(relationship:RATED w)
     session.close();
     return rateValue;
-    //or return n,m,r.rating
-    //return result.records[2].get(0)
+    // return {rateValue:rateValue, notification:notification};
 }
 
 const rateHouseworker_client = async(client, username, rating)=>{
