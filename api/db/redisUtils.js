@@ -56,23 +56,17 @@ const recordNotification = async(userID, type, message) =>{
     }
     await zadd(`user:${userID}:notifications`, timestamps, JSON.stringify(notification));
 
-    return notificationID;
+    return notification;
 }
 
 const recordNotificationbyUsername = async(username, type, message) =>{
     const userID = await getUserIdByUsername(username);
-    console.log("usriD DI:" , userID);
     return await recordNotification(userID, type, message);
 }
 
 const getNotificationsByOffset = async(userID, offset, endIndex) =>{
     const notifications = await zrangerev(`user:${userID}:notifications`, offset, endIndex);
     const notificationsObj = notifications.map((mes) => JSON.parse(mes)); //Parsing JSON to obj
-    
-    const unreadNotifications = notificationsObj.filter(notification => notification.read === false);
-    // const unreadNotificationCount = unreadNotifications.length;
-
-    //wihout unreadNotifications array
     const unreadNotificationCount = notificationsObj.reduce((count, notification) =>{
         return count + (notification.read === false ? 1 : 0);
     },0);
