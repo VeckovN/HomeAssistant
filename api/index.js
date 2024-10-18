@@ -139,15 +139,16 @@ server.listen(5000, ()=>{
             socket.leave(`room:${id}`)
         })
 
-        socket.on("commentNotification", (postComment) =>{
+        socket.on("commentNotification", (commentObj) =>{
+            const houseworkerID = commentObj.newComment.houseworkerID;
             //THESE BROADCAST (NOT EFFICIENT)
             // io.emit(`privateCommentNotify-${postComment.houseworkerID}`, postComment.from);
             //emit newComment, only when the user is on the comments page
             // io.emit(`newComment-${postComment.houseworkerID}`, {postComment});
 
             //use JoinedRoom instead of dynamicName emit because it's broadCast the data (unnecessary traffics)
-            io.to(`user:${postComment.houseworkerID}`).emit('privateCommentNotify', {postComment});
-            io.to(`user:${postComment.houseworkerID}`).emit(`newCommentChange`, {postComment});
+            io.to(`user:${houseworkerID}`).emit('privateCommentNotify', commentObj);
+            io.to(`user:${houseworkerID}`).emit(`newCommentChange`, commentObj.newComment);
         })
 
         socket.on("ratingNotification", ({ratingObj}) =>{

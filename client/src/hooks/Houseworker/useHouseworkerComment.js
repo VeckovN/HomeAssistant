@@ -138,14 +138,14 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                 const newComment = {
                     commentID:commentResult.commentID,
                     date:commentResult.commentDate,
-                    from: client_username,
+                    fromUsername: client_username,
                     houseworkerID: houseworker.id,
                     comment:newCommentContext,
                     read:false,
                     new:true //animation flag for entering modal 
                 }
 
-                emitCommentNotification(socket, newComment);
+                emitCommentNotification(socket, {newComment, notificationObj:commentResult.notificationObj});
 
                 //this will trigger Comp re-render
                 if(comments){

@@ -1,7 +1,7 @@
 
-export const emitCommentNotification = (socket, postComment) =>{
-    socket.emit('commentNotification', postComment); //notification
-    socket.emit('newComment', postComment); // newComment for Comment page and Modal
+export const emitCommentNotification = (socket, commentObj) =>{
+    socket.emit('commentNotification', commentObj); 
+    socket.emit('newComment', commentObj.newComment);
 }
 
 export const emitRatingNotification = (socket, ratingObj) =>{
