@@ -123,12 +123,14 @@ export const postComment = async(newComment) =>{
 
 export const rateUser = async(rateObject) =>{
     try{
-        await axiosSession.post(BASE_URL + 'clients/rate', rateObject)
+        const postResult = await axiosSession.post(BASE_URL + 'clients/rate', rateObject)
+        const postResultData = postResult.data;
         //fetch newRate(new calcuation of avarage rate)
         const result = await axios.get(BASE_URL + `houseworker/rating/${rateObject.houseworker}`)
-        const ratingValue = result.data;
-    
-        return ratingValue;
+        const newAvgRate = result.data;
+        
+        // rate:rateValue, notification:notification  - postResult
+        return  {...postResultData, newAvgRate:newAvgRate};
     }
     catch(err){
         ThrowErorr(err);
@@ -308,7 +310,8 @@ export const getProfessionsAndRating = async(username) =>{
 
 export const getNotifications = async(username) =>{
     try{
-        const result = await axiosSession.get(BASE_URL + `houseworker/notifications/${username}?offset=0&size=5`)
+        const result = await axiosSession.get(BASE_URL + `houseworker/notifications/${username}?offset=0&size=15`)
+        // const result = await axiosSession.get(BASE_URL + `houseworker/notifications/${username}?offset=0&size=5`)
         const notifications = result.data;
         return notifications;
     }
