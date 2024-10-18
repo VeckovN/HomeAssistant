@@ -194,8 +194,7 @@ const commentHouseworker = async(client, houseworker, comment)=>{
     const commentDate = result.records[0].get(1);
     session.close();
 
-    return {commentID, read:false, commentDate};
-    // return {commentID, read:false, commentDate, notification:notification};
+    return {commentID, read:false, commentDate, notificationObj:notification};
 }
 
 
