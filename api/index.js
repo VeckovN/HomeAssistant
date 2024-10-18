@@ -151,10 +151,12 @@ server.listen(5000, ()=>{
             io.to(`user:${houseworkerID}`).emit(`newCommentChange`, commentObj.newComment);
         })
 
-        socket.on("ratingNotification", ({ratingObj}) =>{
+        socket.on("ratingNotification", (ratingObj) =>{
+            const houseworkerID = ratingObj.houseworkerID;
+            // const houseworkerID = newRateObj.houseworkerID;
             //emit only to user whom the message is intended
-            io.emit(`privateRatingNotify-${ratingObj.houseworkerID}`, ratingObj.client);
-            
+            // io.emit(`privateRatingNotify-${ratingObj.houseworkerID}`, ratingObj.client);
+            io.emit(`privateRatingNotify-${houseworkerID}`, ratingObj);
         })
     
 

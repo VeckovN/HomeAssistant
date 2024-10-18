@@ -242,8 +242,7 @@ const rateHouseworker= async(client, houseworker, rating)=>{
     const notification = await recordNotificationbyUsername(houseworker, notificationType, message);
 
     session.close();
-    return rateValue;
-    // return {rateValue:rateValue, notification:notification};
+    return {notification:notification};
 }
 
 const rateHouseworker_client = async(client, username, rating)=>{

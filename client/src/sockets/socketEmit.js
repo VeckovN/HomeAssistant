@@ -5,7 +5,7 @@ export const emitCommentNotification = (socket, commentObj) =>{
 }
 
 export const emitRatingNotification = (socket, ratingObj) =>{
-    socket.emit('ratingNotification', {ratingObj});
+    socket.emit('ratingNotification', ratingObj);
 }
 
 export const emitMessage = (socket, messageObj) =>{

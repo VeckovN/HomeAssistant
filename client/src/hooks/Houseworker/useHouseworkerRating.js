@@ -54,8 +54,9 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
                     rating:rateInt
                 }
 
-                const ratingValue = await rateUser(rateObj);
-                emitRatingNotification(socket, {...rateObj, houseworkerID:id})
+                const ratingResult = await rateUser(rateObj);
+                const newRateObj = {...rateObj, ...ratingResult, houseworkerID:id}
+                emitRatingNotification(socket, newRateObj);
 
                 toast.success(`You have rated the ${username} with rate ${rateInt} `,{
                     className:'toast-contact-message'
