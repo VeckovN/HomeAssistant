@@ -68,8 +68,16 @@ const notificationsSlice = createSlice({
     reducers:{
         //this is Sync action to restart/update states without calling Async
         resetNotifications:(state)=>{
-            state.notifications =[]
+            state.notifications = []
             state.unreadNotificationsCount = 0
+            state.error = false
+            state.loading = null
+        },
+
+        addNotification:(state, action) =>{
+            console.log("addNotification: action payload: ", action.payload);
+            state.notifications.push(action.payload)
+            state.unreadNotificationsCount +=1
             state.error = false
             state.loading = null
         }
@@ -121,5 +129,5 @@ const notificationsSlice = createSlice({
 })
 
 // export const {updateUnreadComments, resetUnreadComments} = unreadCommentsSlice.actions;
-export const {resetNotifications} = notificationsSlice.actions;
+export const {resetNotifications, addNotification} = notificationsSlice.actions;
 export default notificationsSlice;
