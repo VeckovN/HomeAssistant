@@ -17,7 +17,7 @@ const playSound = (soundName) =>{
 export const listenForCommentNotification = async(socket, reduxDispatch) => {
     // socket.on(`privateCommentNotify`, (client_username) =>{
     socket.on(`privateCommentNotify`, (comm) =>{
-        
+
         const {commentID, comment, fromUsername, date} = comm.newComment;
         toast.info(`You received Comment from ${fromUsername} `,{
             className:"toast-contact-message"
@@ -32,12 +32,16 @@ export const listenForCommentNotification = async(socket, reduxDispatch) => {
     })
 }
 
-export const listenForRatingNotfication = async(socket, self_id) =>{
-    socket.on(`privateRatingNotify-${self_id}`, (client_username) =>{
+export const listenForRatingNotfication = async(socket, self_id, reduxDispatch) =>{
+    socket.on(`privateRatingNotify-${self_id}`, (rateObj) =>{
+        const {client, notification} = rateObj;
+        const client_username = client;
+
         toast.info(`You got a Rate from ${client_username} `,{
             className:"toast-contact-message"
         })
 
+        reduxDispatch(addNotification(notification));
         playSound(announcementSound);
     })
 }
