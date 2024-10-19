@@ -135,21 +135,25 @@ export const listenOnCreateUserNotification = (socket, self_id) =>{
     })
 }
 
-export const listenOnAddUserToGroupNotification = (socket, self_id) =>{
+export const listenOnAddUserToGroupNotification = (socket, self_id, reduxDispatch) =>{
     socket.on("addUserToGroupNotify", (messageObj) =>{
-        const {newHouseworkerID, clientUsername, newHouseworkerUsername} = messageObj;
+        const {newHouseworkerID, clientUsername, newHouseworkerUsername,  notifications} = messageObj;
+
+        let matchedNotification;
+        matchedNotification = notifications.find(notification => notification.from === self_id);
 
         if(newHouseworkerID == self_id){
             toast.info(`Client ${clientUsername} added you to the group`,{
                 className:"toast-contact-message"
             })
         }
-        else{
+        else{      
             toast.info(`Client ${clientUsername} added the ${newHouseworkerUsername} to group`,{
                 className:"toast-contact-message"
             })
         }
 
+        reduxDispatch(addNotification(matchedNotification));
         playSound(announcementSound);
       })
 }

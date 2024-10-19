@@ -253,8 +253,7 @@ server.listen(5000, ()=>{
         })
 
         socket.on("addUserToGroup", ({data}) =>{
-            const {newUserID, newUsername, roomID, newRoomID, clientID ,clientUsername, newUserPicturePath} = data;
-
+            const {newUserID, newUsername, newRoomID, clientID ,clientUsername, notifications} = data;
             const users = newRoomID.split(':');
             //exclude the sender from the users notification
             const notifyUsers = users.filter(el => el!=clientID);
@@ -262,7 +261,8 @@ server.listen(5000, ()=>{
             const notifyObj = {
                 newHouseworkerID:newUserID, 
                 clientUsername: clientUsername, 
-                newHouseworkerUsername:newUsername
+                newHouseworkerUsername:newUsername,
+                notifications:notifications
             }
 
             notifyUsers.forEach(id =>{
