@@ -88,12 +88,13 @@ const removeUserFromRoom = async(req,res)=>{
 
 const addUserToRoom = async(req,res) =>{
 
+    const clientID = req.session.user.userID;
     const roomID = req.body.roomID;
     const newUsername = req.body.newUsername;
     console.log("ROOMID: " + roomID + " newUsername " + newUsername);
     
     try{
-        const result = await chatModal.addUserToRoom(newUsername, roomID);
+        const result = await chatModal.addUserToRoom(clientID, newUsername, roomID);
         res.status(200).json(result);
     }
     catch(err){
