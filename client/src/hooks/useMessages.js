@@ -54,12 +54,6 @@ const useMessages = (socket, user) =>{
             //LISTEN ON ONLINE USERS TO ADD IT IN ROOM INFO -> OnlineUsers
             // listenOnUserOnline(socket, dispatch);
             listenNewOnlineUser(socket, dispatch, user.userID);
-
-
-            //when is created new room show it with others
-            socket.on('show.room', (room) =>{
-                
-            })
         }
     },[socket])
 
@@ -107,7 +101,6 @@ const useMessages = (socket, user) =>{
         dispatch({type:"SET_HOUSEWORKERS", data:houseworkerResult});
     }
 
-    //get only for logged user
     const getOnlineChatUsers = async() =>{
         const onlineUsers = await getOnlineUsers(user.userID);
         dispatch({type:"SET_ONLINE_USER", data:onlineUsers});
@@ -130,6 +123,8 @@ const useMessages = (socket, user) =>{
         const messages = await getMessagesByRoomID(roomID);
         dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
 
+        //!!!!
+        //this is trigger afther the room is deleted
         reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:user.userID}))
         setIsLoadingMessages(false);
 
@@ -236,7 +231,7 @@ const useMessages = (socket, user) =>{
 
         try{
             const result = await addUserToRoom(roomInfo);
-            const {newAddedUserID:newUserID, roomID:newRoomID, isPrivate, newUserPicturePath} = result.data;
+            const {newAddedUserID:newUserID, roomID:newRoomID, isPrivate, newUserPicturePath, notifications} = result.data;
 
             if(newRoomID === null){
                 toast.error("The group already exists");
@@ -255,14 +250,13 @@ const useMessages = (socket, user) =>{
                 //Scroll to bottom(new added room)
             }
             else{ 
-                const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath};
+                const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath, notifications};
                 emitUserAddedToChat(socket, {data:groupData});
                 dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});
                 toast.info("User is added to the room: "+  newRoomID);
             }
 
             enterRoomAfterAction(newRoomID);
-            
         }
         catch(err){
             const error = getErrorMessage(err);
@@ -285,7 +279,7 @@ const useMessages = (socket, user) =>{
         const roomInfo ={roomID, username};
         try{
             const result = await removeUserFromGroup(roomInfo);
-            const {newRoomID, kickedUserID} = result.data;
+            const {newRoomID, kickedUserID, notification} = result.data;
             
             if(newRoomID == null){
                 toast.error("The user "+ username + " cannot be kicked, as it will create the conversation with the same members");
