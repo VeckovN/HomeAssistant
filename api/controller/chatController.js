@@ -75,9 +75,10 @@ const deleteRoom = async(req, res)=>{
 }
 
 const removeUserFromRoom = async(req,res)=>{
+    const clientID = req.session.user.userID;
     const { roomID, username } = req.params;
     try{
-        const result = await chatModal.removeUserFromRoomID(roomID, username);
+        const result = await chatModal.removeUserFromRoomID(clientID, roomID, username);
         res.status(200).send(result);
     }
     catch(err){
