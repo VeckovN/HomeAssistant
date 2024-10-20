@@ -62,8 +62,8 @@ const useSocket = (user) =>{
             listenForRatingNotfication(socketRef.current, user.userID, reduxDispatch); // Listen for rating notifications
             listenOnCreateUserNotification(socketRef.current, user.userID); // Listen for create user notifications
             listenOnAddUserToGroupNotification(socketRef.current, user.userID, reduxDispatch);
-            listenOnKickUserFromGroupNotification(socketRef.current, user.userID);
-            listenOnDeleteUserRoomNotification(socketRef.current);
+            listenOnKickUserFromGroupNotification(socketRef.current, user.userID, reduxDispatch);
+            listenOnDeleteUserRoomNotification(socketRef.current, reduxDispatch);
 
             // Clean up on unmount
             //logout will trigger this(redirectin to home trigger onMount component)
