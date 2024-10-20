@@ -275,11 +275,11 @@ server.listen(5000, ()=>{
 
         socket.on("kickUserFromGroup", (data) =>{
             //new roomID without kicked user
-            const {newRoomID, roomID, clientID, clientUsername} = data;
-            // const users = newRoomID.split(":");
+            const {roomID, clientID} = data;
             const users = roomID.split(":");
             const notifyUsers = users.filter(el => el!=clientID);
-
+            
+            //only notified user is notified
             notifyUsers.forEach(id =>{
                 io.to(`user:${id}`).emit("kickUserFromGroupNotify" , data);
                 io.to(`user:${id}`).emit("kickUserFromGroupChange" , data);

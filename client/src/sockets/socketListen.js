@@ -158,33 +158,38 @@ export const listenOnAddUserToGroupNotification = (socket, self_id, reduxDispatc
       })
 }
 
-export const listenOnKickUserFromGroupNotification = (socket, self_id) =>{
+export const listenOnKickUserFromGroupNotification = (socket, self_id, reduxDispatch) =>{
     socket.on("kickUserFromGroupNotify", (dataObj) =>{
-        const {newRoomID, kickedUserID, kickedUsername, clientID, clientUsername} = dataObj;
+        const {kickedUserID, kickedUsername, clientUsername, notifications} = dataObj;
         
+        let matchedNotification;
+        matchedNotification = notifications.find(notification => notification.from === self_id);
+
         if(kickedUserID == self_id){
             toast.info(`Client ${clientUsername} has kicked you from the chat`,{
                 className:"toast-contact-message"
             })
         }
         else{ 
-            toast.info(`Client ${clientUsername} has kicked the ${kickedUsername} from the chat`,{
+            toast.info(`Client ${clientUsername} has kicked ${kickedUsername} from the chat`,{
                 className:"toast-contact-message"
             })
         }
-        
+
+        reduxDispatch(addNotification(matchedNotification));        
         playSound(announcementSound);
     })
 }
 
-export const listenOnDeleteUserRoomNotification = (socket) =>{
+export const listenOnDeleteUserRoomNotification = (socket, reduxDispatch) =>{
     socket.on("deleteUserRoomNotify", (roomObj) =>{
-        const {roomID, clientUsername} = roomObj;
+        const {roomID, clientUsername, notification} = roomObj;
 
         toast.info(`Client ${clientUsername} delete conversation: ${roomID}`,{
             className:"toast-contact-message"
         })
 
+        reduxDispatch(addNotification(notification));
         playSound(announcementSound);
       })
 }

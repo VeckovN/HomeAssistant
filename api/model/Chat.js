@@ -393,10 +393,10 @@ const addUserToRoom = async(clientID, newUsername, currentRoomID)=>{
     }
 }
 
-//it's working
-const removeUserFromRoomID = async(roomID, username) =>{
-    const user = await get(`username:${username}`);
-    const userID = user.split(":")[1] ; //'user':ID 
+
+const removeUserFromRoomID = async(clientID, roomID, username) =>{
+    const userID = await getUserIdByUsername(username);
+    const clientUsername = await getUsernameByUserID(clientID);
 
     const currentRoomKey = `room:${roomID}` //room:1:2
     const currentUserIDS = roomID.split(':');
@@ -416,7 +416,6 @@ const removeUserFromRoomID = async(roomID, username) =>{
     }
     
     let notificationsArray =[];
-
     //(FOR REMOVED USER)
     //-find set `user:${userID}:rooms` and remove roomID from that set
     await srem(`user:${userID}:rooms`, roomID);
@@ -431,10 +430,12 @@ const removeUserFromRoomID = async(roomID, username) =>{
         await srem(`user:${id}:rooms`, roomID);
         await sadd(`user:${id}:rooms`, newRoomID);
 
-        //notify other users
-        const message = `The houseworker ${username} has been kicked from the group`;
-        const notification = await recordNotification(id, notificationType, message);
-        notificationsArray.push(notification);    
+        if(id !== clientID){
+            //notify other users
+            const message = `The houseworker ${username} has been kicked from the group by ${clientUsername}`;
+            const notification = await recordNotification(id, notificationType, message);
+            notificationsArray.push(notification);   
+        }
     // })
     }
 
@@ -447,9 +448,6 @@ const removeUserFromRoomID = async(roomID, username) =>{
     const dateFormat = formatDate(date);
     const messageObj = JSON.stringify({message:`User ${username} has been kicked from the chat`, from:'Server', date:dateFormat, roomID:newRoomID})
     await zadd(newRoomKey, timestamps, messageObj);
-
-
-    console.log("notifications array: ", notificationsArray);
 
     return {
         newRoomID, 
@@ -595,13 +593,23 @@ const deleteRoomByRoomID = async(roomID) =>{
     const roomKey = `room:${roomID}`;
     //find users with this ids and delete room from theri rooms set
     const usersID = roomID.split(':');
-    usersID.forEach(async id =>{
-       await srem(`user:${id}:rooms`, roomID); //delte example memeber 1:2 in user:1:rooms 
-    })
+
+    let notification;
+    for (const id of usersID) {
+        await srem(`user:${id}:rooms`, roomID); //delte example memeber 1:2 in user:1:rooms 
+    
+        const message = `The room ${roomID} has been deleted by `;
+        notification = await recordNotification(id, notificationType, message);  
+    }
+
     //Delete sorted Set which contains all messages in ROOM
     await del(`room:${roomID}`);
+    // return notificationArray;
+    //same notification for
+    return notification;
 
 }
+
 
 //ITS MORE EFFICIENT TO ADD NEW SER FOR EACH USERS -> ChatMembers 
 //After adding users to group(chat) -> add it to this set and every user will have list of theirs users ids

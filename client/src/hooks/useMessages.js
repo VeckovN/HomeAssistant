@@ -279,7 +279,7 @@ const useMessages = (socket, user) =>{
         const roomInfo ={roomID, username};
         try{
             const result = await removeUserFromGroup(roomInfo);
-            const {newRoomID, kickedUserID, notification} = result.data;
+            const {newRoomID, kickedUserID, notifications} = result.data;
             
             if(newRoomID == null){
                 toast.error("The user "+ username + " cannot be kicked, as it will create the conversation with the same members");
@@ -287,7 +287,7 @@ const useMessages = (socket, user) =>{
             }
 
             dispatch({type:"KICK_USER_FROM_GROUP", roomID, newRoomID, username})
-            const data = {newRoomID, roomID, kickedUserID, kickedUsername:username, clientID:user.userID, clientUsername:user.username}
+            const data = {newRoomID, roomID, kickedUserID, kickedUsername:username, clientID:user.userID, clientUsername:user.username, notifications:notifications}
             emitKickUserFromChat(socket, data);
             enterRoomAfterAction(newRoomID);
 
