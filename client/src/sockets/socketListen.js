@@ -136,47 +136,26 @@ export const listenOnCreateUserNotification = (socket, self_id) =>{
 }
 
 export const listenOnAddUserToGroupNotification = (socket, self_id, reduxDispatch) =>{
-    socket.on("addUserToGroupNotify", (messageObj) =>{
-        const {newHouseworkerID, clientUsername, newHouseworkerUsername,  notifications} = messageObj;
+    socket.on("addUserToGroupNotify", (notification) =>{
 
-        let matchedNotification;
-        matchedNotification = notifications.find(notification => notification.from === self_id);
+        const notificationMessage = notification.message;
+        toast.info(notificationMessage,{
+            className:"toast-contact-message"
+        })
 
-        if(newHouseworkerID == self_id){
-            toast.info(`Client ${clientUsername} added you to the group`,{
-                className:"toast-contact-message"
-            })
-        }
-        else{      
-            toast.info(`Client ${clientUsername} added the ${newHouseworkerUsername} to group`,{
-                className:"toast-contact-message"
-            })
-        }
-
-        reduxDispatch(addNotification(matchedNotification));
+        reduxDispatch(addNotification(notification));
         playSound(announcementSound);
       })
 }
 
 export const listenOnKickUserFromGroupNotification = (socket, self_id, reduxDispatch) =>{
-    socket.on("kickUserFromGroupNotify", (dataObj) =>{
-        const {kickedUserID, kickedUsername, clientUsername, notifications} = dataObj;
-        
-        let matchedNotification;
-        matchedNotification = notifications.find(notification => notification.from === self_id);
+    socket.on("kickUserFromGroupNotify", (notification) =>{
+        const notificationMessage = notification.message;
+        toast.info(notificationMessage,{
+            className:"toast-contact-message"
+        })
 
-        if(kickedUserID == self_id){
-            toast.info(`Client ${clientUsername} has kicked you from the chat`,{
-                className:"toast-contact-message"
-            })
-        }
-        else{ 
-            toast.info(`Client ${clientUsername} has kicked ${kickedUsername} from the chat`,{
-                className:"toast-contact-message"
-            })
-        }
-
-        reduxDispatch(addNotification(matchedNotification));        
+        reduxDispatch(addNotification(notification));        
         playSound(announcementSound);
     })
 }

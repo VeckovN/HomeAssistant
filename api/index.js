@@ -253,21 +253,19 @@ server.listen(5000, ()=>{
         })
 
         socket.on("addUserToGroup", ({data}) =>{
-            const {newUserID, newUsername, newRoomID, clientID ,clientUsername, notifications} = data;
+            const {newRoomID, clientID, notifications} = data;
             const users = newRoomID.split(':');
             //exclude the sender from the users notification
             const notifyUsers = users.filter(el => el!=clientID);
 
-            const notifyObj = {
-                newHouseworkerID:newUserID, 
-                clientUsername: clientUsername, 
-                newHouseworkerUsername:newUsername,
-                notifications:notifications
-            }
+            console.log("NOTIFICATIONS FROM ADD USER TO :" , notifications);
 
             notifyUsers.forEach(id =>{
-                //notifications
-                io.to(`user:${id}`).emit("addUserToGroupNotify" , notifyObj);
+                //find notification that belongs to user with 'id'
+                let matchedNotification;
+                matchedNotification = notifications.find(notification => notification.to === id);
+
+                io.to(`user:${id}`).emit("addUserToGroupNotify" , matchedNotification);
                 //send data for chat room update
                 io.to(`user:${id}`).emit("addUserToGroupChange" , data);
             })
@@ -275,13 +273,17 @@ server.listen(5000, ()=>{
 
         socket.on("kickUserFromGroup", (data) =>{
             //new roomID without kicked user
-            const {roomID, clientID} = data;
+            const {roomID, clientID, notifications} = data;
             const users = roomID.split(":");
             const notifyUsers = users.filter(el => el!=clientID);
             
             //only notified user is notified
             notifyUsers.forEach(id =>{
-                io.to(`user:${id}`).emit("kickUserFromGroupNotify" , data);
+                let matchedNotification;
+                matchedNotification = notifications.find(notification => notification.to === id);
+                console.log("MATHS FOR : " + id + " NotificatioN: ", matchedNotification);
+
+                io.to(`user:${id}`).emit("kickUserFromGroupNotify" , matchedNotification);
                 io.to(`user:${id}`).emit("kickUserFromGroupChange" , data);
             });
 
