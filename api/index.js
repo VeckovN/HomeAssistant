@@ -162,7 +162,6 @@ server.listen(5000, ()=>{
 
         socket.on("message", ({data})=>{ 
             try{
-                console.log("MESSAGE INDEX DATA: ", data);
                 const roomKey = data.roomKey;
 
                 //THIS APPEND MESSAGE TO CHAT IF THE USER(RECIPIENT) IS IN CHAT 
@@ -170,7 +169,7 @@ server.listen(5000, ()=>{
                 io.to(roomKey).emit("messageRoom", data) //entered chat page(view)
 
                 //Notify message recipients
-                const {from, roomID, fromUsername, lastMessage, unreadMessArray} = data;
+                const {from, roomID, fromUsername, lastMessage, unreadMessArray, createRoomNotification} = data;
                 const users = roomID.split(':');
                 //exclude the sender from users notification
                 const notifyUsers = users.filter(el => el!=from);
@@ -180,12 +179,18 @@ server.listen(5000, ()=>{
                 notifyUsers.forEach(id =>{
                     const unreadUser = unreadMessArray.find(el => el.recipientID == id);
                     const unreadUpdateStatus = unreadUser ? unreadUser.updateStatus : null;
-                    console.log("unreadUser norifyUUU: ", unreadUser);
 
-                    const notificationData ={roomID, fromUsername, fromUserID:from, userID:id, lastMessage, unreadUpdateStatus:unreadUpdateStatus}
-                    console.log("notificationData:", notificationData)
+                    let notificationData ={
+                        roomID, 
+                        fromUsername, 
+                        fromUserID:from, 
+                        userID:id, 
+                        lastMessage, 
+                        unreadUpdateStatus:unreadUpdateStatus, 
+                        createRoomNotification:createRoomNotification
+                    }
+
                     io.to(`user:${id}`).emit("messageResponseNotify" , notificationData);
-                    //emit for listener on MessagePage(update last messages and date)
                     io.to(`user:${id}`).emit("messagePage" , data);
                 })
 

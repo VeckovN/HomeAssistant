@@ -47,15 +47,20 @@ export const listenForRatingNotfication = async(socket, self_id, reduxDispatch) 
 }
 
 export const listenFormMessage = async(socket, reduxDispatch) =>{
-    //Maybe solution:
-    //check is the user in room(conversation) than don't display notification
-    //if(roomID == currentRoomID)
-
     socket.on("messageResponseNotify", (notifyObj) =>{
-        const {roomID, userID, fromUsername, fromUserID, lastMessage, unreadUpdateStatus} = notifyObj;
-        toast.info(`You received Message from ${fromUsername}`,{
-            className:"toast-contact-message"
-        })
+        const {roomID, fromUsername, unreadUpdateStatus, createRoomNotification} = notifyObj;
+
+        if(createRoomNotification){
+            toast.info(createRoomNotification.message,{
+                className:"toast-contact-message"
+            })
+            reduxDispatch(addNotification(createRoomNotification));
+        }
+        else{
+            toast.info(`You received Message from ${fromUsername}`,{
+                className:"toast-contact-message"
+            })
+        }
         
         reduxDispatch(updateUnreadMessages({roomID, unreadUpdateStatus}))
         playSound(messageSound);

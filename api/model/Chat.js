@@ -64,12 +64,18 @@ const getRoomIdInOrder = (firstUserID, secondUserID) =>{
 
 //When Client want to send message to Houseworker ,we have to create
 //room between them and communicate in that room
-const createRoom = async(firstUsername, secondUsername)=>{
-    const firstUserID = getUserIdByUsername(firstUsername);
-    const secondUserID = getUserIdByUsername(secondUsername);
+// const createRoom = async(firstUsername, secondUsername)=>{
+const createRoom = async(clientUsername, houseworkerUsername)=>{
+
+    // const firstUserID = getUserIdByUsername(firstUsername);
+    // const secondUserID = getUserIdByUsername(secondUsername);
+
+    const clientID = getUserIdByUsername(clientUsername);
+    const houseworkerID = getUserIdByUsername(houseworkerUsername);
 
     //get iid of users ---- user:1 , user:3  --> roomID is 1:3
-    const usersRoomID = getRoomIdInOrder(firstUserID, secondUserID);
+    // const usersRoomID = getRoomIdInOrder(firstUserID, secondUserID);
+    const usersRoomID = getRoomIdInOrder(clientID, houseworkerID);
 
     if(usersRoomID === null){
         //users not exists
@@ -77,8 +83,14 @@ const createRoom = async(firstUsername, secondUsername)=>{
     }
     //create rooms
     //user:{userID}:room room:{minUser}:{maxUser}
-    await sadd(`user:${firstUserID}:rooms`, `${usersRoomID}`)
-    await sadd(`user:${secondUserID}:rooms`, `${usersRoomID}`)
+    // await sadd(`user:${firstUserID}:rooms`, `${usersRoomID}`)
+    // await sadd(`user:${secondUserID}:rooms`, `${usersRoomID}`)
+    await sadd(`user:${clientID}:rooms`, `${usersRoomID}`)
+    await sadd(`user:${houseworkerID}:rooms`, `${usersRoomID}`)
+
+    //notify only houseworker for ID
+    const message = `The client ${clientUsername} has started conversation with you`;
+    const notification = await recordNotification(clientID, houseworkerID, notificationType, message);
 
     //notify new user that added to group chat
 
@@ -87,9 +99,10 @@ const createRoom = async(firstUsername, secondUsername)=>{
         id:usersRoomID,
         //get names from hashed sets ("username" Field)
         names:[
-            await hmget(`user:${firstUserID}`, "username"),
-            await hmget(`user:${secondUserID}`, "username")
-        ]
+            await hmget(`user:${clientID}`, "username"),
+            await hmget(`user:${houseworkerID}`, "username")
+        ],
+        notification:notification
     }]
 }
 
@@ -339,14 +352,21 @@ const addUserToRoom = async(clientID, newUsername, currentRoomID)=>{
         if(isPrivateChat) //client and one houseworker
         {
             //add newRoomID in their rooms(set collection)
-            currentUserIDS.forEach(async(id) =>{ 
+            for (const id of currentUserIDS) { 
                 await sadd(`user:${id}:rooms`, newRoomID);
-            })
+
+                //notify houseworker that is in chat
+                if(id != clientID){
+                    message = `The client ${clientUsername} has been added the houseworker ${newUsername} to the chat`;
+                    notification = await recordNotification(clientID, id, notificationType, message);
+                    notificationArray.push(notification);
+                }
+            }
 
             //add notification for the new added user
-            // const message = `You've been added to chat group ${newRoomID} by ${client}`;
-            // const message = `You've been added to chat the group: ${newRoomID}`;
-            // const notification = await recordNotificationbyUsername(newUsername, notificationType, message);
+            message = `You've been added to the group by ${clientUsername}`;
+            notification = await recordNotification(clientID, newUserID, notificationType, message);
+            notificationArray.push(notification);
 
             //create new roomKey and store first initial message
             const messageObj = JSON.stringify({message:"Chat Created", from:'Server', date:dateFormat, roomID:newRoomID})
@@ -375,7 +395,7 @@ const addUserToRoom = async(clientID, newUsername, currentRoomID)=>{
     
                 //don't record notificatio for sender(client);
                 if(id != clientID){
-                    notification = await recordNotification(id, notificationType, message);
+                    notification = await recordNotification(clientID, id, notificationType, message);
                     notificationArray.push(notification);
                 }
             }
@@ -419,9 +439,8 @@ const removeUserFromRoomID = async(clientID, roomID, username) =>{
     //(FOR REMOVED USER)
     //-find set `user:${userID}:rooms` and remove roomID from that set
     await srem(`user:${userID}:rooms`, roomID);
-    const message = `You've been kicked from the group chat`;
-    // const notification = await recordNotificationbyUsername(username, notificationType, message);
-    const notification = await recordNotification(userID, notificationType, message);
+    const message = `You've been kicked from the group chat by ${clientUsername}`;
+    const notification = await recordNotification(clientID, userID, notificationType, message);
     notificationsArray.push(notification);
 
     //FOR OTHER MEMBERS (replace the old RoomID with new one)
@@ -433,7 +452,7 @@ const removeUserFromRoomID = async(clientID, roomID, username) =>{
         if(id !== clientID){
             //notify other users
             const message = `The houseworker ${username} has been kicked from the group by ${clientUsername}`;
-            const notification = await recordNotification(id, notificationType, message);
+            const notification = await recordNotification(clientID, id, notificationType, message);
             notificationsArray.push(notification);   
         }
     // })
@@ -460,6 +479,7 @@ const sendMessage = async(messageObj) =>{
     const {roomID, from} = messageObj;
     const roomKey = `room:${roomID}`;
     const roomExists = await exists(roomKey);
+    const fromUsername = await getUsernameByUserID(from);
 
     const timestamps = Date.now(); //used for score value (miliseconds)
     const date = new Date(timestamps); //obj that contains 
@@ -469,20 +489,29 @@ const sendMessage = async(messageObj) =>{
     const usersID = roomID.split(":");//[1,2]
     let lastMessage = null;
 
+    let createRoomNotification = null;
     if(!roomExists){
     //or we have to create room and then send message
     //ROOM WILL BE ONLY CREATED WHEN Client send message TO HOUSEWORKER and this houseworker doesn't have room 
         //its same as roomID
-        const user1ID = usersID[0]; //1
-        const user2ID = usersID[1]; //2
+        // const user1ID = usersID[0]; //1
+        // const user2ID = usersID[1]; //2
 
-        await sadd(`user:${user1ID}:rooms`, `${roomID}`)
-        await sadd(`user:${user2ID}:rooms`, `${roomID}`)
+        // await sadd(`user:${user1ID}:rooms`, `${roomID}`)
+        // await sadd(`user:${user2ID}:rooms`, `${roomID}`)
 
         //for more then 2 userIDs
-        usersID.forEach(async(id)=>{
+        // usersID.forEach(async(id)=>{
+        for(const id of usersID){
             await sadd(`user:${id}:rooms`, roomID);
-        })
+
+            if(id !=from){
+                console.log("RECORD CLIENT START NOTIFI");
+                const message = `The client ${fromUsername} has started conversation with you`
+                createRoomNotification = await recordNotification(from, id, notificationType, message);
+            }
+        // })
+        }
     }
 
     if(usersID.length == 2){
@@ -492,8 +521,7 @@ const sendMessage = async(messageObj) =>{
 
     const unreadMessArray = await postUnreadMessagesToUser(roomID, from);
     await zadd(roomKey, timestamps, JSON.stringify(newMessageObj));
-    // return {roomKey, dateFormat, unreadMessArray};
-    return {roomKey, dateFormat, lastMessage, unreadMessArray};
+    return {roomKey, dateFormat, lastMessage, unreadMessArray, createRoomNotification};
 }
 
 const postUnreadMessagesToUser = async(roomID, senderUserID) =>{
@@ -589,17 +617,18 @@ const getRoomCount = async(userID)=>{
     return count;
 }
 
-const deleteRoomByRoomID = async(roomID) =>{
+const deleteRoomByRoomID = async(clientID, roomID) =>{
     const roomKey = `room:${roomID}`;
     //find users with this ids and delete room from theri rooms set
     const usersID = roomID.split(':');
+    const clientUsername = await getUsernameByUserID(clientID);
 
     let notification;
     for (const id of usersID) {
         await srem(`user:${id}:rooms`, roomID); //delte example memeber 1:2 in user:1:rooms 
     
-        const message = `The room ${roomID} has been deleted by `;
-        notification = await recordNotification(id, notificationType, message);  
+        const message = `The room ${roomID} has been deleted by ${clientUsername}`;
+        notification = await recordNotification(clientID, id, notificationType, message);  
     }
 
     //Delete sorted Set which contains all messages in ROOM
