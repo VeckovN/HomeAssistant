@@ -40,7 +40,7 @@ const getUnreadMessageCountByRoomID = async(userID, roomID) =>{
 }
 
 
-const recordNotification = async(userID, type, message) =>{
+const recordNotification = async(fromID, toID, type, message) =>{
     const timestamps = Date.now(); //used for score value (miliseconds)
     const dateFormat = formatDate(new Date(timestamps));
 
@@ -48,20 +48,20 @@ const recordNotification = async(userID, type, message) =>{
 
     const notification = { 
         id:notificationID,
-        from:userID,
+        from:fromID, //client ID, notification from who
         type:type, //comment, rate, chatGroup
         date:dateFormat,
         message:message,
         read:false
     }
-    await zadd(`user:${userID}:notifications`, timestamps, JSON.stringify(notification));
+    await zadd(`user:${toID}:notifications`, timestamps, JSON.stringify(notification));
 
     return notification;
 }
 
-const recordNotificationbyUsername = async(username, type, message) =>{
-    const userID = await getUserIdByUsername(username);
-    return await recordNotification(userID, type, message);
+const recordNotificationbyUsername = async(fromID, toUsername, type, message) =>{
+    const userID = await getUserIdByUsername(toUsername);
+    return await recordNotification(fromID, userID, type, message);
 }
 
 const getNotificationsByOffset = async(userID, offset, endIndex) =>{
