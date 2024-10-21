@@ -49,6 +49,7 @@ const recordNotification = async(fromID, toID, type, message) =>{
     const notification = { 
         id:notificationID,
         from:fromID, //client ID, notification from who
+        to:toID,
         type:type, //comment, rate, chatGroup
         date:dateFormat,
         message:message,
