@@ -62,10 +62,11 @@ const getAllRooms = async(req,res)=>{
 }
 
 const deleteRoom = async(req, res)=>{
+    const clientID = req.session.user.userID;
     const roomID = req.params.roomID;
-    console.log("DELETE ROOMID:" + JSON.stringify(roomID));
+    console.log("DELETE ROOMID:" + JSON.stringify(clientID, roomID));
     try{
-        await chatModal.deleteRoomByRoomID(roomID);
+        await chatModal.deleteRoomByRoomID(clientID, roomID);
         res.status(200).send("Room sucessfully deleted");
     }
     catch(err){
@@ -88,7 +89,6 @@ const removeUserFromRoom = async(req,res)=>{
 }
 
 const addUserToRoom = async(req,res) =>{
-
     const clientID = req.session.user.userID;
     const roomID = req.body.roomID;
     const newUsername = req.body.newUsername;
