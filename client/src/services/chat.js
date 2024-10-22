@@ -40,7 +40,7 @@ export const getMoreMessagesByRoomID = async(roomID, pageNumber) =>{
 export const deleteRoom = async(roomID) =>{
     try{
         const result = await axiosSession.delete(BASE_URL +`chat/room/delete/${roomID}`);
-        return result;
+        return result.data;
     }
     catch(err){
         ThrowErorr(err);
