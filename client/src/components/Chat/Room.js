@@ -11,6 +11,8 @@ const Room = ({info, roomInfo, unreadItem, moreRoomUsers, onRoomClickHanlder, on
     const isActive = info.roomID == roomInfo.roomID ? 'active' : "";
     const unreadCount = unreadItem ? unreadItem.count : null;
 
+    console.log("ROOM INFOO:" , info);
+
     return(
         <>
             {info.users.length > 1 
@@ -75,7 +77,7 @@ const Room = ({info, roomInfo, unreadItem, moreRoomUsers, onRoomClickHanlder, on
                     </>
                     }
                 </div>
-                <div className="timer">{info.lastMessage.dateDiff}</div>
+                <div className="timer">{info.lastMessage?.dateDiff || "just now"}</div>
                 {/* <div className='unread-mess-count'>{unreadCount}</div> */}
             </div>
             :  
