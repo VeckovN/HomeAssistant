@@ -6,9 +6,9 @@ const {client:redisClient, sub} = require('../db/redis.js');
 // It stores the session data on the server and gives the client
 //a session ID to access the session data. 
 
-const clientModal = require('../model/Client');
-const houseworkerModal = require('../model/HouseWorker');
-const userModal = require('../model/User');
+const clientModel = require('../model/Client');
+const houseworkerModel = require('../model/HouseWorker');
+const userModel = require('../model/User');
 const chatModel = require('../model/Chat');
 
 const {getUserIdByUsername} = require('../db/redisUtils.js');
@@ -55,8 +55,8 @@ const register = async (req,res)=>{
         //if picturePath exists
         const picturePath = req.files[0]?.filename;
         const userData = {username, password:hashedPassword, picturePath:picturePath, ...otherData};
-        const userExists = await userModal.checkUser(username);
-        const emailExist = await userModal.checkEmail(username);
+        const userExists = await userModel.checkUser(username);
+        const emailExist = await userModel.checkEmail(username);
 
         if(userExists)
             return res.status(400).json({error:"User with this username exists"}) 
@@ -71,12 +71,12 @@ const register = async (req,res)=>{
 
                 try{
                     if(type=='Client'){
-                        await clientModal.create(userData);
+                        await clientModel.create(userData);
                         //assign user to the session after creating the user /request from client(set the sesson to client)
                         res.status(200).send({success:true, message:"Client Sucessfully created"});
                     }
                     else if(type=='Houseworker'){ //houseworker
-                        await houseworkerModal.create(userData);
+                        await houseworkerModel.create(userData);
                         res.status(200).send({success:true, message:"Houseworker  Sucessfully created"});
                     }
                 }
@@ -109,7 +109,7 @@ const login = async(req,res)=>{
         }
     
         const {username, password} = req.body;
-        const user = await userModal.findByUsername(username);
+        const user = await userModel.findByUsername(username);
         if(!user)
             return res.status(404).json({error: "Incorrect username or password, please try again", errorType:'input'});
 
@@ -160,7 +160,7 @@ const logout = async(req,res)=>{
 
 const putPicturePathToRedisUsers = async(req,res) =>{
 
-    const usersInfo = await userModal.getAllUsersnameWithPicturePath();
+    const usersInfo = await userModel.getAllUsersnameWithPicturePath();
     console.log("CONTROLLER USER INFO", usersInfo);
 
     try{
