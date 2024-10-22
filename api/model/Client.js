@@ -223,7 +223,7 @@ const deleteComment = async(username, commentID)=>{
 }
 
 
-const rateHouseworker= async(client, houseworker, rating)=>{
+const rateHouseworker= async(clientID, clientUsername, houseworkerUsername, rating)=>{
     const session = driver.session();
     //MARGE - ON MATCH SET - when Relationship exist we wanna set new rating value not to create another relationsip
     const result = await session.run(`
@@ -233,13 +233,13 @@ const rateHouseworker= async(client, houseworker, rating)=>{
         ON CREATE SET r.rating = $rating
         ON MATCH  SET r.rating = $rating
         RETURN r.rating
-    `,{client:client, houseworker:houseworker, rating:rating}
+    `,{client:clientUsername, houseworker:houseworkerUsername, rating:rating}
     );
     
     const rateValue = result.records[0].get(0);
 
-    const message = `The user ${client} has been rated you with ${rateValue} `;
-    const notification = await recordNotificationbyUsername(houseworker, notificationType, message);
+    const message = `The user ${clientUsername} has been rated you with ${rateValue} `;
+    const notification = await recordNotificationbyUsername(clientID, houseworkerUsername, notificationType, message);
 
     session.close();
     return {notification:notification};
