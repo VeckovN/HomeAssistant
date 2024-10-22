@@ -295,15 +295,16 @@ server.listen(5000, ()=>{
         });
 
         socket.on("deleteUserRoom", (data) =>{
-            const {roomID, clientID} = data;   
+            const {roomID, clientID, notifications} = data;   
             const users = roomID.split(':');
-            //exclude the sender from the users notification
             const notifyUsers = users.filter(el => el!=clientID);
 
             notifyUsers.forEach(id =>{
-                //notifications
-                io.to(`user:${id}`).emit("deleteUserRoomNotify" , data);
-                //send data for chat room update
+                //const matchedNotification = notifications.find(notification => notification.to === id);
+                let matchedNotification;
+                matchedNotification = notifications.find(notification => notification.to === id);
+                
+                io.to(`user:${id}`).emit("deleteUserRoomNotify" , matchedNotification);
                 io.to(`user:${id}`).emit("deleteUserRoomChange" , data);
             })
         })

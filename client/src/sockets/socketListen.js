@@ -166,10 +166,10 @@ export const listenOnKickUserFromGroupNotification = (socket, self_id, reduxDisp
 }
 
 export const listenOnDeleteUserRoomNotification = (socket, reduxDispatch) =>{
-    socket.on("deleteUserRoomNotify", (roomObj) =>{
-        const {roomID, clientUsername, notification} = roomObj;
-
-        toast.info(`Client ${clientUsername} delete conversation: ${roomID}`,{
+    socket.on("deleteUserRoomNotify", (notification) =>{
+       
+        const notificationMessage = notification.message;
+        toast.info(notificationMessage,{
             className:"toast-contact-message"
         })
 

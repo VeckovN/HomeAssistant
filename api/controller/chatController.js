@@ -63,11 +63,10 @@ const getAllRooms = async(req,res)=>{
 
 const deleteRoom = async(req, res)=>{
     const clientID = req.session.user.userID;
-    const roomID = req.params.roomID;
-    console.log("DELETE ROOMID:" + JSON.stringify(clientID, roomID));
+    const roomID = req.params.roomID;;
     try{
-        await chatModal.deleteRoomByRoomID(clientID, roomID);
-        res.status(200).send("Room sucessfully deleted");
+        const result = await chatModal.deleteRoomByRoomID(clientID, roomID);
+        res.status(200).json(result);
     }
     catch(err){
         console.log(err);

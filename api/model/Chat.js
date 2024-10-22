@@ -474,6 +474,25 @@ const removeUserFromRoomID = async(clientID, roomID, username) =>{
         notifications:notificationsArray
     };
 }
+
+const deleteRoomByRoomID = async(clientID, roomID) =>{
+    const usersID = roomID.split(':');
+    const clientUsername = await getUsernameByUserID(clientID);
+
+    let notificationsArray =[];
+    for (const id of usersID) {
+        await srem(`user:${id}:rooms`, roomID); //delte example memeber 1:2 in user:1:rooms 
+
+        if(id != clientID){
+            const message = `The room ${roomID} has been deleted by ${clientUsername}`;
+            const notification = await recordNotification(clientID, id, notificationType, message);  
+            notificationsArray.push(notification);
+        }
+    }
+
+    await del(`room:${roomID}`);
+    return notificationsArray;
+}
  
 const sendMessage = async(messageObj) =>{
     const {roomID, from} = messageObj;
@@ -617,27 +636,6 @@ const getRoomCount = async(userID)=>{
     return count;
 }
 
-const deleteRoomByRoomID = async(clientID, roomID) =>{
-    const roomKey = `room:${roomID}`;
-    //find users with this ids and delete room from theri rooms set
-    const usersID = roomID.split(':');
-    const clientUsername = await getUsernameByUserID(clientID);
-
-    let notification;
-    for (const id of usersID) {
-        await srem(`user:${id}:rooms`, roomID); //delte example memeber 1:2 in user:1:rooms 
-    
-        const message = `The room ${roomID} has been deleted by ${clientUsername}`;
-        notification = await recordNotification(clientID, id, notificationType, message);  
-    }
-
-    //Delete sorted Set which contains all messages in ROOM
-    await del(`room:${roomID}`);
-    // return notificationArray;
-    //same notification for
-    return notification;
-
-}
 
 
 //ITS MORE EFFICIENT TO ADD NEW SER FOR EACH USERS -> ChatMembers 

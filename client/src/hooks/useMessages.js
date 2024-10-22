@@ -145,10 +145,15 @@ const useMessages = (socket, user) =>{
         //take firsr roomID(if exist) to display it after removing targeted room
         const someRoom = state.rooms[0].roomID;
         try{
-            await deleteRoom(roomID);
+            const notifications = await deleteRoom(roomID);
             dispatch({type:"DELETE_ROOM", data:roomID});
 
-            const data = {roomID, clientID:user.userID, clientUsername:user.username};
+            const data = {
+                roomID,
+                clientID:user.userID,
+                clientUsername:user.username,
+                notifications
+            };
             emitUserDeleteRoom(socket, data);
             
             toast.success("You have successfully deleted the room",{
