@@ -1,4 +1,4 @@
-const chatModal = require('../model/Chat')
+const chatModel = require('../model/Chat')
 
 //using req.query because url .../message?offset=0?size=50
 //BECASE THIS IS GET METHOD, if we wanna post/put we could use req.body to take value from body of request
@@ -9,7 +9,7 @@ const getMessages = async(req,res)=>{
     const size = req.query.size;
 
     try{
-        const messages = await chatModal.getMessages(roomID, offset, size);
+        const messages = await chatModel.getMessages(roomID, offset, size);
         res.json(messages);
     }
     catch(err){
@@ -29,7 +29,7 @@ const getMoreMessages = async(req,res) =>{
     //const pageNUmber = req.query.offset;
 
     try{
-        const messages = await chatModal.getMoreMessages(roomID, pageNumber);
+        const messages = await chatModel.getMoreMessages(roomID, pageNumber);
         res.json(messages);
     }
     catch(err){
@@ -41,7 +41,7 @@ const getMoreMessages = async(req,res) =>{
 const postMessage = async(req,res) =>{
     try{
         const messageObj = req.body;
-        const messageResult = await chatModal.sendMessage(messageObj);
+        const messageResult = await chatModel.sendMessage(messageObj);
         res.json(messageResult);
     }
     catch(err){
@@ -53,7 +53,7 @@ const postMessage = async(req,res) =>{
 const getAllRooms = async(req,res)=>{
     try{
         const username = req.params.username;
-        const result = await chatModal.getAllRooms(username);
+        const result = await chatModel.getAllRooms(username);
         res.json(result);
     }catch(err){
         console.log(err);
@@ -65,7 +65,7 @@ const deleteRoom = async(req, res)=>{
     const clientID = req.session.user.userID;
     const roomID = req.params.roomID;;
     try{
-        const result = await chatModal.deleteRoomByRoomID(clientID, roomID);
+        const result = await chatModel.deleteRoomByRoomID(clientID, roomID);
         res.status(200).json(result);
     }
     catch(err){
@@ -78,7 +78,7 @@ const removeUserFromRoom = async(req,res)=>{
     const clientID = req.session.user.userID;
     const { roomID, username } = req.params;
     try{
-        const result = await chatModal.removeUserFromRoomID(clientID, roomID, username);
+        const result = await chatModel.removeUserFromRoomID(clientID, roomID, username);
         res.status(200).send(result);
     }
     catch(err){
@@ -94,7 +94,7 @@ const addUserToRoom = async(req,res) =>{
     console.log("ROOMID: " + roomID + " newUsername " + newUsername);
     
     try{
-        const result = await chatModal.addUserToRoom(clientID, newUsername, roomID);
+        const result = await chatModel.addUserToRoom(clientID, newUsername, roomID);
         res.status(200).json(result);
     }
     catch(err){
@@ -105,7 +105,7 @@ const addUserToRoom = async(req,res) =>{
 const getConversationCount = async(req,res)=>{
     try{
         const userID = req.params.userID;
-        const result = await chatModal.getRoomCount(userID);
+        const result = await chatModel.getRoomCount(userID);
         res.status(200).json(result);
     }
     catch(err){
@@ -120,7 +120,7 @@ const getOnlineUsers = async(req,res) =>{
         console.log("REQ SESSION USER: ", req.session.user);
         console.log("UserID2: " , userID2);
 
-        const result = await chatModal.getOnlineUsersFromChat(userID);
+        const result = await chatModel.getOnlineUsersFromChat(userID);
         res.status(200).json(result);
     }
     catch(err){
@@ -131,7 +131,7 @@ const getOnlineUsers = async(req,res) =>{
 const getFriendsList = async(req,res) =>{
     try{
         const userID = req.params.userID;
-        const result = await chatModal.getFriendsListByUserID(userID);
+        const result = await chatModel.getFriendsListByUserID(userID);
         res.status(200).json(result);
     }
     catch(err){
@@ -143,7 +143,7 @@ const getFriendsList = async(req,res) =>{
 const getAllUnreadMessages = async(req,res) =>{
     try{
         const username = req.params.username;
-        const result = await chatModal.getUnreadMessages(username)
+        const result = await chatModel.getUnreadMessages(username)
         res.status(200).json(result);
     }
     catch(err){
@@ -154,7 +154,7 @@ const getAllUnreadMessages = async(req,res) =>{
 const getUnreadMessagesTotalCount = async(req,res) =>{
     try{
         const userID = req.params.userID;
-        const result = await chatModal.getUnreadMessagesTotalCount(userID)
+        const result = await chatModel.getUnreadMessagesTotalCount(userID)
         res.status(200).json(result);
     }
     catch(err){
@@ -165,7 +165,7 @@ const getUnreadMessagesTotalCount = async(req,res) =>{
 const removeUnreadMessagesFromRoom = async(req,res) =>{
     try{
         const {roomID, userID} = req.params;
-        const result = await chatModal.resetUnreadMessagesCount(roomID, userID);
+        const result = await chatModel.resetUnreadMessagesCount(roomID, userID);
         res.status(200).json(result);
 
     }
