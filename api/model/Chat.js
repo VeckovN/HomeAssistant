@@ -315,8 +315,6 @@ const getFriendsListByUserID = async(userID) =>{
     return friendsList;
 }
 
-
-//Diff is undefined on frontend
 const addUserToRoom = async(clientID, newUsername, currentRoomID)=>{
     const newUserID = await getUserIdByUsername(newUsername);
     const clientUsername = await getUsernameByUserID(clientID);
@@ -490,8 +488,10 @@ const deleteRoomByRoomID = async(clientID, roomID) =>{
         }
     }
 
+    //Delete sorted Set which contains all messages in ROOM
     await del(`room:${roomID}`);
     return notificationsArray;
+
 }
  
 const sendMessage = async(messageObj) =>{
@@ -512,15 +512,6 @@ const sendMessage = async(messageObj) =>{
     if(!roomExists){
     //or we have to create room and then send message
     //ROOM WILL BE ONLY CREATED WHEN Client send message TO HOUSEWORKER and this houseworker doesn't have room 
-        //its same as roomID
-        // const user1ID = usersID[0]; //1
-        // const user2ID = usersID[1]; //2
-
-        // await sadd(`user:${user1ID}:rooms`, `${roomID}`)
-        // await sadd(`user:${user2ID}:rooms`, `${roomID}`)
-
-        //for more then 2 userIDs
-        // usersID.forEach(async(id)=>{
         for(const id of usersID){
             await sadd(`user:${id}:rooms`, roomID);
 
@@ -529,7 +520,6 @@ const sendMessage = async(messageObj) =>{
                 const message = `The client ${fromUsername} has started conversation with you`
                 createRoomNotification = await recordNotification(from, id, notificationType, message);
             }
-        // })
         }
     }
 
