@@ -262,13 +262,8 @@ server.listen(5000, ()=>{
             const users = newRoomID.split(':');
             //exclude the sender from the users notification
             const notifyUsers = users.filter(el => el!=clientID);
-
-            console.log("NOTIFICATIONS FROM ADD USER TO :" , notifications);
-
             notifyUsers.forEach(id =>{
-                //find notification that belongs to user with 'id'
-                let matchedNotification;
-                matchedNotification = notifications.find(notification => notification.to === id);
+                const matchedNotification = notifications.find(notification => notification.to === id);
 
                 io.to(`user:${id}`).emit("addUserToGroupNotify" , matchedNotification);
                 //send data for chat room update
@@ -284,8 +279,7 @@ server.listen(5000, ()=>{
             
             //only notified user is notified
             notifyUsers.forEach(id =>{
-                let matchedNotification;
-                matchedNotification = notifications.find(notification => notification.to === id);
+                const matchedNotification = notifications.find(notification => notification.to === id);
                 console.log("MATHS FOR : " + id + " NotificatioN: ", matchedNotification);
 
                 io.to(`user:${id}`).emit("kickUserFromGroupNotify" , matchedNotification);
@@ -300,9 +294,7 @@ server.listen(5000, ()=>{
             const notifyUsers = users.filter(el => el!=clientID);
 
             notifyUsers.forEach(id =>{
-                //const matchedNotification = notifications.find(notification => notification.to === id);
-                let matchedNotification;
-                matchedNotification = notifications.find(notification => notification.to === id);
+                const matchedNotification = notifications.find(notification => notification.to === id);
                 
                 io.to(`user:${id}`).emit("deleteUserRoomNotify" , matchedNotification);
                 io.to(`user:${id}`).emit("deleteUserRoomChange" , data);
