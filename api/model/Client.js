@@ -1,6 +1,6 @@
 const {session,driver} = require('../db/neo4j');
 const { set, get, expire } = require('../db/redis');
-const {recordNotificationbyUsername} = require('../db/redisUtils');
+const {recordNotification, getUserIdByUsername} = require('../db/redisUtils');
 
 //When is important to return all properties of Node
 //we can return whole node with RETURN node and return records[0].get(0).properties
@@ -187,8 +187,11 @@ const commentHouseworker = async(client, houseworker, comment)=>{
     , {client:client, houseworker:houseworker, comment:comment}
     )
 
+    const clientID = await getUserIdByUsername(client);
+    const houseworkerID = await getUserIdByUsername(houseworker);
+
     const message = `You've got comment from ${client}`;
-    const notification = await recordNotificationbyUsername(houseworker, notificationType, message);
+    const notification = await recordNotification(clientID, houseworkerID, notificationType, message);
 
     const commentID = parseInt(result.records[0].get(0));
     const commentDate = result.records[0].get(1);
@@ -238,8 +241,9 @@ const rateHouseworker= async(clientID, clientUsername, houseworkerUsername, rati
     
     const rateValue = result.records[0].get(0);
 
+    const houseworkerID = await getUserIdByUsername(houseworkerUsername);
     const message = `The user ${clientUsername} has been rated you with ${rateValue} `;
-    const notification = await recordNotificationbyUsername(clientID, houseworkerUsername, notificationType, message);
+    const notification = await recordNotification(clientID, houseworkerID, notificationType, message);
 
     session.close();
     return {notification:notification};
