@@ -31,10 +31,8 @@ export const getHouseworkerNotifications = createAsyncThunk(
 export const getMoreHouseworkerNotifications = createAsyncThunk(
     //check how to pass multiple variables 
     'notifications/getMoreHouseworkerNotifications',
-    async({username, batchNumber} , thunkAPI) =>{
+    async({username, batchNumber}, thunkAPI) =>{
         try{
-            console.log("UserID : ", username);
-            console.log("BatchNUmber: ", batchNumber);
             const response = await getMoreNotifications(username, batchNumber);
 
             if(response.data && response.data.error) {
@@ -75,8 +73,8 @@ const notificationsSlice = createSlice({
         },
 
         addNotification:(state, action) =>{
-            console.log("addNotification: action payload: ", action.payload);
-            state.notifications.push(action.payload)
+            // state.notifications.push(action.payload)
+            state.notifications = [action.payload, ...state.notifications, ]
             state.unreadNotificationsCount +=1
             state.error = false
             state.loading = null
@@ -90,7 +88,6 @@ const notificationsSlice = createSlice({
             })
             .addCase(getHouseworkerNotifications.fulfilled, (state, action)=>{
                 state.loading = false;
-                console.log("getHouseworkerNotifcations: ", action.payload);
                 state.notifications = [...action.payload.notifications];
                 state.unreadNotificationsCount = action.payload.unreadCount;
             })
@@ -105,7 +102,7 @@ const notificationsSlice = createSlice({
             })
             .addCase(getMoreHouseworkerNotifications.fulfilled, (state, action)=>{
                 state.loading = false;
-                console.log("getMOREEEEHouseworkerNotifcations: ", action.payload);
+                state.notifications.push(...action.payload);
             })
             .addCase(getMoreHouseworkerNotifications.rejected, (state,action) =>{
                 state.loading = false;

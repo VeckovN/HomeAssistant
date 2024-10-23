@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import {useDispatch, useSelector } from 'react-redux';
 import { NavLink} from "react-router-dom";
+import { getMoreHouseworkerNotifications } from '../store/notificationsSlice';
 
 import '../sass/components/_notification.scss';
 
@@ -8,17 +9,22 @@ const HouseworkerNotification = () =>{
 
     const dispatch = useDispatch();
     const {notifications, unreadNotificationsCount} = useSelector((state) => state.notifications)
+    const {user} = useSelector((state) => state.auth)
     const [isOpen, setIsOpen] = useState(false);
-
-    console.log("Notifications:", notifications);
+    const [batchNumber, setBatchNumber] = useState(0);
 
     const isOpenHandler = () =>{
         setIsOpen(prev => !prev);
     }
 
+    const loadMoreNotifications = ()=>{
+        const username = user.username;
+        const newBatchNumber = batchNumber + 1;
+        dispatch(getMoreHouseworkerNotifications({username, batchNumber:newBatchNumber}));
+        setBatchNumber(newBatchNumber);
+    }
+
     const returnPath = (type) =>{
-        //use navLInk to go to the page based on type
-        // <NavLink to={} key={'el-'}></NavLink>
         let path;
         if(type === 'comment')
             path = "/comments"
@@ -32,13 +38,6 @@ const HouseworkerNotification = () =>{
         return path;
     }
 
-    // useEffect(()=>{
-    //         //re-render notification when it's notification state changed:
-    //         //on markUnreadNotification
-    //         //on newNotification (when its arrived )
-    //         //on loadMoreNotifications (when is scrolled )
-    // },[notifications])
-
     return(
         //SHow only Unread Count when is closed
         <div className='notification-unread-count-box'>
@@ -49,14 +48,13 @@ const HouseworkerNotification = () =>{
             <div className='notification-box'>
                 <div className='notification-list'>
                     {notifications.map(el =>(
-                        // <div className='notification' onClick={goToPage(el.type)}>
-                        //     <div> {el.message}</div>
-                        // </div>
-                        
                         <NavLink to={returnPath(el.type)} className='notification' >
                             <div> {el.message}</div>
                         </NavLink>
                     ))}
+                </div>
+                <div className='notification-more-btn-container'>
+                    <button onClick={loadMoreNotifications} className='more-btn'>More</button>
                 </div>
             </div>
             }

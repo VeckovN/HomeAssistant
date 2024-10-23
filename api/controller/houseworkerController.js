@@ -354,14 +354,13 @@ const getNotifications = async(req,res) =>{
 const getMoreNotifications = async(req,res) =>{
     const username = req.params.username;
     const batchNumber = req.params.batchNumber;
-
     try{
-        const messages = await houseworkerModel.getMoreRecordedNotifications(username , batchNumber);
-        res.status(200).res.json(messages);
+        const notifications = await houseworkerModel.getMoreRecordedNotifications(username, batchNumber);
+        res.status(200).json(notifications);
     }
     catch(err){
         console.log(err);
-        res.status(400).json({error:"More Messages Fetching Error"});
+        res.status(400).json({error:"More Notifications Fetching Error"});
     }
 }
 

@@ -1,6 +1,6 @@
 const {driver} = require('../db/neo4j');
 const { set ,get, expire, zadd, zrangescores} = require('../db/redis');
-const {getUserIdByUsername, updateUserPicturePath, getUserPicturePath, getNotificationsByOffset} = require('../db/redisUtils');
+const {getUserIdByUsername, updateUserPicturePath, getUserPicturePath, getNotificationsByOffset, getNotificationsUnreadCount} = require('../db/redisUtils');
 const path = require('path');
 const fs = require('fs');
 
@@ -818,26 +818,20 @@ const getRecordedNotifications = async(username, offset, size) =>{
 
     //on initial get first 5 or 6 notifications based on offset and size,
     const notifications = await getNotificationsByOffset(userID, offset, size-1);
-    console.log("notifications get Recorded: ", notifications);
-
-    return notifications;
+    const unreadCount = await getNotificationsUnreadCount(userID);
+    return {notifications, unreadCount};
 }
 
 // const getMoreRecordedNotifications = async(userID, pageNumber) =>{
 const getMoreRecordedNotifications = async(username, batchNumber) =>{
     const userID = await getUserIdByUsername(username);
-
-    const size = 10;
+    const size = 6;
     const offset = size * batchNumber;
     const endIndex = offset + size -1; 
     
     const notifications = await getNotificationsByOffset(userID, offset, endIndex);
     return notifications;
 }
-
-// const getUnreadNotificationCount = async(userID) =>{
-    
-// }
 
 const markNotificationsAsRead = async(username) =>{ 
     const userID = await getUserIdByUsername(username);
@@ -859,6 +853,7 @@ const markNotificationsAsRead = async(username) =>{
     }
     // return true;
 }
+
 
 module.exports ={
     findByUsername,
