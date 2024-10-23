@@ -310,8 +310,7 @@ export const getProfessionsAndRating = async(username) =>{
 
 export const getNotifications = async(username) =>{
     try{
-        const result = await axiosSession.get(BASE_URL + `houseworker/notifications/${username}?offset=0&size=15`)
-        // const result = await axiosSession.get(BASE_URL + `houseworker/notifications/${username}?offset=0&size=5`)
+        const result = await axiosSession.get(BASE_URL + `houseworker/notifications/${username}?offset=0&size=6`)
         const notifications = result.data;
         return notifications;
     }
