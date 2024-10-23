@@ -60,19 +60,20 @@ const recordNotification = async(fromID, toID, type, message) =>{
     return notification;
 }
 
-const recordNotificationbyUsername = async(fromID, toUsername, type, message) =>{
-    const userID = await getUserIdByUsername(toUsername);
-    return await recordNotification(fromID, userID, type, message);
-}
-
 const getNotificationsByOffset = async(userID, offset, endIndex) =>{
     const notifications = await zrangerev(`user:${userID}:notifications`, offset, endIndex);
+    const notificationsObj = notifications.map((mes) => JSON.parse(mes)); //Parsing JSON to obj
+    return notificationsObj;
+}
+
+const getNotificationsUnreadCount = async(userID) =>{
+    const notifications = await zrangerev(`user:${userID}:notifications`, 0, -1);
     const notificationsObj = notifications.map((mes) => JSON.parse(mes)); //Parsing JSON to obj
     const unreadNotificationCount = notificationsObj.reduce((count, notification) =>{
         return count + (notification.read === false ? 1 : 0);
     },0);
     
-    return {notifications: notificationsObj, unreadCount:unreadNotificationCount};
+    return unreadNotificationCount;
 }
 
 module.exports = {
@@ -83,6 +84,6 @@ module.exports = {
     updateUserPicturePath,
     getUnreadMessageCountByRoomID,
     recordNotification,
-    recordNotificationbyUsername,
+    getNotificationsUnreadCount,
     getNotificationsByOffset
 }
