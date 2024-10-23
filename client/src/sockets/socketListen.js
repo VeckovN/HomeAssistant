@@ -34,10 +34,10 @@ export const listenForCommentNotification = async(socket, reduxDispatch) => {
 
 export const listenForRatingNotfication = async(socket, self_id, reduxDispatch) =>{
     socket.on(`privateRatingNotify-${self_id}`, (rateObj) =>{
-        const {client, notification} = rateObj;
-        const client_username = client;
+        const {notification} = rateObj;
 
-        toast.info(`You got a Rate from ${client_username} `,{
+        const notificationMessage = notification.message;
+        toast.info(notificationMessage,{
             className:"toast-contact-message"
         })
 
