@@ -1,6 +1,6 @@
 const {driver} = require('../db/neo4j');
-const { set ,get, expire, zadd, zrem, zrangescores, zrangerevscores} = require('../db/redis');
-const {getUserIdByUsername, updateUserPicturePath, getUserPicturePath, getNotificationsByOffset, getNotificationsUnreadCount} = require('../db/redisUtils');
+const { set ,get, expire, zadd, zrem, zrangerevscores} = require('../db/redis');
+const {getUserIdByUsername, updateUserPicturePath, getUserPicturePath, getNotificationsByOffset, getNotificationsUnreadCount, getNotificationsUnreadTotalCount} = require('../db/redisUtils');
 const path = require('path');
 const fs = require('fs');
 
@@ -819,7 +819,8 @@ const getRecordedNotifications = async(username, offset, size) =>{
     //on initial get first 5 or 6 notifications based on offset and size,
     const notifications = await getNotificationsByOffset(userID, offset, size-1);
     const unreadCount = await getNotificationsUnreadCount(userID);
-    return {notifications, unreadCount};
+    const totalCount = await getNotificationsUnreadTotalCount(userID);
+    return {notifications, unreadCount, totalCount};
 }
 
 // const getMoreRecordedNotifications = async(userID, pageNumber) =>{
@@ -828,7 +829,7 @@ const getMoreRecordedNotifications = async(username, batchNumber) =>{
     const size = 6;
     const offset = size * batchNumber;
     const endIndex = offset + size -1; 
-    
+
     const notifications = await getNotificationsByOffset(userID, offset, endIndex);
     return notifications;
 }

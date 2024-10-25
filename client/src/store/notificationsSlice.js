@@ -5,6 +5,7 @@ import {getNotifications, getMoreNotifications, markAllNotificationsAsRead, mark
 const initialState ={
     notifications:[], //all user notifications
     unreadNotificationsCount:0,
+    totalNotificationsCount:0,
     error: false,
     loading: null
 }
@@ -69,6 +70,7 @@ const notificationsSlice = createSlice({
         resetNotifications:(state)=>{
             state.notifications = []
             state.unreadNotificationsCount = 0
+            state.totalNotificationsCount = 0;
             state.error = false
             state.loading = null
         },
@@ -77,6 +79,7 @@ const notificationsSlice = createSlice({
             // state.notifications.push(action.payload)
             state.notifications = [action.payload, ...state.notifications, ]
             state.unreadNotificationsCount +=1
+            state.totalNotificationsCount +=1
             state.error = false
             state.loading = null
         }
@@ -91,6 +94,7 @@ const notificationsSlice = createSlice({
                 state.loading = false;
                 state.notifications = [...action.payload.notifications];
                 state.unreadNotificationsCount = action.payload.unreadCount;
+                state.totalNotificationsCount = action.payload.totalCount
             })
             .addCase(getHouseworkerNotifications.rejected, (state,action) =>{
                 state.loading = false;
