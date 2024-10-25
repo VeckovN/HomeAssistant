@@ -377,19 +377,6 @@ const markUnreadNotification = async(req,res) =>{
     }
 }
 
-const markUnreadNotifications = async(req,res) =>{
-    const username = req.params.username;
-    try{
-        await houseworkerModel.markAllNotificationsAsRead(username);
-        res.status(200); //is true return value as default
-    }
-    catch(err){
-        console.log(err);
-        res.status(400).json({error:"More Messages Fetching Error"});
-    }
-}
-
-
 module.exports ={
     getHouseworkerByUsername,
     getHouseworkers,
@@ -417,6 +404,5 @@ module.exports ={
     markHouseworkerUnreadComments,
     getNotifications,
     getMoreNotifications,
-    markUnreadNotifications,
     markUnreadNotification
 }

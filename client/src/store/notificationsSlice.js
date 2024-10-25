@@ -48,18 +48,6 @@ export const getMoreHouseworkerNotifications = createAsyncThunk(
     }
 )
 
-// export const markNotificationsAsRead = createAsyncThunk(
-//     'notifications/markAllNotificationsAsRead',
-//     async(username, thunkAPI) =>{
-//         try{
-//             await markAllNotificationsAsRead(username);
-//         }catch(err){
-//             const message = (err.response && err.response.data.error) || err.message || err
-//             return thunkAPI.rejectWithValue(message);        
-//         }
-//     }
-// )
-
 export const markNotification = createAsyncThunk(
     'notifications/markNotification',
     async({notificationID, batchNumber}, thunkAPI) =>{

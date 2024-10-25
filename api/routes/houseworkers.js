@@ -27,7 +27,6 @@ const {
     markHouseworkerUnreadComments,
     getNotifications,
     getMoreNotifications,
-    markUnreadNotifications,
     markUnreadNotification
 } = require('../controller/houseworkerController');
 
@@ -59,7 +58,6 @@ router.get('/notifications/:username/', checkHouseworker, getNotifications);
 router.get('/notifications/:username/:batchNumber', checkHouseworker, getMoreNotifications);
 router.put('/notifications/mark', checkHouseworker, markUnreadNotification);
 router.put('/notifications/mark/:notificationID', checkHouseworker, markUnreadNotification);
-router.put('/notifications/mark/all/:username', checkHouseworker, markUnreadNotifications);
 
 router.delete('/professions/:profession', checkHouseworker, deleteProfession);
 router.put('/professions/update', checkHouseworker, updateProfessionWorkingHour);

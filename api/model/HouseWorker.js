@@ -833,27 +833,6 @@ const getMoreRecordedNotifications = async(username, batchNumber) =>{
     return notifications;
 }
 
-const markAllNotificationsAsRead = async(username) =>{ 
-    const userID = await getUserIdByUsername(username);
-    const notifications = await zrangescores(`user:${userID}:notifications`, 0, -1); // -1 ->last element
-    //WITHSCORE -> [0] -objectData ,[1] - SCORE VALUE, [2] - next obj, [3] -SCORE VALUE 
-    // that means +2 for new set data
-    for(let i = 0; i< notifications.length; i +=2){
-        const notificationStr = notifications[i];
-        const score = notifications[i+1];
-
-        const notificationObj = JSON.parse(notificationStr);
-
-        if(notificationObj.read === false){
-            notificationObj.read = true;
-        }
-
-        //overwrite the notification in the sorted set with the same score  
-        await zadd(`user:${userID}:notifications`, score, JSON.stringify(notificationObj));
-    }
-    // return true;
-}
-
 const markNotificationAsRead = async(userID, notificationID, batchNumber) =>{
     //optimized : search only for displayed users
     const size = 6;
@@ -906,6 +885,5 @@ module.exports ={
     getHouseworkersCount,
     getRecordedNotifications,
     getMoreRecordedNotifications,
-    markAllNotificationsAsRead,
     markNotificationAsRead
 }

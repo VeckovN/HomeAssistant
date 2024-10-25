@@ -330,22 +330,9 @@ export const getMoreNotifications = async(username, batchNumber) =>{
     }
 }
 
-
 export const markNotificationAsRead = async(notificationID, batchNumber) =>{
     try{
         await axiosSession.put(BASE_URL + `houseworker/notifications/mark/`, {notificationID, batchNumber})
-    }
-    catch(err){
-        ThrowErorr(err);
-    }
-}
-
-
-export const markAllNotificationsAsRead = async(username) =>{
-    try{
-        await axiosSession.put(BASE_URL + `houseworker/notifications/mark/all/${username}`)
-        console.log("ALL NOTIFICATIONS IS READ: ")
-        return true;
     }
     catch(err){
         ThrowErorr(err);
