@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {getNotifications, getMoreNotifications, markAllNotificationsAsRead} from '../services/houseworker';
+import {getNotifications, getMoreNotifications, markAllNotificationsAsRead, markNotificationAsRead} from '../services/houseworker';
 
 
 const initialState ={
@@ -48,11 +48,24 @@ export const getMoreHouseworkerNotifications = createAsyncThunk(
     }
 )
 
-export const markNotificationsAsRead = createAsyncThunk(
-    'notifications/markNotificationsAsRead',
-    async(username, thunkAPI) =>{
+// export const markNotificationsAsRead = createAsyncThunk(
+//     'notifications/markAllNotificationsAsRead',
+//     async(username, thunkAPI) =>{
+//         try{
+//             await markAllNotificationsAsRead(username);
+//         }catch(err){
+//             const message = (err.response && err.response.data.error) || err.message || err
+//             return thunkAPI.rejectWithValue(message);        
+//         }
+//     }
+// )
+
+export const markNotification = createAsyncThunk(
+    'notifications/markNotification',
+    async({notificationID, batchNumber}, thunkAPI) =>{
         try{
-            await markAllNotificationsAsRead(username);
+            await markNotificationAsRead(notificationID, batchNumber);
+            return notificationID; 
         }catch(err){
             const message = (err.response && err.response.data.error) || err.message || err
             return thunkAPI.rejectWithValue(message);        
@@ -109,16 +122,22 @@ const notificationsSlice = createSlice({
                 state.error = action.payload; //passed error from thunkAPI.rejectWithValue
             })    
 
-            .addCase(markNotificationsAsRead.pending, (state)=>{
+            .addCase(markNotification.pending, (state)=>{
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(markNotificationsAsRead.fulfilled, (state, action)=>{
+            .addCase(markNotification.fulfilled, (state, action)=>{
                 state.error = false
                 state.loading = false;
-                console.log("markNotificationsAsRead: ", action.payload);
+                const markedID = action.payload;
+                state.notifications = state.notifications.map(notification => 
+                    notification.id == markedID 
+                    ? {...notification, read:true} //return all other props and updated read
+                    : notification
+                )
+                state.unreadNotificationsCount -= 1;
             })
-            .addCase(markNotificationsAsRead.rejected, (state,action) =>{
+            .addCase(markNotification.rejected, (state,action) =>{
                 state.loading = false;
                 state.error = action.payload;
             })    
