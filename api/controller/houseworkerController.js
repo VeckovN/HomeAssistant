@@ -364,10 +364,23 @@ const getMoreNotifications = async(req,res) =>{
     }
 }
 
+const markUnreadNotification = async(req,res) =>{
+    const {notificationID, batchNumber} = req.body;
+    const userID = req.session.user.userID;
+    try{  
+        await houseworkerModel.markNotificationAsRead(userID, notificationID, batchNumber);
+        res.status(200).send("Successfuly marked");
+    }
+    catch(err){
+        console.log(err);
+        res.status(400).json({error:"More Messages Fetching Error"});
+    }
+}
+
 const markUnreadNotifications = async(req,res) =>{
     const username = req.params.username;
     try{
-        await houseworkerModel.markAllCommentsAsRead(username);
+        await houseworkerModel.markAllNotificationsAsRead(username);
         res.status(200); //is true return value as default
     }
     catch(err){
@@ -375,6 +388,7 @@ const markUnreadNotifications = async(req,res) =>{
         res.status(400).json({error:"More Messages Fetching Error"});
     }
 }
+
 
 module.exports ={
     getHouseworkerByUsername,
@@ -403,5 +417,6 @@ module.exports ={
     markHouseworkerUnreadComments,
     getNotifications,
     getMoreNotifications,
-    markUnreadNotifications
+    markUnreadNotifications,
+    markUnreadNotification
 }

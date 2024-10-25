@@ -1,5 +1,5 @@
 const {driver} = require('../db/neo4j');
-const { set ,get, expire, zadd, zrangescores} = require('../db/redis');
+const { set ,get, expire, zadd, zrem, zrangescores, zrangerevscores} = require('../db/redis');
 const {getUserIdByUsername, updateUserPicturePath, getUserPicturePath, getNotificationsByOffset, getNotificationsUnreadCount} = require('../db/redisUtils');
 const path = require('path');
 const fs = require('fs');
@@ -833,7 +833,7 @@ const getMoreRecordedNotifications = async(username, batchNumber) =>{
     return notifications;
 }
 
-const markNotificationsAsRead = async(username) =>{ 
+const markAllNotificationsAsRead = async(username) =>{ 
     const userID = await getUserIdByUsername(username);
     const notifications = await zrangescores(`user:${userID}:notifications`, 0, -1); // -1 ->last element
     //WITHSCORE -> [0] -objectData ,[1] - SCORE VALUE, [2] - next obj, [3] -SCORE VALUE 
@@ -854,6 +854,28 @@ const markNotificationsAsRead = async(username) =>{
     // return true;
 }
 
+const markNotificationAsRead = async(userID, notificationID, batchNumber) =>{
+    //optimized : search only for displayed users
+    const size = 6;
+    const offset = size * batchNumber + 1;
+    const endIndex = offset + size -1; 
+
+    const notifications = await zrangerevscores(`user:${userID}:notifications`, 0, endIndex); // -1 ->last element
+    for(let i = 0; i< notifications.length; i +=2){
+        const notificationStr = notifications[i];
+        const score = notifications[i+1];
+
+        const notificationObj = JSON.parse(notificationStr);
+
+        if(notificationObj.id == notificationID){
+            if(notificationObj.read == false){
+                notificationObj.read = true;
+                await zrem(`user:${userID}:notifications`, notificationStr);
+                await zadd(`user:${userID}:notifications`, score, JSON.stringify(notificationObj));
+            }
+        }
+    }
+}
 
 module.exports ={
     findByUsername,
@@ -884,5 +906,6 @@ module.exports ={
     getHouseworkersCount,
     getRecordedNotifications,
     getMoreRecordedNotifications,
-    markNotificationsAsRead
+    markAllNotificationsAsRead,
+    markNotificationAsRead
 }

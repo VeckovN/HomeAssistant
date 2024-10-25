@@ -27,7 +27,8 @@ const {
     markHouseworkerUnreadComments,
     getNotifications,
     getMoreNotifications,
-    markUnreadNotifications
+    markUnreadNotifications,
+    markUnreadNotification
 } = require('../controller/houseworkerController');
 
 const router = express.Router();
@@ -56,7 +57,9 @@ router.get('/professions/all', getAllProfessions)
 router.get('/professions/:username', getProfessionsByUsername)
 router.get('/notifications/:username/', checkHouseworker, getNotifications);
 router.get('/notifications/:username/:batchNumber', checkHouseworker, getMoreNotifications);
-router.get('/notifications/mark/:username', checkHouseworker, markUnreadNotifications);
+router.put('/notifications/mark', checkHouseworker, markUnreadNotification);
+router.put('/notifications/mark/:notificationID', checkHouseworker, markUnreadNotification);
+router.put('/notifications/mark/all/:username', checkHouseworker, markUnreadNotifications);
 
 router.delete('/professions/:profession', checkHouseworker, deleteProfession);
 router.put('/professions/update', checkHouseworker, updateProfessionWorkingHour);
