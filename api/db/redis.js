@@ -90,6 +90,10 @@ const zrangescores = (key, value, value2) => {
 const zrangerev = (key, value, value2) => {
     return new Promise((resolve, reject)=> client.zrange(key, value, value2, "REV", resolvePromise(resolve, reject)))
 }
+const zrangerevscores = (key, value, value2) => {
+    return new Promise((resolve, reject)=> client.zrange(key, value, value2, "REV", "WITHSCORES", resolvePromise(resolve, reject)))
+}
+
 //key, offset, size
 const zrangelimit = (key, value, value2) => {
     const limit = parseInt(value+value2);
@@ -133,5 +137,6 @@ module.exports ={
     rename,
     scard,
     zrangelimit,
-    zrangescores
+    zrangescores,
+    zrangerevscores
 }
