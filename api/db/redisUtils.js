@@ -1,4 +1,4 @@
-const {hmset, hmget, get, zadd, zrangerev, incr} = require('../db/redis');
+const {hmset, hmget, get, zcard, zadd, zrangerev, incr} = require('../db/redis');
 const {formatDate} = require('../utils/dateUtils');
 
 const getUserIdByUsername = async (username)=>{
@@ -76,6 +76,11 @@ const getNotificationsUnreadCount = async(userID) =>{
     return unreadNotificationCount;
 }
 
+const getNotificationsUnreadTotalCount = async(userID)=>{
+    const notificationCount = await zcard(`user:${userID}:notifications`);
+    return notificationCount;
+}
+
 module.exports = {
     getUserIdByUsername, 
     getUsernameByUserID,
@@ -85,5 +90,6 @@ module.exports = {
     getUnreadMessageCountByRoomID,
     recordNotification,
     getNotificationsUnreadCount,
-    getNotificationsByOffset
+    getNotificationsByOffset,
+    getNotificationsUnreadTotalCount
 }
