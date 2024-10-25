@@ -8,7 +8,7 @@ import '../sass/components/_notification.scss';
 const HouseworkerNotification = () =>{
 
     const dispatch = useDispatch();
-    const {notifications, unreadNotificationsCount} = useSelector((state) => state.notifications)
+    const {notifications, unreadNotificationsCount, totalNotificationsCount} = useSelector((state) => state.notifications)
     const {user} = useSelector((state) => state.auth)
     const [isOpen, setIsOpen] = useState(false);
     const [batchNumber, setBatchNumber] = useState(0);
@@ -61,9 +61,12 @@ const HouseworkerNotification = () =>{
                         )
                     )}
                 </div>
+                
+                {totalNotificationsCount >= notifications.length  &&
                 <div className='notification-more-btn-container'>
                     <button onClick={loadMoreNotifications} className='more-btn'>More</button>
                 </div>
+                }
             </div>
             }
         </div>
