@@ -80,9 +80,14 @@ const srem = (key = "key", key2 = "") =>
 const expire = (key = "key", value = "0") =>
     new Promise((resolve, reject) => client.expire(key, value, resolvePromise(resolve, reject)))
 
+const zcard = (key) => {
+    return new Promise((resolve, reject) =>client.zcard(key, resolvePromise(resolve, reject)))
+}
+
 const zrange = (key, value, value2) => {
     return new Promise((resolve, reject)=> client.zrange(key, value, value2, resolvePromise(resolve, reject)))
 }
+
 const zrangescores = (key, value, value2) => {
     return new Promise((resolve, reject)=> client.zrange(key, value, value2, "WITHSCORES", resolvePromise(resolve, reject)))
 }
@@ -135,6 +140,7 @@ module.exports ={
     del,
     expire,
     rename,
+    zcard,
     scard,
     zrangelimit,
     zrangescores,
