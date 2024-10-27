@@ -2,6 +2,10 @@ import { useState} from "react";
 import { NavLink, Outlet} from "react-router-dom";
 import {useDispatch, useSelector} from 'react-redux';
 import {logout} from '../../store/auth-slice'
+import { resetNotifications } from '../../store/notificationsSlice';
+import { resetUnreadComments } from '../../store/unreadCommentSlice';
+import { resetUnreadMessages } from '../../store/unreadMessagesSlice';
+import { resetReduxStates } from "../../store/reset-states";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHouse } from '@fortawesome/free-solid-svg-icons';
@@ -42,6 +46,7 @@ const Sidebar = () => {
     }
 
     const logoutHandler = () =>{
+        resetReduxStates(dispatch);
         dispatch(logout());
     }
 
