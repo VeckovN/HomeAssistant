@@ -1,5 +1,6 @@
 @use '../abstracts/colors' as *;
 @use '../abstracts/fonts' as *;
+@use '../abstracts/placeholders' as *;
 @use '../base/typography' as *;
 @use '../abstracts/brakepoints' as *;
 @use '../abstracts/mixins' as *;
@@ -14,12 +15,32 @@
     left:50%;
     transform: translateX(-50%);
 
-    // background-color: rgba(7, 7, 7, 0.911);
     background-color: rgba(0, 0, 0, 0.822);
 
     @include xl-breakpoint{
         position:unset;
         transform:translateX(0);
+    }
+
+    .notifications-container{
+        position: absolute;
+        top:4em;
+        // left:14.3em;
+        padding:1em 1em;    
+        
+        max-height: 505px;
+        max-width: 500px;
+        overflow:auto;
+        
+        @extend %scrollbar-chat-style;
+        
+        background-color: $black-5;
+        
+        z-index: 20;
+
+        @include md-breakpoint{
+            left:4em;
+        }
     }
 
     .nav-button{
@@ -191,6 +212,56 @@
                         text-align: center;
                         border-radius: 10%;
                     }
+                }
+
+                .notification-icon-container{
+
+                    .notification-icon{
+                        position:relative;
+                        width: 20%;
+                        color:$grey-6;
+                        font-size: 1.8em;
+                        padding-left:.3em;
+
+                        &:hover{
+                            color:$black;
+                            cursor: pointer;
+                        }
+
+                        @include md-breakpoint{
+                            padding-left:0em;
+                        }
+                    }
+
+                    .notifications-unread-count{
+                        position: absolute;
+                        top:0em;
+                        left:2.1em;
+                        font-size: $fs-em-9;
+                        font-weight: 700;
+                        color:$black;
+
+                        @include md-breakpoint{
+                            left:1.5em
+                        }
+                    }
+                }
+
+                .notifications-container{
+                    position: relative;
+                    top:2em;
+                    left:13.3em;
+                    padding:1em 1em;    
+                    
+                    max-height: 500px;
+                    max-width: 500px;
+                    overflow:auto;
+                    
+                    @extend %scrollbar-chat-style;
+                    
+                    background-color: $black-5;
+                    
+                    z-index: 10;
                 }
 
                 .logout{

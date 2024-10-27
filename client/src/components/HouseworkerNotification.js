@@ -1,21 +1,24 @@
-import {useState, useEffect} from 'react';
-import {useDispatch, useSelector } from 'react-redux';
-import { NavLink} from "react-router-dom";
+import {useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {useNavigate} from "react-router-dom";
 import { getMoreHouseworkerNotifications, markNotification} from '../store/notificationsSlice';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHouse } from '@fortawesome/free-solid-svg-icons';
+import { faMessage } from '@fortawesome/free-solid-svg-icons';
+import { faComments } from '@fortawesome/free-solid-svg-icons';
 
 import '../sass/components/_notification.scss';
 
-const HouseworkerNotification = () =>{
+const HouseworkerNotification = ({closeNotifications}) =>{
 
     const dispatch = useDispatch();
-    const {notifications, unreadNotificationsCount, totalNotificationsCount} = useSelector((state) => state.notifications)
+    const {notifications, totalNotificationsCount} = useSelector((state) => state.notifications)
     const {user} = useSelector((state) => state.auth)
-    const [isOpen, setIsOpen] = useState(false);
     const [batchNumber, setBatchNumber] = useState(0);
+    const navigator = useNavigate();
 
-    const isOpenHandler = () =>{
-        setIsOpen(prev => !prev);
-    }
+    console.log("batchNumber, "+ batchNumber);
 
     const loadMoreNotifications = () => {
         const username = user.username;
@@ -24,8 +27,13 @@ const HouseworkerNotification = () =>{
         setBatchNumber(newBatchNumber);
     }
 
-    const markNotificationHanlder = (notificationID) => {
-        dispatch(markNotification({notificationID, batchNumber}));
+    const hanldeNotificationClick = (path, notificationID) =>{
+        if(notificationID){ //when notification is unread
+            dispatch(markNotification({notificationID, batchNumber}));
+        }
+
+        navigator(path);
+        closeNotifications();
     }
 
     const returnPath = (type) =>{
@@ -41,37 +49,37 @@ const HouseworkerNotification = () =>{
     }
 
     return(
-        <div className='notification-unread-count-box'>
-            <div className='notification-icon' onClick={isOpenHandler}>
-                {unreadNotificationsCount}
+        <div className='notification-box'>
+            <div className='notification-box-title'>
+                Notifications
             </div>
-            {isOpen && 
-            <div className='notification-box'>
-                <div className='notification-list'>
-                    {notifications.map(el =>
-                        el.read    
-                        ? (
-                            <NavLink  to={returnPath(el.type)} className='notification'>
-                                <div className={`message `}> {el.message } --- {el.id}</div>
-                            </NavLink>
-                        ) : (
-                            <NavLink onClick={() => markNotificationHanlder(el.id)} to={returnPath(el.type)} className='notification'>
-                                <div className={`message un-read`}> {el.message } --- {el.id}</div>
-                            </NavLink>
-                        )
-                    )}
-                </div>
-                
-                {totalNotificationsCount >= notifications.length  &&
-                <div className='notification-more-btn-container'>
-                    <button onClick={loadMoreNotifications} className='more-btn'>More</button>
-                </div>
-                }
+            {notifications.length > 0
+            ?
+            <div className='notifications-list'>
+                {notifications.map(el =>
+                    <div onClick={() => hanldeNotificationClick(returnPath(el.type), el.read ? null : el.id)}  className='notification'>
+                        <div className= {`notification-context-image ${el.read ? ' ' : 'un-read-image'}`}>
+                            {el.type === 'comment' && <FontAwesomeIcon icon={faComments}/>}
+                            {el.type === 'chatGroup' && <FontAwesomeIcon icon={faMessage}/>}
+                            {el.type === 'rating' && <FontAwesomeIcon icon={faHouse}/>}
+                        </div>
+                        <div className={`notification-context ${el.read ? ' ' : 'un-read'}`}> {el.message } --- {el.id}</div>
+                    </div>
+                )}
+            </div>
+            :
+            <div className='notifications-empty-list'>
+                You have no notifications
+            </div>
+            }
+            
+            {totalNotificationsCount > notifications.length  &&
+            <div className='notification-more-btn-container'>
+                <button onClick={loadMoreNotifications} className='more-btn'>More</button>
             </div>
             }
         </div>
     )
-
 }
 
 export default HouseworkerNotification;

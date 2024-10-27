@@ -9,11 +9,14 @@ import { faMessage } from '@fortawesome/free-solid-svg-icons';
 import { faComments } from '@fortawesome/free-solid-svg-icons';
 import { faSliders } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { faBell} from '@fortawesome/free-solid-svg-icons';
 import { faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 
 import CottageIcon from '@mui/icons-material/Cottage';
 import KeyboardArrowRightOutlinedIcon from '@mui/icons-material/KeyboardArrowRightOutlined';
 import KeyboardArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardArrowLeftOutlined';
+
+import HouseworkerNotification from "../HouseworkerNotification";
 
 import '../../sass/layout/_sidebar.scss';
 
@@ -22,6 +25,21 @@ const Sidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const {unreadCount} = useSelector((state) => state.unreadMessages);
     const {unreadCommentsCount} = useSelector((state) => state.unreadComments)
+    const {unreadNotificationsCount} = useSelector((state) => state.notifications)
+    const [isOpenNotification, setIsOpenNotification] = useState(false);
+
+    const isOpenNotificationHandler = () =>{
+        setIsOpenNotification(prev => !prev);
+    }
+
+    const closeNotificationHandler = () =>{
+        setIsOpenNotification(false);
+    }
+
+    const closeOpenedViewsHandler = () =>{
+        setIsOpenNotification(false);
+        setIsOpen(false);
+    }
 
     const logoutHandler = () =>{
         dispatch(logout());
@@ -80,9 +98,21 @@ const Sidebar = () => {
 
                 <div className='sidebar-menu'>
                     <div className="menu-option">
+                        <div className='notification-icon-container' onClick={isOpenNotificationHandler}>
+                            <div className='notification-icon'>
+                                <FontAwesomeIcon icon={faBell} />
+                                {unreadNotificationsCount !== 0 &&
+                                <div className='notifications-unread-count'>
+                                    {unreadNotificationsCount}
+                                </div>
+                                }
+                            </div>
+                            
+                        </div>
                         {
-                             menuItem1.map((el, index) =>(
-                                <NavLink to={el.path} onClick={()=> setIsOpen(false)} key={'el-'+index}  
+                            menuItem1.map((el, index) =>(
+                                // <NavLink to={el.path} onClick={()=> setIsOpen(false)} key={'el-'+index}  
+                                <NavLink to={el.path} onClick={closeOpenedViewsHandler} key={'el-'+index}  
                                     className={({ isActive}) =>
                                     isActive ? "sidebar-menu-link active-link" : "sidebar-menu-link"
                                 }>
@@ -100,7 +130,8 @@ const Sidebar = () => {
                     <div className="menu-option">
                         {
                              menuItem2.map((el, index) =>(
-                                <NavLink to={el.path} onClick={()=> setIsOpen(false)} key={'el-'+index}
+                                // <NavLink to={el.path} onClick={()=> setIsOpen(false)} key={'el-'+index}
+                                <NavLink to={el.path} onClick={closeOpenedViewsHandler} key={'el-'+index}
                                     className={({ isActive}) =>
                                     isActive ? "sidebar-menu-link active-link" : "sidebar-menu-link"
                                 }>
@@ -120,6 +151,11 @@ const Sidebar = () => {
             </section>
             
             <section className='sidebar-context-container'>
+                {isOpenNotification &&  
+                    <div className='notifications-container'>
+                        <HouseworkerNotification closeNotifications={closeNotificationHandler}/>
+                    </div>
+                }
                 <Outlet />
             </section>
         </main>
