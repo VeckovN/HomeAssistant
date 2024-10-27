@@ -18,36 +18,9 @@
         height: 100%;
         // max-width: 1200px;
         font-family: $font-family-3;
-        
-        .header-loggout{
-            height: 4em;
-            display: flex;
-            justify-content: flex-end;
-
-            border-bottom:1px solid #D6D6D6;
-
-            .logout-button{
-                padding:.5em 1em;
-                margin-right:1em;
-                background-color: $color-hs-6;
-                align-self: center;
-                
-                font-family: $font-family-3;
-                font-weight: 500;
-                color:$white;
-                border: none;
-                border-radius: 8px;
-
-                &:hover{
-                    background-color: $color-hs-4;
-                    cursor: pointer;
-                    color:$black;
-                }
-            }
-        }
 
         .info-client-section{
-            padding: 0em 1em 0em 1em;
+            padding: 1em 1em 0em 1em;
             max-height: 300px;
             
             display: flex;

@@ -39,20 +39,12 @@ const HouseworkerHome = () =>{
        fetchData();
     },[])
 
-    const logoutHandler = () =>{
-        //emit disconnected socket
-        dispatch(logout());
-    }
 
     return (
 
         <div className='page-conainer'>
             {loading ? <Spinner className='profile-spinner'/> :
             <main className='houseworker-container'>
-                <header className='header-loggout'>
-                    <button onClick={logoutHandler} className='logout-button'>Logout</button>
-                </header>
-
                 <section className='info-client-section'>       
                     <div className='info-content-container'>
                         <div className='title-text-container'> 
