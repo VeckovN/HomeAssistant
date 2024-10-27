@@ -78,7 +78,6 @@ const notificationsSlice = createSlice({
         },
 
         addNotification:(state, action) =>{
-            // state.notifications.push(action.payload)
             state.notifications = [action.payload, ...state.notifications, ]
             state.unreadNotificationsCount +=1
             state.totalNotificationsCount +=1

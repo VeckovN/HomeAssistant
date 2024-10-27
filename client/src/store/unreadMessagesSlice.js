@@ -84,15 +84,20 @@ const unreadMessagesSlice = createSlice({
                     state.unreadMessages[index].count = currentCount + 1;
                 }
                 else{
-                    //if unread messages with matching room aren't found
                     state.unreadMessages.push({ roomID: roomID, count: 1 });
                 }
             }
             else{
                 state.unreadMessages.push({roomID:roomID, count:1})
             }
-            //update totalCount in both situations
             state.unreadCount += 1;
+        },
+
+        resetUnreadMessages:(state)=>{
+            state.unreadMessages =[]
+            state.unreadCount = 0
+            state.error = false
+            state.loading = null
         }
     },
     extraReducers: (builder) =>{
@@ -147,7 +152,7 @@ const unreadMessagesSlice = createSlice({
 })
 
 
-export const {updateUnreadMessages} = unreadMessagesSlice.actions;
+export const {updateUnreadMessages, resetUnreadMessages} = unreadMessagesSlice.actions;
 export default unreadMessagesSlice;
 
 // export const unreadMessagesActions = unreadMessagesSlice.actions;
