@@ -1,11 +1,12 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {getNotifications, getMoreNotifications, markAllNotificationsAsRead, markNotificationAsRead} from '../services/houseworker';
+import {getNotifications, getMoreNotifications, markNotificationAsRead} from '../services/houseworker';
 
 
 const initialState ={
     notifications:[], //all user notifications
     unreadNotificationsCount:0,
     totalNotificationsCount:0,
+    batchNumber:0, //number of loadedMore pages
     error: false,
     loading: null
 }
@@ -70,7 +71,8 @@ const notificationsSlice = createSlice({
         resetNotifications:(state)=>{
             state.notifications = []
             state.unreadNotificationsCount = 0
-            state.totalNotificationsCount = 0;
+            state.totalNotificationsCount = 0
+            state.batchNumber = 0
             state.error = false
             state.loading = null
         },
@@ -108,6 +110,7 @@ const notificationsSlice = createSlice({
             .addCase(getMoreHouseworkerNotifications.fulfilled, (state, action)=>{
                 state.loading = false;
                 state.notifications.push(...action.payload);
+                state.batchNumber += 1;
             })
             .addCase(getMoreHouseworkerNotifications.rejected, (state,action) =>{
                 state.loading = false;

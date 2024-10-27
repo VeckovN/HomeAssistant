@@ -13,9 +13,8 @@ import '../sass/components/_notification.scss';
 const HouseworkerNotification = ({closeNotifications}) =>{
 
     const dispatch = useDispatch();
-    const {notifications, totalNotificationsCount} = useSelector((state) => state.notifications)
+    const {notifications, totalNotificationsCount, batchNumber} = useSelector((state) => state.notifications)
     const {user} = useSelector((state) => state.auth)
-    const [batchNumber, setBatchNumber] = useState(0);
     const navigator = useNavigate();
 
     console.log("batchNumber, "+ batchNumber);
@@ -24,7 +23,6 @@ const HouseworkerNotification = ({closeNotifications}) =>{
         const username = user.username;
         const newBatchNumber = batchNumber + 1;
         dispatch(getMoreHouseworkerNotifications({username, batchNumber:newBatchNumber}));
-        setBatchNumber(newBatchNumber);
     }
 
     const hanldeNotificationClick = (path, notificationID) =>{

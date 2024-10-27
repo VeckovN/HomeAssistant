@@ -46,10 +46,10 @@ const conditionalNotificationsTransform = createTransform(
     if (state.auth && state.auth.user) {
       return inboundState;
     }
-    return { notifications: [], unreadNotificationsCount: 0, totalNotificationsCount: 0, error: false, loading: null };
+    return { notifications: [], unreadNotificationsCount: 0, totalNotificationsCount: 0, batchNumber: 0, error: false, loading: null };
   },
   (outboundState, key) => outboundState,
-  { whitelist: ['notifications', 'unreadNotificationsCount', 'totalNotificationsCount']}
+  { whitelist: ['notifications', 'unreadNotificationsCount', 'totalNotificationsCount' , 'batchNumber']}
 );
 
 const unreadMessagesPersistConfig = {
