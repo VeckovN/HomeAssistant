@@ -1,8 +1,8 @@
-import { city_options } from '../../utils/options';
-import HouseworkerProfessions from '../../components/HouseworkerProfessions.js';
-import HouseworkerInputs from '../../components/HouseworkerInputs.js';
-import Spinner from '../../components/UI/Spinner.js';
-import '../../sass/pages/_houseworkerProfile.scss';
+import { city_options } from '../../../utils/options';
+import HouseworkerProfessions from '../../../components/HouseworkerProfessions.js';
+import HouseworkerInputs from '../../../components/HouseworkerInputs.js';
+import Spinner from '../../../components/UI/Spinner.js';
+import '../../../sass/pages/_houseworkerProfile.scss';
 
 const HouseworkerProfileForm = ({loading, houseworkerData, setHouseworkerData, cityField, avatarField, register, errors, watch, handleSubmit, getNotOwnedProfessions, onSubmitUpdate, onChangeCityHandler, onChangeAvatarHandler, onRemoveAvatarHandler}) =>{
     return(

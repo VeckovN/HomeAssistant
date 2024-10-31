@@ -1,10 +1,10 @@
 import {useState, useEffect} from 'react';
 import {toast} from 'react-toastify';
 import HouseworkerProfileForm from './HouseworkerProfileForm';
-import {profession_options} from '../../utils/options';
-import {getUserData, getProfessions, updateHouseworker} from '../../services/houseworker.js';
+import {profession_options} from '../../../utils/options';
+import {getUserData, getProfessions, updateHouseworker} from '../../../services/houseworker.js';
 import {useForm, useController} from 'react-hook-form';
-import { getErrorMessage } from '../../utils/ThrowError.js';
+import { getErrorMessage } from '../../../utils/ThrowError.js';
 
 const HouseworkerProfile = () =>{
 

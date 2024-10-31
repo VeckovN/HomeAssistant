@@ -1,10 +1,10 @@
 import {useState, useEffect} from 'react';
 import {toast} from 'react-toastify';
-import ClientProfileForm from './ClientProfileForm';
-import {getUserData, updateClient} from '../../services/client.js';
+import ClientProfileForm from './ClientProfileForm.js';
+import {getUserData, updateClient} from '../../../services/client.js';
 import {useForm, useController} from 'react-hook-form';
-import {city_options} from '../../utils/options.js';
-import {getErrorMessage} from '../../utils/ThrowError.js';
+import {city_options} from '../../../utils/options.js';
+import {getErrorMessage} from '../../../utils/ThrowError.js';
 
 const ClientProfile = () =>{ 
     const initialState = {

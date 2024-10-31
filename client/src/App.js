@@ -9,8 +9,8 @@ import HouseworkerRegister from './pages/Register/Houseworker/HouseworkerRegiste
 import Login from './pages/Login.js';
 import Comments from './pages/CommentsList.js';
 
-import ClientProfile from './pages/ClientProfile/ClientProfile.js';
-import HouseworkerProfile from './pages/HouseworkerProfile/HouseworkerProfile.js';
+import ClientProfile from './pages/Profile/ClientProfile/ClientProfile.js';
+import HouseworkerProfile from './pages/Profile/HouseworkerProfile/HouseworkerProfile.js';
 import Messages from './pages/Messages.js';
 import NotFound from './pages/NotFound.js';
 import HouseworkerHome from './pages/Home/HouseworkerHome.js';
