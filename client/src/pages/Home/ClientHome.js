@@ -1,14 +1,14 @@
 import {useState, useEffect, useRef} from 'react'
 import { useSelector } from 'react-redux';
-import useClient from '../hooks/useClient.js';
-import HouseworkerCard from '../components/HouseworkerCard/HouseworkerCard.js'
-import { getHouseworkersCount } from '../services/houseworker.js';
-import Filter from '../components/Filter/Filter.js';
-import Search from '../components/Search.js';
-import Sort from '../components/Sort.js';
-import Spinner from '../components/UI/Spinner.js';
-import ScrollToTopHome from '../utils/ScrollToTopHome.js';
-import '../sass/pages/_clientHome.scss';
+import useClient from '../../hooks/useClient.js';
+import HouseworkerCard from '../../components/HouseworkerCard/HouseworkerCard.js'
+import { getHouseworkersCount } from '../../services/houseworker.js';
+import Filter from '../../components/Filter/Filter.js';
+import Search from '../../components/Search.js';
+import Sort from '../../components/Sort.js';
+import Spinner from '../../components/UI/Spinner.js';
+import ScrollToTopHome from '../../utils/ScrollToTopHome.js';
+import '../../sass/pages/_clientHome.scss';
 
 const ClientHome = ({socket}) =>{
     const {user} = useSelector((state) => state.auth);

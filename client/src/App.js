@@ -13,8 +13,8 @@ import ClientProfile from './pages/ClientProfile/ClientProfile.js';
 import HouseworkerProfile from './pages/HouseworkerProfile/HouseworkerProfile.js';
 import Messages from './pages/Messages.js';
 import NotFound from './pages/NotFound.js';
-import HouseworkerHome from './pages/HouseworkerHome.js';
-import ClientHome from './pages/ClientHome.js';
+import HouseworkerHome from './pages/Home/HouseworkerHome.js';
+import ClientHome from './pages/Home/ClientHome.js';
 import Sidebar from './components/Layout/Sidebar.js';
 import ClientLayout from './components/Layout/ClientLayout.js';
 

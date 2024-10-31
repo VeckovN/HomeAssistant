@@ -1,12 +1,12 @@
 import {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {getConversationCount, getHomeInfo} from '../services/houseworker.js'
-import Spinner from '../components/UI/Spinner.js';
-import { logout } from '../store/auth-slice.js';
-import HouseworkerProfessionItem from '../components/HouseworkerProfessionItem.js';
+import {getConversationCount, getHomeInfo} from '../../services/houseworker.js'
+import Spinner from '../../components/UI/Spinner.js';
+import { logout } from '../../store/auth-slice.js';
+import HouseworkerProfessionItem from '../../components/HouseworkerProfessionItem.js';
 import GradeIcon from '@mui/icons-material/Grade';
 
-import '../sass/pages/_houseworkerHome.scss';
+import '../../sass/pages/_houseworkerHome.scss';
 
 const HouseworkerHome = () =>{
 
