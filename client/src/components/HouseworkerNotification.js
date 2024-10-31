@@ -1,4 +1,3 @@
-import {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigate} from "react-router-dom";
 import { getMoreHouseworkerNotifications, markNotification} from '../store/notificationsSlice';
@@ -16,8 +15,6 @@ const HouseworkerNotification = ({closeNotifications}) =>{
     const {notifications, totalNotificationsCount, batchNumber} = useSelector((state) => state.notifications)
     const {user} = useSelector((state) => state.auth)
     const navigator = useNavigate();
-
-    console.log("batchNumber, "+ batchNumber);
 
     const loadMoreNotifications = () => {
         const username = user.username;
@@ -61,7 +58,7 @@ const HouseworkerNotification = ({closeNotifications}) =>{
                             {el.type === 'chatGroup' && <FontAwesomeIcon icon={faMessage}/>}
                             {el.type === 'rating' && <FontAwesomeIcon icon={faHouse}/>}
                         </div>
-                        <div className={`notification-context ${el.read ? ' ' : 'un-read'}`}> {el.message } --- {el.id}</div>
+                        <div className={`notification-context ${el.read ? ' ' : 'un-read'}`}> {el.message }</div>
                     </div>
                 )}
             </div>
