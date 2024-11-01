@@ -1,4 +1,4 @@
-const {incr, set, hmset, sadd, hmget, exists, zrange, smembers, zadd, zrangerev, srem, del, get, rename, scard} = require('../db/redis');
+const {incr, set, hmset, sadd, hmget, exists, zrange, smembers, srandmember, zadd, zrangerev, srem, del, get, rename, scard} = require('../db/redis');
 const {formatDate, parseFormattedDate, calculateTimeDifference} = require('../utils/dateUtils');
 const { getUserIdByUsername, getUserInfoByUserID, getUserPicturePath, getUnreadMessageCountByRoomID, recordNotification, getUsernameByUserID} = require('../db/redisUtils');
 
@@ -296,6 +296,12 @@ const getOnlineUsersFromChat = async(userID) =>{
     const onlineRoomUsers = Array.from(usersFromRoomSet).filter(user => onlineUsersSet.has(user))
     
     return onlineRoomUsers
+}
+
+const getHouseworkerFirstRoomID = async(userID) =>{
+    const userRoomKey = `user:${userID}:rooms`;
+    let firstRoomID = await srandmember(userRoomKey, 1);
+    return firstRoomID;
 }
 
 const getFriendsListByUserID = async(userID) =>{
@@ -650,6 +656,7 @@ module.exports ={
     getUnreadMessages,
     postUnreadMessagesToUser,
     resetUnreadMessagesCount,
-    getUnreadMessagesTotalCount
+    getUnreadMessagesTotalCount,
+    getHouseworkerFirstRoomID
 }
 

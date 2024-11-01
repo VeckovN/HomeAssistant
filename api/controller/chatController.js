@@ -128,6 +128,17 @@ const getOnlineUsers = async(req,res) =>{
     }
 }
 
+const getFirstRoomID = async(req,res) =>{
+    try{
+        const userID = req.params.userID;
+        const result = await chatModel.getHouseworkerFirstRoomID(userID);
+        res.status(200).json(result);
+    }
+    catch(err){
+        res.status(400).json({error: 'Conversetion Count error'})
+    }
+}
+
 const getFriendsList = async(req,res) =>{
     try{
         const userID = req.params.userID;
@@ -188,4 +199,5 @@ module.exports ={
     getAllUnreadMessages,
     getUnreadMessagesTotalCount,
     removeUnreadMessagesFromRoom,
+    getFirstRoomID 
 }

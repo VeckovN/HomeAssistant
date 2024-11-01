@@ -12,6 +12,7 @@ const {
     getOnlineUsers,
     getFriendsList,
     getAllUnreadMessages,
+    getFirstRoomID,
     getUnreadMessagesTotalCount,
     removeUnreadMessagesFromRoom,
     setUnreadMessagesForUser
@@ -31,6 +32,7 @@ router.delete('/room/delete/:roomID', checkClient, deleteRoom);
 router.delete('/room/removeUser/:roomID/:username', checkClient, removeUserFromRoom);
 router.post('/room/addUser', checkClient, addUserToRoom);
 router.get('/room/onlineUsers/:userID', isLogged, getOnlineUsers)
+router.get('/room/firstRoom/:userID', isLogged, getFirstRoomID)
 router.get('/room/friends/:userID', isLogged, getFriendsList);
 router.get('/room/unread/:username', isLogged, getAllUnreadMessages);
 router.get('/room/unread/count/:userID', isLogged, getUnreadMessagesTotalCount);
