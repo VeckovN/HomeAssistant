@@ -258,13 +258,18 @@ server.listen(5000, ()=>{
         })
 
         socket.on("addUserToGroup", ({data}) =>{
-            const {newRoomID, clientID, notifications} = data;
+            console.log("data Adduser TO Grtoup: " ,data);
+            const {newRoomID, roomID, clientID, notifications} = data;
             const users = newRoomID.split(':');
+
+            const roomKey = `room:${roomID}`;
+            //user's that are in the room right now
+            io.to(roomKey).emit("addUserToGroupChangeInRoom", newRoomID) //entered chat p
+
             //exclude the sender from the users notification
             const notifyUsers = users.filter(el => el!=clientID);
             notifyUsers.forEach(id =>{
                 const matchedNotification = notifications.find(notification => notification.to === id);
-
                 io.to(`user:${id}`).emit("addUserToGroupNotify" , matchedNotification);
                 //send data for chat room update
                 io.to(`user:${id}`).emit("addUserToGroupChange" , data);

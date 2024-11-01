@@ -82,22 +82,43 @@ export const listenOnMessageReceive = (socket, dispatch) =>{
     })
 }
 
-export const listenOnCreateUserGroup = (socket, dispatch) =>{
+export const listenOnCreateUserGroup = (socket, dispatch, self_id) =>{
     socket.on("createUserGroupChange", (context) =>{
-        const {newUsername, roomID, newRoomID, currentMember, newUserPicturePath} = context;
-        dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, currentMember:currentMember, newUsername:newUsername, picturePath:newUserPicturePath})
+        console.log("createUserGroupChange to groupo:", context);
+        let {newUserID, newUsername, roomID, newRoomID, currentMember, clientUsername, newUserPicturePath, online} = context;
+        //If the newly added user is the current user, create a new group and display it
+        if(self_id == newUserID){
+            newUsername = clientUsername;
+            newUserPicturePath = null
+            online = true
+        }
+        dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, newUserID:newUserID, currentMember:currentMember, newUsername:newUsername, picturePath:newUserPicturePath, online})
     })
 }
 
-export const listenOnAddUserToGroup = (socket, dispatch, self_id) =>{
+export const listenOnAddUserToGroup = (socket, dispatch, self_id, enterRoomAfterAction) =>{
     socket.on("addUserToGroupChange", (context) =>{
-        const {newUserID, newUsername, roomID, newRoomID, currentMember, newUserPicturePath} = context;
+        console.log("listeOnADdUser to groupo:", context);
+        const {newUserID, newUsername, roomID, newRoomID, currentMember, clientUsername, newUserPicturePath, online} = context;
         //If the newly added user is the current user, create a new group and display it
         if(newUserID == self_id)
-            dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, currentMember:currentMember, newUsername:newUsername, picturePath:newUserPicturePath})
-        else
+        {
+            dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, newUserID:newUserID, currentMember:currentMember, newUsername:clientUsername, picturePath:null, online:true})
+            console.log("CREATE_NEW_GROUP");
+        }
+        else{
             //Update othercaht members by adding the new user to the group
-            dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:newUsername, picturePath:newUserPicturePath});    
+            dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUserID:newUserID, newUsername:newUsername, picturePath:newUserPicturePath, online:online});    
+            console.log("ADD_USER_TO_GROUP");
+        }        
+    })
+}
+
+///io.to(roomKey).emit("addUserToGroupChangeInRoom": than trigger enterToNewRoomAction because 
+//it's wathcing that room and pointer on that room must be changed 
+export const listenOnAddUserToGroupInRoom  = (socket, enterRoomAfterAction) =>{
+    socket.on("addUserToGroupChangeInRoom", (newRoomID) =>{
+        enterRoomAfterAction(newRoomID);
     })
 }
 

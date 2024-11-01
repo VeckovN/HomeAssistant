@@ -4,7 +4,7 @@ import {toast} from 'react-toastify';
 import {getErrorMessage} from '../utils/ThrowError.js';
 import {MessagesReducer} from '../components/MessagesReducer.js';
 import {getHouseworkers} from '../services/houseworker.js';
-import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup, listenNewOnlineUser, listenOnMessageReceive} from '../sockets/socketListen.js';
+import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup, listenNewOnlineUser, listenOnMessageReceive, listenOnAddUserToGroupInRoom} from '../sockets/socketListen.js';
 import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat, emitKickUserFromChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
 import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser, getMoreMessagesByRoomID, getOnlineUsers} from '../services/chat.js';
 import {resetUserUnreadMessagesCount} from '../store/unreadMessagesSlice.js';
@@ -29,6 +29,8 @@ const useMessages = (socket, user) =>{
     const [showMoreRoomUsers, setShowMoreRoomUsers] = useState({});
     const pageNumberRef = useRef(0); 
 
+    console.log("State Message: ", state);
+
     const reduxDispatch = useDispatch();
 
     const onShowMenuToggleHandler = () =>  setShowMenu(prev => !prev);
@@ -46,8 +48,9 @@ const useMessages = (socket, user) =>{
         if(socket && user){
             listenOnMessageInRoom(socket, dispatch);
             listenOnMessageReceive(socket, dispatch);
-            listenOnCreateUserGroup(socket, dispatch);
-            listenOnAddUserToGroup(socket, dispatch, user.userID);
+            listenOnCreateUserGroup(socket, dispatch, user.userID);
+            listenOnAddUserToGroupInRoom(socket, enterRoomAfterAction);
+            listenOnAddUserToGroup(socket, dispatch, user.userID, enterRoomAfterAction);
             listenOnDeleteUserFromGroup(socket, dispatch);
             listenOnKickUserFromGroup(socket, dispatch, user.userID);
             // listenOnStartTypingInGroup(socket, user.userID, user.username);
@@ -84,7 +87,6 @@ const useMessages = (socket, user) =>{
             // emitRoomJoin(socket, roomID);
             
             const messages = await getMessagesByRoomID(roomID)
-            console.log("MESSSSSSS:" , messages);
             
             dispatch({type:"SET_ROOM_MESSAGES", data:messages})
             dispatch({type:"SET_LOADING", payload:false})
@@ -104,6 +106,11 @@ const useMessages = (socket, user) =>{
     const getOnlineChatUsers = async() =>{
         const onlineUsers = await getOnlineUsers(user.userID);
         dispatch({type:"SET_ONLINE_USER", data:onlineUsers});
+    }
+
+    const getOnlineUserStatus = (userID) =>{
+        const status = state.onlineUsers.includes(userID);
+        return status;
     }
 
     const enterRoomAfterAction = async(roomID) =>{
@@ -143,7 +150,7 @@ const useMessages = (socket, user) =>{
         const roomID = e.target.value;
 
         //take firsr roomID(if exist) to display it after removing targeted room
-        const someRoom = state.rooms[0].roomID;
+        const firstRoom = state.rooms[0].roomID;
         try{
             const notifications = await deleteRoom(roomID);
             dispatch({type:"DELETE_ROOM", data:roomID});
@@ -156,17 +163,23 @@ const useMessages = (socket, user) =>{
             };
             emitUserDeleteRoom(socket, data);
             
+            
             toast.success("You have successfully deleted the room",{
                 className:"toast-contact-message"
             });
 
-            if(someRoom){
-                enterRoomAfterAction(someRoom);
-                //scroll to top ()
+            if(firstRoom){
+                console.log("firstRoom:" , firstRoom);
+                enterRoomAfterAction(firstRoom);
+                //scroll on firstRoom (new room pointer in rooms)
             }  
 
             if(showChatView)
-                showRoomsHandler();
+            {
+                console.log("ShowChatView");
+                //showRoomsHandler(); //doesn't exist
+            }
+
         }
         catch(err){
             const error = getErrorMessage(err);
@@ -221,6 +234,7 @@ const useMessages = (socket, user) =>{
                 }
     },[state.rooms])
 
+
     const onAddUserToGroupHanlder = (async(roomID, username)=>{
         if(username == ""){
             toast.info("Select user that you want to add in room",{
@@ -235,6 +249,7 @@ const useMessages = (socket, user) =>{
         }
 
         try{
+            //return online status for added user
             const result = await addUserToRoom(roomInfo);
             const {newAddedUserID:newUserID, roomID:newRoomID, isPrivate, newUserPicturePath, notifications} = result.data;
 
@@ -245,22 +260,27 @@ const useMessages = (socket, user) =>{
 
             const roomUsers = state.rooms.filter(room => room.roomID == roomID);
             const currentUser = roomUsers[0].users; 
+
+            const onlineStatus = getOnlineUserStatus(newUserID);
             
             if(isPrivate){                    
-                const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath};
+                const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath, online:onlineStatus};
                 emitCreteUserGroup(socket, {data:groupData});
+                //check newUserID in onlineUsers state
                 //update client room view
-                dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, currentMember:currentUser, newUsername:username, picturePath:newUserPicturePath})
+                dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, currentMember:currentUser, newUserID:newUserID, newUsername:username, picturePath:newUserPicturePath, online:onlineStatus})
                 toast.info("A Group with "+ username + " has been created");
                 //Scroll to bottom(new added room)
             }
             else{ 
-                const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath, notifications};
+                const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath, online:onlineStatus, notifications};
                 emitUserAddedToChat(socket, {data:groupData});
-                dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUsername:username, picturePath:newUserPicturePath});
+                
+                dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUserID:newUserID, newUsername:username, picturePath:newUserPicturePath, online:onlineStatus});
                 toast.info("User is added to the room: "+  newRoomID);
             }
 
+            //enter afther the room is created
             enterRoomAfterAction(newRoomID);
         }
         catch(err){
