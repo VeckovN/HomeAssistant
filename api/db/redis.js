@@ -74,6 +74,9 @@ const sismember = (key = "key", key2 = "") =>
 const smembers = (key = "key") =>
     new Promise((resolve, reject) => client.smembers(key, resolvePromise(resolve, reject)))
 
+const srandmember = (key = "key", value = "1") =>
+    new Promise((resolve, reject) => client.srandmember(key, value, resolvePromise(resolve, reject)))
+
 const srem = (key = "key", key2 = "") =>
     new Promise((resolve, reject) => client.srem(key, key2, resolvePromise(resolve, reject)))
 
@@ -132,6 +135,7 @@ module.exports ={
     hmget,
     hset,
     sismember,
+    srandmember,
     smembers,
     srem,
     zrange,
