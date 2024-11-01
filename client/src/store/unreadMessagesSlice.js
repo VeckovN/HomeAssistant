@@ -21,7 +21,7 @@ const initialState ={
 
 export const getUserUnreadMessages = createAsyncThunk(
     'unreadMessages/getUserUnreadMessages',
-    async(username, thunkAPI) =>{ //user passed from register ( dispatch(register(userData) ))
+    async(username, thunkAPI) =>{
         try{
             const response = await getAllUnreadMessages(username);
 
@@ -33,22 +33,16 @@ export const getUserUnreadMessages = createAsyncThunk(
 
         }catch(err){
             const message = (err.response && err.response.data.error) || err.message || err
-            //using thinkApi (passed in this function)
-            return thunkAPI.rejectWithValue(message); //that will actualy reject and send the message as payload:message
+            return thunkAPI.rejectWithValue(message); 
         }
     }
 )
 
 export const resetUserUnreadMessagesCount = createAsyncThunk(
     'unreadMessages/resetUserUnreadMessagesCount',
-    async({roomID, userID}, thunkAPI) =>{ //user passed from register ( dispatch(register(userData) ))
+    async({roomID, userID}, thunkAPI) =>{
         try{
             const state = thunkAPI.getState().unreadMessages;
-            console.log("ThunkAPI STATE: ", state);
-
-            console.log("roomID: ", roomID);
-
-            //need to check does roomID is inlcuded in unreadMessages array
             const unreadExists = Object.values(state.unreadMessages).some(
                 (item) => item.roomID === roomID
             )
@@ -58,12 +52,10 @@ export const resetUserUnreadMessagesCount = createAsyncThunk(
             }
 
             const response = await resetUnreadMessagesCount(roomID, userID);
-            console.log("response", response);
             return {roomID:roomID, removedCount:response.removedCount}
         }catch(err){
-            console.log("resetUnreadMEssagesCoutn : ", err);
-            // const message = (err.response && err.response.data.error) || err.message || err
-            return thunkAPI.rejectWithValue(err.message); //that will actualy reject and send the message as payload:message
+            console.error("resetUnreadMEssagesCoutn : ", err);
+            return thunkAPI.rejectWithValue(err.message);
         }
     }
 )
@@ -75,7 +67,6 @@ const unreadMessagesSlice = createSlice({
         //this is Sync action to update totalUnread and unread.count prop without calling Async
         updateUnreadMessages: (state, action) =>{
             const {unreadUpdateStatus, roomID} = action.payload;
-            //unreadUpdateStatus will be true if the user have already
             if(unreadUpdateStatus){
                 const index = state.unreadMessages.findIndex(el => el.roomID == roomID);
                 
@@ -103,60 +94,32 @@ const unreadMessagesSlice = createSlice({
     extraReducers: (builder) =>{
         builder
             .addCase(getUserUnreadMessages.pending, (state)=>{
-                //what we wanna do when the state goes on the register actions  pending
                 state.loading = true;
                 state.error = null;
             })
             .addCase(getUserUnreadMessages.fulfilled, (state, action)=>{
-                console.log("getUserUnreadMessages");
                 state.loading = false;
                 state.unreadMessages = action.payload.unread;
                 state.unreadCount = action.payload.totalUnread;
-
             })
             .addCase(getUserUnreadMessages.rejected, (state,action) =>{
                 state.loading = false;
                 state.error = action.payload; //passed error from thunkAPI.rejectWithValue
             })    
 
-            //We will see, but .fulfiled is enought 
             .addCase(resetUserUnreadMessagesCount.fulfilled, (state, action)=>{
-                console.log("resetUnreadMessagesCount.fulfilled PAYLOAD", action.payload);
-                //Filter here unread messages based on retunred removeUnreadMessages = createAsyncThunk roomID
-                
-                //When is this used in resetUserUnreadMEssagesCount
-                // if(!unreadExists){
-                //     return; 
-                // }
-                //use this here 
-                // if(!action.payload){
-                //     return;
-                // }
-                
                 state.unreadMessages = state.unreadMessages.filter(
-                    // (el) => el.roomID !== action.payload //action.payload => roomID
                     (el) => el.roomID !== action.payload.roomID //action.payload => roomID
                 ),
-                // state.unreadCount = ;
                 state.unreadCount = state.unreadCount - action.payload.removedCount;
-
                 state.loading = false;
             })
             .addCase(resetUserUnreadMessagesCount.rejected, (state,action) =>{
-                console.log("resetUnreadMessagesCount.rejected, action:", action);
-                //when the unread doesn't exist
                 state.loading = false;
                 state.error = action.payload;  
             })    
     }
 })
 
-
 export const {updateUnreadMessages, resetUnreadMessages} = unreadMessagesSlice.actions;
 export default unreadMessagesSlice;
-
-// export const unreadMessagesActions = unreadMessagesSlice.actions;
-// //also export sync function
-// export const {updateUnreadMessages} =  unreadMessagesSlice.actions;
-// //and also export 
-// export default unreadMessagesSlice;
