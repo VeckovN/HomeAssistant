@@ -300,8 +300,8 @@ const getOnlineUsersFromChat = async(userID) =>{
 
 const getHouseworkerFirstRoomID = async(userID) =>{
     const userRoomKey = `user:${userID}:rooms`;
-    let firstRoomID = await srandmember(userRoomKey, 1);
-    return firstRoomID;
+    const result = await srandmember(userRoomKey, 1);
+    return result[0];
 }
 
 const getFriendsListByUserID = async(userID) =>{
