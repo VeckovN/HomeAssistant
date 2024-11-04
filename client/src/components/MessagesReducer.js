@@ -50,6 +50,7 @@ export const MessagesReducer = (state, action) =>{
                 })
             }
         case "SET_ROOM_MESSAGE_WITH_ROOM_INFO":
+            console.log("roommmm mm mm : " ,action);
             return{
                 ...state,
                 roomMessages: action.messages,
@@ -112,6 +113,11 @@ export const MessagesReducer = (state, action) =>{
                 ...state, 
                 rooms: state.rooms.filter(el => el.roomID !== action.data), //action.data = roomID
                 roomsAction:'DELETE_ROOM'
+            }
+        case "DELETE_ROOM_AFTER_USER_KICK":
+            return{
+                ...state, 
+                rooms: state.rooms.filter(el => el.roomID !== action.data), //action.data = roomID
             }
         case "SET_LOADING":
             return{
