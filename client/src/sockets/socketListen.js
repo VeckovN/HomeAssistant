@@ -84,7 +84,6 @@ export const listenOnMessageReceive = (socket, dispatch) =>{
 
 export const listenOnCreateUserGroup = (socket, dispatch, self_id) =>{
     socket.on("createUserGroupChange", (context) =>{
-        console.log("createUserGroupChange to groupo:", context);
         let {newUserID, newUsername, roomID, newRoomID, currentMember, clientUsername, newUserPicturePath, online} = context;
         //If the newly added user is the current user, create a new group and display it
         if(self_id == newUserID){
@@ -98,7 +97,6 @@ export const listenOnCreateUserGroup = (socket, dispatch, self_id) =>{
 
 export const listenOnAddUserToGroup = (socket, dispatch, self_id, enterRoomAfterAction) =>{
     socket.on("addUserToGroupChange", (context) =>{
-        console.log("listeOnADdUser to groupo:", context);
         const {newUserID, newUsername, roomID, newRoomID, currentMember, clientUsername, newUserPicturePath, online} = context;
         //If the newly added user is the current user, create a new group and display it
         if(newUserID == self_id)
@@ -126,10 +124,27 @@ export const listenOnKickUserFromGroup = (socket, dispatch, self_id) =>{
     socket.on("kickUserFromGroupChange", (context) =>{
         const {roomID, newRoomID, kickedUsername, kickedUserID} = context;
 
-        if(kickedUserID === self_id)
-            dispatch({type:"DELETE_ROOM", data:roomID})
+        if(kickedUserID === self_id){
+            // dispatch({type:"DELETE_ROOM", data:roomID})
+            dispatch({type:"DELETE_ROOM_AFTER_USER_KICK", data:roomID})
+        }
         else
             dispatch({type:"KICK_USER_FROM_GROUP", roomID, newRoomID, username:kickedUsername})        
+    })
+}
+
+export const listenOnKickUserFromGroupInRoom  = (socket, self_id, enterRoomAfterAction) =>{
+    socket.on("kickUserFromGroupChangeInRoom", (context) =>{
+        const {firstRoomID, kickedUserID, newRoomID} = context;
+        //kicked user -> newRoomID is deleted so enterFirst/last room
+        if(kickedUserID === self_id){
+            //dispatch to set roomID 
+            enterRoomAfterAction(firstRoomID);
+        }
+        else{
+            enterRoomAfterAction(newRoomID)
+            console.log("ENTER ROOM KickUSer IN ROOM --- newRoomID: " + newRoomID)
+        }
     })
 }
 

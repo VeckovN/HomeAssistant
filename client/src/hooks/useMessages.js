@@ -4,9 +4,9 @@ import {toast} from 'react-toastify';
 import {getErrorMessage} from '../utils/ThrowError.js';
 import {MessagesReducer} from '../components/MessagesReducer.js';
 import {getHouseworkers} from '../services/houseworker.js';
-import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup, listenNewOnlineUser, listenOnMessageReceive, listenOnAddUserToGroupInRoom} from '../sockets/socketListen.js';
+import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup, listenNewOnlineUser, listenOnMessageReceive, listenOnAddUserToGroupInRoom, listenOnKickUserFromGroupInRoom} from '../sockets/socketListen.js';
 import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat, emitKickUserFromChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
-import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser, getMoreMessagesByRoomID, getOnlineUsers} from '../services/chat.js';
+import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser, getMoreMessagesByRoomID, getOnlineUsers, getFirstRoomID} from '../services/chat.js';
 import {resetUserUnreadMessagesCount} from '../store/unreadMessagesSlice.js';
 import {sendMessage} from "../utils/MessageUtils/handleMessage.js";
 
@@ -53,9 +53,7 @@ const useMessages = (socket, user) =>{
             listenOnAddUserToGroup(socket, dispatch, user.userID, enterRoomAfterAction);
             listenOnDeleteUserFromGroup(socket, dispatch);
             listenOnKickUserFromGroup(socket, dispatch, user.userID);
-            // listenOnStartTypingInGroup(socket, user.userID, user.username);
-            //LISTEN ON ONLINE USERS TO ADD IT IN ROOM INFO -> OnlineUsers
-            // listenOnUserOnline(socket, dispatch);
+            listenOnKickUserFromGroupInRoom(socket, user.userID, enterRoomAfterAction);
             listenNewOnlineUser(socket, dispatch, user.userID);
         }
     },[socket])
@@ -112,7 +110,7 @@ const useMessages = (socket, user) =>{
         const status = state.onlineUsers.includes(userID);
         return status;
     }
-
+    
     const enterRoomAfterAction = async(roomID) =>{
         //don't applie logic if is clicked on the same room
         if(roomID === state.roomInfo.roomID)
@@ -130,8 +128,6 @@ const useMessages = (socket, user) =>{
         const messages = await getMessagesByRoomID(roomID);
         dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
 
-        //!!!!
-        //this is trigger afther the room is deleted
         reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:user.userID}))
         setIsLoadingMessages(false);
 
@@ -304,6 +300,7 @@ const useMessages = (socket, user) =>{
         const roomInfo ={roomID, username};
         try{
             const result = await removeUserFromGroup(roomInfo);
+            console.log("RESS S:" , result);
             const {newRoomID, kickedUserID, notifications} = result.data;
             
             if(newRoomID == null){
@@ -312,7 +309,9 @@ const useMessages = (socket, user) =>{
             }
 
             dispatch({type:"KICK_USER_FROM_GROUP", roomID, newRoomID, username})
-            const data = {newRoomID, roomID, kickedUserID, kickedUsername:username, clientID:user.userID, clientUsername:user.username, notifications:notifications}
+            const firstRoomID = await getFirstRoomID(kickedUserID);
+            
+            const data = {firstRoomID, newRoomID, roomID, kickedUserID, kickedUsername:username, clientID:user.userID, clientUsername:user.username, notifications:notifications}
             emitKickUserFromChat(socket, data);
             enterRoomAfterAction(newRoomID);
 

@@ -98,7 +98,6 @@ server.listen(5000, ()=>{
 
         //listen on onlineUser event (/thissocket.id could be identifier as well as userID )
         socket.on("addOnlineUser", (userData) =>{
-            console.log("USERD DATA: ", userData);
             const data ={type:"Add", userID: userData.userID};
             //cleear distinction between storing user data (Hash) and tracking online users (Set).
             //for every registerd user there is HASH (user:{id} -> usenrame, password, imagePath)()
@@ -116,21 +115,16 @@ server.listen(5000, ()=>{
         //every user on socket init join the room * used to send end receive data for concrete user
         //instead of broadcasting with io.emit('dynamicName') because it's less efficient and not good performance
         socket.on('joinRoom', (userID)=>{
-            console.log("MY ID: " + ID);
-            console.log("PASSED ID: " + userID);
             socket.join(`user:${userID}`);
-            console.log(`\n User with ID ${userID} joined the room user-${userID} \n`)
         })
 
         socket.on('leaveRoom', userID =>{
-            console.log(`User with ID ${userID} left the room user-${userID}`)
             socket.leave(`user:${userID}`);
         })
 
 
         //Chat rooms
         socket.on("chatRoom.join", id =>{ //listen on 'room.join' event
-            console.log("CLIENT ENTERED THE ROOM " + id);
             socket.join(`room:${id}`); //join room -> room:1:2 example or group room:1:5:7
         })
     
@@ -141,41 +135,26 @@ server.listen(5000, ()=>{
 
         socket.on("commentNotification", (commentObj) =>{
             const houseworkerID = commentObj.newComment.houseworkerID;
-            //THESE BROADCAST (NOT EFFICIENT)
-            // io.emit(`privateCommentNotify-${postComment.houseworkerID}`, postComment.from);
-            //emit newComment, only when the user is on the comments page
-            // io.emit(`newComment-${postComment.houseworkerID}`, {postComment});
-
-            //use JoinedRoom instead of dynamicName emit because it's broadCast the data (unnecessary traffics)
+            //optimization
+            //use JoinedRoom instead of dynamicName emit for 'newCommentChange', it's broadCasting the unnecessary traffics (data)
             io.to(`user:${houseworkerID}`).emit('privateCommentNotify', commentObj);
             io.to(`user:${houseworkerID}`).emit(`newCommentChange`, commentObj.newComment);
         })
 
         socket.on("ratingNotification", (ratingObj) =>{
             const houseworkerID = ratingObj.houseworkerID;
-            // const houseworkerID = newRateObj.houseworkerID;
-            //emit only to user whom the message is intended
-            // io.emit(`privateRatingNotify-${ratingObj.houseworkerID}`, ratingObj.client);
             io.emit(`privateRatingNotify-${houseworkerID}`, ratingObj);
         })
-    
 
         socket.on("message", ({data})=>{ 
             try{
                 const roomKey = data.roomKey;
-
-                //THIS APPEND MESSAGE TO CHAT IF THE USER(RECIPIENT) IS IN CHAT 
-                //add message to chat(users that enter the chat room(room:ID) will listen this event ro)
                 io.to(roomKey).emit("messageRoom", data) //entered chat page(view)
 
-                //Notify message recipients
                 const {from, roomID, fromUsername, lastMessage, unreadMessArray, createRoomNotification} = data;
                 const users = roomID.split(':');
-                //exclude the sender from users notification
                 const notifyUsers = users.filter(el => el!=from);
 
-                //The user is in conversation when is this message sent -> 
-                //SHOULDN'T RECEIVE NOTIFICATION AND
                 notifyUsers.forEach(id =>{
                     const unreadUser = unreadMessArray.find(el => el.recipientID == id);
                     const unreadUpdateStatus = unreadUser ? unreadUser.updateStatus : null;
@@ -210,7 +189,6 @@ server.listen(5000, ()=>{
                     senderUsername:username
                 }
                 io.to(roomKey).emit("typingMessageStart", sender) 
-                console.log(`io.to(roomKey).emit("typingMessageStart", sender) `)
             }
             catch(err){
                 console.error("errpr: " , err);
@@ -221,7 +199,6 @@ server.listen(5000, ()=>{
             try{
                 const {userID, username} = user;
                 const roomKey = `room:${roomID}`
-                console.log("STOP ROOMKEY: " + roomKey);
 
                 const sender ={
                     senderID:userID, 
@@ -229,7 +206,6 @@ server.listen(5000, ()=>{
                 }
                 //send it in room (sender should check does is he sender userID === senderID and dont show (...))
                 io.to(roomKey).emit("typingMessageStop", sender) 
-                console.log(`io.to(roomKey).emit("typingMessageStop", sender) `)
             }
             catch(err){
                 console.error("errpr: " , err);
@@ -238,9 +214,7 @@ server.listen(5000, ()=>{
 
         socket.on("createUserGroup", ({data}) =>{
             const {newUserID, newUsername, roomID, newRoomID, clientID ,clientUsername, newUserPicturePath} = data;                        
-            //notify users
             const users = newRoomID.split(':');
-            //exclude the sender from the users notification
             const notifyUsers = users.filter(el => el!=clientID);
 
             const notifyObj = {
@@ -250,7 +224,6 @@ server.listen(5000, ()=>{
             }
 
             notifyUsers.forEach(id =>{
-                //notifications
                 io.to(`user:${id}`).emit('createUserToGroupNotify', notifyObj);
                 //send data for chat room update
                 io.to(`user:${id}`).emit('createUserGroupChange', data);
@@ -258,35 +231,31 @@ server.listen(5000, ()=>{
         })
 
         socket.on("addUserToGroup", ({data}) =>{
-            console.log("data Adduser TO Grtoup: " ,data);
             const {newRoomID, roomID, clientID, notifications} = data;
             const users = newRoomID.split(':');
 
             const roomKey = `room:${roomID}`;
-            //user's that are in the room right now
             io.to(roomKey).emit("addUserToGroupChangeInRoom", newRoomID) //entered chat p
 
-            //exclude the sender from the users notification
             const notifyUsers = users.filter(el => el!=clientID);
             notifyUsers.forEach(id =>{
                 const matchedNotification = notifications.find(notification => notification.to === id);
                 io.to(`user:${id}`).emit("addUserToGroupNotify" , matchedNotification);
-                //send data for chat room update
                 io.to(`user:${id}`).emit("addUserToGroupChange" , data);
             })
         })
 
         socket.on("kickUserFromGroup", (data) =>{
-            //new roomID without kicked user
-            const {roomID, clientID, notifications} = data;
+            const {firstRoomID, roomID, newRoomID, kickedUserID, clientID, notifications} = data;
             const users = roomID.split(":");
             const notifyUsers = users.filter(el => el!=clientID);
-            
-            //only notified user is notified
+
+            const roomKey = `room:${roomID}`;
+            //user's that are in the room right now
+            io.to(roomKey).emit("kickUserFromGroupChangeInRoom", {kickedUserID, newRoomID, firstRoomID}) //entered chat p
+           
             notifyUsers.forEach(id =>{
                 const matchedNotification = notifications.find(notification => notification.to === id);
-                console.log("MATHS FOR : " + id + " NotificatioN: ", matchedNotification);
-
                 io.to(`user:${id}`).emit("kickUserFromGroupNotify" , matchedNotification);
                 io.to(`user:${id}`).emit("kickUserFromGroupChange" , data);
             });
@@ -322,5 +291,4 @@ server.listen(5000, ()=>{
     })
     
     console.log("SERVER at 5000 port");
-    //CRAETE - dynamic function for listener (socket, io, eventName, data)
 })
