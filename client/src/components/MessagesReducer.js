@@ -114,6 +114,11 @@ export const MessagesReducer = (state, action) =>{
                 rooms: state.rooms.filter(el => el.roomID !== action.data), //action.data = roomID
                 roomsAction:'DELETE_ROOM'
             }
+        case "RESET_ROOM_ACTION":
+            return{
+                ...state,
+                roomsAction:''
+            }
         case "DELETE_ROOM_AFTER_USER_KICK":
             return{
                 ...state, 
