@@ -46,6 +46,7 @@ const useMessages = (socket, user) =>{
 
     useEffect(() => {
         if(socket && user){
+            console.log("socket && user");
             listenOnMessageInRoom(socket, dispatch);
             listenOnMessageReceive(socket, dispatch);
             listenOnCreateUserGroup(socket, dispatch, user.userID);
@@ -82,7 +83,7 @@ const useMessages = (socket, user) =>{
             dispatch({type:"SET_ROOM_INFO", ID:roomID, usersArray:users});
 
             //COMMENTED (emit event before socket initialization(connection))
-            // emitRoomJoin(socket, roomID);
+            emitRoomJoin(socket, roomID);
             
             const messages = await getMessagesByRoomID(roomID)
             
