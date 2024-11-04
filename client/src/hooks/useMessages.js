@@ -145,9 +145,6 @@ const useMessages = (socket, user) =>{
 
     const onDeleteRoomHandler = async(e) => {   
         const roomID = e.target.value;
-
-        //take firsr roomID(if exist) to display it after removing targeted room
-        const firstRoom = state.rooms[0].roomID;
         try{
             const notifications = await deleteRoom(roomID);
             dispatch({type:"DELETE_ROOM", data:roomID});
@@ -165,18 +162,6 @@ const useMessages = (socket, user) =>{
                 className:"toast-contact-message"
             });
 
-            if(firstRoom){
-                console.log("firstRoom:" , firstRoom);
-                enterRoomAfterAction(firstRoom);
-                //scroll on firstRoom (new room pointer in rooms)
-            }  
-
-            if(showChatView)
-            {
-                console.log("ShowChatView");
-                //showRoomsHandler(); //doesn't exist
-            }
-
         }
         catch(err){
             const error = getErrorMessage(err);
@@ -188,39 +173,6 @@ const useMessages = (socket, user) =>{
         }
     }
 
-    useEffect(() =>{
-        fetchAllRooms();
-        getAllHouseworkers();
-        getOnlineChatUsers();
-    },[])
-
-
-    //all user rooms re-rendering //not efficient
-    //IMPROVE:fetch and re-render only rooms that the newOnline user is member 
-    const showNewOnlineUsers = async() =>{
-        const data = await getUserRooms(user.username); //roomID, users{}
-        // dispatch({type:"SET_ROOMS", data:data}) 
-        dispatch({type:"SET_ROOMS", data:data.rooms}) 
-    }
-    //roomID, lastMessage, users:roomObjectArray
-    // users:
-    //     username:user.username, 
-    //     picturePath:user.picturePath,
-    //     online: onlineUsersSet.has(id) --- CHANGE THIS 
-
-    useEffect(() =>{
-        //triger re-rendering the rooms (only when the new online user exist) and chat view but   
-        //don't override roomInfo: current visited chat
-        showNewOnlineUsers()
-    },[state.onlineUsers]) //has changed in socketListener
-
-
-    const MessagesAfterRoomsAction = async(roomID)=>{
-        const messages = await getMessagesByRoomID(roomID)
-        dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID});
-        setShowMenu(false);
-    }
-
     useEffect(()=>{
         //onDelete function for deleting room from state.rooms (is Async)
         //deletion must be awaited before obtaining a new roomID
@@ -228,8 +180,33 @@ const useMessages = (socket, user) =>{
             if (state.rooms.length > 0) {
                 const firstRoomID = state.rooms[0].roomID;
                 MessagesAfterRoomsAction(firstRoomID);
-                }
+                emitRoomJoin(socket, firstRoomID);
+                dispatch({type:"RESET_ROOM_ACTION"});
+            }
     },[state.rooms])
+
+    const MessagesAfterRoomsAction = async(roomID)=>{
+        const messages = await getMessagesByRoomID(roomID)
+        dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID});
+        setShowMenu(false);
+    }
+
+    useEffect(() =>{
+        fetchAllRooms();
+        getAllHouseworkers();
+        getOnlineChatUsers();
+    },[])
+
+    const showNewOnlineUsers = async() =>{
+        const data = await getUserRooms(user.username); //roomID, users{}) 
+        dispatch({type:"SET_ROOMS", data:data.rooms}) 
+    }
+
+    useEffect(() =>{
+        //triger re-rendering the rooms (only when the new online user exist) and chat view but   
+        //don't override roomInfo: current visited chat
+        showNewOnlineUsers()
+    },[state.onlineUsers]) //has changed in socketListener
 
 
     const onAddUserToGroupHanlder = (async(roomID, username)=>{
