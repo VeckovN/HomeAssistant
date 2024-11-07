@@ -56,6 +56,10 @@ const hgetall = (key = "key") =>
 const zadd = (key, key2 , value) =>
     new Promise((resolve, reject) => client.zadd(key, key2, value, resolvePromise(resolve, reject)))
 
+//zadd version - update elements that already exist
+const zaddxx = (key, score , value) =>
+    new Promise((resolve, reject) => client.zadd(key, "XX", score, value, resolvePromise(resolve, reject)))
+
 const sadd = (key = "key", value) =>
     new Promise((resolve, reject) => client.sadd(key, value, resolvePromise(resolve, reject)))
   
@@ -130,6 +134,7 @@ module.exports ={
     get,
     hgetall,
     zadd,
+    zaddxx,
     sadd,
     hmset,
     hmget,
