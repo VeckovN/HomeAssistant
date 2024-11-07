@@ -1,4 +1,4 @@
-const {incr, set, hmset, hmget, exists, zrange, smembers, srandmember, zadd, zrangerev, del, rename, zcard, zrem} = require('../db/redis');
+const {incr, set, hmset, hmget, exists, zrange, smembers, srandmember, zadd, zaddxx, zrangerev, del, rename, zcard, zrem} = require('../db/redis');
 const {formatDate, parseFormattedDate, calculateTimeDifference} = require('../utils/dateUtils');
 const { getUserIdByUsername, getUserInfoByUserID, getUserPicturePath, getUnreadMessageCountByRoomID, recordNotification, getUsernameByUserID} = require('../db/redisUtils');
 
@@ -525,6 +525,11 @@ const sendMessage = async(messageObj) =>{
             }
         }
     }
+    else{
+        //update all receiver and client room score on message receiving
+        for(const id of usersID)
+            await zaddxx(`user:${id}:rooms`, timestamps, roomID);
+    }
 
     if(usersID.length == 2){
         //only for private conversation the last message is displayed
@@ -533,8 +538,6 @@ const sendMessage = async(messageObj) =>{
 
     const unreadMessArray = await postUnreadMessagesToUser(roomID, from);
     await zadd(roomKey, timestamps, JSON.stringify(newMessageObj));
-    //update room score 
-    await zadd(`user:${id}:rooms`, timestamps, roomID);
     return {roomKey, dateFormat, lastMessage, unreadMessArray, createRoomNotification};
 }
 
