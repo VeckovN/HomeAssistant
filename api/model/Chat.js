@@ -1,4 +1,4 @@
-const {incr, set, hmset, sadd, hmget, exists, zrange, smembers, srandmember, zadd, zrangerev, srem, del, get, rename, scard} = require('../db/redis');
+const {incr, set, hmset, hmget, exists, zrange, smembers, srandmember, zadd, zrangerev, del, get, rename, scard, zrem} = require('../db/redis');
 const {formatDate, parseFormattedDate, calculateTimeDifference} = require('../utils/dateUtils');
 const { getUserIdByUsername, getUserInfoByUserID, getUserPicturePath, getUnreadMessageCountByRoomID, recordNotification, getUsernameByUserID} = require('../db/redisUtils');
 
@@ -64,11 +64,7 @@ const getRoomIdInOrder = (firstUserID, secondUserID) =>{
 
 //When Client want to send message to Houseworker ,we have to create
 //room between them and communicate in that room
-// const createRoom = async(firstUsername, secondUsername)=>{
 const createRoom = async(clientUsername, houseworkerUsername)=>{
-
-    // const firstUserID = getUserIdByUsername(firstUsername);
-    // const secondUserID = getUserIdByUsername(secondUsername);
 
     const clientID = getUserIdByUsername(clientUsername);
     const houseworkerID = getUserIdByUsername(houseworkerUsername);
@@ -78,26 +74,20 @@ const createRoom = async(clientUsername, houseworkerUsername)=>{
     const usersRoomID = getRoomIdInOrder(clientID, houseworkerID);
 
     if(usersRoomID === null){
-        //users not exists
         return null;
     }
     //create rooms
-    //user:{userID}:room room:{minUser}:{maxUser}
-    // await sadd(`user:${firstUserID}:rooms`, `${usersRoomID}`)
-    // await sadd(`user:${secondUserID}:rooms`, `${usersRoomID}`)
-    await sadd(`user:${clientID}:rooms`, `${usersRoomID}`)
-    await sadd(`user:${houseworkerID}:rooms`, `${usersRoomID}`)
-
+    const timestamps = Date.now(); //used for score value (miliseconds)
+    await zadd(`user:${clientID}:rooms`, timestamps, `${usersRoomID}`);
+    await zadd(`user:${houseworkerID}:rooms`, timestamps, `${usersRoomID}`);
+    
     //notify only houseworker for ID
     const message = `The client ${clientUsername} has started conversation with you`;
     const notification = await recordNotification(clientID, houseworkerID, notificationType, message);
 
-    //notify new user that added to group chat
-
     //return created room id and names of users
     return [{
         id:usersRoomID,
-        //get names from hashed sets ("username" Field)
         names:[
             await hmget(`user:${clientID}`, "username"),
             await hmget(`user:${houseworkerID}`, "username")
@@ -153,7 +143,10 @@ const getMoreMessages = async(roomID, pageNumber) =>{
 const getAllRooms = async(username)=>{
     let userID = await getUserIdByUsername(username);
     const userRoomKey = `user:${userID}:rooms`;
-    let rooms = await smembers(userRoomKey);
+    //let rooms = await smembers(userRoomKey);
+    let rooms = await zrangerev(userRoomKey, 0, -1);
+    
+    console.log("Zrange Rooms : ", rooms);
 
     //Get online users and create 6set for efficeint lookups(could be massive)
     const onlineUsers = await smembers(`onlineUsers`);
@@ -357,13 +350,18 @@ const addUserToRoom = async(clientID, newUsername, currentRoomID)=>{
         {
             //add newRoomID in their rooms(set collection)
             for (const id of currentUserIDS) { 
-                await sadd(`user:${id}:rooms`, newRoomID);
+                try{
+                    await zadd(`user:${id}:rooms`, timestamps, newRoomID);
 
-                //notify houseworker that is in chat
-                if(id != clientID){
-                    message = `The client ${clientUsername} has been added the houseworker ${newUsername} to the chat`;
-                    notification = await recordNotification(clientID, id, notificationType, message);
-                    notificationArray.push(notification);
+                    //notify houseworker that is in chat
+                    if(id != clientID){
+                        message = `The client ${clientUsername} has been added the houseworker ${newUsername} to the chat`;
+                        notification = await recordNotification(clientID, id, notificationType, message);
+                        notificationArray.push(notification);
+                    }
+                }
+                catch(err){
+                    console.error("error: ", err);
                 }
             }
 
@@ -379,13 +377,13 @@ const addUserToRoom = async(clientID, newUsername, currentRoomID)=>{
         else{
             //Reinaming Room:ROOMID - sorted set for storing messages
             await rename(currentRoomKey, newRoomKey);
-            await sadd(`user:${newUserID}:rooms`, newRoomID);
+            await zadd(`user:${newUserID}:rooms`, timestamps, newRoomID);
 
             // currentUserIDS.forEach(async(id) =>{  THis doesn't handle async/await properly
             //assignment is likely happening after the loop finishes so use this another for loop approach
             for (const id of currentUserIDS) { 
-                await srem(`user:${id}:rooms`, currentRoomID);
-                await sadd(`user:${id}:rooms`, newRoomID);
+                await zrem(`user:${id}:rooms`, currentRoomID);
+                await zadd(`user:${id}:rooms`, timestamps, newRoomID);
 
                 //record notification for group users
                 let message;
@@ -442,7 +440,7 @@ const removeUserFromRoomID = async(clientID, roomID, username) =>{
     let notificationsArray =[];
     //(FOR REMOVED USER)
     //-find set `user:${userID}:rooms` and remove roomID from that set
-    await srem(`user:${userID}:rooms`, roomID);
+    await zrem(`user:${userID}:rooms`, roomID);
     const message = `You've been kicked from the group chat by ${clientUsername}`;
     const notification = await recordNotification(clientID, userID, notificationType, message);
     notificationsArray.push(notification);
@@ -450,9 +448,9 @@ const removeUserFromRoomID = async(clientID, roomID, username) =>{
     //FOR OTHER MEMBERS (replace the old RoomID with new one)
     // newIds.forEach(async(id) =>{ 
     for (const id of newIds) {
-        await srem(`user:${id}:rooms`, roomID);
-        await sadd(`user:${id}:rooms`, newRoomID);
-
+        await zrem(`user:${id}:rooms`, roomID);
+        await zadd(`user:${id}:rooms`, timestamps, newRoomID);
+        
         if(id !== clientID){
             //notify other users
             const message = `The houseworker ${username} has been kicked from the group by ${clientUsername}`;
@@ -484,8 +482,8 @@ const deleteRoomByRoomID = async(clientID, roomID) =>{
     const clientUsername = await getUsernameByUserID(clientID);
 
     let notificationsArray =[];
-    for (const id of usersID) {
-        await srem(`user:${id}:rooms`, roomID); //delte example memeber 1:2 in user:1:rooms 
+    for (const id of usersID) { 
+        await zrem(`user:${id}:rooms`, roomID); //delte example memeber 1:2 in user:1:rooms 
 
         if(id != clientID){
             const message = `The room ${roomID} has been deleted by ${clientUsername}`;
@@ -519,7 +517,7 @@ const sendMessage = async(messageObj) =>{
     //or we have to create room and then send message
     //ROOM WILL BE ONLY CREATED WHEN Client send message TO HOUSEWORKER and this houseworker doesn't have room 
         for(const id of usersID){
-            await sadd(`user:${id}:rooms`, roomID);
+            await zadd(`user:${id}:rooms`, timestamps, roomID);
 
             if(id !=from){
                 console.log("RECORD CLIENT START NOTIFI");
