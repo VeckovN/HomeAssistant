@@ -1,4 +1,4 @@
-const {incr, set, hmset, hmget, exists, zrange, smembers, srandmember, zadd, zrangerev, del, get, rename, scard, zrem} = require('../db/redis');
+const {incr, set, hmset, hmget, exists, zrange, smembers, srandmember, zadd, zrangerev, del, rename, zcard, zrem} = require('../db/redis');
 const {formatDate, parseFormattedDate, calculateTimeDifference} = require('../utils/dateUtils');
 const { getUserIdByUsername, getUserInfoByUserID, getUserPicturePath, getUnreadMessageCountByRoomID, recordNotification, getUsernameByUserID} = require('../db/redisUtils');
 
@@ -143,11 +143,9 @@ const getMoreMessages = async(roomID, pageNumber) =>{
 const getAllRooms = async(username)=>{
     let userID = await getUserIdByUsername(username);
     const userRoomKey = `user:${userID}:rooms`;
-    //let rooms = await smembers(userRoomKey);
     let rooms = await zrangerev(userRoomKey, 0, -1);
     
     console.log("Zrange Rooms : ", rooms);
-
     //Get online users and create 6set for efficeint lookups(could be massive)
     const onlineUsers = await smembers(`onlineUsers`);
     const onlineUsersSet = new Set(onlineUsers);
@@ -273,7 +271,8 @@ const getOnlineUsersFromChat = async(userID) =>{
     const usersFromRoomSet = new Set();
 
     const usersRoomKey = `user:${userID}:rooms`;
-    const usersRoomsIDS = await smembers(usersRoomKey);
+    const usersRoomsIDS = await zrangerev(usersRoomKey , 0, -1);
+
     usersRoomsIDS.forEach(id => {
         const membersIds = id.split(':');
         membersIds.forEach(memberID => {
@@ -299,9 +298,9 @@ const getHouseworkerFirstRoomID = async(userID) =>{
 
 const getFriendsListByUserID = async(userID) =>{
     const usersFromRoomSet = new Set();
-
     const usersRoomKey = `user:${userID}:rooms`;
-    const usersRoomsIDS = await smembers(usersRoomKey);
+    const usersRoomsIDS = await zrangerev(usersRoomKey , 0, -1);
+
     usersRoomsIDS.forEach(id => {
         const membersIds = id.split(':');
         membersIds.forEach(memberID => {
@@ -534,6 +533,8 @@ const sendMessage = async(messageObj) =>{
 
     const unreadMessArray = await postUnreadMessagesToUser(roomID, from);
     await zadd(roomKey, timestamps, JSON.stringify(newMessageObj));
+    //update room score 
+    await zadd(`user:${id}:rooms`, timestamps, roomID);
     return {roomKey, dateFormat, lastMessage, unreadMessArray, createRoomNotification};
 }
 
@@ -567,7 +568,7 @@ const postUnreadMessagesToUser = async(roomID, senderUserID) =>{
 const getUnreadMessages = async(username) =>{
     let userID = await getUserIdByUsername(username);
     const userRoomKey = `user:${userID}:rooms`;
-    let rooms = await smembers(userRoomKey);
+    let rooms = await zrangerev(userRoomKey , 0, -1);
 
     var unreadMessageArray = [];
     let totalCount = 0;
@@ -607,7 +608,7 @@ const resetUnreadMessagesCount = async(roomID, userID) =>{
 const getUnreadMessagesTotalCount = async(userID) =>{
     try{
         const userRoomKey = `user:${userID}:rooms`;
-        let rooms = await smembers(userRoomKey);
+        let rooms = await zrangerev(userRoomKey , 0, -1);
 
         let totalCount = 0;
         for(const roomID of rooms){
@@ -626,7 +627,7 @@ const getUnreadMessagesTotalCount = async(userID) =>{
 
 const getRoomCount = async(userID)=>{
     const userKey = `user:${userID}:rooms`;
-    const count = await scard(userKey);
+    const count = await zcard(userKey);
     return count;
 }
 
