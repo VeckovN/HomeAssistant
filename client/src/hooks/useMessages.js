@@ -177,14 +177,19 @@ const useMessages = (socket, user) =>{
     useEffect(()=>{
         //onDelete function for deleting room from state.rooms (is Async)
         //deletion must be awaited before obtaining a new roomID
-        if(state.roomsAction == "DELETE_ROOM")
-            console.log("State.Rooms length: " , state.rooms.length);
+        if(state.roomsAction == "DELETE_ROOM"){
             if (state.rooms.length > 0) {
                 const firstRoomID = state.rooms[0].roomID;
                 MessagesAfterRoomsAction(firstRoomID);
                 emitRoomJoin(socket, firstRoomID);
                 dispatch({type:"RESET_ROOM_ACTION"});
             }
+            else {
+                const removedRoomID = state.roomInfo.roomID;
+                emitLeaveRoom(socket, removedRoomID);
+                dispatch({type:"RESET_ROOMS"});
+            }
+        }
         //this ensure when redux change state(add room and set this roomsAction == "CREATE_CONVERSATION )
         //to enterRoom room if the user has only 1 room
         if(state.roomsAction == "CREATE_CONVERSATION"){
