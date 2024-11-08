@@ -59,7 +59,7 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onKic
                         const usernameMatch = item.username.toLowerCase();
 
                         const usernameStartsWithSerachInput = searchInput && usernameMatch.startsWith(searchInput);
-                        const isNotInRoomUsers = !roomInfo.users.some(user => user.username === item.username);
+                        const isNotInRoomUsers = !roomInfo.users?.some(user => user.username === item.username);
 
                         return usernameStartsWithSerachInput && isNotInRoomUsers && selectedUsername==''
                     })
@@ -85,7 +85,7 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onKic
             </div>
         </div>
 
-        {roomInfo.users.length > 1 &&
+        {roomInfo.users?.length > 1 &&
             <div className='menu-option'> 
                 <div className='kick-user-container'>
                     <p className='menu-option-title'>Kick User </p>
