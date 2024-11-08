@@ -74,11 +74,30 @@ export const listenOnMessageInRoom = (socket, dispatch) =>{
         dispatch({type:"SEND_MESSAGE", data:contextObj})
     })
 }
+
 //when the user is in the Message page 
 export const listenOnMessageReceive = (socket, dispatch) =>{
     socket.on("messagePage", (contextObj) =>{
         const {roomID, lastMessage} = contextObj;
-        dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:roomID, message:lastMessage})
+        dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:roomID, message:lastMessage}) 
+    })
+}
+
+//only for houseworker (because client contanct houseworker on homePage and won't be able to see changing from message page)
+export const listenOnFirstMessageReceive = (socket, dispatch, enterRoomAfterAction) =>{
+    socket.on("firstMessageConversation", (contextObj) =>{
+        const {roomID, from, fromUsername, lastMessage} = contextObj;
+        dispatch({type:'CREATE_CONVERSATION', roomID:roomID, clientID:from, clientUsername:fromUsername, message:lastMessage, clientPicturePath:null, online:true})  
+    })
+}
+
+export const listenOnCreateUserGroupInRoom  = (socket, dispatch, enterRoomAfterAction) =>{
+    socket.on("createUserGroupChangeInRoom", (context) =>{
+        console.log("listenOnCreateUserGroupInRoom ,: ", context);
+        const {newUserID, newUsername, roomID, newRoomID, currentMember, clientUsername, newUserPicturePath, online} = context;
+        //If the newly added user is the current user, create a new group and display it
+        dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, newUserID:newUserID, currentMember:currentMember, newUsername:newUsername, picturePath:newUserPicturePath, online})
+        enterRoomAfterAction(newRoomID);
     })
 }
 
@@ -91,6 +110,8 @@ export const listenOnCreateUserGroup = (socket, dispatch, self_id) =>{
             newUserPicturePath = null
             online = true
         }
+
+        //check does is private 
         dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, newUserID:newUserID, currentMember:currentMember, newUsername:newUsername, picturePath:newUserPicturePath, online})
     })
 }

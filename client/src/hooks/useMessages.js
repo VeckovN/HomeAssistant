@@ -4,7 +4,7 @@ import {toast} from 'react-toastify';
 import {getErrorMessage} from '../utils/ThrowError.js';
 import {MessagesReducer} from '../components/MessagesReducer.js';
 import {getHouseworkers} from '../services/houseworker.js';
-import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup, listenNewOnlineUser, listenOnMessageReceive, listenOnAddUserToGroupInRoom, listenOnKickUserFromGroupInRoom} from '../sockets/socketListen.js';
+import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup, listenNewOnlineUser, listenOnMessageReceive, listenOnAddUserToGroupInRoom, listenOnKickUserFromGroupInRoom, listenOnFirstMessageReceive} from '../sockets/socketListen.js';
 import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat, emitKickUserFromChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
 import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser, getMoreMessagesByRoomID, getOnlineUsers, getFirstRoomID} from '../services/chat.js';
 import {resetUserUnreadMessagesCount} from '../store/unreadMessagesSlice.js';
@@ -49,6 +49,7 @@ const useMessages = (socket, user) =>{
             console.log("socket && user");
             listenOnMessageInRoom(socket, dispatch);
             listenOnMessageReceive(socket, dispatch);
+            listenOnFirstMessageReceive(socket, dispatch, enterRoomAfterAction);
             listenOnCreateUserGroup(socket, dispatch, user.userID);
             listenOnAddUserToGroupInRoom(socket, enterRoomAfterAction);
             listenOnAddUserToGroup(socket, dispatch, user.userID, enterRoomAfterAction);
@@ -177,12 +178,21 @@ const useMessages = (socket, user) =>{
         //onDelete function for deleting room from state.rooms (is Async)
         //deletion must be awaited before obtaining a new roomID
         if(state.roomsAction == "DELETE_ROOM")
+            console.log("State.Rooms length: " , state.rooms.length);
             if (state.rooms.length > 0) {
                 const firstRoomID = state.rooms[0].roomID;
                 MessagesAfterRoomsAction(firstRoomID);
                 emitRoomJoin(socket, firstRoomID);
                 dispatch({type:"RESET_ROOM_ACTION"});
             }
+        //this ensure when redux change state(add room and set this roomsAction == "CREATE_CONVERSATION )
+        //to enterRoom room if the user has only 1 room
+        if(state.roomsAction == "CREATE_CONVERSATION"){
+            if(state.rooms.length == 1 ){
+                enterRoomAfterAction(state.rooms[0].roomID);
+            }
+            dispatch({type:"RESET_ROOM_ACTION"});
+        }
     },[state.rooms])
 
     const MessagesAfterRoomsAction = async(roomID)=>{

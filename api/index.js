@@ -151,7 +151,7 @@ server.listen(5000, ()=>{
                 const roomKey = data.roomKey;
                 io.to(roomKey).emit("messageRoom", data) //entered chat page(view)
 
-                const {from, roomID, fromUsername, lastMessage, unreadMessArray, createRoomNotification} = data;
+                const {from, roomID, fromUsername, lastMessage, unreadMessArray, createRoomNotification, contact} = data;
                 const users = roomID.split(':');
                 const notifyUsers = users.filter(el => el!=from);
 
@@ -169,10 +169,14 @@ server.listen(5000, ()=>{
                         createRoomNotification:createRoomNotification
                     }
 
+                    //on conversation start *client sent message through contact home page (not from chat)
+                    if(contact)
+                        io.to(`user:${id}`).emit("firstMessageConversation" , data);
+                    else
+                        io.to(`user:${id}`).emit("messagePage" , data);
+                
                     io.to(`user:${id}`).emit("messageResponseNotify" , notificationData);
-                    io.to(`user:${id}`).emit("messagePage" , data);
                 })
-
             }
             catch(error){
                 console.error("Error Handling message: ", error);

@@ -30,6 +30,7 @@ const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
                         from:currentUserID,
                         roomID:RoomID,
                         fromUsername:client_username,
+                        contact:true,
                 }
                 try{
                     sendMessage(socket, messageObj);
