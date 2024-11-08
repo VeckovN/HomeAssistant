@@ -29,6 +29,14 @@ export const MessagesReducer = (state, action) =>{
                 ],
                 roomsAction:"CREATE_CONVERSATION"
             }
+        case "RESET_ROOMS":
+            return{
+                ...state,
+                onlineUsers:[],
+                roomInfo:[],
+                roomMessages:[],
+                roomsAction:''
+            }
         case "SET_ROOM_INFO": //RoomInfo
             return{
                 ...state,
