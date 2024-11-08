@@ -17,6 +17,18 @@ export const MessagesReducer = (state, action) =>{
                 ...state,
                 rooms: [...state.rooms, {roomID:action.newRoomID, users:[...action.currentMember, {userID:action.newUserID, username:action.newUsername, picturePath:action.picturePath, online:action.online}]}],
             }
+        case "CREATE_CONVERSATION": 
+            return{
+                ...state,
+                rooms: [...state.rooms,
+                    {
+                        roomID:action.roomID, 
+                        users:[{userID:action.clientID, username:action.clientUsername, picturePath:action.clientPicturePath, online:action.online}],
+                        lastMessage: { message: action.message, dateDiff: "just now" }
+                    }
+                ],
+                roomsAction:"CREATE_CONVERSATION"
+            }
         case "SET_ROOM_INFO": //RoomInfo
             return{
                 ...state,
