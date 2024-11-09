@@ -18,14 +18,14 @@ export const ThrowErorr = (error) =>{
 export const getErrorMessage = (err) =>{
     if(err.response?.data?.error){
         // Specific error message from server response
-        return {messagError: err.response.data.error};
+        return {messageError: err.response.data.error};
     }
     else if (err.message){
         //General error messsage from error object
-        return {messagError: err.message};
+        return {messageError: err.message};
     }
     else{
         //Fallback message if no specific error is found
-        return {messagError: "An error occurred. Please try again later."}
+        return {messageError: "An error occurred. Please try again later."}
     }
 }
