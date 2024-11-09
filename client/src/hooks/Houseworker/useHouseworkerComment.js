@@ -3,7 +3,7 @@ import {getComments, postComment} from '../../services/houseworker.js';
 import {deleteComment} from '../../services/client.js';
 import {emitCommentNotification} from '../../sockets/socketEmit.js'
 import { toast } from 'react-toastify';
-import { getErrorMessage } from '../../utils/ThrowError.js';
+import { getErrorMessage } from '../../utils/ErrorUtils.js';
 
 const useHouseworkerComment = (socket, isClient, client_username) =>{
     

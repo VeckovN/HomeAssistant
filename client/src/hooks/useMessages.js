@@ -1,7 +1,7 @@
 import {useReducer, useState, useRef, useEffect} from "react";
 import {useDispatch} from 'react-redux';
 import {toast} from 'react-toastify';
-import {getErrorMessage} from '../utils/ThrowError.js';
+import {getErrorMessage} from '../utils/ErrorUtils.js';
 import {MessagesReducer} from '../components/MessagesReducer.js';
 import {getHouseworkers} from '../services/houseworker.js';
 import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup, listenNewOnlineUser, listenOnMessageReceive, listenOnAddUserToGroupInRoom, listenOnKickUserFromGroupInRoom, listenOnFirstMessageReceive} from '../sockets/socketListen.js';

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ThrowErorr } from '../utils/ThrowError';
+import { ThrowErorr } from '../utils/ErrorUtils';
 const BASE_URL = 'http://localhost:5000/api/'
 
 import { axiosSession } from '../utils/AxiosInterceptors';

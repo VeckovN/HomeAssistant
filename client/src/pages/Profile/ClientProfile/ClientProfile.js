@@ -4,7 +4,7 @@ import ClientProfileForm from './ClientProfileForm.js';
 import {getUserData, updateClient} from '../../../services/client.js';
 import {useForm, useController} from 'react-hook-form';
 import {city_options} from '../../../utils/options.js';
-import {getErrorMessage} from '../../../utils/ThrowError.js';
+import {getErrorMessage} from '../../../utils/ErrorUtils.js';
 
 const ClientProfile = () =>{ 
     const initialState = {

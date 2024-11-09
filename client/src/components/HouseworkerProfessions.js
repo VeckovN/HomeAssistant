@@ -4,7 +4,7 @@ import {toast} from 'react-toastify';
 import useUser from '../hooks/useUser';
 import {profession_options} from '../utils/options';
 import {addProfession, deleteProfession, updateProfessionWorkingHour} from '../services/houseworker.js';
-import { getErrorMessage } from '../utils/ThrowError.js';
+import { getErrorMessage } from '../utils/ErrorUtils.js';
 
 import '../sass/components/_houseworkerProfessions.scss';
 

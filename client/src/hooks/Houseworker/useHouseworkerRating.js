@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import {rateUser} from '../../services/houseworker.js'
 import {getProfessionsAndRating} from '../../services/houseworker.js';
 import { emitRatingNotification } from '../../sockets/socketEmit.js';
-import { getErrorMessage } from '../../utils/ThrowError.js';
+import { getErrorMessage } from '../../utils/ErrorUtils.js';
 
 const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsername) =>{
 

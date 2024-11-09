@@ -4,7 +4,7 @@ import { sendMessageToUser} from '../../services/chat';
 import { toast } from 'react-toastify';
 import {getRoomIdInOrder} from '../../utils/Helper';
 import {sendMessage} from '../../utils/MessageUtils/handleMessage.js';
-import { getErrorMessage } from '../../utils/ThrowError';
+import { getErrorMessage } from '../../utils/ErrorUtils.js';
 
 const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
 
