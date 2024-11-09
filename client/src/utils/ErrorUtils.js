@@ -29,3 +29,11 @@ export const getErrorMessage = (err) =>{
         return {messageError: "An error occurred. Please try again later."}
     }
 }
+
+export const handlerError = (err) =>{
+    const { messageError } = getErrorMessage(err);
+    toast.error(`${messageError}`, {
+        className: 'toast-contact-message'
+    });
+    console.error(err);
+} 
