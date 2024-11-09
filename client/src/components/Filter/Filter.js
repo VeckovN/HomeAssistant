@@ -1,4 +1,5 @@
 import {useState, useEffect, useMemo, memo} from 'react';
+import {handlerError} from '../../utils/ErrorUtils.js';
 import {getProfessionsAndCities} from '../../services/houseworker.js'
 import useUser from '../../hooks/useUser.js';
 import FilterForm from './FilterForm.js';
@@ -11,9 +12,14 @@ const Filter = (prop) =>{
    
     //concurrent requests to different endpoints - impl in Service with axios.all
     const fetchData =  async () =>{
-        const result = await getProfessionsAndCities();
-        setProfessions(result.houseworker_professions);
-        setCities(result.houseworker_cities);
+        try{
+            const result = await getProfessionsAndCities();
+            setProfessions(result.houseworker_professions);
+            setCities(result.houseworker_cities);
+        }
+        catch(err){
+            handlerError(err);
+        }
     }
 
     useEffect(()=>{

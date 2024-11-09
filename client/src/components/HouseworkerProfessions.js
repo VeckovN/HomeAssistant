@@ -1,10 +1,10 @@
 import {useRef} from 'react';
 import Select from 'react-select';
 import {toast} from 'react-toastify';
+import {handlerError} from '../utils/ErrorUtils.js';
 import useUser from '../hooks/useUser';
 import {profession_options} from '../utils/options';
 import {addProfession, deleteProfession, updateProfessionWorkingHour} from '../services/houseworker.js';
-import { getErrorMessage } from '../utils/ErrorUtils.js';
 
 import '../sass/components/_houseworkerProfessions.scss';
 
@@ -51,12 +51,7 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
             }
         }
         catch(err){
-            const error = getErrorMessage(err);
-            const errorMessage = error.messageError || "Please try again later";
-            toast.error(`Failed to change the profession. ${errorMessage}`, {
-                className: 'toast-contact-message'
-            });
-            console.error(error);
+            handlerError(err);
         }
     }
 
@@ -115,12 +110,7 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
             addProffesionRef.current.clearValue();
         }
         catch(err){
-            const error = getErrorMessage(err);
-            const errorMessage = error.messageError || "Please try again later";
-            toast.error(`Failed to add the profession. ${errorMessage}`, {
-                className: 'toast-contact-message'
-            });
-            console.error(error);
+            handlerError(err);
         }
     }
 
@@ -142,13 +132,8 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
             changeProfessionRef.current.clearValue();
         }
         catch(err){
-            const error = getErrorMessage(err);
-            const errorMessage = error.messageError || "Please try again later";
-            toast.error(`Failed to delete the profession. ${errorMessage}`, {
-                className: 'toast-contact-message'
-            });
-            console.error(error);
-        }   
+            handlerError(err);
+        } 
     }
 
     return (

@@ -1,4 +1,5 @@
 import {toast} from "react-toastify"
+import {handlerError} from "../utils/ErrorUtils.js";
 import messageSound from '../assets/sounds/livechat-m.mp3'
 import announcementSound from '../assets/sounds/new-notification.mp3'
 import {getFriendsList} from '../services/chat.js';
@@ -242,19 +243,24 @@ export const listenNewOnlineUser = async(socket, dispatch, self_id) =>{
     socket.on("newOnlineUser", async(userData) =>{
         const {type, userID} = userData;
 
-        const friendsList = await getFriendsList(self_id);
-        //if newOnline user match the friend list then trigger
-        if(!friendsList.includes(userID))
-            return;
+        try{
+            const friendsList = await getFriendsList(self_id);
+            //if newOnline user match the friend list then trigger
+            if(!friendsList.includes(userID))
+                return;
 
-        if(type==="Add"){
-            dispatch({type:"ADD_ONLINE_USER", data:userID});
+            if(type==="Add"){
+                dispatch({type:"ADD_ONLINE_USER", data:userID});
+            }
+            else if(type==="Remove"){
+                dispatch({type:"REMOVE_ONLINE_USER", data:userID});
+            }
+            else
+                return
         }
-        else if(type==="Remove"){
-            dispatch({type:"REMOVE_ONLINE_USER", data:userID});
+        catch(err){
+            handlerError(err);
         }
-        else
-            return
 
       })
 }

@@ -1,9 +1,9 @@
 import {useState, useEffect} from 'react';
-import { toast } from 'react-toastify';
+import {handlerError} from '../../utils/ErrorUtils.js';
+import {toast} from 'react-toastify';
 import {rateUser} from '../../services/houseworker.js'
 import {getProfessionsAndRating} from '../../services/houseworker.js';
-import { emitRatingNotification } from '../../sockets/socketEmit.js';
-import { getErrorMessage } from '../../utils/ErrorUtils.js';
+import {emitRatingNotification} from '../../sockets/socketEmit.js';
 
 const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsername) =>{
 
@@ -13,11 +13,16 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
     const [houseworkerProfessions, setHouseworkerProfessions] = useState('');
     const [loadingRating, setLoadingRating] = useState(true);
 
-    const fetchProfessionAndRating = async( ) =>{
-        const result = await getProfessionsAndRating(houseworkerUsername);
-        setHouseworkerRating(result.rating);
-        setHouseworkerProfessions(result.professions);
-        setLoadingRating(false);
+    const fetchProfessionAndRating = async() =>{
+        try{
+            const result = await getProfessionsAndRating(houseworkerUsername);
+            setHouseworkerRating(result.rating);
+            setHouseworkerProfessions(result.professions);
+            setLoadingRating(false);
+        }
+        catch(err){
+            handlerError(err);
+        }
     }
 
     useEffect(()=>{
@@ -65,12 +70,7 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
                 onCloseRateHandler();
             }
             catch(err){
-                const error = getErrorMessage(err);
-                const errorMessage = error.messageError || "Please try again later";
-                toast.error(`Failed to rate the user. ${errorMessage}`, {
-                    className: 'toast-contact-message'
-                });
-                console.error(error);
+                handlerError(err);
             }
         }
     }

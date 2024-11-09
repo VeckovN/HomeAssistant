@@ -1,5 +1,6 @@
 import {useEffect, useState, useRef} from 'react';
 import {useDispatch} from 'react-redux';
+import {handlerError} from '../utils/ErrorUtils.js';
 import {markCommentsAsRead} from '../store/unreadCommentSlice.js';
 import CommentItem  from '../components/UI/CommentItem.js';
 import {getAuthenticatedUserComments} from '../services/houseworker.js';
@@ -81,21 +82,31 @@ const CommentsList = ({socket, user}) =>{
 
     const fetchComments = async() =>{
         const pageNumber = 0;
-        const comms = await getAuthenticatedUserComments(pageNumber);
-        setComments(comms);
-        setLoading(false);
+        try{
+            const comms = await getAuthenticatedUserComments(pageNumber);
+            setComments(comms);
+            setLoading(false);
+        }
+        catch(err){
+            handlerError(err);
+        }
     }
 
     const fetchMoreComments = async() =>{
         const pageNumber = pageNumberRef.current + 1;
         pageNumberRef.current = pageNumber;
 
-        const comms = await getAuthenticatedUserComments(pageNumber);
+        try{
+            const comms = await getAuthenticatedUserComments(pageNumber);
 
-        if(comms.length > 0)
-            setComments((prev)=>[...prev, ...comms]);   
-        else 
-            allCommentsLoadedRef.current = true;   
+            if(comms.length > 0)
+                setComments((prev)=>[...prev, ...comms]);   
+            else 
+                allCommentsLoadedRef.current = true;   
+        }
+        catch(err){
+            handlerError(err);
+        }
     }
 
     return (

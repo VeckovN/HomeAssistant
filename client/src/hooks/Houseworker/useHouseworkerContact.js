@@ -1,10 +1,8 @@
 import {useRef} from 'react';
-import { emitMessage } from '../../sockets/socketEmit';
-import { sendMessageToUser} from '../../services/chat';
-import { toast } from 'react-toastify';
+import {handlerError} from '../../utils/ErrorUtils.js';
+import {toast} from 'react-toastify';
 import {getRoomIdInOrder} from '../../utils/Helper';
 import {sendMessage} from '../../utils/MessageUtils/handleMessage.js';
-import { getErrorMessage } from '../../utils/ErrorUtils.js';
 
 const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
 
@@ -33,19 +31,14 @@ const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
                         contact:true,
                 }
                 try{
-                    sendMessage(socket, messageObj);
+                    await sendMessage(socket, messageObj);
                     toast.success("The message is send",{
                         className:'toast-contact-message'
                     })
                     contactMessageRef.current.value='';
                 }
                 catch(err){
-                    const error = getErrorMessage(err);
-                    const errorMessage = error.messageError || "Please try again later";
-                    toast.error(`Failed to send message. ${errorMessage}`, {
-                        className: 'toast-contact-message'
-                    });
-                    console.error(error);
+                    handlerError(err);
                 }
             }
             else

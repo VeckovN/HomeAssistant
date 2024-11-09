@@ -1,7 +1,7 @@
 import {useReducer, useState, useRef, useEffect} from "react";
 import {useDispatch} from 'react-redux';
 import {toast} from 'react-toastify';
-import {getErrorMessage} from '../utils/ErrorUtils.js';
+import {handlerError} from "../utils/ErrorUtils.js";
 import {MessagesReducer} from '../components/MessagesReducer.js';
 import {getHouseworkers} from '../services/houseworker.js';
 import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup, listenNewOnlineUser, listenOnMessageReceive, listenOnAddUserToGroupInRoom, listenOnKickUserFromGroupInRoom, listenOnFirstMessageReceive} from '../sockets/socketListen.js';
@@ -66,11 +66,7 @@ const useMessages = (socket, user) =>{
             }
         }
         catch(err){
-            const {messageError} = getErrorMessage(err);
-            toast.error(`${messageError}`, {
-                className: 'toast-contact-message'
-            });
-            console.error(err); 
+            handlerError(err);
         }
     })
 
@@ -103,11 +99,7 @@ const useMessages = (socket, user) =>{
             dispatch({type:"SET_LOADING", payload:false})
         }
         catch(err){
-            const {messageError} = getErrorMessage(err);
-            toast.error(`${messageError}`, {
-                className: 'toast-contact-message'
-            });
-            console.error(err); 
+            handlerError(err);
         }
     });
 
@@ -117,9 +109,7 @@ const useMessages = (socket, user) =>{
             dispatch({type:"SET_HOUSEWORKERS", data:houseworkerResult});
         }
         catch(err){
-            const {messageError} = getErrorMessage(err);
-            toast.error(messageError, {className: 'toast-contact-message'});
-            console.error(err); 
+            handlerError(err);
         }
     }
 
@@ -129,9 +119,7 @@ const useMessages = (socket, user) =>{
             dispatch({type:"SET_ONLINE_USER", data:onlineUsers});
         }
         catch(err){
-            const {messageError} = getErrorMessage(err);
-            toast.error(messageError, {className: 'toast-contact-message'});
-            console.error(err); 
+            handlerError(err);
         }
     }
 
@@ -165,9 +153,7 @@ const useMessages = (socket, user) =>{
                 setShowMenu(false);
         }
         catch(err){
-            const {messageError} = getErrorMessage(err);
-            toast.error(messageError, {className: 'toast-contact-message'});
-            console.error(err); 
+            handlerError(err); 
         }
     }
 
@@ -178,9 +164,7 @@ const useMessages = (socket, user) =>{
             setShowChatView(true);  
         }
         catch(err){
-            const {messageError} = getErrorMessage(err);
-            toast.error(messageError, {className: 'toast-contact-message'});
-            console.error(err); 
+            handlerError(err);
         }
     })
 
@@ -205,11 +189,7 @@ const useMessages = (socket, user) =>{
 
         }
         catch(err){
-            const {messageError} = getErrorMessage(err);
-            toast.error(`${messageError}`, {
-                className: 'toast-contact-message'
-            });
-            console.error(err);
+            handlerError(err);
         }
     }
 
@@ -246,9 +226,7 @@ const useMessages = (socket, user) =>{
             setShowMenu(false);
         }
         catch(err){
-            const {messageError} = getErrorMessage(err);
-            toast.error(messageError, {className: 'toast-contact-message'});
-            console.error(err); 
+            handlerError(err);
         }
     }
 
@@ -319,11 +297,7 @@ const useMessages = (socket, user) =>{
             enterRoomAfterAction(newRoomID);
         }
         catch(err){
-            const {messageError} = getErrorMessage(err);
-            toast.error(`${messageError}`, {
-                className: 'toast-contact-message'
-            });
-            console.error(err);
+            handlerError(err);
         }
     });
 
@@ -356,11 +330,7 @@ const useMessages = (socket, user) =>{
             toast.info("The user "+ username + " has been kicked from the chat");
         }
         catch(err){
-            const {messageError} = getErrorMessage(err);
-            toast.error(`${messageError}`, {
-                className: 'toast-contact-message'
-            });
-            console.error(err);
+            handlerError(err);
         }
     }
 
@@ -377,11 +347,7 @@ const useMessages = (socket, user) =>{
                 dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:fromRoomID, message:message})
             }
             catch(err){
-                const {messageError} = getErrorMessage(err);
-                toast.error(`${messageError}`, {
-                    className: 'toast-contact-message'
-                });
-                console.error(err); 
+                handlerError(err);
             }
         }
         else

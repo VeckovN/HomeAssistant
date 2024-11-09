@@ -1,5 +1,6 @@
 import {useState, useEffect, useRef} from 'react'
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
+import {handlerError} from '../../utils/ErrorUtils.js';
 import useClient from '../../hooks/useClient.js';
 import HouseworkerCard from '../../components/HouseworkerCard/HouseworkerCard.js'
 import { getHouseworkersCount } from '../../services/houseworker.js';
@@ -39,9 +40,14 @@ const ClientHome = ({socket}) =>{
     }
 
     const fetchHouseworkerCount = async() =>{
-        const houseworkerResult = await getHouseworkersCount();
-        const count = houseworkerResult.count;
-        setHouseworkerCount(count);
+        try{
+            const houseworkerResult = await getHouseworkersCount();
+            const count = houseworkerResult.count;
+            setHouseworkerCount(count);
+        }
+        catch(err){
+            handlerError(err);
+        }
     }
 
     //THIS CAUSED RE_RENDERING ON EVERY DATA CHANGE ITS CHANGE  setHouseworkerData(houseworkerList); THAT AGAIN CAUSE RE_REDNERING

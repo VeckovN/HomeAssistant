@@ -1,9 +1,9 @@
 import {useState, useRef, useEffect} from 'react';
+import {handlerError} from '../../utils/ErrorUtils.js';
 import {getComments, postComment} from '../../services/houseworker.js';
 import {deleteComment} from '../../services/client.js';
 import {emitCommentNotification} from '../../sockets/socketEmit.js'
-import { toast } from 'react-toastify';
-import { getErrorMessage } from '../../utils/ErrorUtils.js';
+import {toast} from 'react-toastify';
 
 const useHouseworkerComment = (socket, isClient, client_username) =>{
     
@@ -27,12 +27,16 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
 
     const getHouseworkerComments = async() =>{
         const pageNumber = 0; 
-        const comms = await getComments(houseworker.username, pageNumber);
-
-        if(comms)
-            setComments(comms)
-        else
-            setComments(null)
+        try{
+            const comms = await getComments(houseworker.username, pageNumber);
+            if(comms)
+                setComments(comms)
+            else
+                setComments(null)
+        }
+        catch(err){
+            handlerError(err);
+        }
     }
 
     const onLoadMoreComments = async() =>{
@@ -47,7 +51,7 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                 allCommentsLoadedRef.current = true;
         }
         catch(err){
-            console.error(err);
+            handlerError(err);
         }
     }
 
@@ -103,12 +107,7 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
             })
         }   
         catch(err){
-            const error = getErrorMessage(err);
-            const errorMessage = error.messageError || "Please try again later";
-            toast.error(`Failed to delete the comment. ${errorMessage}`, {
-                className: 'toast-contact-message'
-            });
-            console.error(error);
+            handlerError(err);
         }
     }
 
@@ -160,13 +159,9 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                     
                 postCommentRef.current.value='';
                     
-            }catch(err){
-                const error = getErrorMessage(err);
-                const errorMessage = error.messageError || "Please try again later";
-                toast.error(`Failed to post the comment. ${errorMessage}`, {
-                    className: 'toast-contact-message'
-                });
-                console.error(error);
+            }
+            catch(err){
+                handlerError(err);
             }
         }
     }

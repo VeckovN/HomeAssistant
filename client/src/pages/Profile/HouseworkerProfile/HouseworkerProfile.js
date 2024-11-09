@@ -1,10 +1,10 @@
 import {useState, useEffect} from 'react';
 import {toast} from 'react-toastify';
+import {handlerError} from '../../../utils/ErrorUtils.js';
 import HouseworkerProfileForm from './HouseworkerProfileForm';
 import {profession_options} from '../../../utils/options';
 import {getUserData, getProfessions, updateHouseworker} from '../../../services/houseworker.js';
 import {useForm, useController} from 'react-hook-form';
-import { getErrorMessage } from '../../../utils/ErrorUtils.js';
 
 const HouseworkerProfile = () =>{
 
@@ -46,14 +46,19 @@ const HouseworkerProfile = () =>{
     }
 
     const fetchData = async() =>{
-        const houseworkerResult = await getUserData();
-        const houseworker_professions = await getProfessions(); //from users
+        try{
+            const houseworkerResult = await getUserData();
+            const houseworker_professions = await getProfessions(); //from users
 
-        const {professions:not_owned_professions, profession_format } = getNotOwnedProfessions(houseworker_professions);
-        const newHouseworker = {...houseworkerResult, professions:[...profession_format], not_owned_professions:[...not_owned_professions]}
+            const {professions:not_owned_professions, profession_format } = getNotOwnedProfessions(houseworker_professions);
+            const newHouseworker = {...houseworkerResult, professions:[...profession_format], not_owned_professions:[...not_owned_professions]}
 
-        setHouseworkerData(newHouseworker);
-        setLoading(false);
+            setHouseworkerData(newHouseworker);
+            setLoading(false);
+        }
+        catch(err){
+            handlerError(err);
+        }
     }
 
     const onSubmitUpdate = async (submitData)=>{
@@ -84,12 +89,7 @@ const HouseworkerProfile = () =>{
             })
         }
         catch(err){
-            const error = getErrorMessage(err);
-            const errorMessage = error.messageError || "Please try again later";
-            toast.error(`Failed to update the profile. ${errorMessage}`, {
-                className: 'toast-contact-message'
-            });
-            console.error(error);
+            handlerError(err);
         }
     }
 

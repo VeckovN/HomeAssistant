@@ -1,4 +1,5 @@
 import {useState, useEffect, useRef, useCallback} from 'react';
+import {handlerError} from '../utils/ErrorUtils.js';
 import {getHouseworkerByFilter} from '../services/houseworker.js'
 import {getRecommended} from '../services/client.js'
 import { toast } from 'react-toastify';
@@ -129,9 +130,10 @@ const useClient = (user) =>{
             }   
             
             setLoading(false);
-        }catch(err){
-            console.error("ERR: " + err);
-        }   
+        }
+        catch(err){
+            handlerError(err);
+        }  
     }
 
     const fetchRecommended = async(houseworkers) =>{
@@ -140,7 +142,7 @@ const useClient = (user) =>{
             return recommendedData1;
         }
         catch(err){
-            console.error("Error wiht recommended fetch user " + err);
+            handlerError(err);
         }
     }
     

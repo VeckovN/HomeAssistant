@@ -1,10 +1,10 @@
 import {useState, useEffect} from 'react';
 import {toast} from 'react-toastify';
+import {handlerError} from '../../../utils/ErrorUtils.js';
 import ClientProfileForm from './ClientProfileForm.js';
 import {getUserData, updateClient} from '../../../services/client.js';
 import {useForm, useController} from 'react-hook-form';
 import {city_options} from '../../../utils/options.js';
-import {getErrorMessage} from '../../../utils/ErrorUtils.js';
 
 const ClientProfile = () =>{ 
     const initialState = {
@@ -33,9 +33,14 @@ const ClientProfile = () =>{
     },[isSubmitSuccessful])
 
     const fetchData = async() =>{
-        const clientData = await getUserData();
-        setClientData(clientData);
-        setLoading(false);
+        try{
+            const clientData = await getUserData();
+            setClientData(clientData);
+            setLoading(false);
+        }
+        catch(err){
+            handlerError(err);
+        }
     }
 
     const onSubmitUpdate = async(updatedData) =>{
@@ -68,12 +73,7 @@ const ClientProfile = () =>{
 
         }
         catch(err){
-            const error = getErrorMessage(err);
-            const errorMessage = error.messageError || "Please try again later";
-            toast.error(`Failed to update the profile. ${errorMessage}`, {
-                className: 'toast-contact-message'
-            });
-            console.error(error);
+            handlerError(err);
         }
     }
 
