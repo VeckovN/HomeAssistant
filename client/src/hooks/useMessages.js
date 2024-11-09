@@ -1,15 +1,14 @@
-import { useReducer, useState, useRef, useEffect } from "react";
+import {useReducer, useState, useRef, useEffect} from "react";
 import {useDispatch} from 'react-redux';
 import {toast} from 'react-toastify';
 import {getErrorMessage} from '../utils/ThrowError.js';
 import {MessagesReducer} from '../components/MessagesReducer.js';
 import {getHouseworkers} from '../services/houseworker.js';
 import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup, listenNewOnlineUser, listenOnMessageReceive, listenOnAddUserToGroupInRoom, listenOnKickUserFromGroupInRoom, listenOnFirstMessageReceive} from '../sockets/socketListen.js';
-import {emitRoomJoin, emitLeaveRoom, emitMessage, emitCreteUserGroup, emitUserAddedToChat, emitKickUserFromChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
-import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, sendMessageToUser, getMoreMessagesByRoomID, getOnlineUsers, getFirstRoomID} from '../services/chat.js';
+import {emitRoomJoin, emitLeaveRoom, emitCreteUserGroup, emitUserAddedToChat, emitKickUserFromChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
+import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, getMoreMessagesByRoomID, getOnlineUsers, getFirstRoomID} from '../services/chat.js';
 import {resetUserUnreadMessagesCount} from '../store/unreadMessagesSlice.js';
 import {sendMessage} from "../utils/MessageUtils/handleMessage.js";
-
 
 const useMessages = (socket, user) =>{
     const initialState = {
@@ -28,8 +27,6 @@ const useMessages = (socket, user) =>{
     const [showChatView, setShowChatView] = useState(false);
     const [showMoreRoomUsers, setShowMoreRoomUsers] = useState({});
     const pageNumberRef = useRef(0); 
-
-    console.log("State Message: ", state);
 
     const reduxDispatch = useDispatch();
 
@@ -61,51 +58,81 @@ const useMessages = (socket, user) =>{
     },[socket])
 
     const fetchMoreMessages  = (async (roomID, pageNumber) =>{
-        const messages = await getMoreMessagesByRoomID(roomID, pageNumber);
+        try{
+            const messages = await getMoreMessagesByRoomID(roomID, pageNumber);
 
-        if(messages.length > 0){
-            dispatch({type:"ADD_MORE_ROOM_MESSAGES", data:messages});
+            if(messages.length > 0){
+                dispatch({type:"ADD_MORE_ROOM_MESSAGES", data:messages});
+            }
+        }
+        catch(err){
+            const {messageError} = getErrorMessage(err);
+            toast.error(`${messageError}`, {
+                className: 'toast-contact-message'
+            });
+            console.error(err); 
         }
     })
 
-    const fetchAllRooms = ( async () =>{   
-        const data = await getUserRooms(user.username); //roomID, users{}
-        // dispatch({type:"SET_ROOMS", data:data}) 
-        dispatch({type:"SET_ROOMS", data:data.rooms}) 
+    const fetchAllRooms = ( async () =>{  
+        try{
+            const data = await getUserRooms(user.username); //roomID, users{}
+            // dispatch({type:"SET_ROOMS", data:data}) 
+            dispatch({type:"SET_ROOMS", data:data.rooms}) 
 
-        //When user has conversations
-        // if(data.length > 0){
-        if(data.rooms.length > 0){
-                //display first room as active
-            // const roomID = data[0].roomID;
-            // const users = data[0].users;
-            const roomID = data.rooms[0].roomID;
-            const users = data.rooms[0].users;
-            dispatch({type:"SET_ROOM_INFO", ID:roomID, usersArray:users});
+            //When user has conversations
+            // if(data.length > 0){
+            if(data.rooms.length > 0){
+                    //display first room as active
 
-            //COMMENTED (emit event before socket initialization(connection))
-            emitRoomJoin(socket, roomID);
-            
-            const messages = await getMessagesByRoomID(roomID)
-            
-            dispatch({type:"SET_ROOM_MESSAGES", data:messages})
+                const roomID = data.rooms[0].roomID;
+                const users = data.rooms[0].users;
+                dispatch({type:"SET_ROOM_INFO", ID:roomID, usersArray:users});
+
+                emitRoomJoin(socket, roomID);
+                
+                const messages = await getMessagesByRoomID(roomID)
+                
+                dispatch({type:"SET_ROOM_MESSAGES", data:messages})
+            }
+            else{
+                dispatch({type:"SET_ROOM_INFO", ID:null, usersArray:[]});
+                dispatch({type:"SET_ROOM_MESSAGES", data:[]})
+            }
+
             dispatch({type:"SET_LOADING", payload:false})
         }
-        else{
-            dispatch({type:"SET_ROOM_INFO", ID:null, usersArray:[]});
-            dispatch({type:"SET_ROOM_MESSAGES", data:[]})
-            dispatch({type:"SET_LOADING", payload:false})
+        catch(err){
+            const {messageError} = getErrorMessage(err);
+            toast.error(`${messageError}`, {
+                className: 'toast-contact-message'
+            });
+            console.error(err); 
         }
     });
 
     const getAllHouseworkers = async() =>{
-        const houseworkerResult = await getHouseworkers();
-        dispatch({type:"SET_HOUSEWORKERS", data:houseworkerResult});
+        try{
+            const houseworkerResult = await getHouseworkers();
+            dispatch({type:"SET_HOUSEWORKERS", data:houseworkerResult});
+        }
+        catch(err){
+            const {messageError} = getErrorMessage(err);
+            toast.error(messageError, {className: 'toast-contact-message'});
+            console.error(err); 
+        }
     }
 
     const getOnlineChatUsers = async() =>{
-        const onlineUsers = await getOnlineUsers(user.userID);
-        dispatch({type:"SET_ONLINE_USER", data:onlineUsers});
+        try{
+            const onlineUsers = await getOnlineUsers(user.userID);
+            dispatch({type:"SET_ONLINE_USER", data:onlineUsers});
+        }
+        catch(err){
+            const {messageError} = getErrorMessage(err);
+            toast.error(messageError, {className: 'toast-contact-message'});
+            console.error(err); 
+        }
     }
 
     const getOnlineUserStatus = (userID) =>{
@@ -114,35 +141,48 @@ const useMessages = (socket, user) =>{
     }
     
     const enterRoomAfterAction = async(roomID) =>{
-        //don't applie logic if is clicked on the same room
-        if(roomID === state.roomInfo.roomID)
-            return;
+        try{
+            //don't applie logic if is clicked on the same room
+            if(roomID === state.roomInfo.roomID)
+                return;
 
-        pageNumberRef.current = 0; //reset page number on entering new room
+            pageNumberRef.current = 0; //reset page number on entering new room
 
-        if(state.roomInfo.roomID !='' && state.roomInfo.roomID != roomID){
-            emitLeaveRoom(socket, state.roomInfo.roomID);;
+            if(state.roomInfo.roomID !='' && state.roomInfo.roomID != roomID){
+                emitLeaveRoom(socket, state.roomInfo.roomID);;
+            }
+
+            emitRoomJoin(socket, roomID);
+
+            setIsLoadingMessages(true);
+            const messages = await getMessagesByRoomID(roomID);
+            dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
+
+            reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:user.userID}))
+            setIsLoadingMessages(false);
+
+            if(showMenu)
+                setShowMenu(false);
         }
-
-        emitRoomJoin(socket, roomID);
-
-        setIsLoadingMessages(true);
-        const messages = await getMessagesByRoomID(roomID);
-        dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
-
-        reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:user.userID}))
-        setIsLoadingMessages(false);
-
-        if(showMenu)
-            setShowMenu(false);
+        catch(err){
+            const {messageError} = getErrorMessage(err);
+            toast.error(messageError, {className: 'toast-contact-message'});
+            console.error(err); 
+        }
     }
 
     const onRoomClickHanlder = ( async e =>{
         const roomID = e.target.value;
-        await enterRoomAfterAction(roomID);
-        setShowChatView(true);  
+        try{
+            await enterRoomAfterAction(roomID);
+            setShowChatView(true);  
+        }
+        catch(err){
+            const {messageError} = getErrorMessage(err);
+            toast.error(messageError, {className: 'toast-contact-message'});
+            console.error(err); 
+        }
     })
-
 
     const onDeleteRoomHandler = async(e) => {   
         const roomID = e.target.value;
@@ -165,12 +205,11 @@ const useMessages = (socket, user) =>{
 
         }
         catch(err){
-            const error = getErrorMessage(err);
-            const errorMessage = error.messageError || "Please try again later";
-            toast.error(`The room can't be deleted. ${errorMessage}`, {
+            const {messageError} = getErrorMessage(err);
+            toast.error(`${messageError}`, {
                 className: 'toast-contact-message'
             });
-            console.error(error);
+            console.error(err);
         }
     }
 
@@ -201,9 +240,16 @@ const useMessages = (socket, user) =>{
     },[state.rooms])
 
     const MessagesAfterRoomsAction = async(roomID)=>{
-        const messages = await getMessagesByRoomID(roomID)
-        dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID});
-        setShowMenu(false);
+        try{
+            const messages = await getMessagesByRoomID(roomID)
+            dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID});
+            setShowMenu(false);
+        }
+        catch(err){
+            const {messageError} = getErrorMessage(err);
+            toast.error(messageError, {className: 'toast-contact-message'});
+            console.error(err); 
+        }
     }
 
     useEffect(() =>{
@@ -273,12 +319,11 @@ const useMessages = (socket, user) =>{
             enterRoomAfterAction(newRoomID);
         }
         catch(err){
-            const error = getErrorMessage(err);
-            const errorMessage = error.messageError || "Please try again later";
-            toast.error(`Failed to add user to group. ${errorMessage}`, {
+            const {messageError} = getErrorMessage(err);
+            toast.error(`${messageError}`, {
                 className: 'toast-contact-message'
             });
-            console.error(error);
+            console.error(err);
         }
     });
 
@@ -311,12 +356,11 @@ const useMessages = (socket, user) =>{
             toast.info("The user "+ username + " has been kicked from the chat");
         }
         catch(err){
-            const error = getErrorMessage(err);
-            const errorMessage = error.messageError || "Please try again later";
-            toast.error(`Failed to kick user from chat. ${errorMessage}`, {
+            const {messageError} = getErrorMessage(err);
+            toast.error(`${messageError}`, {
                 className: 'toast-contact-message'
             });
-            console.error(error);
+            console.error(err);
         }
     }
 
@@ -333,14 +377,12 @@ const useMessages = (socket, user) =>{
                 dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:fromRoomID, message:message})
             }
             catch(err){
-                const error = getErrorMessage(err);
-                const errorMessage = error.messageError || "Please try again later";
-                toast.error(`Failed to send message. ${errorMessage}`, {
+                const {messageError} = getErrorMessage(err);
+                toast.error(`${messageError}`, {
                     className: 'toast-contact-message'
                 });
-                console.error(error); 
+                console.error(err); 
             }
-            
         }
         else
             toast.error("Empty message cannot be sent",{
@@ -350,7 +392,6 @@ const useMessages = (socket, user) =>{
 
     const onShowMoreUsersFromChatHandler = ({roomID, users}) => setShowMoreRoomUsers({roomID, users});
     const onShowRoomsButtonHandler = () => {setShowChatView(false)}
-
 
     return {
         state, 

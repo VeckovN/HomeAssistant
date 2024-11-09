@@ -2,39 +2,32 @@ const chatModel = require('../model/Chat')
 
 //using req.query because url .../message?offset=0?size=50
 //BECASE THIS IS GET METHOD, if we wanna post/put we could use req.body to take value from body of request
-// http://localhost:5000/api/chat/room/1:2/messages?offset=0&size=50
+//http://localhost:5000/api/chat/room/1:2/messages?offset=0&size=50
 const getMessages = async(req,res)=>{
     const roomID = req.params.id;
     const offset = req.query.offset;
     const size = req.query.size;
-
     try{
         const messages = await chatModel.getMessages(roomID, offset, size);
         res.json(messages);
     }
     catch(err){
-        console.log(err);
-        res.status(400).json({error:"Message Errors"});
+        console.error(err);
+        //err.message -> throwned error message from getMessage caller function
+        res.status(400).json({error: err.message || "Message Errors"});
     }
 }
 
 const getMoreMessages = async(req,res) =>{
-    console.log("REQWWQ : " , req.params);
     const roomID = req.params.id;
     const pageNumber = req.params.pageNumber;
-
-    console.log("getMOremessages: " + roomID, + "pn: " + pageNumber);
-    //or
-    //const roomID = req.query.offset;
-    //const pageNUmber = req.query.offset;
-
     try{
         const messages = await chatModel.getMoreMessages(roomID, pageNumber);
         res.json(messages);
     }
     catch(err){
-        console.log(err);
-        res.status(400).json({error:"More Messages Fetching Error"});
+        console.error(err);
+        res.status(400).json({error: err.message || "Fetching Messages Error"});
     }
 }
 
@@ -46,18 +39,18 @@ const postMessage = async(req,res) =>{
     }
     catch(err){
         console.error(err);
-        res.status(400).json({error:"Message posting Error"});
+        res.status(400).json({error: err.message || "Message posting Error"});
     }
 }   
 
 const getAllRooms = async(req,res)=>{
+    const username = req.params.username;
     try{
-        const username = req.params.username;
         const result = await chatModel.getAllRooms(username);
         res.json(result);
     }catch(err){
-        console.log(err);
-        res.status(500).json({error:"Error durring getting all rooms"});
+        console.error(err);
+        res.status(400).json({error: err.message || "Error durring getting all rooms"});
     }
 }
 
@@ -69,8 +62,8 @@ const deleteRoom = async(req, res)=>{
         res.status(200).json(result);
     }
     catch(err){
-        console.log(err);
-        res.status(400).json({error:"Room can't be deleted"});
+        console.error(err);
+        res.status(400).json({error: err.message || "Room can't be deleted"});
     }
 }
 
@@ -81,9 +74,9 @@ const removeUserFromRoom = async(req,res)=>{
         const result = await chatModel.removeUserFromRoomID(clientID, roomID, username);
         res.status(200).send(result);
     }
-    catch(err){
-        console.log(err);
-        res.status(400).json({error:"Room can't be deleted"});
+    catch(err){    
+        console.error(err);
+        res.status(400).json({error: err.message || "You can't add user to Room"});
     }
 }
 
@@ -91,14 +84,13 @@ const addUserToRoom = async(req,res) =>{
     const clientID = req.session.user.userID;
     const roomID = req.body.roomID;
     const newUsername = req.body.newUsername;
-    console.log("ROOMID: " + roomID + " newUsername " + newUsername);
-    
     try{
         const result = await chatModel.addUserToRoom(clientID, newUsername, roomID);
         res.status(200).json(result);
     }
     catch(err){
-        res.status(400).json({error:'You cant add user to ROom'});
+        console.error(err);
+        res.status(400).json({error: err.message || "You can't add user to Room"});
     }
 }
 
@@ -109,22 +101,20 @@ const getConversationCount = async(req,res)=>{
         res.status(200).json(result);
     }
     catch(err){
-        res.status(400).json({error: 'Conversetion Count error'})
+        console.error(err);
+        res.status(400).json({error: err.message || "Conversetion Count error"});
     }
 }
 
 const getOnlineUsers = async(req,res) =>{
     try{
         const userID = req.params.userID;
-        const userID2 = req.session.user.userID;
-        console.log("REQ SESSION USER: ", req.session.user);
-        console.log("UserID2: " , userID2);
-
         const result = await chatModel.getOnlineUsersFromChat(userID);
         res.status(200).json(result);
     }
     catch(err){
-        res.status(400).json({error: 'Conversetion Count error'})
+        console.error(err);
+        res.status(400).json({error: err.message || "Fetching online users error"});
     }
 }
 
@@ -135,7 +125,8 @@ const getFirstRoomID = async(req,res) =>{
         res.status(200).json(result);
     }
     catch(err){
-        res.status(400).json({error: 'Conversetion Count error'})
+        console.error(err);
+        res.status(400).json({error: err.message || "Fetching First room Error"});
     }
 }
 
@@ -146,10 +137,10 @@ const getFriendsList = async(req,res) =>{
         res.status(200).json(result);
     }
     catch(err){
-        res.status(400).json({error: 'Friends list error'})
+        console.error(err);
+        res.status(400).json({error: err.message || "Friends list error"});
     }
 }
-
 
 const getAllUnreadMessages = async(req,res) =>{
     try{
@@ -158,7 +149,8 @@ const getAllUnreadMessages = async(req,res) =>{
         res.status(200).json(result);
     }
     catch(err){
-        res.status(400).json({error: 'UnreadMessage TotalCount error'})
+        console.error(err);
+        res.status(400).json({error: err.message || "Fetching unread messages error"});
     }
 }
 
@@ -169,7 +161,8 @@ const getUnreadMessagesTotalCount = async(req,res) =>{
         res.status(200).json(result);
     }
     catch(err){
-        res.status(400).json({error: 'UnreadMessage TotalCount error'})
+        console.error(err);
+        res.status(400).json({error: err.message || "Message posting Error"});
     }
 }
 
@@ -178,10 +171,10 @@ const removeUnreadMessagesFromRoom = async(req,res) =>{
         const {roomID, userID} = req.params;
         const result = await chatModel.resetUnreadMessagesCount(roomID, userID);
         res.status(200).json(result);
-
     }
     catch(err){
-        res.status(400).json({error: 'UnreadMessage TotalCount error'})
+        console.error(err);
+        res.status(400).json({error: err.message || "Remove unread messages Error"});
     }
 }
 

@@ -10,10 +10,9 @@ const createUser = async(username, hashedPassword, picturePath) =>{
     try{
         const usernameKey = `username:${username}`;
         const freeID = await incr("total_users"); //total_users is data in Redis(number of users)
-    
         const userKey = `user:${freeID}`;
     
-        await set(usernameKey, userKey) //username:Novak user:1
+        await set(usernameKey, userKey)
         await hmset(userKey, ["username", username, "password", hashedPassword, "picturePath", picturePath]);
         
         return {success:true, id:freeID, username};
@@ -28,573 +27,530 @@ const createUser = async(username, hashedPassword, picturePath) =>{
 const deleteUserOnNeo4JFailure = async(username, userID) =>{
     try{
         const usernameKey = `username:${username}`;
-        await del(usernameKey); //set delete
+        await del(usernameKey); 
         const userKey = `user:${userID}`;
-        await del(userKey); //hmset delete
+        await del(userKey); 
         return {success:true, message:"User's set and hmset successfully deleted"}
     }
     catch(error){
         console.error("Redis deleting user Failed");
         return {success:false}
     }
-
 }
 
 const getLastMessageFromRoom = async(roomID) =>{
-    const result = await zrange(`room:${roomID}`, -1, -1);
-    if(result == 0){
-        return {message:"", dateDiff:null};
+    try{
+        const result = await zrange(`room:${roomID}`, -1, -1);
+        if(result == 0){
+            return {message:"", dateDiff:null};
+        }
+        const parsedObj = JSON.parse(result);
+        const currentDate = parsedObj.date;
+        const difference = calculateTimeDifference(currentDate);
+        const lastMessage  = {message:parsedObj.message, dateDiff:difference}
+
+        return lastMessage;
     }
-    console.log("RESIULL : ", result);
-    const parsedObj = JSON.parse(result);
-    const currentDate = parsedObj.date;
-    const difference = calculateTimeDifference(currentDate);
-    const lastMessage  = {message:parsedObj.message, dateDiff:difference}
-    return lastMessage;
+    catch(error){
+        console.error("Error fetching last message from the room:", error.message); 
+        throw new Error("Failed to get last room message. Please try again later."); 
+    }
 }
 
 // Format room ID to start with the lower user ID value
 const getRoomIdInOrder = (firstUserID, secondUserID) =>{
-     // The room ID should be formatted as minID:maxID (e.g., room:1:2, room:4:9, not room:8:2)
     const minUserID = firstUserID > secondUserID ? secondUserID : firstUserID;
     const maxUserID = firstUserID > secondUserID ? firstUserID : secondUserID;
-    // Generate the room ID in the format minID:maxID between two users
     return `${minUserID}:${maxUserID}`
 }
 
-//When Client want to send message to Houseworker ,we have to create
-//room between them and communicate in that room
 const createRoom = async(clientUsername, houseworkerUsername)=>{
+    try{
+        const clientID = getUserIdByUsername(clientUsername);
+        const houseworkerID = getUserIdByUsername(houseworkerUsername);
+        const usersRoomID = getRoomIdInOrder(clientID, houseworkerID);
 
-    const clientID = getUserIdByUsername(clientUsername);
-    const houseworkerID = getUserIdByUsername(houseworkerUsername);
+        if(usersRoomID === null){
+            return null;
+        }
 
-    //get iid of users ---- user:1 , user:3  --> roomID is 1:3
-    // const usersRoomID = getRoomIdInOrder(firstUserID, secondUserID);
-    const usersRoomID = getRoomIdInOrder(clientID, houseworkerID);
+        const timestamps = Date.now(); //used for score value (miliseconds)
+        await zadd(`user:${clientID}:rooms`, timestamps, `${usersRoomID}`);
+        await zadd(`user:${houseworkerID}:rooms`, timestamps, `${usersRoomID}`);
+        
+        //notify only houseworker for ID
+        const message = `The client ${clientUsername} has started conversation with you`;
+        const notification = await recordNotification(clientID, houseworkerID, notificationType, message);
 
-    if(usersRoomID === null){
-        return null;
+        //return created room id and names of users
+        return [{
+            id:usersRoomID,
+            names:[
+                await hmget(`user:${clientID}`, "username"),
+                await hmget(`user:${houseworkerID}`, "username")
+            ],
+            notification:notification
+        }]
     }
-    //create rooms
-    const timestamps = Date.now(); //used for score value (miliseconds)
-    await zadd(`user:${clientID}:rooms`, timestamps, `${usersRoomID}`);
-    await zadd(`user:${houseworkerID}:rooms`, timestamps, `${usersRoomID}`);
-    
-    //notify only houseworker for ID
-    const message = `The client ${clientUsername} has started conversation with you`;
-    const notification = await recordNotification(clientID, houseworkerID, notificationType, message);
-
-    //return created room id and names of users
-    return [{
-        id:usersRoomID,
-        names:[
-            await hmget(`user:${clientID}`, "username"),
-            await hmget(`user:${houseworkerID}`, "username")
-        ],
-        notification:notification
-    }]
+    catch(error){
+        console.error("Error creating the room:", error.message); 
+        throw new Error("Failed to create the room. Please try again later."); 
+    }
 }
 
-
-//get message From ---  ZREVRANGE room:{roomID} {offset_start} {offset_end}
-// ZREVRANGE room:1:2 0 50 (will return 50 messages with 0 offsets for the private room between users with IDs 1 and 2.)
 const getMessages = async(roomID, offset, size) =>{
-    // console.log("OFFSET : " + offset + " SIZE: " + size);
-    // const size = 10;
+    try{
+        const roomKey = `room:${roomID}`;
+        const roomExists = await exists(roomKey)
+        if(!roomExists)
+            return null;
 
-    //from offset to size--> 0 to 10 -> 11 elements
-    const roomKey = `room:${roomID}`;
-    const roomExists = await exists(roomKey)
-    if(!roomExists)
-        return null;
-
-    const messages = await zrangerev(roomKey, offset, size -1);
-    // const messages = latestMessages.reverse();
-
-    const messagesObj = messages.map((mes) => JSON.parse(mes)); //Parsing JSON to obj
-    return messagesObj;
+        const messages = await zrangerev(roomKey, offset, size -1);
+        const messagesObj = messages.map((mes) => JSON.parse(mes));
+        return messagesObj;
+    }
+    catch(err){
+        console.error(err);
+        throw new Error("Failed to fetch messages. Please try again later.");
+    }
 }
 
-//offset calculated based on pageNumber and size(defined)
 const getMoreMessages = async(roomID, pageNumber) =>{
-    const size = 10;
-    const offset = size * pageNumber;
-    //od offset do size
-    const endIndex = offset + size -1; 
-
-    //pNUmber =0 => offset = 10 * 0 -> from 0 index element
-    //pNUmber =0 => lastE = 0 + 10 -1 -> to 9 index element
-
-     //pNUmber =1 => offset = 10 * 1 -> from 10 index element
-    //pNUmber =1 => lastE = 10 + 10 -1 -> to 19 index element
- 
-    const roomKey = `room:${roomID}`;
-    const roomExists = await exists(roomKey)
-    if(!roomExists)
-        return null;
-
-    const messages = await zrangerev(roomKey, offset, endIndex);
-    // const messages = latestMessages.reverse();
-    const messagesObj = messages.map((mes) => JSON.parse(mes)); //Parsing JSON to obj
-    return messagesObj;
+    try{
+        const size = 10;
+        const offset = size * pageNumber;
+        const endIndex = offset + size -1; 
+     
+        const roomKey = `room:${roomID}`;
+        const roomExists = await exists(roomKey)
+        if(!roomExists)
+            return null;
+    
+        const messages = await zrangerev(roomKey, offset, endIndex);
+        const messagesObj = messages.map((mes) => JSON.parse(mes)); 
+        return messagesObj;
+    }
+    catch(error){
+        console.error("Error fetching messages:", error.message); // Log error for debugging
+        throw new Error("Failed to fetch more messages. Please try again later."); // Throw custom error for the caller
+    }
 }
 
 const getAllRooms = async(username)=>{
-    let userID = await getUserIdByUsername(username);
-    const userRoomKey = `user:${userID}:rooms`;
-    let rooms = await zrangerev(userRoomKey, 0, -1);
-    
-    console.log("Zrange Rooms : ", rooms);
-    //Get online users and create 6set for efficeint lookups(could be massive)
-    const onlineUsers = await smembers(`onlineUsers`);
-    const onlineUsersSet = new Set(onlineUsers);
-
-    //through every room read another userID -> 1:7 , 1:3 in this situatin 7 and 3
-    var roomsArr = []
-    var unreadMess = [];
-    for(const roomID of rooms){
-        const userIDS = roomID.split(":");
-        const otherUsers = userIDS.filter(el => el!= userID)
-        console.log("ROOOOOOOOMMMMM ID: ", roomID);
-        const lastMessage = await getLastMessageFromRoom(roomID);
-        const countNumber = await getUnreadMessageCountByRoomID(userID, roomID);
-        if(countNumber)
-        {
-            const obj ={
-                roomID:roomID,
-                count:countNumber,
-            }
-            unreadMess.push(obj);
-            console.log("unreadMess:", unreadMess , "\n");
-        }
-        // console.log("unreadOBJ: ", countNumber + "\n");
+    try{
+        let userID = await getUserIdByUsername(username);
+        const userRoomKey = `user:${userID}:rooms`;
+        let rooms = await zrangerev(userRoomKey, 0, -1);
         
-        //DONT USE FOREACH FOR ASYNC/AWAIT ,USE for() because this will wait for async execution
-        //Create promise to be ensure tha user is found and then this user push in array
-        //without that this async function could be finished after pushing NOTFOUND user in array
-        let roomObjectArray =[];
-        for(const id of otherUsers){ //group users
-            const user = await getUserInfoByUserID(id); 
-            roomObjectArray.push({
-                userID:id,
-                username:user.username, 
-                picturePath:user.picturePath,
-                online: onlineUsersSet.has(id) //not required for chat component -> replaced by checking onlineUsers state
-            });
+        //Get online users and create set for efficient lookups(could be massive)
+        const onlineUsers = await smembers(`onlineUsers`);
+        const onlineUsersSet = new Set(onlineUsers);
+
+        //through every room read another userID -> 1:7 , 1:3 in this situatin 7 and 3
+        var roomsArr = []
+        var unreadMess = [];
+        for(const roomID of rooms){
+            const userIDS = roomID.split(":");
+            const otherUsers = userIDS.filter(el => el!= userID)
+            const lastMessage = await getLastMessageFromRoom(roomID);
+            const countNumber = await getUnreadMessageCountByRoomID(userID, roomID);
+            if(countNumber)
+            {
+                const obj ={
+                    roomID:roomID,
+                    count:countNumber,
+                }
+                unreadMess.push(obj);
+            }
+            
+            let roomObjectArray =[];
+            //for loop instead of foreach *async/await
+            for(const id of otherUsers){ //group users
+                const user = await getUserInfoByUserID(id); 
+                roomObjectArray.push({
+                    userID:id,
+                    username:user.username, 
+                    picturePath:user.picturePath,
+                    online: onlineUsersSet.has(id) //not required for chat component -> replaced by checking onlineUsers state
+                });
+            }
+            roomsArr.push({roomID, lastMessage, users:roomObjectArray})        
         }
 
-        roomsArr.push({roomID, lastMessage, users:roomObjectArray})        
+        const roomsObj = {rooms:[...roomsArr], unread:unreadMess}
+        return roomsObj;
     }
-
-    const roomsObj = {rooms:[...roomsArr], unread:unreadMess}
-    console.log("RoomS OBJ L :" , roomsObj);
-    return roomsObj;
+    catch(error){
+        console.error("Error fetching rooms:", error.message); 
+        throw new Error("Failed to fetch rooms. Please try again later."); 
+    }
 }
-// const getAllRooms = async(username)=>{
-//     let userID = await getUserIdByUsername(username);
-//     const userRoomKey = `user:${userID}:rooms`;
-//     let rooms =[];
-//     rooms = await smembers(userRoomKey);
-
-
-//     //through every room read another userID -> 1:7 , 1:3 in this situatin 7 and 3
-//     var roomsArr = []
-//     let roomObjectArray =[];
-//     for(const room of rooms){
-//         const roomID = room;
-//         const userIDS = roomID.split(":");
-//         const otherUsers = userIDS.filter(el => el!= userID)
-//         //maybe here get onlineUsers
-
-
-//          //display only last messages for private rooms
-//          let lastMessage;
-//          if(otherUsers.length <= 2){
-//              lastMessage = await getLastMessageFromRoom(roomID);
-//              console.log("ROOM: " + roomID + " LastMessage: " + lastMessage);
-//          } 
-
-//         //DONT USE FOREACH FOR ASYNC/AWAIT ,USE for() because this will wait for async execution
-
-//         //Create promise to be ensure tha user is found and then this user push in array
-//         //without that this async function could be finished after pushing NOTFOUND user in array
-//         for(const id of otherUsers){
-//             const user = await getUserInfoByUserID(id); 
-//             roomObjectArray.push({username:user.username, picturePath:user.picturePath});
-//         }
-
-//         roomsArr.push({roomID, lastMessage, users:roomObjectArray}) //add last message
-//         roomObjectArray =[];
-//     }
-//     return roomsArr;
-// }
-
-//With PromiseAll usage
-// const getAllRooms = async (username) => {
-//   let userID = await getUserIdByUsername(username);
-//   const userRoomKey = `user:${userID}:rooms`;
-//   let rooms = [];
-//   rooms = await smembers(userRoomKey);
-
-//   // Create an array of promises for roomObjectArray
-//   const roomObjectArrayPromises = rooms.map(async (room) => {
-//     const roomID = room;
-//     const userIDS = roomID.split(":");
-//     const otherUsers = userIDS.filter((el) => el != userID);
-
-//     // Display only last messages for private rooms
-//     let lastMessage;
-//     if (otherUsers.length <= 2) {
-//       lastMessage = await getLastMessageFromRoom(roomID);
-//       console.log("ROOM: " + roomID + " LastMessage: " + lastMessage);
-//     }
-
-//     // Use Promise.all to wait for all user info promises to resolve
-//     const usersPromises = otherUsers.map(async (id) => {
-//       const user = await getUserInfoByUserID(id);
-//       return { username: user.username, picturePath: user.picturePath };
-//     });
-
-//     const users = await Promise.all(usersPromises);
-
-//     return { roomID, lastMessage, users };
-//   });
-
-//   const roomObjectArray = await Promise.all(roomObjectArrayPromises);
-
-//   return roomObjectArray;
-// };
 
 const getOnlineUsersFromChat = async(userID) =>{
-    //set to manage unique users IDs(automatically)
-    const usersFromRoomSet = new Set();
+    try{
+        //set to manage unique users IDs(automatically)
+        const usersFromRoomSet = new Set();
 
-    const usersRoomKey = `user:${userID}:rooms`;
-    const usersRoomsIDS = await zrangerev(usersRoomKey , 0, -1);
+        const usersRoomKey = `user:${userID}:rooms`;
+        const usersRoomsIDS = await zrangerev(usersRoomKey , 0, -1);
 
-    usersRoomsIDS.forEach(id => {
-        const membersIds = id.split(':');
-        membersIds.forEach(memberID => {
-            usersFromRoomSet.add(memberID);
+        usersRoomsIDS.forEach(id => {
+            const membersIds = id.split(':');
+            membersIds.forEach(memberID => {
+                usersFromRoomSet.add(memberID);
+            })
         })
-    })
 
-    // Convert the Set back to an array (IF NEEDED)
-    const uniqueUserIds = Array.from(usersFromRoomSet);
-    // This approach works well even if onlineUsers is massive(with set->filter and has methods)
-    const onlineUsers = await smembers(`onlineUsers`);
-    const onlineUsersSet = new Set(onlineUsers); // O(1) average time complexity
-    const onlineRoomUsers = Array.from(usersFromRoomSet).filter(user => onlineUsersSet.has(user))
-    
-    return onlineRoomUsers
+        // Convert the Set back to an array (IF NEEDED)
+        const uniqueUserIds = Array.from(usersFromRoomSet);
+        // This approach works well even if onlineUsers is massive(with set->filter and has methods)
+        const onlineUsers = await smembers(`onlineUsers`);
+        const onlineUsersSet = new Set(onlineUsers); // O(1) average time complexity
+        const onlineRoomUsers = Array.from(usersFromRoomSet).filter(user => onlineUsersSet.has(user))
+        
+        return onlineRoomUsers
+    }
+    catch(error){
+        console.error("Error fetching online users from the chat:", error.message); 
+        throw new Error("Failed to fetch online chat users. Please try again later.");
+    }
 }
 
 const getHouseworkerFirstRoomID = async(userID) =>{
-    const userRoomKey = `user:${userID}:rooms`;
-    const result = await srandmember(userRoomKey, 1);
-    return result[0];
+    try{
+        const userRoomKey = `user:${userID}:rooms`;
+        const result = await srandmember(userRoomKey, 1);
+        return result[0];
+    }
+    catch(error){
+        console.error("Error fetching houseworker first room id:", error.message); 
+        throw new Error("Failed to fetch houseworker first room id. Please try again later.");
+    }
 }
 
 const getFriendsListByUserID = async(userID) =>{
-    const usersFromRoomSet = new Set();
-    const usersRoomKey = `user:${userID}:rooms`;
-    const usersRoomsIDS = await zrangerev(usersRoomKey , 0, -1);
+    try{
+        const usersFromRoomSet = new Set();
+        const usersRoomKey = `user:${userID}:rooms`;
+        const usersRoomsIDS = await zrangerev(usersRoomKey , 0, -1);
 
-    usersRoomsIDS.forEach(id => {
-        const membersIds = id.split(':');
-        membersIds.forEach(memberID => {
-            usersFromRoomSet.add(memberID);
+        usersRoomsIDS.forEach(id => {
+            const membersIds = id.split(':');
+            membersIds.forEach(memberID => {
+                usersFromRoomSet.add(memberID);
+            })
         })
-    })
 
-    // const uniqueUserIds = Array.from(usersFromRoomSet);
-    const friendsList = Array.from(usersFromRoomSet);
-    return friendsList;
+        // const uniqueUserIds = Array.from(usersFromRoomSet);
+        const friendsList = Array.from(usersFromRoomSet);
+        return friendsList;
+    }
+    catch(error){
+        console.error("Error fetching friends list:", error.message); 
+        throw new Error("Failed to fetch firends list. Please try again later.");
+    }
 }
 
 const addUserToRoom = async(clientID, newUsername, currentRoomID)=>{
-    const newUserID = await getUserIdByUsername(newUsername);
-    const clientUsername = await getUsernameByUserID(clientID);
+    try{
+        const newUserID = await getUserIdByUsername(newUsername);
+        const clientUsername = await getUsernameByUserID(clientID);
+        const currentRoomKey = `room:${currentRoomID}` //room:1:2
+        const currentUserIDS = currentRoomID.split(':');
+        const userPicturePath = await getUserPicturePath(newUsername);
+        const isPrivateChat = currentUserIDS.length == 2 ? true :false 
 
-    const currentRoomKey = `room:${currentRoomID}` //room:1:2
-    const currentUserIDS = currentRoomID.split(':');
+        currentUserIDS.push(newUserID);
+        currentUserIDS.sort((a, b) => a - b);
 
-    const userPicturePath = await getUserPicturePath(newUsername);
-    const isPrivateChat = currentUserIDS.length == 2 ? true :false 
+        let newRoomKey = "room";
+        currentUserIDS.forEach(id =>{
+            newRoomKey+=`:${id}`
+        })
+        //this is memeber of users Rooms -> user:{ID}:rooms
+        const newRoomID = currentUserIDS.join(":"); 
+        const timestamps = Date.now(); //used for score value (miliseconds)
+        const date = new Date(timestamps); 
+        const dateFormat = formatDate(date);
 
-    currentUserIDS.push(newUserID);
-    currentUserIDS.sort((a, b) => a - b);
+        const newRoomKeyExists = await exists(newRoomKey);
+        //but this newRoomKey have contain rooms id in order -> 1:42:311 not 1:311:42
 
-    let newRoomKey = "room";
-    currentUserIDS.forEach(id =>{
-        newRoomKey+=`:${id}`
-    })
-    //this is memeber of users Rooms -> user:{ID}:rooms
-    const newRoomID = currentUserIDS.join(":"); 
-    const timestamps = Date.now(); //used for score value (miliseconds)
-    const date = new Date(timestamps); //obj that contains 
-    const dateFormat = formatDate(date);
+        var notification = null;
+        let notificationArray = [];
+        if(newRoomKeyExists) {
+            return {roomID:null, isPrivate:isPrivateChat};
+        }
+        else{
+            if(isPrivateChat) //client and one houseworker
+            {
+                //add newRoomID in their rooms(set collection)
+                for (const id of currentUserIDS) { 
+                    try{
+                        await zadd(`user:${id}:rooms`, timestamps, newRoomID);
 
-    const newRoomKeyExists = await exists(newRoomKey);
-    //but this newRoomKey have contain rooms id in order -> 1:42:311 not 1:311:42
+                        if(id != clientID){
+                            message = `The client ${clientUsername} has added the houseworker ${newUsername} to the chat`;
+                            notification = await recordNotification(clientID, id, notificationType, message);
+                            notificationArray.push(notification);
+                        }
+                    }
+                    catch(err){
+                        console.error("error: ", err);
+                    }
+                }
 
-    var notification = null;
-    let notificationArray = [];
-    if(newRoomKeyExists) {
-        return {roomID:null, isPrivate:isPrivateChat};
-    }
-    else{
-        if(isPrivateChat) //client and one houseworker
-        {
-            //add newRoomID in their rooms(set collection)
-            for (const id of currentUserIDS) { 
-                try{
+                //add notification for the new added user
+                message = `You've been added to the group by ${clientUsername}`;
+                notification = await recordNotification(clientID, newUserID, notificationType, message);
+                notificationArray.push(notification);
+
+                //create new roomKey and store first initial message
+                const messageObj = JSON.stringify({message:"Chat Created", from:'Server', date:dateFormat, roomID:newRoomID})
+                await zadd(newRoomKey, timestamps, messageObj);
+            }
+            else{
+                //Reinaming Room:ROOMID - sorted set for storing messages
+                await rename(currentRoomKey, newRoomKey);
+                await zadd(`user:${newUserID}:rooms`, timestamps, newRoomID);
+
+                // currentUserIDS.forEach(async(id) =>{  THis doesn't handle async/await properly
+                //assignment is likely happening after the loop finishes so use this another for loop approach
+                for (const id of currentUserIDS) { 
+                    await zrem(`user:${id}:rooms`, currentRoomID);
                     await zadd(`user:${id}:rooms`, timestamps, newRoomID);
 
-                    //notify houseworker that is in chat
+                    //record notification for group users
+                    let message;
+                    if(id === newUserID){
+                        message = `You've been added to the group by ${clientUsername}`;
+                    }
+                    else{
+                        message = `The client ${clientUsername} has added the houseworker ${newUsername} to the chat`;
+                    }
+        
+                    //don't record notificatio for sender(client);
                     if(id != clientID){
-                        message = `The client ${clientUsername} has been added the houseworker ${newUsername} to the chat`;
                         notification = await recordNotification(clientID, id, notificationType, message);
                         notificationArray.push(notification);
                     }
                 }
-                catch(err){
-                    console.error("error: ", err);
-                }
+
+                const messageObj = JSON.stringify({message:`User ${newUsername} has been added to the chat`, from:'Server', date:dateFormat, roomID:newRoomID});
+                await zadd(newRoomKey, timestamps, messageObj);
             }
-
-            //add notification for the new added user
-            message = `You've been added to the group by ${clientUsername}`;
-            notification = await recordNotification(clientID, newUserID, notificationType, message);
-            notificationArray.push(notification);
-
-            //create new roomKey and store first initial message
-            const messageObj = JSON.stringify({message:"Chat Created", from:'Server', date:dateFormat, roomID:newRoomID})
-            await zadd(newRoomKey, timestamps, messageObj);
+            return {
+                newAddedUserID:newUserID,
+                roomID:newRoomID, 
+                isPrivate:isPrivateChat, 
+                newUserPicturePath:userPicturePath,
+                notifications: notificationArray
+            };
         }
-        else{
-            //Reinaming Room:ROOMID - sorted set for storing messages
-            await rename(currentRoomKey, newRoomKey);
-            await zadd(`user:${newUserID}:rooms`, timestamps, newRoomID);
-
-            // currentUserIDS.forEach(async(id) =>{  THis doesn't handle async/await properly
-            //assignment is likely happening after the loop finishes so use this another for loop approach
-            for (const id of currentUserIDS) { 
-                await zrem(`user:${id}:rooms`, currentRoomID);
-                await zadd(`user:${id}:rooms`, timestamps, newRoomID);
-
-                //record notification for group users
-                let message;
-                console.log("ID :: " + id + " newUIserID: " + newUserID);
-                if(id === newUserID){
-                    message = `You've been added to the group by ${clientUsername}`;
-                }
-                else{
-                    message = `The client ${clientUsername} has been added the houseworker ${newUsername} to the chat`;
-                }
-    
-                //don't record notificatio for sender(client);
-                if(id != clientID){
-                    notification = await recordNotification(clientID, id, notificationType, message);
-                    notificationArray.push(notification);
-                }
-            }
-
-            const messageObj = JSON.stringify({message:`User ${newUsername} has been added to the chat`, from:'Server', date:dateFormat, roomID:newRoomID});
-            await zadd(newRoomKey, timestamps, messageObj);
-        }
-        return {
-            newAddedUserID:newUserID,
-            roomID:newRoomID, 
-            isPrivate:isPrivateChat, 
-            newUserPicturePath:userPicturePath,
-            notifications: notificationArray
-        };
+    }
+    catch(error){
+        console.error("Error adding user to room messages:", error.message); 
+        throw new Error("Failed to add user to the room. Please try again later.");
     }
 }
 
 
 const removeUserFromRoomID = async(clientID, roomID, username) =>{
-    const userID = await getUserIdByUsername(username);
-    const clientUsername = await getUsernameByUserID(clientID);
+    try{
 
-    const currentRoomKey = `room:${roomID}` //room:1:2
-    const currentUserIDS = roomID.split(':');
+        const userID = await getUserIdByUsername(username);
+        const clientUsername = await getUsernameByUserID(clientID);
 
-    const newIds = currentUserIDS.filter(id => id !== userID);
-    const newRoomID = newIds.join(":");
-    const newRoomKey = `room:${newRoomID}`
+        const currentRoomKey = `room:${roomID}` //room:1:2
+        const currentUserIDS = roomID.split(':');
 
-    //if newRoomKey exist (group with same members)
-    //make newRoomKey to be unique to avoid conflict with same roomID
-    const newRoomKeyExists = await exists(newRoomKey);
-    if(newRoomKeyExists){
-        return{
-            newRoomID:null, 
-            kickedUserID:userID
+        const newIds = currentUserIDS.filter(id => id !== userID);
+        const newRoomID = newIds.join(":");
+        const newRoomKey = `room:${newRoomID}`
+
+        //if newRoomKey exist (group with same members)
+        //make newRoomKey unique to avoid a conflict with the same roomID
+        const newRoomKeyExists = await exists(newRoomKey);
+        if(newRoomKeyExists){
+            return{
+                newRoomID:null, 
+                kickedUserID:userID
+            }
         }
-    }
-    
-    let notificationsArray =[];
-    //(FOR REMOVED USER)
-    //-find set `user:${userID}:rooms` and remove roomID from that set
-    await zrem(`user:${userID}:rooms`, roomID);
-    const message = `You've been kicked from the group chat by ${clientUsername}`;
-    const notification = await recordNotification(clientID, userID, notificationType, message);
-    notificationsArray.push(notification);
-
-    //FOR OTHER MEMBERS (replace the old RoomID with new one)
-    // newIds.forEach(async(id) =>{ 
-    for (const id of newIds) {
-        await zrem(`user:${id}:rooms`, roomID);
-        await zadd(`user:${id}:rooms`, timestamps, newRoomID);
         
-        if(id !== clientID){
-            //notify other users
-            const message = `The houseworker ${username} has been kicked from the group by ${clientUsername}`;
-            const notification = await recordNotification(clientID, id, notificationType, message);
-            notificationsArray.push(notification);   
+        let notificationsArray =[];
+        //for removed user
+        await zrem(`user:${userID}:rooms`, roomID);
+        const message = `You've been kicked from the group chat by ${clientUsername}`;
+        const notification = await recordNotification(clientID, userID, notificationType, message);
+        notificationsArray.push(notification);
+
+        //FOR OTHER MEMBERS (replace the old RoomID with new one)
+        for (const id of newIds) {
+            await zrem(`user:${id}:rooms`, roomID);
+            await zadd(`user:${id}:rooms`, timestamps, newRoomID);
+            
+            if(id !== clientID){
+                //notify other users
+                const message = `The houseworker ${username} has been kicked from the group by ${clientUsername}`;
+                const notification = await recordNotification(clientID, id, notificationType, message);
+                notificationsArray.push(notification);   
+            }
         }
-    // })
+
+        //find sorted set and remove user from it (id) room:3:6:22:123 where messages are stored
+        await rename(currentRoomKey, newRoomKey);
+
+        const timestamps = Date.now();
+        const date = new Date(timestamps); 
+        const dateFormat = formatDate(date);
+        const messageObj = JSON.stringify({message:`User ${username} has been kicked from the chat`, from:'Server', date:dateFormat, roomID:newRoomID})
+        await zadd(newRoomKey, timestamps, messageObj);
+
+        return {
+            newRoomID, 
+            kickedUserID:userID,
+            notifications:notificationsArray
+        };
     }
-
-    //find sorted set and remove user from it (id) room:3:6:22:123 where messages are stored
-    await rename(currentRoomKey, newRoomKey);
-
-    //Store Server message (user {username} is kicked from the chat)
-    const timestamps = Date.now(); //used for score value (miliseconds)
-    const date = new Date(timestamps); //obj that contains 
-    const dateFormat = formatDate(date);
-    const messageObj = JSON.stringify({message:`User ${username} has been kicked from the chat`, from:'Server', date:dateFormat, roomID:newRoomID})
-    await zadd(newRoomKey, timestamps, messageObj);
-
-    return {
-        newRoomID, 
-        kickedUserID:userID,
-        notifications:notificationsArray
-    };
+    catch(error){
+        console.error("Error removing user from the room:", error.message); 
+        throw new Error("Failed to remove user form the room. Please try again later."); 
+    }
 }
 
 const deleteRoomByRoomID = async(clientID, roomID) =>{
-    const usersID = roomID.split(':');
-    const clientUsername = await getUsernameByUserID(clientID);
+    try{
+        const usersID = roomID.split(':');
+        const clientUsername = await getUsernameByUserID(clientID);
 
-    let notificationsArray =[];
-    for (const id of usersID) { 
-        await zrem(`user:${id}:rooms`, roomID); //delte example memeber 1:2 in user:1:rooms 
+        let notificationsArray =[];
+        for (const id of usersID) { 
+            await zrem(`user:${id}:rooms`, roomID);
 
-        if(id != clientID){
-            const message = `The room ${roomID} has been deleted by ${clientUsername}`;
-            const notification = await recordNotification(clientID, id, notificationType, message);  
-            notificationsArray.push(notification);
+            if(id != clientID){
+                const message = `The room ${roomID} has been deleted by ${clientUsername}`;
+                const notification = await recordNotification(clientID, id, notificationType, message);  
+                notificationsArray.push(notification);
+            }
         }
+
+        await del(`room:${roomID}`);
+        return notificationsArray;
     }
-
-    //Delete sorted Set which contains all messages in ROOM
-    await del(`room:${roomID}`);
-    return notificationsArray;
-
+    catch(error){
+        console.error("Error fetching messages:", error.message); 
+        throw new Error("Failed to delete room. Please try again later."); 
+    }
 }
  
 const sendMessage = async(messageObj) =>{
-    const {roomID, from} = messageObj;
-    const roomKey = `room:${roomID}`;
-    const roomExists = await exists(roomKey);
-    const fromUsername = await getUsernameByUserID(from);
+    try{
+        const {roomID, from} = messageObj;
+        const roomKey = `room:${roomID}`;
+        const roomExists = await exists(roomKey);
+        const fromUsername = await getUsernameByUserID(from);
 
-    const timestamps = Date.now(); //used for score value (miliseconds)
-    const date = new Date(timestamps); //obj that contains 
-    const dateFormat = formatDate(date);
-    const newMessageObj = {...messageObj, date:dateFormat};
+        const timestamps = Date.now();
+        const date = new Date(timestamps); 
+        const dateFormat = formatDate(date);
+        const newMessageObj = {...messageObj, date:dateFormat};
 
-    const usersID = roomID.split(":");//[1,2]
-    let lastMessage = null;
+        const usersID = roomID.split(":");
+        let lastMessage = null;
 
-    let createRoomNotification = null;
-    if(!roomExists){
-    //or we have to create room and then send message
-    //ROOM WILL BE ONLY CREATED WHEN Client send message TO HOUSEWORKER and this houseworker doesn't have room 
-        for(const id of usersID){
-            await zadd(`user:${id}:rooms`, timestamps, roomID);
-
-            if(id !=from){
-                console.log("RECORD CLIENT START NOTIFI");
-                const message = `The client ${fromUsername} has started conversation with you`
-                createRoomNotification = await recordNotification(from, id, notificationType, message);
+        let createRoomNotification = null;
+        if(!roomExists){
+        //or we have to create room and then send message
+        //ROOM WILL BE ONLY CREATED WHEN Client send message TO HOUSEWORKER and this houseworker doesn't have room 
+            for(const id of usersID){
+                await zadd(`user:${id}:rooms`, timestamps, roomID);
+                if(id !=from){
+                    const message = `The client ${fromUsername} has started conversation with you`
+                    createRoomNotification = await recordNotification(from, id, notificationType, message);
+                }
             }
         }
-    }
-    else{
-        //update all receiver and client room score on message receiving
-        for(const id of usersID)
-            await zaddxx(`user:${id}:rooms`, timestamps, roomID);
-    }
+        else{
+            //update all receiver and client room score on message receiving
+            for(const id of usersID)
+                await zaddxx(`user:${id}:rooms`, timestamps, roomID);
+        }
 
-    if(usersID.length == 2){
-        //only for private conversation the last message is displayed
-        lastMessage = messageObj.message;
-    }
+        if(usersID.length == 2){ //private conversation *display last message
+            lastMessage = messageObj.message;
+        }
 
-    const unreadMessArray = await postUnreadMessagesToUser(roomID, from);
-    await zadd(roomKey, timestamps, JSON.stringify(newMessageObj));
-    return {roomKey, dateFormat, lastMessage, unreadMessArray, createRoomNotification};
+        const unreadMessArray = await postUnreadMessagesToUser(roomID, from);
+        await zadd(roomKey, timestamps, JSON.stringify(newMessageObj));
+
+        return {roomKey, dateFormat, lastMessage, unreadMessArray, createRoomNotification};
+    }
+    catch(error){
+        console.error("Error sending messages:", error.message);
+        throw new Error("Failed to send message. Please try again later.");
+    }
 }
 
 const postUnreadMessagesToUser = async(roomID, senderUserID) =>{
-    const userIDFromRoom = roomID.split(":").filter(id => id != senderUserID);
-    
-    let unreadMessagesArray = [];
-    userIDFromRoom.forEach(async(id)=>{
-        const unreadMessKey =`user${id}:room:${roomID}:unread`
-        let countNumber = await getUnreadMessageCountByRoomID(id, roomID);
-        console.log("\n unreaDMESSKEYT: ", unreadMessKey);
-        console.log("\n COUNT NUMBER: " , countNumber);
-        
-        let updateStatus = false;
-        //the unreadMessagesExist
-        if(countNumber){
-            countNumber = countNumber + 1;
-            updateStatus = true;
-        }
-        else{
-            countNumber = 1;
-        }
-        unreadMessagesArray.push({roomID, recipientID:id, countNumber, updateStatus});
-        // await hmset(unreadMessKey, ["last_received_timestamp", timestamps, "count", countNumber, "sender", from]);
-        await hmset(unreadMessKey, ["count", countNumber, "sender", senderUserID]);
-    })
+    try{
+        const userIDFromRoom = roomID.split(":").filter(id => id != senderUserID);
+        let unreadMessagesArray = [];
 
-    return unreadMessagesArray;
+        userIDFromRoom.forEach(async(id)=>{
+            const unreadMessKey =`user${id}:room:${roomID}:unread`
+            let countNumber = await getUnreadMessageCountByRoomID(id, roomID);
+            let updateStatus = false;
+
+            if(countNumber){
+                countNumber = countNumber + 1;
+                updateStatus = true;
+            }
+            else{
+                countNumber = 1;
+            }
+            
+            unreadMessagesArray.push({roomID, recipientID:id, countNumber, updateStatus});
+            await hmset(unreadMessKey, ["count", countNumber, "sender", senderUserID]);
+        })
+
+        return unreadMessagesArray;
+    }
+    catch(error){
+        console.error("Error posting  unread messages to user:", error.message); 
+        throw new Error("Failed to post unread messages. Please try again later.");
+    }
 }
 
 const getUnreadMessages = async(username) =>{
-    let userID = await getUserIdByUsername(username);
-    const userRoomKey = `user:${userID}:rooms`;
-    let rooms = await zrangerev(userRoomKey , 0, -1);
+    try{
+        let userID = await getUserIdByUsername(username);
+        const userRoomKey = `user:${userID}:rooms`;
+        let rooms = await zrangerev(userRoomKey , 0, -1);
 
-    var unreadMessageArray = [];
-    let totalCount = 0;
-    for(const roomID of rooms){
-        const countNumber = await getUnreadMessageCountByRoomID(userID, roomID);
-        if(countNumber)
-        {
-            const obj ={
-                roomID:roomID,
-                count:countNumber,
-                // sender:userID
+        var unreadMessageArray = [];
+        let totalCount = 0;
+        for(const roomID of rooms){
+            const countNumber = await getUnreadMessageCountByRoomID(userID, roomID);
+            if(countNumber)
+            {
+                const obj ={
+                    roomID:roomID,
+                    count:countNumber,
+                }
+                unreadMessageArray.push(obj);
+                totalCount += countNumber;
             }
-            unreadMessageArray.push(obj);
-            totalCount += countNumber;
-            console.log("unreadMess:", unreadMessageArray , "\n");
         }
+        const unreadMessageObj = {unread:unreadMessageArray, totalUnread:totalCount}
+        return unreadMessageObj;
     }
-
-    const unreadMessageObj = {unread:unreadMessageArray, totalUnread:totalCount}
-    return unreadMessageObj;
+    catch(error){
+        console.error("Error fetching unread messages:", error.message); 
+        throw new Error("Failed to fetch unread messages. Please try again later.");
+    }
 }
 
-//when user click on room with unread messages
 const resetUnreadMessagesCount = async(roomID, userID) =>{
     try{
         const unreadMessKey = `user${userID}:room:${roomID}:unread`
@@ -612,8 +568,8 @@ const getUnreadMessagesTotalCount = async(userID) =>{
     try{
         const userRoomKey = `user:${userID}:rooms`;
         let rooms = await zrangerev(userRoomKey , 0, -1);
-
         let totalCount = 0;
+
         for(const roomID of rooms){
             const countNumber = await getUnreadMessageCountByRoomID(userID, roomID);
             if(countNumber)
@@ -629,16 +585,16 @@ const getUnreadMessagesTotalCount = async(userID) =>{
 }
 
 const getRoomCount = async(userID)=>{
-    const userKey = `user:${userID}:rooms`;
-    const count = await zcard(userKey);
-    return count;
+    try{
+        const userKey = `user:${userID}:rooms`;
+        const count = await zcard(userKey);
+        return count;
+    }
+    catch(error){
+        console.error("Error getting room count:", error.message); 
+        throw new Error("Failed to get room count. Please try again later.");
+    }
 }
-
-
-
-//ITS MORE EFFICIENT TO ADD NEW SER FOR EACH USERS -> ChatMembers 
-//After adding users to group(chat) -> add it to this set and every user will have list of theirs users ids
-//INSTEAD OF EXTRACTING memebers from users rooms ids.
 
 module.exports ={
     getRoomIdInOrder,

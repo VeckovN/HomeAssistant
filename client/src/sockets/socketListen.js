@@ -71,6 +71,7 @@ export const listenFormMessage = async(socket, reduxDispatch) =>{
 //users Joined in room (room.join(io.to(roomKey).emit()) listen for these events
 export const listenOnMessageInRoom = (socket, dispatch) =>{
     socket.on("messageRoom", (contextObj) =>{
+        console.log("messageRoom ContextOBJ:  ", contextObj);
         dispatch({type:"SEND_MESSAGE", data:contextObj})
     })
 }
@@ -79,6 +80,7 @@ export const listenOnMessageInRoom = (socket, dispatch) =>{
 export const listenOnMessageReceive = (socket, dispatch) =>{
     socket.on("messagePage", (contextObj) =>{
         const {roomID, lastMessage} = contextObj;
+        console.log("listenOnMessageReceive ContextOBJ:  ", contextObj);
         dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:roomID, message:lastMessage}) 
     })
 }
