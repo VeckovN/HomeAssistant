@@ -1,126 +1,158 @@
-const {session,driver} = require('../db/neo4j');
+const {driver} = require('../db/neo4j');
 const bcrypt = require('bcrypt');
 
 //return user Type and user Info
 const findByUsername = async(username)=>{
-    //finduser and return userType and userInfo
     const session = driver.session();
+    try{
+        const userResult = await session.run(
+            `MATCH (n:User {username:$name}) 
+            RETURN n`,
+            {name:username}
+        )
 
-    const userResult = await session.run(
-        `MATCH (n:User {username:$name}) 
-        RETURN n`,
-        {name:username}
-    )
+        if(userResult.records.length == 0){
+            return null
+        }
+        //Return userType
+        //OPTINAL MATCH Return Null if cant find node(in this situatian that is relation-IS_HOUSEWORKER)
+        const userTypeResult = await session.run(`
+            OPTIONAL MATCH (n:User {username:$name})-[r:IS_HOUSEWORKER]->()
+            RETURN DISTINCT Case Type(r) WHEN "IS_HOUSEWORKER" THEN "Houseworker" ELSE "Client" END 
+        `,
+        {name:username})
 
-    if(userResult.records.length == 0){
-        return null
+        const userType = userTypeResult.records[0].get(0);
+        const userInfo = userResult.records[0].get(0).properties;
+     
+        return {props:userInfo, type:userType};
     }
-    //Return userType
-    //OPTINAL MATCH Return Null if cant find node(in this situatian that is relation-IS_HOUSEWORKER)
-    const userTypeResult = await session.run(`
-        OPTIONAL MATCH (n:User {username:$name})-[r:IS_HOUSEWORKER]->()
-        RETURN DISTINCT Case Type(r) WHEN "IS_HOUSEWORKER" THEN "Houseworker" ELSE "Client" END 
-    `,
-    {name:username})
-
-
-    const userType = userTypeResult.records[0].get(0);
-    const userInfo = userResult.records[0].get(0).properties;
-    console.log("User: " + JSON.stringify(userType) + "--- " + JSON.stringify(userInfo));
-
-    session.close();
-    return {props:userInfo, type:userType};
+    catch(error){
+        console.error("Error finding user info :", error.message); 
+        throw new Error("Failed to find user. Please try again later.");
+    }
+    finally{
+        session.close();
+    }
 }
 
 const checkUser = async(username)=>{
-    //finduser and return userType and userInfo
     const session = driver.session();
+    try{
+        const userResult = await session.run(
+            `MATCH (n:User {username:$name}) 
+            RETURN n`,
+            {name:username}
+        )
 
-    const userResult = await session.run(
-        `MATCH (n:User {username:$name}) 
-        RETURN n`,
-        {name:username}
-    )
-
-    if(userResult.records.length == 0){
-        return null
+        if(userResult.records.length == 0){
+            return null
+        }
+        return true;
     }
-
-    session.close();
-    return true;
+    catch(error){
+        console.error("Error checking user :", error.message); 
+        throw new Error("Failed to check user. Please try again later.");
+    }
+    finally{
+        session.close();
+    }
 }
 
 const checkEmail = async(email)=>{
     const session = driver.session();
+    try{
+        const userResult = await session.run(
+            `MATCH (n:User {email:$email}) 
+            RETURN n`,
+            {email:email}
+        )
 
-    const userResult = await session.run(
-        `MATCH (n:User {email:$email}) 
-        RETURN n`,
-        {email:email}
-    )
+        if(userResult.records.length == 0){
+            return null
+        }
 
-    if(userResult.records.length == 0){
-        return null
+        return true;
     }
-
-    session.close();
-    return true;
+    catch(error){
+        console.error("Error checking emial :", error.message); 
+        throw new Error("Failed to check user email. Please try again later.");
+    }
+    finally{
+        session.close();
+    }
 }
 
 
 const changePassword = async(username,password) =>{
     const session = driver.session();
+    try{
+        const hashedPassword = bcrypt.hashSync(password, 12);
+        const result = await session.run(
+            `MATCH(n:User {username:$name}) 
+            Set n.password = $pass
+            return n`,
+            {name:username, pass:hashedPassword}
+        )
 
-    console.log("Passwrod: " + password);
-    const hashedPassword = bcrypt.hashSync(password, 12);
-    console.log("Hashed password: " + hashedPassword);
-
-    const result = await session.run(
-        `MATCH(n:User {username:$name}) 
-        Set n.password = $pass
-        return n`,
-        {name:username, pass:hashedPassword}
-    )
-
-    session.close();
-
-    return result.records[0].get(0).properties;
+        return result.records[0].get(0).properties;
+    }
+    catch(error){
+        console.error("Error changing the password :", error.message); 
+        throw new Error("Failed to change password. Please try again later.");
+    }
+    finally{
+        session.close();
+    }
 }
 
 const updateCityRelation = async(username,city)=>{
     const session = driver.session();
-    const result = await session.run(`
-        MATCH (n:User {username: $houseworker})-[oldRel:LIVES_IN]->(:City)
-        DELETE oldRel
-        WITH n
-        MERGE (c:City {name: $cityName})
-        MERGE (n)-[:LIVES_IN]->(c)
-        RETURN n;
-    `
-    ,{houseworker:username, cityName:city}
-    )
-    
-    session.close();
-    return result.records[0].get(0);
+    try{
+        const result = await session.run(`
+            MATCH (n:User {username: $houseworker})-[oldRel:LIVES_IN]->(:City)
+            DELETE oldRel
+            WITH n
+            MERGE (c:City {name: $cityName})
+            MERGE (n)-[:LIVES_IN]->(c)
+            RETURN n;
+        `
+        ,{houseworker:username, cityName:city}
+        )
+        
+        return result.records[0].get(0);
+    }
+    catch(error){
+        console.error("Error updating user city :", error.message); 
+        throw new Error("Failed to update user city. Please try again later.");
+    }
+    finally{
+        session.close();
+    }
 }
 
 //only for moving from Neo4j to Redis after adding(change code) picturePath in Redis users hash
 const getAllUsersnameWithPicturePath = async() =>{
     const session = driver.session();
-    const result = await session.run(`
-        MATCH (n:User) RETURN n.id, n.picturePath
-    `)
+    try{
+        const result = await session.run(`
+            MATCH (n:User) RETURN n.id, n.picturePath
+        `)
+        const userInfo = result.records.map(rec=>{
+            return {id:rec.get(0), picturePath:rec.get(1)}
+        });
 
-    const userInfo = result.records.map(rec=>{
-        return {id:rec.get(0), picturePath:rec.get(1)}
-    });
-
-    session.close();
-    return userInfo;
+        return userInfo;
+    }
+    catch(error){
+        console.error("Error getting users with picture path:", error.message); 
+        throw new Error("Failed to get user with picture path. Please try again later.");
+    }
+    finally{
+        session.close();
+    }
 }
  
-
-
 // *****INITIAL CREATED
 // -Create gender on start of project(becase we don't have aditional gender after in project process)
 // CREATE(n:Gender {type:"Male"})
@@ -137,13 +169,6 @@ const getAllUsersnameWithPicturePath = async() =>{
 //CREATE(a:Profession {title:"Home Health Aide", description:"Provides medical and personal care to individuals with health needs"})
 //CREATE(a:Profession {title:"Personal Shopper", description:"Assists with shopping for groceries, clothing, and other household needs"})
 //CREATE(a:Profession {title:"Butler", description: "Manages various aspects of the household, such as scheduling, organizing, and supervising other staff"})
-
-
-//----------------CHAT PART--------------------
-
-
-
-
 
 
 module.exports = {findByUsername, changePassword, checkUser, checkEmail, updateCityRelation, getAllUsersnameWithPicturePath};

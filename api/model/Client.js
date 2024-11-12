@@ -1,288 +1,302 @@
-const {session,driver} = require('../db/neo4j');
+const {driver} = require('../db/neo4j');
 const { set, get, expire } = require('../db/redis');
 const {recordNotification, getUserIdByUsername} = require('../db/redisUtils');
 
-//When is important to return all properties of Node
-//we can return whole node with RETURN node and return records[0].get(0).properties
-
-//But when we want to reture some properties not all of them
-//we  can return those properties Return node.property1, node.property2
-
-
-//for notification record
-const notificationType="comment";
-
+const notificationType="comment"; //for notification record
 
 const findByUsername = async (username)=>{
     const session = driver.session();
-    const result = await session.run(
-        `MATCH (n:User {username:$name})-[:IS_CLIENT]->() 
-        RETURN n`,
-        {name:username})
+    try{
+        const result = await session.run(
+            `MATCH (n:User {username:$name})-[:IS_CLIENT]->() 
+            RETURN n`,
+            {name:username})
 
-    //if user not exists 
-    console.log("RES: " + result.records.length );
-    if(result.records.length == 0)
-        return null
-    else{
-        const singleRecord = result.records[0];
-        //whole OBject(node) (with all properies)
-        const node = singleRecord.get(0);
-        //to get all properties 
-        const client = node.properties;
+        //if user not exists 
+        if(result.records.length == 0)
+            return null
+        else{
+            const singleRecord = result.records[0];
+            //whole OBject(node) (with all properies)
+            const node = singleRecord.get(0);
+            //to get all properties 
+            const client = node.properties;
 
-        //show result as JSON
-        // console.log("ALL RESULTS: " + JSON.stringify(allResults));
-
-        //THIS IS A PROMISE, We return a promise Because we used await to take get result from session.run
-        //return object without password
-        session.close();
-        return client;
+            //THIS IS A PROMISE, We return a promise Because we used await to take get result from session.run
+            //return object without password
+            return client;
+        }
     }
+    catch(error){
+        console.error("Error finding username :", error.message); 
+        throw new Error("Failed to find user by username. Please try again later.");
+    }
+    finally{//close session regardless of the outcome
+        session.close();
+    }
+    
 }
 
 const getCity = async(username)=>{
     const session = driver.session();
+    try{
+        const result = await session.run(
+            `MATCH(n:User)-[:LIVES_IN]-(c)
+            WHERE n.username = $username
+            RETURN c.name `,
+            {username:username}
+        )
 
-    const result = await session.run(
-        `MATCH(n:User)-[:LIVES_IN]-(c)
-        WHERE n.username = $username
-        RETURN c.name `,
-        {username:username}
-    )
+        const city = result.records[0].get(0);
+        console.log("CIRTTTTTTT" + city);
+        return city;
 
-    const city = result.records[0].get(0);
-    console.log("CIRTTTTTTT" + city);
-
-    session.close();
-    //all others client
-    return city;
-    
+    }
+    catch(error){
+        console.error("Error finding username :", error.message); 
+        throw new Error("Failed to fetch all users. Please try again later.");
+    }
+    finally{ //close session regardless of the outcome
+        session.close();
+    }
 }
 
 const getInfo = async (username) =>{
     const session = driver.session();
-    //more than one is expected
-    const result = await session.run(
-        `MATCH(n:User {username:$name})-[:IS_CLIENT]->(c)
-            MATCH(n)-[:GENDER]->(g)
-            MATCH(n)-[:LIVES_IN]->(l)
-            RETURN n,  g.type, l.name`
-        ,{name:username}
-    )
+    try{
+        const result = await session.run(
+            `MATCH(n:User {username:$name})-[:IS_CLIENT]->(c)
+                MATCH(n)-[:GENDER]->(g)
+                MATCH(n)-[:LIVES_IN]->(l)
+                RETURN n,  g.type, l.name`
+            ,{name:username}
+        )
 
-    //if there isn't users
-    if(result.records.length == 0)
-        //not good practice to return Error
-        // return new Error("Client not exists")
-        return []; 
+        //if there isn't users
+        if(result.records.length == 0)
+            //not good practice to return Error
+            // return new Error("Client not exists")
+            return [];   
 
-    //one result -> [0]
-    const clientProp = result.records[0].get(0).properties;
-    const clientGender = result.records[0].get(1);
-    const clientCity = result.records[0].get(2);
+        //one result -> [0]
+        const clientProp = result.records[0].get(0).properties;
+        const clientGender = result.records[0].get(1);
+        const clientCity = result.records[0].get(2);
 
-    //all properties excpets password
-    const { password, ...clientInfo} = clientProp 
+        //all properties excpets password
+        const { password, ...clientInfo} = clientProp 
 
-    //Add gender and city
-    clientInfo.gender = clientGender;
-    clientInfo.city = clientCity;
+        //Add gender and city
+        clientInfo.gender = clientGender;
+        clientInfo.city = clientCity;
 
-    console.log("CLIENT INFO: " + JSON.stringify(clientInfo));
-
-    session.close();
-    return clientInfo;
+        console.log("CLIENT INFO: " + JSON.stringify(clientInfo));
+        return clientInfo;
+    }
+    catch(error){
+        console.error("Error getting info :", error.message); 
+        throw new Error("Failed to get info. Please try again later.");
+    }
+    finally{
+        session.close();
+    }
 }
 
 const findAll = async ()=>{
     const session = driver.session();
     //more than one is expected
-    const result = await session.run(
-        'Match(n:User)-[:IS_CLIENT]->() return n'
-    )
+    try{
+        const result = await session.run(
+            'Match(n:User)-[:IS_CLIENT]->() return n'
+        )
 
-    //if there isn't users
-    if(result.records.length == 0)
-        return []
+        //if there isn't users
+        if(result.records.length == 0)
+            return []
 
-    const clients = result.records.map(el=>{
-        //return each clients propteries as object
-        return el.get(0).properties;
-    })
-
-    session.close();
-    return clients;
+        const clients = result.records.map(el=>{
+            //return each clients propteries as object
+            return el.get(0).properties;
+        })
+        return clients;
+    }
+    catch(error){
+        console.error("Error finding username :", error.message); 
+        throw new Error("Failed to fetch all users. Please try again later.");
+    }
+    finally{
+        session.close();
+    }
+    
 }
 
 const findByUsernameAndDelete = async (username)=>{
     const session = driver.session();
-    //User -[:IS_CLIENT]->Client
-    //to delete a node it is necessery to DELTE THE RELATIONSHIP FIRST
-    const result = await session.run(
-        "MATCH (n:User {username:$name})-[r:IS_CLIENT]->(m) DELETE r, n, m",
-        {name:username}
-    )
-    session.close();
-    //all others client
+    try{
+        //User -[:IS_CLIENT]->Client
+        //to delete a node it is necessery to DELTE THE RELATIONSHIP FIRST
+        const result = await session.run(
+            "MATCH (n:User {username:$name})-[r:IS_CLIENT]->(m) DELETE r, n, m",
+            {name:username}
+        )
+    }
+    catch(error){
+        console.error("Error deleting user :", error.message); 
+        throw new Error("Failed to delete user. Please try again later.");
+    }
+    finally{
+        session.close();
+    }
+    //all others client after user delete
     return await findAll();
 }
 
 
 const getAllComments = async (username)=>{
     const session = driver.session();
-    const result = await session.run(`
-    MATCH(n:Client {username:$name})-[r:COMMENTED]->(m)MATCH(m)-[b:BELONGS_TO]->(c) 
-    RETURN m.context,c.username`,
-    {name:username})
+    try{
+        const result = await session.run(`
+        MATCH(n:Client {username:$name})-[r:COMMENTED]->(m)MATCH(m)-[b:BELONGS_TO]->(c) 
+        RETURN m.context,c.username`,
+        {name:username})
 
-    //WHEN WE RETURN WHOLE NODE RETURN m, c;
-    // const comments = result.records.map(rec=>{
-    //     //rec.get(0) is first node -> Comment node --- rec.get(0).properties -> (context='example comentar')
-    //     //rec.get(1) is seccodn node -> Houseworker node --- rec.get(1).properties ->(username="Sara", working_hours='200')
-    //     //console.log("re: " + rec.get(0) + "re2: " +rec.get(1));
-    //     const commentProperties = rec.get(0).properties;
-    //     const houseWorkerProperties = rec.get(1).properties;
-    //     return {comment:commentProperties.context, houseworker:houseWorkerProperties.username}
-    // });
+        const comments = result.records.map(rec=>{
+            //rec.get(0) is first node -> Comment node --- rec.get(0).properties -> (context='example comentar')
+            //rec.get(1) is seccodn node -> Houseworker node --- rec.get(1).properties ->(username="Sara", working_hours='200')
+            //console.log("re: " + rec.get(0) + "re2: " +rec.get(1));
+            return {comment:rec.get(0), houseworker:rec.get(1)}
+        });
 
-    const comments = result.records.map(rec=>{
-        //rec.get(0) is first node -> Comment node --- rec.get(0).properties -> (context='example comentar')
-        //rec.get(1) is seccodn node -> Houseworker node --- rec.get(1).properties ->(username="Sara", working_hours='200')
-        //console.log("re: " + rec.get(0) + "re2: " +rec.get(1));
-        return {comment:rec.get(0), houseworker:rec.get(1)}
-    });
-
-    session.close();
-    return comments;
-
+        return comments;
+    }
+    catch(error){
+        console.error("Error getting all comments :", error.message); 
+        throw new Error("Failed to fetch all user comments. Please try again later.");
+    }
+    finally{
+        session.close();
+    }
 }
-//comments.records;
-// [
-//     Record {
-//       keys: [ 'm', 'c' ],
-//       length: 2,
-//       _fields: [ [Node], [Node] ],
-//       _fieldLookup: { m: 0, c: 1 }
-//     },
-//     Record {
-//       keys: [ 'm', 'c' ],
-//       length: 2,
-//       _fields: [ [Node], [Node] ],
-//       _fieldLookup: { m: 0, c: 1 }
-//     }
-//   ]
-
 
 const commentHouseworker = async(client, houseworker, comment)=>{
     const session = driver.session();
+    try{
+        const result = await session.run(`
+        MATCH (n:Client {username:$client})
+        MATCH (m:HouseWorker {username:$houseworker})
+        CREATE (c:Comment {context:$comment, read:false, timestamp: timestamp()} )
+        CREATE (n)-[:COMMENTED]->(c)
+        CREATE (c)-[:BELONGS_TO]->(m)
+        RETURN ID(c) AS commentID, apoc.date.format(c.timestamp, "ms", "dd.MM.yyyy") AS commentTimestamp`
+        , {client:client, houseworker:houseworker, comment:comment}
+        )
 
-    const result = await session.run(`
-    MATCH (n:Client {username:$client})
-    MATCH (m:HouseWorker {username:$houseworker})
-    CREATE (c:Comment {context:$comment, read:false, timestamp: timestamp()} )
-    CREATE (n)-[:COMMENTED]->(c)
-    CREATE (c)-[:BELONGS_TO]->(m)
-    RETURN ID(c) AS commentID, apoc.date.format(c.timestamp, "ms", "dd.MM.yyyy") AS commentTimestamp`
-    , {client:client, houseworker:houseworker, comment:comment}
-    )
+        const clientID = await getUserIdByUsername(client);
+        const houseworkerID = await getUserIdByUsername(houseworker);
 
-    const clientID = await getUserIdByUsername(client);
-    const houseworkerID = await getUserIdByUsername(houseworker);
+        const message = `You've got comment from ${client}`;
+        const notification = await recordNotification(clientID, houseworkerID, notificationType, message);
 
-    const message = `You've got comment from ${client}`;
-    const notification = await recordNotification(clientID, houseworkerID, notificationType, message);
-
-    const commentID = parseInt(result.records[0].get(0));
-    const commentDate = result.records[0].get(1);
-    session.close();
-
-    return {commentID, read:false, commentDate, notificationObj:notification};
+        const commentID = parseInt(result.records[0].get(0));
+        const commentDate = result.records[0].get(1);
+        
+        return {commentID, read:false, commentDate, notificationObj:notification};
+    }
+    catch(error){
+        console.error("Error posting comment :", error.message); 
+        throw new Error("Failed to post the comment. Please try again later.");
+    }
+    finally{
+        session.close();
+    }
 }
 
 
 const deleteComment = async(username, commentID)=>{
     const session = driver.session();
 
-    const comment_id = parseInt(commentID);
-    const result = await session.run(`
-    MATCH(n:Client {username:$client})
-    MATCH (c:Comment) WHERE ID(c) = $id
-    MATCH(n)-[r:COMMENTED]->(c)
-    MATCH(c)-[t:BELONGS_TO]->(m)
-    DELETE r,t,c
-    RETURN n`
-    , {client:username, id:comment_id}
-    )
+    try{
 
-    //get username of deleted User comment -> (Belongs to 'm' than his/her username)
-    // const houseworker = 
-    // const message = `The user ${username} has been deleted the comment`;
-    // const notificationID = await recordNotificationbyUsername(houseworker, notificationType, message);
+        const comment_id = parseInt(commentID);
+        const result = await session.run(`
+        MATCH(n:Client {username:$client})
+        MATCH (c:Comment) WHERE ID(c) = $id
+        MATCH(n)-[r:COMMENTED]->(c)
+        MATCH(c)-[t:BELONGS_TO]->(m)
+        DELETE r,t,c
+        RETURN n`
+        , {client:username, id:comment_id}
+        )
 
-    session.close();
-    return result.records[0];
-    // return {deletedClient: result.records[0], notification:notification};
+        //get username of deleted User comment -> (Belongs to 'm' than his/her username)
+        // const houseworker = 
+        // const message = `The user ${username} has been deleted the comment`;
+        // const notificationID = await recordNotificationbyUsername(houseworker, notificationType, message);
+
+        return result.records[0];
+        // return {deletedClient: result.records[0], notification:notification};
+    }
+    catch(error){
+        console.error("Error deleting comment :", error.message); 
+        throw new Error("Failed to delete user comment. Please try again later.");
+    }
+    finally{
+        session.close();   
+    }
 }
 
 
-const rateHouseworker= async(clientID, clientUsername, houseworkerUsername, rating)=>{
+const rateHouseworker = async(clientID, clientUsername, houseworkerUsername, rating)=>{
     const session = driver.session();
     //MARGE - ON MATCH SET - when Relationship exist we wanna set new rating value not to create another relationsip
-    const result = await session.run(`
-        MATCH(n:Client {username:$client})
-        MATCH(m:HouseWorker {username:$houseworker})
-        MERGE (n)-[r:RATED]->(m)
-        ON CREATE SET r.rating = $rating
-        ON MATCH  SET r.rating = $rating
-        RETURN r.rating
-    `,{client:clientUsername, houseworker:houseworkerUsername, rating:rating}
-    );
-    
-    const rateValue = result.records[0].get(0);
+    try{
 
-    const houseworkerID = await getUserIdByUsername(houseworkerUsername);
-    const message = `The user ${clientUsername} has been rated you with ${rateValue} `;
-    const notification = await recordNotification(clientID, houseworkerID, notificationType, message);
+        const result = await session.run(`
+            MATCH(n:Client {username:$client})
+            MATCH(m:HouseWorker {username:$houseworker})
+            MERGE (n)-[r:RATED]->(m)
+            ON CREATE SET r.rating = $rating
+            ON MATCH  SET r.rating = $rating
+            RETURN r.rating
+        `,{client:clientUsername, houseworker:houseworkerUsername, rating:rating}
+        );
+        
+        const rateValue = result.records[0].get(0);
 
-    session.close();
-    return {notification:notification};
-}
+        const houseworkerID = await getUserIdByUsername(houseworkerUsername);
+        const message = `The user ${clientUsername} has been rated you with ${rateValue} `;
+        const notification = await recordNotification(clientID, houseworkerID, notificationType, message);
 
-const rateHouseworker_client = async(client, username, rating)=>{
-    const session = driver.session();
-    // const ourUsername ="Novak";
-
-    //MARGE - ON MATCH SET - when Relationship exist we wanna set new rating value not to create another relationsip
-    const result = await session.run(`
-        MATCH(n:Client {username:$client})
-        MATCH(m:HouseWorker {username:$houseworker})
-        MERGE (n)-[r:RATED]->(m)
-        ON CREATE SET r.rating = $rating
-        ON MATCH  SET r.rating = $rating
-        RETURN r.rating
-    `,{client:client, houseworker:username, rating:rating}
-    );
-
-    //records[0] is record of n(Node Client)
-    //records[2] is the r(relationship:RATED w)
-    console.log("RATING : " + result.records[0].get(0))
-    return result.records[0].get(0);
-    //or return n,m,r.rating
-    //return result.records[2].get(0)
+        return {notification:notification};
+    }
+    catch(error){
+        console.error("Error rating user :", error.message); 
+        throw new Error("Failed to rate user. Please try again later.");
+    }
+    finally{
+        session.close();
+    }
 }
 
 const addInterest = async(username, interest) =>{
     const session = driver.session();
 
-    await session.run(` 
-        MATCH(n:User {username:$client})-[:IS_CLIENT]->(m)
-        MATCH(p:Profession {title:$profession})
-        MERGE(m)-[r:INTEREST]->(p)
-        RETURN p.title`,
-    {client:username, profession:interest})
+    try{
+        await session.run(` 
+            MATCH(n:User {username:$client})-[:IS_CLIENT]->(m)
+            MATCH(p:Profession {title:$profession})
+            MERGE(m)-[r:INTEREST]->(p)
+            RETURN p.title`,
+        {client:username, profession:interest})
 
-    session.close()
+    }
+    catch(error){
+        console.error("Error adding user interest :", error.message); 
+        throw new Error("Failed to add user interest. Please try again later.");
+    }
+    finally{
+        session.close()
+    }
 }
 
 const create = async(clientObject)=>{
@@ -290,55 +304,63 @@ const create = async(clientObject)=>{
     const session = driver.session();
     const {id, username, email, password, firstName, lastName, picturePath, city, gender, interests} = clientObject;
 
-    //WITH Clause is necessary between Create and Other part of query(Create Gender and City)
-    const result = await session.run(`
-    CREATE (n:User 
-        {
-            id:$id,
-            username:$username, 
-            email:$email, 
-            password:$password, 
-            first_name:$firstName,
-            last_name:$lastName,
-            picturePath:$picturePath
+    try {
+
+        //WITH Clause is necessary between Create and Other part of query(Create Gender and City)
+        const result = await session.run(`
+        CREATE (n:User 
+            {
+                id:$id,
+                username:$username, 
+                email:$email, 
+                password:$password, 
+                first_name:$firstName,
+                last_name:$lastName,
+                picturePath:$picturePath
+            }
+            ) 
+            -[:IS_CLIENT]->
+            (
+            m:Client
+            {
+                username:$username  
+            })
+        WITH n as user , m as client
+        MATCH(g:Gender {type:$gender})
+        CREATE(user)-[r:GENDER]->(g)
+
+        MERGE(c:City {name:$city})
+        MERGE(user)-[h:LIVES_IN]->(c)
+        RETURN user,g.type,c.name
+        `
+        ,{id:id, username:username, email:email, password:password, firstName:firstName, lastName:lastName, picturePath:picturePath, city:city, gender:gender, interests:interests}
+        )
+
+        //Interests relation between profession and Client
+        const interestsArray = interests.split(',');
+        console.log("PROFESSIONS: " + interests);
+        console.log("PROFESSIONSArray: " + JSON.stringify(interestsArray));
+        console.log("PROF: TYPEOF: " + typeof(interests));
+        console.log("PROF: TYPEOF ARRRAY: " + typeof(interestsArray));
+        //add professions
+        interestsArray.forEach(interest => {
+            console.log("PT: " + interest); 
+            addInterest(username, interest);
+        });
+
+        const user = result.records[0].get(0).properties;
+        const userGender = result.records[0].get(1);
+        const userCity = result.records[0].get(2);
+        return {
+            user, gender:userGender, city:userCity
         }
-        ) 
-        -[:IS_CLIENT]->
-        (
-         m:Client
-         {
-             username:$username  
-         })
-    WITH n as user , m as client
-    MATCH(g:Gender {type:$gender})
-    CREATE(user)-[r:GENDER]->(g)
-
-    MERGE(c:City {name:$city})
-    MERGE(user)-[h:LIVES_IN]->(c)
-    RETURN user,g.type,c.name
-    `
-    ,{id:id, username:username, email:email, password:password, firstName:firstName, lastName:lastName, picturePath:picturePath, city:city, gender:gender, interests:interests}
-    )
-
-    //Interests relation between profession and Client
-    const interestsArray = interests.split(',');
-    console.log("PROFESSIONS: " + interests);
-    console.log("PROFESSIONSArray: " + JSON.stringify(interestsArray));
-    console.log("PROF: TYPEOF: " + typeof(interests));
-    console.log("PROF: TYPEOF ARRRAY: " + typeof(interestsArray));
-    //add professions
-    interestsArray.forEach(interest => {
-        console.log("PT: " + interest); 
-        addInterest(username, interest);
-    });
-
-
-    const user = result.records[0].get(0).properties;
-    const userGender = result.records[0].get(1);
-    const userCity = result.records[0].get(2);
-    session.close();
-    return {
-        user, gender:userGender, city:userCity
+    }
+    catch(error){
+        console.error("Error creating user :", error.message); 
+        throw new Error("Failed to create user. Please try again later.");
+    }
+    finally{
+        session.close();
     }
 
 }
@@ -354,52 +376,78 @@ const update = async(username, newValue)=>{
     // picture	"/"
     // username "Novak"
 
-    const result = await session.run(`
-        MATCH (n:User { username: $client})
-        SET n += $object
-        RETURN n
-    `,{client:username, object:newValue}
-    )
-    // const result = await session.run(`
-    //     MATCH (n:User { username: "Novak"})
-    //     SET n += { password:"pwww" , picture:"//" }
-    // `
-    // )
-    session.close();
-    return result.records[0].get(0).properties;
+    try{
+        const result = await session.run(`
+            MATCH (n:User { username: $client})
+            SET n += $object
+            RETURN n
+        `,{client:username, object:newValue}
+        )
+        // const result = await session.run(`
+        //     MATCH (n:User { username: "Novak"})
+        //     SET n += { password:"pwww" , picture:"//" }
+        // `
+        // )
+        return result.records[0].get(0).properties;
+    }
+    catch(error){
+        console.error("Error updating user :", error.message); 
+        throw new Error("Failed to update user. Please try again later.");
+    }
+    finally{
+        session.close();
+    }
 }
 
 //update City node with [:LIVES_IN]
 const updateCity = async(username, city)=>{
     const session = driver.session();
 
-    const result = await session.run(`
-        MATCH(n:User{username:$client})
-        MATCH(n)-[:LIVES_IN]->(c:City)
-        Set c.name = $cityName
-        return c.name
-    `
-    ,{client:username, cityName:city}
-    )
+    try{
+        const result = await session.run(`
+            MATCH(n:User{username:$client})
+            MATCH(n)-[:LIVES_IN]->(c:City)
+            Set c.name = $cityName
+            return c.name
+        `
+        ,{client:username, cityName:city}
+        )
 
-    session.close();
-    return result.records[0].get(0);
+        return result.records[0].get(0);
+    }
+    catch(error){
+        console.error("Error updating user's city :", error.message); 
+        throw new Error("Failed to update user's city. Please try again later.");
+    }
+    finally{
+        session.close();
+    }
 }
 
 const updateGender = async(gender)=>{
     const session = driver.session();
-    const ourUsername = "Sara";
-    const result = await session.run(`
-        MATCH(n:User{username:$client})
-        MATCH(n)-[:GENDER]->(g:Gender)
-        Set g.type = $gender
-        return g.type
-    `
-    ,{client:ourUsername, gender:gender}
-    )
 
-    session.close();
-    return result.records[0].get(0);
+    try{
+
+        const ourUsername = "Sara";
+        const result = await session.run(`
+            MATCH(n:User{username:$client})
+            MATCH(n)-[:GENDER]->(g:Gender)
+            Set g.type = $gender
+            return g.type
+        `
+        ,{client:ourUsername, gender:gender}
+        )
+
+        return result.records[0].get(0);
+    }
+    catch(error){
+        console.error("Error updating user's gender :", error.message); 
+        throw new Error("Failed to update user's gender. Please try again later.");
+    }
+    finally{
+        session.close();
+    }
 }
 
 
@@ -412,55 +460,68 @@ const interestedProfessions = async(professions)=>{
 }
  
 const checkRecommendedInCache = async(username) =>{
-    const data = await get("recommended:" + username);
-    if(data){
-        const dataObj = JSON.parse(data);
-        return dataObj
+    try{
+        const data = await get("recommended:" + username);
+        if(data){
+            const dataObj = JSON.parse(data);
+            return dataObj
+        }
+        else
+            return null
     }
-    else
-        return null
+    catch(error){
+        console.error("Error checking recommended Cache :", error.message); 
+        throw new Error("Failed to check recommended Cache. Please try again later.");
+    }
 }
 
 const recomendedByCityAndInterest = async(username,city) =>{
     const session = driver.session();
 
-    const catchedData = await checkRecommendedInCache(username);
+    try{
+        const catchedData = await checkRecommendedInCache(username);
 
-    if(catchedData == null) {
-        const result = await session.run(`
-            MATCH(h:HouseWorker)-[:OFFERS]->(o:Profession)
-            MATCH(uu:User)-[:IS_CLIENT]->(c:Client)-[:INTEREST]->(o)
-            MATCH(h)<-[:IS_HOUSEWORKER]-(u:User)-[:LIVES_IN]->(l:City)
-            MATCH(u)-[:GENDER]->(g:Gender)
-            WHERE uu.username = $username and l.name = $city
-            WITH DISTINCT u, h, l.name AS cityName, g.type AS genderType
-            RETURN u, h, cityName, genderType, rand() as rand
-            ORDER BY rand ASC
-            LIMIT 3
-            `,{username:username, city:city}
-        )
+        if(catchedData == null) {
+            const result = await session.run(`
+                MATCH(h:HouseWorker)-[:OFFERS]->(o:Profession)
+                MATCH(uu:User)-[:IS_CLIENT]->(c:Client)-[:INTEREST]->(o)
+                MATCH(h)<-[:IS_HOUSEWORKER]-(u:User)-[:LIVES_IN]->(l:City)
+                MATCH(u)-[:GENDER]->(g:Gender)
+                WHERE uu.username = $username and l.name = $city
+                WITH DISTINCT u, h, l.name AS cityName, g.type AS genderType
+                RETURN u, h, cityName, genderType, rand() as rand
+                ORDER BY rand ASC
+                LIMIT 3
+                `,{username:username, city:city}
+            )
 
-        const houseworkers = result.records.map(el =>{
-            let userInfo = {};
-            const userNode = el.get(0).properties;
-            const housworkerNode = el.get(1).properties;
-            userInfo ={...userNode, ...housworkerNode, recommended:true}
-            //gotted id{"low":0,"high":0} it MUST parse to INT
-            userInfo.city = el.get(2);
-            userInfo.gender =el.get(3); 
-            //console.log("USER INFOOOO : " + JSON.stringify(userInfo));
-            return userInfo;
-        })
+            const houseworkers = result.records.map(el =>{
+                let userInfo = {};
+                const userNode = el.get(0).properties;
+                const housworkerNode = el.get(1).properties;
+                userInfo ={...userNode, ...housworkerNode, recommended:true}
+                //gotted id{"low":0,"high":0} it MUST parse to INT
+                userInfo.city = el.get(2);
+                userInfo.gender =el.get(3); 
+                //console.log("USER INFOOOO : " + JSON.stringify(userInfo));
+                return userInfo;
+            })
 
-        await set("recommended:" + username, JSON.stringify(houseworkers))
-        await expire("recommended:" + username, 10*60);
+            await set("recommended:" + username, JSON.stringify(houseworkers))
+            await expire("recommended:" + username, 10*60);
 
-        session.close();
-        return houseworkers;
+            return houseworkers;
+        }
+        else{
+            return catchedData;
+        }
     }
-    else{
+    catch(error){
+        console.error("Error getting recommended users :", error.message); 
+        throw new Error("Failed to get recommended users. Please try again later.");
+    }
+    finally{
         session.close();
-        return catchedData;
     }
 
 }

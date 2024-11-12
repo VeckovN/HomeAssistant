@@ -7,33 +7,32 @@ const getHouseworkerByUsername = async(req,res)=>{e
     try{
         const result = await houseworkerModel.findByUsername(HouseworkerUsername);
         const {password, ...houseworkerData} = result;
-        res.json(houseworkerData);
+        res.status(200).json(houseworkerData);
     }
     catch(err){
-        console.log("ERROR GetHouseworkerBYUsername: " + err);
-        res.status(404).json({error:'GetHouseworkerBYUsername Error'});
+        // console.log("ERROR GetHouseworkerBYUsername: " + err);
+        // res.status(404).json({error:'GetHouseworkerBYUsername Error'});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error getting houseworker"});
     }
 }
 
 const getHouseworkerWithFilters = async(req,res)=>{
+    const filters = req.query;
     try{
-        //take filter parameters from url
-        const filters = req.query;
         const result = await houseworkerModel.findAllWithFilters(filters)
 
         const houseworkers = result.map(el =>{
             const {password, ...houseworkerData} =el;
             return houseworkerData;
         })
-        res.json(houseworkers);
+        res.status(200).json(houseworkers);
 
     }catch(err){
-        console.log("ERROR HouseworkerFilters: " + err);
-        res.status(404).json({error:'Houseworker filter error'});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error houseworker filter"});
     }
 }
-
-
 
 const getHouseworkers = async(req,res)=>{
     try{
@@ -42,47 +41,47 @@ const getHouseworkers = async(req,res)=>{
             const {password, ...houseworkerData} = el;
             return houseworkerData;
         })
-        res.json(houseworkers);
+        res.status(200).json(houseworkers);
     }
     catch(err){
-        console.log("ERROR GetHouseworkers: " + err);
-        res.status(404).json({error:'Houseworkers Error'});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error getting houseworkers"});
     }
 }
 
 const getHouseworkerUsersCount = async(req, res) =>{
     try{
         const result = await houseworkerModel.getHouseworkersCount();
-        res.json(result);
+        res.status(200).json(result);
     }
     catch(err){
-        res.status(404).json({error:'Houseworkers Count Error'});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error houseworker count"});
     }
 }
 
-
 const getHouseworkerInfo = async(req,res)=>{
     //logged user session
+    const username = req.session.user.username;
     try{
-        const username = req.session.user.username;
         const result = await houseworkerModel.getInfo(username);
-        res.json(result);
+        res.status(200).json(result);
     }
     catch(err){
-        console.log("ERROR GetHouseworkerInfo: " + err);
-        res.status(404).json({error:'Houseworkers Error'});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error houseworker info"});
     }
 }
 
 const getHomeInfo = async(req,res) =>{
+    const username = req.params.username;
     try{
-        const username = req.params.username;
         const result = await houseworkerModel.getHomeInfo(username);
-        res.json(result);
+        res.status(200).json(result);
     }
     catch(err){
-        console.log("ERROR GetHomeInfo: " + err);
-        res.status(404).json({error:'Houseworkers Home Info Error'});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error houseworker home info"});
     }
 }
 
@@ -90,175 +89,174 @@ const deleteHouseworker = async(req, res)=>{
     const houseworkerUsername = req.params.username;
     try{
         const result = await houseworkerModel.findByUsernameAndDelete(houseworkerUsername);
-        res.json(result);
+        //status-204 => Use when a request is successful but there’s no data to send back, especially for DELETE actions. 
+        //but we return something
+        res.status(200).json(result);
     }
     catch(err){
-        console.log("ERROR GetHouseworkers: " + err);
-        res.status(500).json({error:`Houseworkers can't be deleted`});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error deleting houseworker"});
     }
 }
 
 const getRatings = async(req,res)=>{
+    const username = req.session.user.username
     try{
-        const username = req.session.user.username
         const result = await houseworkerModel.getRatings(username);
-        res.json(result);
+        res.status(200).json(result);
     }
     catch(err){
-        console.log("ERROR GetHouseworkers: " + err);
-        res.status(505).json({error:'Rating error'});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error rating houseworker"});
     }
 }
 
 const getRatingUsername = async(req,res)=>{
+    const username = req.params.username;
     try{
-        //from session
-        const username = req.params.username;
         const result = await houseworkerModel.getRatings(username);
-        res.json(result);
+        res.status(200).json(result);
     }
     catch(err){
-        console.log("ERROR GetHouseworkers: " + err);
-        res.status(404).json({error:'Get rating error'});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error getting houseworker rating"});
     }
 }
 
 const getCities = async(req,res)=>{
     try{
         const result = await houseworkerModel.findCities();
-        res.send(result);
+        res.status(200).send(result);
     }
     catch(err){
-        console.log("ERROR CITIES: " + err);
-        res.status(404).json({error:'City error'});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error getting houseworker city"});
     }
 }
 
 const getOurComments = async(req,res)=>{
+    const username = req.session.user.username
+    const pageNumber = req.params.pageNumber;
     try{
-        console.log("REQQ: " , req.params);
-        const username = req.session.user.username
-        const pageNumber = req.params.pageNumber;
         const result = await houseworkerModel.getComments(username, pageNumber);
-        res.json(result);
+        res.status(200).json(result);
     }
     catch(err){
-        console.log("ERROR Comments: " + err);
-        res.status(404).json({error:'User comments error'});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error getting comments"});
     }
 }
 
 
 const getComments = async(req,res)=>{
+    const username = req.params.username;
+    const pageNumber = req.params.pageNumber;
     try{
-        const username = req.params.username;
-        const pageNumber = req.params.pageNumber;
         const result = await houseworkerModel.getComments(username, pageNumber);
-        res.json(result);
+        res.status(200).json(result);
     }
     catch(err){
-        console.error("ERROR Comments: " + err);
-        res.status(404).json({error:'Comments Error'});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error getting houseworker comments"});
     }
 }
 
 const getHouseworkerCommentsCount = async(req,res)=>{
+    const username = req.params.username;
     try{
-        const username = req.params.username;
         const result = await houseworkerModel.getCommentsCount(username);
-        res.json(result);
+        res.status(200).json(result);
     }
     catch(err){
-        console.log("ERROR Comments: " + err);
-        res.status(404).json({error:'Comments Count error'});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error getting houseworker cooments count"});
     }
 }
 
 const getHouseworkerUnreadComments = async(req,res)=>{
+    const username = req.params.username;
     try{
-        const username = req.params.username;
         const result = await houseworkerModel.getUnreadComments(username);
         res.status(200).json(result);
     }
     catch(err){
-        console.error("ERROR Comments: " + err);
-        res.status(404).json({error:'Unread Comments Error'});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error getting unread comments"});
     }
 }
 
 const getHouseworkerUnreadCommentsCount = async(req,res)=>{
+    const username = req.params.username;
     try{
-        const username = req.params.username;
         const result = await houseworkerModel.getUnreadCommentsCount(username);
-        res.json(result);
+        res.status(200).json(result);
     }
     catch(err){
-        console.log("ERROR Unread Comments: " + err);
-        res.status(404).json({error:'Unread Comments Count error'});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error getting unread comments count"});
     }
 }
 
 const markHouseworkerUnreadComments = async(req,res) =>{
+    const username = req.params.username;
     try{
-        const username = req.params.username;
         const result = await houseworkerModel.markAllCommentsAsRead(username);
         res.status(200).json(result);
     }
     catch(err){
-        console.log("ERROR Mark Comments: " + err);
-        res.status(404).json({error:'Unread Comments Mark error'});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error getting unread comments"});
     }
 }
 
 const getAllProfessions = async(req,res) => {
     try{
         const result = await houseworkerModel.getAllProffesions();
-        res.json(result);
+        res.status(200).json(result);
 
     }catch(err){
-        console.log("ERROR GetHouseworkers: " + err);
-        res.status(404).json({error:'Professions error'});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error getting all professions"});
     }
 }
 
 const getProfessions = async(req,res)=>{
+    const username = req.session.user.username;
     try{
-        const username = req.session.user.username;
         const result = await houseworkerModel.getProfessions(username);
-        res.json(result);
+        res.status(200).json(result);
     }
     catch(err){
-        console.log("ERROR GetHouseworkers: " + err);
-        res.status(404).json({error:'Professions error'});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error getting professions"});
     }
 }
 
 //username passed through put method
 const getProfessionsByUsername = async(req,res)=>{
+    const username = req.params.username;
     try{
-        const username = req.params.username;
         const result = await houseworkerModel.getProfessions(username);
-        res.json(result);
+        res.status(200).json(result);
     }
     catch(err){
-        console.log("ERROR GetHouseworkers: " + err);
-        res.status(404).json({error:'Professions error'});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error getting houseworker professions"});
     }
 }
 
 const addProfession = async(req,res)=>{
-    // const houseworkerUsername = "Sara"
     const username = req.session.user.username;
     const profession = req.body.profession;
     const working_hour = req.body.working_hour;
 
     try{
         const result = await houseworkerModel.addProfession(username, profession, working_hour);
-        res.json(result);
+        res.status(201).json(result);
     }
     catch(err){
-        console.log("ERROR GetHouseworkers: " + err);
-        res.status(500).json({error:`Proffessions can't be added`});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error adding profession"});
     }
 }
 
@@ -268,23 +266,22 @@ const deleteProfession = async(req,res)=>{
     try{
         const result = await houseworkerModel.deleteProfession(username, profession);
         const listOfProfessions = result.records.map(record => ({ profession:record.get(0), working_hour:record.get(1)})) //or record.get('title')
-        res.json(listOfProfessions);
+        res.status(200).json(listOfProfessions);
     }
     catch(err){
-        console.log("ERROR GetHouseworkers: " + err);
-        res.status(500).json({error:`Proffessions can't be deleted`});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error removing profession"});
     }
 }
 
 const udpateHouseworker = async(req, res) =>{
+    const newData = req.body;
+    const username = req.session.user.username;
     try{
-        const newData = req.body;
-        const username = req.session.user.username;
-
         if(newData.email){
             const emailExists = await userModel.checkEmail(newData.email)
             if(emailExists)
-                return res.status(400).json({error:"User with this email exists"})
+                return res.status(409).json({error:"User with this email exists"})
         }
 
         if(newData.password)
@@ -299,81 +296,82 @@ const udpateHouseworker = async(req, res) =>{
 
         if(city)
             await userModel.updateCityRelation(username, city);
-        res.send("Successfuly updated!!!");
+        res.status(200).send("Successfuly updated!!!");
     }
     catch(err){
-        console.log("Error UpdateHouseworker(Yourself): " + err);
-        res.status(500).json({error:`Update error`});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error updating houseworker"});
     }
 }
 
 const updateProfessionWorkingHour = async(req,res)=>{
-    try{
-        const username = req.session.user.username;
-        const profession = req.body.profession;
-        const working_hour = req.body.working_hour;
+    const username = req.session.user.username;
+    const profession = req.body.profession;
+    const working_hour = req.body.working_hour;
 
-        console.log("USER: " + username + " \n PROFESSION: " + profession + " \n WORKING_HOUR: " + working_hour)
-        // const result = await houseworkerModel.updateWorkingHour(profession, working_hour);
+    try{
         const result = await houseworkerModel.updateWorkingHour(username, profession, working_hour);
         res.status(200).json(result);
     }
     catch(err){
-        console.log("Error updateProfessionWorkingHour: " + err);
-        res.status(500).json({error:`Working hour update error`});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error updating profession working hour"});
     }
 }
 
 const getHouseworkerProfessionsAndRating = async(req,res) =>{
+    const username = req.params.username;
     try{
-        const username = req.params.username;
         const result = await houseworkerModel.getProfessionsAndRating(username);
         res.status(200).json(result);
     }
     catch(err){
-        console.log("Error updateProfessionWorkingHour: " + err);
-        res.status(500).json({error:`HouseworkerProfessions and rating error`});
+          console.error(err);
+        res.status(500).json({error: err.message || "Error getting professions and rating"});
     }
 }
 
 //GET /notifications/userID?offset=10&size=20
 const getNotifications = async(req,res) =>{
-        const username = req.params.username;
-        const offset = req.query.offset;
-        const size = req.query.size;
+    const username = req.params.username;
+    const offset = req.query.offset;
+    const size = req.query.size;
+
     try{
         const result = await houseworkerModel.getRecordedNotifications(username, offset, size);        
         res.status(200).json(result);
     }
     catch(err){
-        console.log("Error getNotifications: " + err);
-        res.status(500).json({error:`HouseworkerProfessions and rating error`});
+          console.error(err);
+        res.status(500).json({error: err.message || "Error getting notifications"});
     }
 }
 
 const getMoreNotifications = async(req,res) =>{
     const username = req.params.username;
     const batchNumber = req.params.batchNumber;
+
     try{
         const notifications = await houseworkerModel.getMoreRecordedNotifications(username, batchNumber);
         res.status(200).json(notifications);
     }
     catch(err){
-        console.log(err);
-        res.status(400).json({error:"More Notifications Fetching Error"});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error getting more notifications"});
     }
 }
 
 const markUnreadNotification = async(req,res) =>{
     const {notificationID, batchNumber} = req.body;
     const userID = req.session.user.userID;
+
     try{  
         await houseworkerModel.markNotificationAsRead(userID, notificationID, batchNumber);
         res.status(200).send("Successfuly marked");
     }
     catch(err){
-        console.log(err);
-        res.status(400).json({error:"More Messages Fetching Error"});
+        console.error(err);
+        res.status(500).json({error: err.message || "Error marking unread notifications"});
     }
 }
 
