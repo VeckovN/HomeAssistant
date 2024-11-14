@@ -3,7 +3,7 @@ import {handlerError} from "../utils/ErrorUtils.js";
 import messageSound from '../assets/sounds/livechat-m.mp3'
 import announcementSound from '../assets/sounds/new-notification.mp3'
 import {getFriendsList} from '../services/chat.js';
-import {updateUnreadMessages} from '../store/unreadMessagesSlice.js';
+import {updateUnreadMessages, resetUserUnreadMessagesCount} from '../store/unreadMessagesSlice.js';
 import {updateUnreadComments} from "../store/unreadCommentSlice.js";
 import {addNotification} from '../store/notificationsSlice.js';
 
@@ -100,6 +100,7 @@ export const listenOnCreateUserGroupInRoom  = (socket, dispatch, enterRoomAfterA
         const {newUserID, newUsername, roomID, newRoomID, currentMember, clientUsername, newUserPicturePath, online} = context;
         //If the newly added user is the current user, create a new group and display it
         dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, newUserID:newUserID, currentMember:currentMember, newUsername:newUsername, picturePath:newUserPicturePath, online})
+        console.log(" listenOnCreateUserGroupInRoom EnterRoomAfterAction: ", newRoomID);
         enterRoomAfterAction(newRoomID);
     })
 }
@@ -140,6 +141,7 @@ export const listenOnAddUserToGroup = (socket, dispatch, self_id, enterRoomAfter
 //it's wathcing that room and pointer on that room must be changed 
 export const listenOnAddUserToGroupInRoom  = (socket, enterRoomAfterAction) =>{
     socket.on("addUserToGroupChangeInRoom", (newRoomID) =>{
+        console.log(" listenOnAddUserToGroupInRoom EnterRoomAfterAction: ", newRoomID);
         enterRoomAfterAction(newRoomID);
     })
 }
@@ -227,17 +229,17 @@ export const listenOnKickUserFromGroupNotification = (socket, self_id, reduxDisp
 
 export const listenOnDeleteUserRoomNotification = (socket, reduxDispatch) =>{
     socket.on("deleteUserRoomNotify", (notification) =>{
-       
-        const notificationMessage = notification.message;
+        const {message, roomID, to} = notification;
+        const notificationMessage = message;
         toast.info(notificationMessage,{
             className:"toast-contact-message"
         })
 
         reduxDispatch(addNotification(notification));
+        reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:to}))
         playSound(announcementSound);
       })
 }
-
 
 export const listenNewOnlineUser = async(socket, dispatch, self_id) =>{
     socket.on("newOnlineUser", async(userData) =>{

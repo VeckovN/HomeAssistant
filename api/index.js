@@ -273,8 +273,8 @@ server.listen(5000, ()=>{
 
             notifyUsers.forEach(id =>{
                 const matchedNotification = notifications.find(notification => notification.to === id);
-                
-                io.to(`user:${id}`).emit("deleteUserRoomNotify" , matchedNotification);
+
+                io.to(`user:${id}`).emit("deleteUserRoomNotify" , {roomID:roomID, ...matchedNotification});
                 io.to(`user:${id}`).emit("deleteUserRoomChange" , data);
             })
         })
