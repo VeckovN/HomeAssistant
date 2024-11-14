@@ -1,4 +1,4 @@
-const {incr, set, hmset, hmget, exists, zrange, smembers, srandmember, zadd, zaddxx, zrangerev, del, rename, zcard, zrem} = require('../db/redis');
+const {incr, set, hmset, hmget, exists, zrange, smembers, srandmember, zadd, zaddxx, zrangerev, del, rename, zcard, zrem, zrangerevscores} = require('../db/redis');
 const {formatDate, calculateTimeDifference} = require('../utils/dateUtils');
 const { getUserIdByUsername, getUserInfoByUserID, getUserPicturePath, getUnreadMessageCountByRoomID, recordNotification, getUsernameByUserID} = require('../db/redisUtils');
 
@@ -216,8 +216,10 @@ const getOnlineUsersFromChat = async(userID) =>{
 const getHouseworkerFirstRoomID = async(userID) =>{
     try{
         const userRoomKey = `user:${userID}:rooms`;
-        const result = await srandmember(userRoomKey, 1);
-        return result[0];
+        //get first room with highest score 
+        const result = await zrangerevscores(userRoomKey, 0, 0);
+        console.log("result: ", result);
+        return result[0]; 
     }
     catch(error){
         console.error("Error fetching houseworker first room id:", error.message); 
@@ -360,6 +362,10 @@ const removeUserFromRoomID = async(clientID, roomID, username) =>{
         const newRoomID = newIds.join(":");
         const newRoomKey = `room:${newRoomID}`
 
+        const timestamps = Date.now();
+        const date = new Date(timestamps); 
+        const dateFormat = formatDate(date);
+
         //if newRoomKey exist (group with same members)
         //make newRoomKey unique to avoid a conflict with the same roomID
         const newRoomKeyExists = await exists(newRoomKey);
@@ -393,9 +399,6 @@ const removeUserFromRoomID = async(clientID, roomID, username) =>{
         //find sorted set and remove user from it (id) room:3:6:22:123 where messages are stored
         await rename(currentRoomKey, newRoomKey);
 
-        const timestamps = Date.now();
-        const date = new Date(timestamps); 
-        const dateFormat = formatDate(date);
         const messageObj = JSON.stringify({message:`User ${username} has been kicked from the chat`, from:'Server', date:dateFormat, roomID:newRoomID})
         await zadd(newRoomKey, timestamps, messageObj);
 
