@@ -142,7 +142,9 @@ const useClient = (user) =>{
             return recommendedData1;
         }
         catch(err){
-            handlerError(err);
+            //just display it in the console
+            console.error(err)
+            //handlerError(err);
         }
     }
     
