@@ -2,7 +2,7 @@ const {driver} = require('../db/neo4j');
 const { set, get, expire } = require('../db/redis');
 const {recordNotification, getUserIdByUsername} = require('../db/redisUtils');
 
-const notificationType="comment"; //for notification record
+const notificationType="comment";
 
 const findByUsername = async (username)=>{
     const session = driver.session();
@@ -48,15 +48,13 @@ const getCity = async(username)=>{
         )
 
         const city = result.records[0].get(0);
-        console.log("CIRTTTTTTT" + city);
         return city;
-
     }
     catch(error){
         console.error("Error finding username :", error.message); 
         throw new Error("Failed to fetch all users. Please try again later.");
     }
-    finally{ //close session regardless of the outcome
+    finally{
         session.close();
     }
 }
@@ -72,25 +70,18 @@ const getInfo = async (username) =>{
             ,{name:username}
         )
 
-        //if there isn't users
         if(result.records.length == 0)
-            //not good practice to return Error
-            // return new Error("Client not exists")
             return [];   
 
-        //one result -> [0]
         const clientProp = result.records[0].get(0).properties;
         const clientGender = result.records[0].get(1);
         const clientCity = result.records[0].get(2);
 
-        //all properties excpets password
         const { password, ...clientInfo} = clientProp 
 
-        //Add gender and city
         clientInfo.gender = clientGender;
         clientInfo.city = clientCity;
 
-        console.log("CLIENT INFO: " + JSON.stringify(clientInfo));
         return clientInfo;
     }
     catch(error){
@@ -110,12 +101,10 @@ const findAll = async ()=>{
             'Match(n:User)-[:IS_CLIENT]->() return n'
         )
 
-        //if there isn't users
         if(result.records.length == 0)
             return []
 
         const clients = result.records.map(el=>{
-            //return each clients propteries as object
             return el.get(0).properties;
         })
         return clients;
@@ -133,9 +122,7 @@ const findAll = async ()=>{
 const findByUsernameAndDelete = async (username)=>{
     const session = driver.session();
     try{
-        //User -[:IS_CLIENT]->Client
-        //to delete a node it is necessery to DELTE THE RELATIONSHIP FIRST
-        const result = await session.run(
+        await session.run(
             "MATCH (n:User {username:$name})-[r:IS_CLIENT]->(m) DELETE r, n, m",
             {name:username}
         )
@@ -147,7 +134,6 @@ const findByUsernameAndDelete = async (username)=>{
     finally{
         session.close();
     }
-    //all others client after user delete
     return await findAll();
 }
 
@@ -234,7 +220,6 @@ const deleteComment = async(username, commentID)=>{
         // const notificationID = await recordNotificationbyUsername(houseworker, notificationType, message);
 
         return result.records[0];
-        // return {deletedClient: result.records[0], notification:notification};
     }
     catch(error){
         console.error("Error deleting comment :", error.message); 
@@ -305,7 +290,6 @@ const create = async(clientObject)=>{
     const {id, username, email, password, firstName, lastName, picturePath, city, gender, interests} = clientObject;
 
     try {
-
         //WITH Clause is necessary between Create and Other part of query(Create Gender and City)
         const result = await session.run(`
         CREATE (n:User 
@@ -338,10 +322,6 @@ const create = async(clientObject)=>{
 
         //Interests relation between profession and Client
         const interestsArray = interests.split(',');
-        console.log("PROFESSIONS: " + interests);
-        console.log("PROFESSIONSArray: " + JSON.stringify(interestsArray));
-        console.log("PROF: TYPEOF: " + typeof(interests));
-        console.log("PROF: TYPEOF ARRRAY: " + typeof(interestsArray));
         //add professions
         interestsArray.forEach(interest => {
             console.log("PT: " + interest); 
@@ -365,17 +345,8 @@ const create = async(clientObject)=>{
 
 }
 
-//update only client NODE property
 const update = async(username, newValue)=>{
     const session = driver.session();
-    //newValue must have same property as Client NODE
-    // email	"novak@gmail.com"
-    // first_name	"Novak"
-    // last_name	"Veckov"
-    // password	"pw1"
-    // picture	"/"
-    // username "Novak"
-
     try{
         const result = await session.run(`
             MATCH (n:User { username: $client})
@@ -383,11 +354,6 @@ const update = async(username, newValue)=>{
             RETURN n
         `,{client:username, object:newValue}
         )
-        // const result = await session.run(`
-        //     MATCH (n:User { username: "Novak"})
-        //     SET n += { password:"pwww" , picture:"//" }
-        // `
-        // )
         return result.records[0].get(0).properties;
     }
     catch(error){
@@ -399,7 +365,6 @@ const update = async(username, newValue)=>{
     }
 }
 
-//update City node with [:LIVES_IN]
 const updateCity = async(username, city)=>{
     const session = driver.session();
 
@@ -426,9 +391,7 @@ const updateCity = async(username, city)=>{
 
 const updateGender = async(gender)=>{
     const session = driver.session();
-
     try{
-
         const ourUsername = "Sara";
         const result = await session.run(`
             MATCH(n:User{username:$client})
@@ -477,7 +440,6 @@ const checkRecommendedInCache = async(username) =>{
 
 const recomendedByCityAndInterest = async(username,city) =>{
     const session = driver.session();
-
     try{
         const catchedData = await checkRecommendedInCache(username);
 
@@ -500,10 +462,8 @@ const recomendedByCityAndInterest = async(username,city) =>{
                 const userNode = el.get(0).properties;
                 const housworkerNode = el.get(1).properties;
                 userInfo ={...userNode, ...housworkerNode, recommended:true}
-                //gotted id{"low":0,"high":0} it MUST parse to INT
                 userInfo.city = el.get(2);
                 userInfo.gender =el.get(3); 
-                //console.log("USER INFOOOO : " + JSON.stringify(userInfo));
                 return userInfo;
             })
 
@@ -523,7 +483,6 @@ const recomendedByCityAndInterest = async(username,city) =>{
     finally{
         session.close();
     }
-
 }
 
 module.exports ={

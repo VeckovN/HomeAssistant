@@ -1,7 +1,6 @@
 const {driver} = require('../db/neo4j');
 const bcrypt = require('bcrypt');
 
-//return user Type and user Info
 const findByUsername = async(username)=>{
     const session = driver.session();
     try{
@@ -14,8 +13,7 @@ const findByUsername = async(username)=>{
         if(userResult.records.length == 0){
             return null
         }
-        //Return userType
-        //OPTINAL MATCH Return Null if cant find node(in this situatian that is relation-IS_HOUSEWORKER)
+        //OPTINAL MATCH Return Null if cant find node
         const userTypeResult = await session.run(`
             OPTIONAL MATCH (n:User {username:$name})-[r:IS_HOUSEWORKER]->()
             RETURN DISTINCT Case Type(r) WHEN "IS_HOUSEWORKER" THEN "Houseworker" ELSE "Client" END 
@@ -83,7 +81,6 @@ const checkEmail = async(email)=>{
     }
 }
 
-
 const changePassword = async(username,password) =>{
     const session = driver.session();
     try{
@@ -131,7 +128,6 @@ const updateCityRelation = async(username,city)=>{
     }
 }
 
-//only for moving from Neo4j to Redis after adding(change code) picturePath in Redis users hash
 const getAllUsersnameWithPicturePath = async() =>{
     const session = driver.session();
     try{
@@ -158,7 +154,7 @@ const getAllUsersnameWithPicturePath = async() =>{
 // CREATE(n:Gender {type:"Male"})
 // CREATE(n:Gender {type:"Female"})
 
-//PRofessions
+//PROFESSIONS
 //CREATE(a:Profession {title:"Housekeeper", description:"Responsible for cleaning and maintaining the cleanliness of the house"})
 //CREATE(a:Profession {title:"Nanny", description:"Provides childcare services, including caring for children, preparing meals, and helping with homework"})
 //CREATE(a:Profession {title:"Personal Chef", description:"Prepares meals for the household, including planning menus and accommodating dietary restrictions"})
@@ -169,6 +165,5 @@ const getAllUsersnameWithPicturePath = async() =>{
 //CREATE(a:Profession {title:"Home Health Aide", description:"Provides medical and personal care to individuals with health needs"})
 //CREATE(a:Profession {title:"Personal Shopper", description:"Assists with shopping for groceries, clothing, and other household needs"})
 //CREATE(a:Profession {title:"Butler", description: "Manages various aspects of the household, such as scheduling, organizing, and supervising other staff"})
-
 
 module.exports = {findByUsername, changePassword, checkUser, checkEmail, updateCityRelation, getAllUsersnameWithPicturePath};

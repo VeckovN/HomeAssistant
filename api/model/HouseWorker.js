@@ -413,7 +413,6 @@ const getRatings = async(username)=>{
     }
 }
 
-// const getComments = async(username)=>{
 const getComments = async(username, pageNumber)=>{
     //on inital (page visit) thepageNUmber is 0 
     const itemsPerPage = 10;
@@ -530,7 +529,6 @@ const getUnreadCommentsCount = async(username) =>{
     }
 }
 
-
 const markAllCommentsAsRead = async(username) =>{
     const session = driver.session();
     try{
@@ -555,7 +553,7 @@ const markAllCommentsAsRead = async(username) =>{
 }
 
 const getProfessions = async (username)=>{
-    //Get Professions with working Hours
+
     const session = driver.session();
     try{
         const result = await session.run(`
@@ -565,7 +563,6 @@ const getProfessions = async (username)=>{
             {houseworker:username}
         )
         const professions = result.records.map(rec =>{
-            //title ='Dadilja" npr (rec.get(0) is WHOLE NODE and has the properties, while rec.get(1) ->r.working_hour is returned property)
             return {profession:rec.get(0) , working_hour:rec.get(1)}
         })
 
@@ -691,40 +688,8 @@ const getHouseworkersCount = async() =>{
 const create = async(houseworkerObject)=>{
     const session = driver.session();
     const {id, username, email, password, firstName, lastName, picturePath, address, description, city, gender, age, phoneNumber,professions, houseworkerProfessions} = houseworkerObject;
-    //houseworkerObject
-    // {
-    //     username:"Sara", 
-    //     email:"sara@gmail.com", 
-    //     password:"pw1", 
-    //     first_name:"Sara",
-    //     last_name:"Veckov",
-    //     picture:"/",
-    //     city:"Nis",
-    //     address:"Mokranjceva",
-    //     description:"Ambicious, Hardworker",
-    //     gender:"Male"
-    // }
-
-    //IN User Node
-    //username:"Sara", 
-    //     email:"sara@gmail.com", 
-    //     password:"pw1", 
-    //     first_name:"Sara",
-    //     last_name:"Veckov",
-    //     picture:"/",
-    //     age:''
-
-    //RELATIONSHIPS WITH USER NODE
-    //     city 
-    //     gender
-
-    //IN HOUSEWORKER NODE
-    //     address:"Mokranjceva",
-    //     description:"Ambicious, Hardworker",
-    //     phone_number
 
     try{
-        //WITH Clause is necessary between Create and Other part of query(Create Gender and City)
         const result = await session.run(`
             CREATE (n:User 
                 {
@@ -822,7 +787,6 @@ const update = async(username, newUserValue, newHouseworkerValue)=>{
     }
 }
  
-
 const updateCity = async(username,city)=>{
     const session = driver.session();
     try{
@@ -904,8 +868,6 @@ const getHomeInfo = async(username) =>{
 
 const getProfessionsAndRating = async(username) =>{
     const session = driver.session();
-    //OPTIONAL MATCH because not all houseworkers may have comments, 
-    //and we want to count them if they exist.
     try{
         const result = await session.run(`
             MATCH (n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(h)
@@ -935,10 +897,6 @@ const getProfessionsAndRating = async(username) =>{
     }
 }
 
-//redis usage
-
-//get message From ---  ZREVRANGE room:{roomID} {offset_start} {offset_end}
-// ZREVRANGE room:1:2 0 50 (will return 50 messages with 0 offsets for the private room between users with IDs 1 and 2.)
 const getRecordedNotifications = async(username, offset, size) =>{
     try{
         const userID = await getUserIdByUsername(username);
@@ -955,7 +913,6 @@ const getRecordedNotifications = async(username, offset, size) =>{
     }
 }
 
-// const getMoreRecordedNotifications = async(userID, pageNumber) =>{
 const getMoreRecordedNotifications = async(username, batchNumber) =>{
     try{
         const userID = await getUserIdByUsername(username);
@@ -973,7 +930,6 @@ const getMoreRecordedNotifications = async(username, batchNumber) =>{
 }
 
 const markNotificationAsRead = async(userID, notificationID, batchNumber) =>{
-    //optimized : search only for displayed users
     try{
         const size = 6;
         const offset = size * batchNumber + 1;

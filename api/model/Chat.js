@@ -1,5 +1,5 @@
 const {incr, set, hmset, hmget, exists, zrange, smembers, srandmember, zadd, zaddxx, zrangerev, del, rename, zcard, zrem} = require('../db/redis');
-const {formatDate, parseFormattedDate, calculateTimeDifference} = require('../utils/dateUtils');
+const {formatDate, calculateTimeDifference} = require('../utils/dateUtils');
 const { getUserIdByUsername, getUserInfoByUserID, getUserPicturePath, getUnreadMessageCountByRoomID, recordNotification, getUsernameByUserID} = require('../db/redisUtils');
 
 const notificationType = "chatGroup";
@@ -23,7 +23,6 @@ const createUser = async(username, hashedPassword, picturePath) =>{
     }
 }
 
-//Deleting a freshly created user on neo4j failed to craete the same
 const deleteUserOnNeo4JFailure = async(username, userID) =>{
     try{
         const usernameKey = `username:${username}`;
@@ -146,7 +145,6 @@ const getAllRooms = async(username)=>{
         const onlineUsers = await smembers(`onlineUsers`);
         const onlineUsersSet = new Set(onlineUsers);
 
-        //through every room read another userID -> 1:7 , 1:3 in this situatin 7 and 3
         var roomsArr = []
         var unreadMess = [];
         for(const roomID of rooms){
@@ -165,7 +163,7 @@ const getAllRooms = async(username)=>{
             
             let roomObjectArray =[];
             //for loop instead of foreach *async/await
-            for(const id of otherUsers){ //group users
+            for(const id of otherUsers){ 
                 const user = await getUserInfoByUserID(id); 
                 roomObjectArray.push({
                     userID:id,
@@ -201,9 +199,8 @@ const getOnlineUsersFromChat = async(userID) =>{
             })
         })
 
-        // Convert the Set back to an array (IF NEEDED)
         const uniqueUserIds = Array.from(usersFromRoomSet);
-        // This approach works well even if onlineUsers is massive(with set->filter and has methods)
+
         const onlineUsers = await smembers(`onlineUsers`);
         const onlineUsersSet = new Set(onlineUsers); // O(1) average time complexity
         const onlineRoomUsers = Array.from(usersFromRoomSet).filter(user => onlineUsersSet.has(user))
@@ -241,7 +238,7 @@ const getFriendsListByUserID = async(userID) =>{
             })
         })
 
-        // const uniqueUserIds = Array.from(usersFromRoomSet);
+        //const uniqueUserIds = Array.from(usersFromRoomSet);
         const friendsList = Array.from(usersFromRoomSet);
         return friendsList;
     }
@@ -274,8 +271,7 @@ const addUserToRoom = async(clientID, newUsername, currentRoomID)=>{
         const dateFormat = formatDate(date);
 
         const newRoomKeyExists = await exists(newRoomKey);
-        //but this newRoomKey have contain rooms id in order -> 1:42:311 not 1:311:42
-
+       
         var notification = null;
         let notificationArray = [];
         if(newRoomKeyExists) {
@@ -305,12 +301,11 @@ const addUserToRoom = async(clientID, newUsername, currentRoomID)=>{
                 notification = await recordNotification(clientID, newUserID, notificationType, message);
                 notificationArray.push(notification);
 
-                //create new roomKey and store first initial message
+                //create new roomKey first initial message
                 const messageObj = JSON.stringify({message:"Chat Created", from:'Server', date:dateFormat, roomID:newRoomID})
                 await zadd(newRoomKey, timestamps, messageObj);
             }
             else{
-                //Reinaming Room:ROOMID - sorted set for storing messages
                 await rename(currentRoomKey, newRoomKey);
                 await zadd(`user:${newUserID}:rooms`, timestamps, newRoomID);
 
@@ -329,7 +324,6 @@ const addUserToRoom = async(clientID, newUsername, currentRoomID)=>{
                         message = `The client ${clientUsername} has added the houseworker ${newUsername} to the chat`;
                     }
         
-                    //don't record notificatio for sender(client);
                     if(id != clientID){
                         notification = await recordNotification(clientID, id, notificationType, message);
                         notificationArray.push(notification);
@@ -354,14 +348,12 @@ const addUserToRoom = async(clientID, newUsername, currentRoomID)=>{
     }
 }
 
-
 const removeUserFromRoomID = async(clientID, roomID, username) =>{
     try{
-
         const userID = await getUserIdByUsername(username);
         const clientUsername = await getUsernameByUserID(clientID);
 
-        const currentRoomKey = `room:${roomID}` //room:1:2
+        const currentRoomKey = `room:${roomID}`
         const currentUserIDS = roomID.split(':');
 
         const newIds = currentUserIDS.filter(id => id !== userID);
@@ -462,7 +454,7 @@ const sendMessage = async(messageObj) =>{
         let createRoomNotification = null;
         if(!roomExists){
         //or we have to create room and then send message
-        //ROOM WILL BE ONLY CREATED WHEN Client send message TO HOUSEWORKER and this houseworker doesn't have room 
+        //ROOM WILL BE ONLY CREATED WHEN Client send message TO HOUSEWORKER and this houseworker doesn't have the room 
             for(const id of usersID){
                 await zadd(`user:${id}:rooms`, timestamps, roomID);
                 if(id !=from){
