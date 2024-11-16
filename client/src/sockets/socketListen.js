@@ -3,7 +3,7 @@ import {handlerError} from "../utils/ErrorUtils.js";
 import messageSound from '../assets/sounds/livechat-m.mp3'
 import announcementSound from '../assets/sounds/new-notification.mp3'
 import {getFriendsList} from '../services/chat.js';
-import {updateUnreadMessages, resetUserUnreadMessagesCount} from '../store/unreadMessagesSlice.js';
+import {updateUnreadMessages, removeUnreadMessages} from '../store/unreadMessagesSlice.js';
 import {updateUnreadComments} from "../store/unreadCommentSlice.js";
 import {addNotification} from '../store/notificationsSlice.js';
 
@@ -223,6 +223,7 @@ export const listenOnKickUserFromGroupNotification = (socket, self_id, reduxDisp
         })
 
         reduxDispatch(addNotification(notification));        
+        //removeUnreadMessagesforKickedUser
         playSound(announcementSound);
     })
 }
@@ -236,7 +237,8 @@ export const listenOnDeleteUserRoomNotification = (socket, reduxDispatch) =>{
         })
 
         reduxDispatch(addNotification(notification));
-        reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:to}))
+        // reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:to}))
+        reduxDispatch(removeUnreadMessages({roomID}))
         playSound(announcementSound);
       })
 }

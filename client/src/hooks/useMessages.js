@@ -185,9 +185,6 @@ const useMessages = (socket, user) =>{
                 notifications
             };
             emitUserDeleteRoom(socket, data);
-            //Delete All Users MEssagesa
-            //find rooms in users data and reset it
-            console.log("ON DELETE ROOM HANDLER");
             reduxDispatch(resetUsersUnreadMessagesbyRoomID({roomID, clientID:user.userID}));
 
             toast.success("You have successfully deleted the room",{
@@ -320,7 +317,6 @@ const useMessages = (socket, user) =>{
         const roomInfo ={roomID, username};
         try{
             const result = await removeUserFromGroup(roomInfo);
-            console.log("RESS S:" , result);
             const {newRoomID, kickedUserID, notifications} = result.data;
             
             if(newRoomID == null){
@@ -333,6 +329,10 @@ const useMessages = (socket, user) =>{
             
             const data = {firstRoomID, newRoomID, roomID, kickedUserID, kickedUsername:username, clientID:user.userID, clientUsername:user.username, notifications:notifications}
             emitKickUserFromChat(socket, data);
+            
+            //but the unread messages from old room -> roomID should be assigned to newRoomID;
+            //for all from roomID instead of kicked one, delete roomID for kicked user as well
+            reduxDispatch(moveUnreadMessagesFromOldToNewRoom({oldRoomID:roomID, newRoomID:newRoomID, kickedUserID}));
             enterRoomAfterAction(newRoomID);
 
             toast.info("The user "+ username + " has been kicked from the chat");
