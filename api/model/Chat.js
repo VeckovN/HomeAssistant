@@ -559,6 +559,27 @@ const resetUnreadMessagesCount = async(roomID, userID) =>{
     }
 }
 
+const resetAllUnreadMessagesCountFromRoom = async(roomID, clientID) =>{
+    try{
+        const usersID = roomID.split(":")
+        
+        let countNumber = 0;
+        for(const id of usersID){
+            if(id == clientID){
+                countNumber = await getUnreadMessageCountByRoomID(clientID, roomID);
+            }
+
+            const unreadMessKey = `user${id}:room:${roomID}:unread`;
+            await del(unreadMessKey);
+        }
+        return {status:"success", removedClientUnreadCount:countNumber}
+    }
+    catch(err){
+        console.error("Redis reset unread message count Errror: " + err);
+        return {success:false, message:"Error with reseting unread message"}
+    }
+}
+
 const getUnreadMessagesTotalCount = async(userID) =>{
     try{
         const userRoomKey = `user:${userID}:rooms`;
@@ -610,6 +631,7 @@ module.exports ={
     postUnreadMessagesToUser,
     resetUnreadMessagesCount,
     getUnreadMessagesTotalCount,
-    getHouseworkerFirstRoomID
+    getHouseworkerFirstRoomID,
+    resetAllUnreadMessagesCountFromRoom
 }
 

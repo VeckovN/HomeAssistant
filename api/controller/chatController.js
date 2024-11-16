@@ -178,6 +178,19 @@ const removeUnreadMessagesFromRoom = async(req,res) =>{
     }
 }
 
+const removeAllUnreadMessagesFromRoom = async(req,res) =>{
+    const {roomID, clientID} = req.params;
+    try{
+        const result = await chatModel.resetAllUnreadMessagesCountFromRoom(roomID, clientID);
+        res.status(200).json(result);
+    }
+    catch(err){
+        console.error(err);
+        res.status(400).json({error: err.message || "Remove unread messages Error"});
+    }
+}
+
+
 module.exports ={
     getMessages,
     getMoreMessages,
@@ -192,5 +205,6 @@ module.exports ={
     getAllUnreadMessages,
     getUnreadMessagesTotalCount,
     removeUnreadMessagesFromRoom,
-    getFirstRoomID 
+    removeAllUnreadMessagesFromRoom,
+    getFirstRoomID
 }
