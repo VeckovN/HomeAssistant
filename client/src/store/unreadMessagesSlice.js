@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {resetUnreadMessagesCount, getAllUnreadMessages} from '../services/chat.js';
+import {resetUnreadMessagesCount, getAllUnreadMessages, resetUsersUnreadMessagesCount} from '../services/chat.js';
 
 
 //USING COOKIE OR LOCALSTORAGE INSTAED OF REDUX  PERSIST:
@@ -60,6 +60,20 @@ export const resetUserUnreadMessagesCount = createAsyncThunk(
     }
 )
 
+export const resetUsersUnreadMessagesbyRoomID = createAsyncThunk(
+    'unreadMessages/resetUsersUnreadMessagesbyRoomID ',
+    async({roomID, clientID}, thunkAPI) =>{
+        console.log("Reset passed varaiubles: ", roomID , 's:  ',clientID)
+        try{
+            const response = await resetUsersUnreadMessagesCount(roomID, clientID);
+            return {roomID:roomID, removedCount:response.removedClientUnreadCount}
+        }catch(err){
+            console.error("resetUnreadMEssagesCoutn : ", err);
+            return thunkAPI.rejectWithValue(err.message);
+        }
+    }
+)
+
 const unreadMessagesSlice = createSlice({
     name:'unreadMessages',
     initialState,
@@ -84,12 +98,35 @@ const unreadMessagesSlice = createSlice({
             state.unreadCount += 1;
         },
 
+        removeUnreadMessages: (state, action) =>{
+            const messageIndex = state.unreadMessages.findIndex(
+                (el) => el.roomID === action.payload.roomID
+            )
+
+            console.log("ACTION ", action);
+            console.log("Action RoomID: ", action.payload.roomI);
+            console.log("messageIndex: ", messageIndex);
+
+            if(messageIndex !== -1){
+                const removedCount = parseInt(state.unreadMessages[messageIndex].count);
+                console.log("RemovedCount: ", removedCount);
+                state.unreadCount -= removedCount;
+
+                state.unreadMessages = state.unreadMessages.filter(
+                    (el) => el.roomID !== action.payload.roomID //action.payload => roomID
+                );
+            }
+
+            state.loading = false;
+        },
+
         resetUnreadMessages:(state)=>{
             state.unreadMessages =[]
             state.unreadCount = 0
             state.error = false
             state.loading = null
         }
+
     },
     extraReducers: (builder) =>{
         builder
@@ -118,8 +155,20 @@ const unreadMessagesSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;  
             })    
+
+            .addCase(resetUsersUnreadMessagesbyRoomID.fulfilled, (state, action)=>{
+                state.unreadMessages = state.unreadMessages.filter(
+                    (el) => el.roomID !== action.payload.roomID //action.payload => roomID
+                ),
+                state.unreadCount = state.unreadCount - action.payload.removedCount;
+                state.loading = false;
+            })
+            .addCase(resetUsersUnreadMessagesbyRoomID.rejected, (state,action) =>{
+                state.loading = false;
+                state.error = action.payload;  
+            })    
     }
 })
 
-export const {updateUnreadMessages, resetUnreadMessages} = unreadMessagesSlice.actions;
+export const {updateUnreadMessages, resetUnreadMessages, removeUnreadMessages} = unreadMessagesSlice.actions;
 export default unreadMessagesSlice;

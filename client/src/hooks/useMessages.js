@@ -1,5 +1,5 @@
 import {useReducer, useState, useRef, useEffect} from "react";
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {toast} from 'react-toastify';
 import {handlerError} from "../utils/ErrorUtils.js";
 import {MessagesReducer} from '../components/MessagesReducer.js';
@@ -7,9 +7,11 @@ import {getHouseworkers} from '../services/houseworker.js';
 import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup, listenNewOnlineUser, listenOnMessageReceive, listenOnAddUserToGroupInRoom, listenOnKickUserFromGroupInRoom, listenOnFirstMessageReceive} from '../sockets/socketListen.js';
 import {emitRoomJoin, emitLeaveRoom, emitCreteUserGroup, emitUserAddedToChat, emitKickUserFromChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
 import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, getMoreMessagesByRoomID, getOnlineUsers, getFirstRoomID} from '../services/chat.js';
-import {resetUserUnreadMessagesCount} from '../store/unreadMessagesSlice.js';
+import {resetUserUnreadMessagesCount, resetUsersUnreadMessagesbyRoomID} from '../store/unreadMessagesSlice.js';
 import {sendMessage} from "../utils/MessageUtils/handleMessage.js";
 
+//Commit: Set show menu to false on room delete action, and other.. check for it
+//Commit: Add redux reset unread messages for all rooms
 const useMessages = (socket, user) =>{
     const initialState = {
         loading:true,
@@ -86,7 +88,8 @@ const useMessages = (socket, user) =>{
                 dispatch({type:"SET_ROOM_INFO", ID:roomID, usersArray:users});
 
                 emitRoomJoin(socket, roomID);
-                
+                //reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:user.userID}));
+
                 const messages = await getMessagesByRoomID(roomID)
                 
                 dispatch({type:"SET_ROOM_MESSAGES", data:messages})
@@ -130,6 +133,7 @@ const useMessages = (socket, user) =>{
     
     const enterRoomAfterAction = async(roomID) =>{
         try{
+            reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:user.userID}))
             //don't applie logic if is clicked on the same room
             if(roomID === state.roomInfo.roomID)
                 return;
@@ -146,7 +150,7 @@ const useMessages = (socket, user) =>{
             const messages = await getMessagesByRoomID(roomID);
             dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
 
-            reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:user.userID}))
+            // reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:user.userID}))
             setIsLoadingMessages(false);
 
             if(showMenu)
@@ -181,8 +185,11 @@ const useMessages = (socket, user) =>{
                 notifications
             };
             emitUserDeleteRoom(socket, data);
-            
-            
+            //Delete All Users MEssagesa
+            //find rooms in users data and reset it
+            console.log("ON DELETE ROOM HANDLER");
+            reduxDispatch(resetUsersUnreadMessagesbyRoomID({roomID, clientID:user.userID}));
+
             toast.success("You have successfully deleted the room",{
                 className:"toast-contact-message"
             });
@@ -207,6 +214,7 @@ const useMessages = (socket, user) =>{
                 const removedRoomID = state.roomInfo.roomID;
                 emitLeaveRoom(socket, removedRoomID);
                 dispatch({type:"RESET_ROOMS"});
+                setShowMenu(false);
             }
         }
         //this ensure when redux change state(add room and set this roomsAction == "CREATE_CONVERSATION )
