@@ -1,16 +1,5 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {resetUnreadMessagesCount, getAllUnreadMessages, resetUsersUnreadMessagesCount} from '../services/chat.js';
-
-
-//USING COOKIE OR LOCALSTORAGE INSTAED OF REDUX  PERSIST:
-//1.Upon sucessful user login, unread messages are fetched and memoized in Cookie("unreadMEssages");
-//which prevents loos of state when reloading page or closing the browser
-//That causes more potential problems:
-//Problem -> if the state changes and the page is reloaded, the state value won't be the last modified, but will be the same as when the user logged in(read from the cookie)
-//How to solve it? -> I have to write to the Cookie after every state change
-//example: If i decrenent the unreadCount for some user who changes unreadCount state and this value MUST BE written to the COOKIE to have last modified value
-
-//BETTER SOLUTON -> use Redux Persist that automatcally saves your Redux store's states to a storage engine (like 'LocalStorage - cookie')
+import {resetUnreadMessagesCount, getAllUnreadMessages, resetUsersUnreadMessagesCount, forwardUnreadMessagesFromOldToNewRoom} from '../services/chat.js';
 
 const initialState ={
     unreadMessages:[],
@@ -74,6 +63,20 @@ export const resetUsersUnreadMessagesbyRoomID = createAsyncThunk(
     }
 )
 
+export const forwardUnreadMessagesToNewRoom = createAsyncThunk(
+    'unreadMessages/forwardUnreadMessagesToNewRoom ',
+    async({oldRoomID, newRoomID, kickedUserID}, thunkAPI) =>{
+        try{
+            await forwardUnreadMessagesFromOldToNewRoom({oldRoomID, newRoomID, kickedUserID});
+            return {oldRoomID, newRoomID}
+        }catch(err){
+            console.error("forward unread messages : ", err);
+            return thunkAPI.rejectWithValue(err.message);
+        }
+    }
+)
+
+
 const unreadMessagesSlice = createSlice({
     name:'unreadMessages',
     initialState,
@@ -117,6 +120,20 @@ const unreadMessagesSlice = createSlice({
                 );
             }
 
+            state.loading = false;
+        },
+
+        forwardUnreadMessages: (state, action) =>{
+            const {oldRoomID, newRoomID} = action.payload;  
+                      
+            const oldRoom = state.unreadMessages.find(el => el.roomID === oldRoomID);
+            const unreadRoomCount = oldRoom ? oldRoom.count : null;
+
+            state.unreadMessages = state.unreadMessages.map((message) =>
+                message.roomID === oldRoomID
+                    ? {roomID: newRoomID, count:unreadRoomCount} // Update the room ID immutably
+                    : message
+            );
             state.loading = false;
         },
 
@@ -166,9 +183,27 @@ const unreadMessagesSlice = createSlice({
             .addCase(resetUsersUnreadMessagesbyRoomID.rejected, (state,action) =>{
                 state.loading = false;
                 state.error = action.payload;  
+            }) 
+
+            .addCase(forwardUnreadMessagesToNewRoom.fulfilled, (state, action)=>{
+                const {oldRoomID, newRoomID} = action.payload;
+   
+                const oldRoom = state.unreadMessages.find(el => el.roomID === oldRoomID);
+                const unreadRoomCount = oldRoom ? oldRoom.count : null;
+    
+                state.unreadMessages = state.unreadMessages.map((message) =>
+                    message.roomID === oldRoomID
+                        ? {roomID: newRoomID, count:unreadRoomCount} // Update the room ID immutably
+                        : message
+                );
+                state.loading = false;
+            })
+            .addCase(forwardUnreadMessagesToNewRoom.rejected, (state,action) =>{
+                state.loading = false;
+                state.error = action.payload;  
             })    
     }
 })
 
-export const {updateUnreadMessages, resetUnreadMessages, removeUnreadMessages} = unreadMessagesSlice.actions;
+export const {updateUnreadMessages, resetUnreadMessages, removeUnreadMessages, forwardUnreadMessages} = unreadMessagesSlice.actions;
 export default unreadMessagesSlice;
