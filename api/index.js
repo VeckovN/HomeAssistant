@@ -260,7 +260,7 @@ server.listen(5000, ()=>{
            
             notifyUsers.forEach(id =>{
                 const matchedNotification = notifications.find(notification => notification.to === id);
-                io.to(`user:${id}`).emit("kickUserFromGroupNotify" , matchedNotification);
+                io.to(`user:${id}`).emit("kickUserFromGroupNotify" , {roomID, newRoomID, kickedUserID, notification:matchedNotification});
                 io.to(`user:${id}`).emit("kickUserFromGroupChange" , data);
             });
 
