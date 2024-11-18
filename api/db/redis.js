@@ -72,6 +72,9 @@ const hset = (key, field, value ) =>
 const hmget = (key = "key", key2 = "") =>
     new Promise((resolve, reject) => client.hmget(key, key2, resolvePromise(resolve, reject)))
 
+const hmgetmultiple =(key = "key", values = [])=>
+    new Promise((resolve, reject) => client.hmget(key, ...values, resolvePromise(resolve, reject)))
+
 const sismember = (key = "key", key2 = "") =>
     new Promise((resolve, reject) => client.sismember(key, key2, resolvePromise(resolve, reject)))
 
@@ -138,6 +141,7 @@ module.exports ={
     sadd,
     hmset,
     hmget,
+    hmgetmultiple,
     hset,
     sismember,
     srandmember,
