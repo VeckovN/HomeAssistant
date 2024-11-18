@@ -33,6 +33,7 @@ const useSocket = (user) =>{
                 const userData ={userID:user.userID, userUsername:user.username}
                 socketRef.current.emit('addOnlineUser', userData);
 
+                console.log("SOCEKT: joinRoom: " ,user.userID);
                 // Emit join request for the user's room
                 socketRef.current.emit('joinRoom', user.userID);
             });
