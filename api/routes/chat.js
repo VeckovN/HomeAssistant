@@ -16,7 +16,8 @@ const {
     getUnreadMessagesTotalCount,
     removeUnreadMessagesFromRoom,
     removeAllUnreadMessagesFromRoom,
-    setUnreadMessagesForUser
+    setUnreadMessagesForUser,
+    forwardUnreadMessages
 } = require('../controller/chatController'); 
 const router = express.Router();
 
@@ -36,6 +37,7 @@ router.get('/room/onlineUsers/:userID', isLogged, getOnlineUsers)
 router.get('/room/firstRoom/:userID', isLogged, getFirstRoomID)
 router.get('/room/friends/:userID', isLogged, getFriendsList);
 router.get('/room/unread/:username', isLogged, getAllUnreadMessages);
+router.put('/room/unread/forward', isLogged, forwardUnreadMessages);
 router.get('/room/unread/count/:userID', isLogged, getUnreadMessagesTotalCount);
 router.delete('/room/unread/delete/all/:roomID/:clientID', isLogged, removeAllUnreadMessagesFromRoom);
 router.delete('/room/unread/delete/:roomID/:userID', isLogged, removeUnreadMessagesFromRoom);

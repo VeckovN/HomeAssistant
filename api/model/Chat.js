@@ -1,4 +1,4 @@
-const {incr, set, hmset, hmget, exists, zrange, smembers, srandmember, zadd, zaddxx, zrangerev, del, rename, zcard, zrem, zrangerevscores} = require('../db/redis');
+const {incr, set, hmset, hmget, hmgetmultiple, exists, zrange, smembers, srandmember, zadd, zaddxx, zrangerev, del, rename, zcard, zrem, zrangerevscores} = require('../db/redis');
 const {formatDate, calculateTimeDifference} = require('../utils/dateUtils');
 const { getUserIdByUsername, getUserInfoByUserID, getUserPicturePath, getUnreadMessageCountByRoomID, recordNotification, getUsernameByUserID} = require('../db/redisUtils');
 
@@ -562,7 +562,7 @@ const resetUnreadMessagesCount = async(roomID, userID) =>{
 const resetAllUnreadMessagesCountFromRoom = async(roomID, clientID) =>{
     try{
         const usersID = roomID.split(":")
-        
+
         let countNumber = 0;
         for(const id of usersID){
             if(id == clientID){
@@ -576,6 +576,34 @@ const resetAllUnreadMessagesCountFromRoom = async(roomID, clientID) =>{
     }
     catch(err){
         console.error("Redis reset unread message count Errror: " + err);
+        return {success:false, message:"Error with reseting unread message"}
+    }
+}
+
+//after user kicking, the oldRoom becomes newRoomID without kickedUser
+const forwardUnreadMessagesToNewRoom = async(oldRoomID, newRoomID, kickedUserID) => {
+    try{
+        const usersID = oldRoomID.split(":");
+        for (const id of usersID) {
+            
+            if(id !== kickedUserID){
+                const oldRoomKey = `user${id}:room:${oldRoomID}:unread`;
+                const newRoomKey = `user${id}:room:${newRoomID}:unread`
+
+                const roomData = await hmgetmultiple(oldRoomKey, ['count', 'sender']);
+
+                await hmset(newRoomKey, ["count", roomData[0], "sender", roomData[1]]);
+                await del(oldRoomKey);
+            }
+            else{
+                await del(`user${kickedUserID}:room:${oldRoomID}:unread`);
+            }            
+        }
+
+        return {newRoomID};
+    }   
+    catch(err){
+        console.error("Redis move unread messages Errror: " + err);
         return {success:false, message:"Error with reseting unread message"}
     }
 }
@@ -632,6 +660,7 @@ module.exports ={
     resetUnreadMessagesCount,
     getUnreadMessagesTotalCount,
     getHouseworkerFirstRoomID,
-    resetAllUnreadMessagesCountFromRoom
+    resetAllUnreadMessagesCountFromRoom,
+    forwardUnreadMessagesToNewRoom
 }
 

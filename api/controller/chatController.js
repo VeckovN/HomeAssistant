@@ -190,6 +190,18 @@ const removeAllUnreadMessagesFromRoom = async(req,res) =>{
     }
 }
 
+const forwardUnreadMessages = async(req,res) =>{
+    const {oldRoomID, newRoomID, kickedUserID} = req.body;
+    try{
+        const result = await chatModel.forwardUnreadMessagesToNewRoom(oldRoomID, newRoomID, kickedUserID);
+        res.status(200).json(result);
+    }
+    catch(err){
+        console.error(err);
+        res.status(400).json({error: err.message || "Remove unread messages Error"});
+    }
+}
+
 
 module.exports ={
     getMessages,
@@ -206,5 +218,6 @@ module.exports ={
     getUnreadMessagesTotalCount,
     removeUnreadMessagesFromRoom,
     removeAllUnreadMessagesFromRoom,
-    getFirstRoomID
+    getFirstRoomID,
+    forwardUnreadMessages
 }

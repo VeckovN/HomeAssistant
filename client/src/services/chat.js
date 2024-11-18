@@ -148,6 +148,16 @@ export const resetUsersUnreadMessagesCount = async(roomID, clientID) =>{
     }
 }
 
+export const forwardUnreadMessagesFromOldToNewRoom = async(roomData) =>{
+    try{
+        const result = await axiosSession.put(BASE_URL + `chat/room/unread/forward/`, roomData);
+        return result.data;
+    }
+    catch(err){
+        ThrowErorr(err);
+    }
+}
+
 
 
 
