@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 export const ThrowErorr = (error) =>{
     if(error.response){
         throw error;
