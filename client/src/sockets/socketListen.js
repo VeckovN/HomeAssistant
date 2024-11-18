@@ -3,7 +3,7 @@ import {handlerError} from "../utils/ErrorUtils.js";
 import messageSound from '../assets/sounds/livechat-m.mp3'
 import announcementSound from '../assets/sounds/new-notification.mp3'
 import {getFriendsList} from '../services/chat.js';
-import {updateUnreadMessages, removeUnreadMessages} from '../store/unreadMessagesSlice.js';
+import {updateUnreadMessages, removeUnreadMessages, forwardUnreadMessages} from '../store/unreadMessagesSlice.js';
 import {updateUnreadComments} from "../store/unreadCommentSlice.js";
 import {addNotification} from '../store/notificationsSlice.js';
 
@@ -101,7 +101,7 @@ export const listenOnCreateUserGroupInRoom  = (socket, dispatch, enterRoomAfterA
         //If the newly added user is the current user, create a new group and display it
         dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, newUserID:newUserID, currentMember:currentMember, newUsername:newUsername, picturePath:newUserPicturePath, online})
         console.log(" listenOnCreateUserGroupInRoom EnterRoomAfterAction: ", newRoomID);
-        enterRoomAfterAction(newRoomID);
+        enterRoomAfterAction(newRoomID, true);
     })
 }
 
@@ -142,7 +142,7 @@ export const listenOnAddUserToGroup = (socket, dispatch, self_id, enterRoomAfter
 export const listenOnAddUserToGroupInRoom  = (socket, enterRoomAfterAction) =>{
     socket.on("addUserToGroupChangeInRoom", (newRoomID) =>{
         console.log(" listenOnAddUserToGroupInRoom EnterRoomAfterAction: ", newRoomID);
-        enterRoomAfterAction(newRoomID);
+        enterRoomAfterAction(newRoomID, true);
     })
 }
 
@@ -164,12 +164,11 @@ export const listenOnKickUserFromGroupInRoom  = (socket, self_id, enterRoomAfter
         const {firstRoomID, kickedUserID, newRoomID} = context;
         //kicked user -> newRoomID is deleted so enterFirst/last room
         if(kickedUserID === self_id){
-            //dispatch to set roomID 
-            enterRoomAfterAction(firstRoomID);
+            enterRoomAfterAction(firstRoomID, true);
         }
         else{
-            enterRoomAfterAction(newRoomID)
-            console.log("ENTER ROOM KickUSer IN ROOM --- newRoomID: " + newRoomID)
+            //enter room without reading unread messages
+            enterRoomAfterAction(newRoomID, false);
         }
     })
 }
@@ -210,20 +209,39 @@ export const listenOnAddUserToGroupNotification = (socket, self_id, reduxDispatc
             className:"toast-contact-message"
         })
 
+        // if(kickedUser === self_id){
+        //     //Remove unreadMessagesCount of roomID
+        // }
+
         reduxDispatch(addNotification(notification));
         playSound(announcementSound);
       })
 }
 
 export const listenOnKickUserFromGroupNotification = (socket, self_id, reduxDispatch) =>{
-    socket.on("kickUserFromGroupNotify", (notification) =>{
-        const notificationMessage = notification.message;
-        toast.info(notificationMessage,{
+    socket.on("kickUserFromGroupNotify", (data) =>{
+        console.log("Listen kickUserFromGroup Not :", data);
+        const {roomID, newRoomID, kickedUserID, notification} = data;
+        const message = notification.message;
+
+        toast.info(message,{
             className:"toast-contact-message"
         })
 
-        reduxDispatch(addNotification(notification));        
-        //removeUnreadMessagesforKickedUser
+        console.log("selfID: ", self_id + " kickedUserID: ", kickedUserID);
+
+        if(self_id != kickedUserID){
+            reduxDispatch(forwardUnreadMessages({
+                oldRoomID:roomID, 
+                newRoomID, 
+                kickedUserID
+            }));
+        }
+        else{
+            reduxDispatch(removeUnreadMessages({roomID})) 
+        }     
+        
+        reduxDispatch(addNotification(notification));  
         playSound(announcementSound);
     })
 }
@@ -237,7 +255,6 @@ export const listenOnDeleteUserRoomNotification = (socket, reduxDispatch) =>{
         })
 
         reduxDispatch(addNotification(notification));
-        // reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:to}))
         reduxDispatch(removeUnreadMessages({roomID}))
         playSound(announcementSound);
       })

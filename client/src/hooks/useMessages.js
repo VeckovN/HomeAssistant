@@ -7,7 +7,7 @@ import {getHouseworkers} from '../services/houseworker.js';
 import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, listenOnKickUserFromGroup, listenOnDeleteUserFromGroup, listenNewOnlineUser, listenOnMessageReceive, listenOnAddUserToGroupInRoom, listenOnKickUserFromGroupInRoom, listenOnFirstMessageReceive} from '../sockets/socketListen.js';
 import {emitRoomJoin, emitLeaveRoom, emitCreteUserGroup, emitUserAddedToChat, emitKickUserFromChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
 import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, getMoreMessagesByRoomID, getOnlineUsers, getFirstRoomID} from '../services/chat.js';
-import {resetUserUnreadMessagesCount, resetUsersUnreadMessagesbyRoomID} from '../store/unreadMessagesSlice.js';
+import {resetUserUnreadMessagesCount, resetUsersUnreadMessagesbyRoomID, forwardUnreadMessagesToNewRoom} from '../store/unreadMessagesSlice.js';
 import {sendMessage} from "../utils/MessageUtils/handleMessage.js";
 
 //Commit: Set show menu to false on room delete action, and other.. check for it
@@ -131,9 +131,11 @@ const useMessages = (socket, user) =>{
         return status;
     }
     
-    const enterRoomAfterAction = async(roomID) =>{
+    const enterRoomAfterAction = async(roomID, read) =>{
         try{
-            reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:user.userID}))
+            if(read)
+                reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:user.userID}))
+        
             //don't applie logic if is clicked on the same room
             if(roomID === state.roomInfo.roomID)
                 return;
@@ -164,7 +166,7 @@ const useMessages = (socket, user) =>{
     const onRoomClickHanlder = ( async e =>{
         const roomID = e.target.value;
         try{
-            await enterRoomAfterAction(roomID);
+            await enterRoomAfterAction(roomID, true);
             setShowChatView(true);  
         }
         catch(err){
@@ -218,7 +220,7 @@ const useMessages = (socket, user) =>{
         //to enterRoom room if the user has only 1 room
         if(state.roomsAction == "CREATE_CONVERSATION"){
             if(state.rooms.length == 1 ){
-                enterRoomAfterAction(state.rooms[0].roomID);
+                enterRoomAfterAction(state.rooms[0].roomID, true);
             }
             dispatch({type:"RESET_ROOM_ACTION"});
         }
@@ -298,8 +300,7 @@ const useMessages = (socket, user) =>{
                 toast.info("User is added to the room: "+  newRoomID);
             }
 
-            //enter afther the room is created
-            enterRoomAfterAction(newRoomID);
+            enterRoomAfterAction(newRoomID, true); 
         }
         catch(err){
             handlerError(err);
@@ -330,10 +331,8 @@ const useMessages = (socket, user) =>{
             const data = {firstRoomID, newRoomID, roomID, kickedUserID, kickedUsername:username, clientID:user.userID, clientUsername:user.username, notifications:notifications}
             emitKickUserFromChat(socket, data);
             
-            //but the unread messages from old room -> roomID should be assigned to newRoomID;
-            //for all from roomID instead of kicked one, delete roomID for kicked user as well
-            reduxDispatch(moveUnreadMessagesFromOldToNewRoom({oldRoomID:roomID, newRoomID:newRoomID, kickedUserID}));
-            enterRoomAfterAction(newRoomID);
+            reduxDispatch(forwardUnreadMessagesToNewRoom({oldRoomID:roomID, newRoomID:newRoomID, kickedUserID}));
+            enterRoomAfterAction(newRoomID, true);
 
             toast.info("The user "+ username + " has been kicked from the chat");
         }
