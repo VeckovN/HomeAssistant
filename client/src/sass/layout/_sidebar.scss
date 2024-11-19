@@ -41,7 +41,12 @@
         @include md-breakpoint{
             left:4em;
         }
+
+        @include sm-breakpoint{
+            left:3.5em;
+        }
     }
+    
 
     .nav-button{
         display: none;
@@ -261,22 +266,22 @@
                     }
                 }
 
-                .notifications-container{
-                    position: relative;
-                    top:2em;
-                    left:13.3em;
-                    padding:1em 1em;    
+                // .notifications-container{
+                //     position: relative;
+                //     top:2em;
+                //     left:13.3em;
+                //     padding:1em 1em;    
                     
-                    max-height: 500px;
-                    max-width: 500px;
-                    overflow:auto;
+                //     max-height: 500px;
+                //     max-width: 500px;
+                //     overflow:auto;
                     
-                    @extend %scrollbar-chat-style;
+                //     @extend %scrollbar-chat-style;
                     
-                    background-color: $black-5;
+                //     background-color: $black-5;
                     
-                    z-index: 10;
-                }
+                //     z-index: 10;
+                // }
 
                 .logout{
                     padding-top:0em;
