@@ -43,6 +43,13 @@ const Sidebar = () => {
     const closeOpenedViewsHandler = () =>{
         setIsOpenNotification(false);
         setIsOpen(false);
+
+    }
+
+    const toogleSideBarMenuHanlder = () =>{
+        setIsOpen(!isOpen)
+        if(isOpenNotification)
+            setIsOpenNotification(false);
     }
 
     const logoutHandler = () =>{
@@ -86,7 +93,7 @@ const Sidebar = () => {
 
     return(
         <main className='sidebar-container'>
-            <div className={`nav-button ${!isOpen ? 'close-nav-button' : ''}`} onClick={()=> setIsOpen(!isOpen)}>
+            <div className={`nav-button ${!isOpen ? 'close-nav-button' : ''}`} onClick={toogleSideBarMenuHanlder}>
                 <div className='nav-button-icon'>{!isOpen ? <KeyboardArrowRightOutlinedIcon fontSize="inherit"/> : <KeyboardArrowLeftOutlinedIcon fontSize="inherit"/>}</div>
             </div>
             <section className={`section-menu ${!isOpen ? 'section-menu-close' : ''}`} >
