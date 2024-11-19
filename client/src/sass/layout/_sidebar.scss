@@ -84,7 +84,6 @@
 
         display: flex;
         flex-direction: column;
-        // justify-content: center;
         align-content: center;
 
         @include md-breakpoint{
@@ -159,7 +158,6 @@
                     margin: 0em;
                     display: flex;
                     flex-direction: column;
-                    // justify-content: center;
                     align-items: center;
                 }
                 @include sm-breakpoint{
@@ -167,7 +165,6 @@
                 }
 
                 .sidebar-menu-link{
-
                     display: flex;
                     align-items: center;
                     text-decoration: none;
@@ -178,6 +175,10 @@
                     color:$black-7;
                     border-radius: 8px;
 
+                    @include md-breakpoint{
+                        padding:.1em 0 0 .2em;
+                    }
+
                     &:hover{
                         background-color:$color-hs-1;
                         color:$white;
@@ -185,8 +186,11 @@
                     
                     .sidebar-menu-icon{
                         font-size:1.3rem;
-                        padding:.2em .2em .2em .2em;
-                        padding-right:.4em;
+                        padding:.2em .4em .2em .2em;
+
+                        @include md-breakpoint{
+                            padding:.1em .2em .2em .1em;
+                        }
 
                     }
                     .sidebar-menu-name{
@@ -211,6 +215,15 @@
                         background-color: $color-hs-6;
                         text-align: center;
                         border-radius: 10%;
+
+                        @include md-breakpoint{
+                            width: 20px;
+                            height: 20px;
+                            font-size:$fs-em-5;
+
+                            // margin-left:auto;
+                            margin-right:.2em;
+                        }
                     }
                 }
 
@@ -229,7 +242,7 @@
                         }
 
                         @include md-breakpoint{
-                            padding-left:0em;
+                            padding-left:0em;      
                         }
                     }
 
@@ -242,7 +255,8 @@
                         color:$black;
 
                         @include md-breakpoint{
-                            left:1.5em
+                            left:1em;
+                            top:-.5em;
                         }
                     }
                 }
