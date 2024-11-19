@@ -493,7 +493,7 @@ const postUnreadMessagesToUser = async(roomID, senderUserID) =>{
         let unreadMessagesArray = [];
 
         userIDFromRoom.forEach(async(id)=>{
-            const unreadMessKey =`user${id}:room:${roomID}:unread`
+            const unreadMessKey =`user:${id}:room:${roomID}:unread`
             let countNumber = await getUnreadMessageCountByRoomID(id, roomID);
             let updateStatus = false;
 
@@ -548,7 +548,7 @@ const getUnreadMessages = async(username) =>{
 
 const resetUnreadMessagesCount = async(roomID, userID) =>{
     try{
-        const unreadMessKey = `user${userID}:room:${roomID}:unread`
+        const unreadMessKey = `user:${userID}:room:${roomID}:unread`
         const countNumber = await getUnreadMessageCountByRoomID(userID, roomID);
         await del(unreadMessKey);
         return {status:"success", removedCount:countNumber};
@@ -569,7 +569,7 @@ const resetAllUnreadMessagesCountFromRoom = async(roomID, clientID) =>{
                 countNumber = await getUnreadMessageCountByRoomID(clientID, roomID);
             }
 
-            const unreadMessKey = `user${id}:room:${roomID}:unread`;
+            const unreadMessKey = `user:${id}:room:${roomID}:unread`;
             await del(unreadMessKey);
         }
         return {status:"success", removedClientUnreadCount:countNumber}
@@ -587,8 +587,8 @@ const forwardUnreadMessagesToNewRoom = async(oldRoomID, newRoomID, kickedUserID)
         for (const id of usersID) {
             
             if(id !== kickedUserID){
-                const oldRoomKey = `user${id}:room:${oldRoomID}:unread`;
-                const newRoomKey = `user${id}:room:${newRoomID}:unread`
+                const oldRoomKey = `user:${id}:room:${oldRoomID}:unread`;
+                const newRoomKey = `user:${id}:room:${newRoomID}:unread`
 
                 const roomData = await hmgetmultiple(oldRoomKey, ['count', 'sender']);
 
@@ -596,7 +596,7 @@ const forwardUnreadMessagesToNewRoom = async(oldRoomID, newRoomID, kickedUserID)
                 await del(oldRoomKey);
             }
             else{
-                await del(`user${kickedUserID}:room:${oldRoomID}:unread`);
+                await del(`user:${kickedUserID}:room:${oldRoomID}:unread`);
             }            
         }
 

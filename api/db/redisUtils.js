@@ -32,7 +32,7 @@ const updateUserPicturePath = async(username, picturePath) =>{
 }
 
 const getUnreadMessageCountByRoomID = async(userID, roomID) =>{
-    const unreadObjKey =`user${userID}:room:${roomID}:unread`
+    const unreadObjKey =`user:${userID}:room:${roomID}:unread`
     const unreadCount = await hmget(unreadObjKey, "count");
     const countNumber = Number(unreadCount);
 
