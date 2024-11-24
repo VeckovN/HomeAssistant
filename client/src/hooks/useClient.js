@@ -5,11 +5,12 @@ import {getRecommended} from '../services/client.js'
 import { toast } from 'react-toastify';
 import debounce from 'lodash/debounce';
 
+
+//* Commit: removed errorHandler (just show error in console -> don't display as notification alert)
 const useClient = (user) =>{
     //fetched(houseworker) Data based on filtered and searched Data
     const [data, setData] = useState([]);
     const [showRecommended, setShowRecommended] = useState(false);
-    // const [recommendedData, setRecommendedDate] = useState([]);
     const [recommendedData, setRecommendedDate] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -20,18 +21,14 @@ const useClient = (user) =>{
 
     const pageNumberRef = useRef(0);
     
-    //this will ensure that the scroll event is not triggered multiple times in quick succession,
-    //and thus help in fetching data only once on each scroll event.
     const debouncedHandleScroll = debounce(() =>{   
         const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
-        //20px above page bottom
         const triggerThreshold = scrollableHeight - 200; 
         // if (window.scrollY >= triggerThreshold) {
         //pageNumberRef.current -1 prevent refetching houseworker after is fetched and there isn't new one.
         if (window.scrollY >= triggerThreshold && pageNumberRef.current != -1) {
             const newPage =  pageNumberRef.current+ 1;
             pageNumberRef.current = newPage;
-
             fetchData(newPage);
         }
     }, 50);
@@ -44,9 +41,7 @@ const useClient = (user) =>{
         if(localStorage.getItem("searchedData"))
             localStorage.clear('searchedData')
 
-        //scroll event listener attached on intial page rendering
         window.addEventListener('scroll', debouncedHandleScroll);
-        //cleanup function remove event listener on component unmount
         return () =>{
             window.removeEventListener('scroll',debouncedHandleScroll);
         }
@@ -86,13 +81,11 @@ const useClient = (user) =>{
             const params = new URLSearchParams(queryParams);
             // console.log("URL: " + `http://localhost:5000/api/houseworker/filter?/${params}`);
             const houseworkers = await getHouseworkerByFilter(params);
-            if(houseworkers.length >0){
-                console.log("HE");
+            if(houseworkers.length >0){ 
                 //if is new houseworkers fetched then contcatenate it with older houseworkers
                 if(pageNumberRef.current > 0){
                     console.log("Recoomme: ", recommendedData);
                     console.log("\n hos: ", houseworkers);
-
                     console.log("SHW :" , showRecommended);
 
                     setData(prev =>([
@@ -105,6 +98,7 @@ const useClient = (user) =>{
                         const recommendedDataRes = await fetchRecommended(houseworkers);
                         setRecommendedDate({daa:"ASAS"});
                         console.log("SSSSSSSSSSSSSS: ", recommendedDataRes);
+                        //exclude houseworker that are same as recommendedDataRes
                         setData([...recommendedDataRes, ...houseworkers]);
                         setShowRecommended(true);
                     }
@@ -132,55 +126,48 @@ const useClient = (user) =>{
             setLoading(false);
         }
         catch(err){
-            handlerError(err);
+            console.error(err);     
         }  
     }
 
     const fetchRecommended = async(houseworkers) =>{
         try{
-            const recommendedData1 = await getRecommended(user.username);
-            return recommendedData1;
+            const recommendedDataResult = await getRecommended(user.username);
+            return recommendedDataResult;
         }
         catch(err){
-            //just display it in the console
             console.error(err)
-            //handlerError(err);
         }
     }
     
     const searchDataHanlder = useCallback((searchDataObj) =>{
-        //searchData is data from SearchAndSort(Child) component
-; 
-        //This will ensure that the old key is overide with new value and new key added to this object
         setSearchData(prev=>{
-            const search_obj = {...prev}
-            //key of searchData (could be sort or name)
+            const searchObject = {...prev}
             const newKey = Object.keys(searchDataObj);
             const newValue = searchDataObj[newKey];
 
-            const currentKeys = Object.keys(search_obj);
+            const currentKeys = Object.keys(searchObject);
 
             //Ensure if we click on same Sort (example AgeUp) then replace this sort with default "ASC"
             if(currentKeys.includes('sort')){
-                //(reset)show again initial houseworkers (without filters)
-                if(search_obj['sort'] == newValue){
-                    search_obj['sort'] = 'ASC';
-                    localStorage.setItem('searchedData', JSON.stringify(search_obj));
-                    //allowe displaying recommended users 
+                if(searchObject['sort'] == newValue){
+                    searchObject['sort'] = 'ASC';
+                    localStorage.setItem('searchedData', JSON.stringify(searchObject));
+
                     setShowRecommended(false);
-                    return search_obj
+                    return searchObject
                 }
             }
             if(newKey == 'name' & newValue == ''){
-                if(search_obj['name']){
+                if(searchObject['name']){
                     setShowRecommended(false);
-                    delete search_obj.name;
+                    delete searchObject.name;
                 } 
             }
 
-            search_obj[newKey] = newValue; //add or update key with value
-            localStorage.setItem('searchedData', JSON.stringify(search_obj));
-            return search_obj;
+            searchObject[newKey] = newValue; //add or update key with value
+            localStorage.setItem('searchedData', JSON.stringify(searchObject));
+            return searchObject;
         })
         pageNumberRef.current = 0;
 
@@ -188,15 +175,14 @@ const useClient = (user) =>{
     // },[]);
 
     //On every re-rendering this function will be differentand without using useCallback and Filter component will be re-rendered(unnecessary)
-    const filterDataHandler = useCallback((filterData) =>{
+    const filterDataHandler = useCallback((filterObj) =>{
         //filteredData is passed data from Children Component (Filter)
         pageNumberRef.current = 0;
-        setFilterData(filterData);        
-        localStorage.setItem('filteredData', JSON.stringify(filterData));
+        setFilterData(filterObj);        
+        localStorage.setItem('filteredData', JSON.stringify(filterObj));
     },[filteredData]);
 
     return {data, loading, setLoading, pageNumberRef, searchDataHanlder, filterDataHandler}
-    // return {data, pageNumberRef, searchDataHanlder, filterDataHandler}
 }
 
 export default useClient;
