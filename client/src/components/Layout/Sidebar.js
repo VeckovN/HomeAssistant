@@ -20,7 +20,7 @@ import CottageIcon from '@mui/icons-material/Cottage';
 import KeyboardArrowRightOutlinedIcon from '@mui/icons-material/KeyboardArrowRightOutlined';
 import KeyboardArrowLeftOutlinedIcon from '@mui/icons-material/KeyboardArrowLeftOutlined';
 
-import HouseworkerNotification from "../HouseworkerNotification";
+import HouseworkerNotification from "../HouseworkerNotification/HouseworkerNotification.js";
 
 import '../../sass/layout/_sidebar.scss';
 
