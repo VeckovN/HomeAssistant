@@ -5,24 +5,18 @@ import {deleteComment} from '../../services/client.js';
 import {emitCommentNotification} from '../../sockets/socketEmit.js'
 import {toast} from 'react-toastify';
 
-const useHouseworkerComment = (socket, isClient, client_username) =>{
-    
+const useHouseworkerComment = (socket, isClient, clientUsername, houseworker, commentClick) =>{
     const [comments, setComments] = useState(null);
     const postCommentRef = useRef();
-    const commentClick = useRef(false);
     const pageNumberRef = useRef(0);
     const allCommentsLoadedRef = useRef(false);
 
-    //houseworker which comment modal is showned
-    const [houseworker, setHouseworker] = useState({
-        username:'',
-        id:''
-    })
-
     useEffect(()=>{
-        // if(commentClick.current == true && houseworker.username !='') //if is clicked or newComment added
         if(commentClick.current == true && houseworker.username !='') //if is clicked or newComment added
+        {
+            console.log("\n getHouseworkerComments \n")
             getHouseworkerComments();
+        }    
     },[houseworker.username])
 
     const getHouseworkerComments = async() =>{
@@ -70,30 +64,6 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
     //     }
     // },[])
 
-    const onCommentHandler = (e) =>{
-        if(!isClient){
-            toast.error("You must be logged in",{
-                className:"toast-contact-message"
-            })
-            return 
-        }
-
-        setHouseworker({
-            username:e.target.value,
-            id:e.target.id
-        })
-        commentClick.current = true;
-    }
-
-    const onCloseComment = ()=>{
-        setHouseworker(prevState =>({
-            ...prevState,
-            username:''
-        }))
-        commentClick.current = false;
-        // pageNumberRef.current = 0;
-    }
-
     const onCommentDelete = async (e, comment_id, from)=>{
         e.preventDefault();
         try{
@@ -123,7 +93,7 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
             //this fetch will be only trigger on Comment submit this is a reason why we can fetch over the useEffect
             try{
                 const newPostComment = {
-                    client:client_username,
+                    client:clientUsername,
                     houseworker:houseworker.username,
                     comment: newCommentContext
                 }
@@ -137,7 +107,7 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
                 const newComment = {
                     commentID:commentResult.commentID,
                     date:commentResult.commentDate,
-                    fromUsername: client_username,
+                    fromUsername: clientUsername,
                     houseworkerID: houseworker.id,
                     comment:newCommentContext,
                     read:false,
@@ -169,13 +139,10 @@ const useHouseworkerComment = (socket, isClient, client_username) =>{
     return {
         comments, 
         postCommentRef, 
-        commentClick, 
         allCommentsLoadedRef,
         houseworkerUsername:houseworker.username, 
-        onCommentHandler, 
         onCommentSubmit, 
         onCommentDelete, 
-        onCloseComment, 
         onLoadMoreComments
     }
 }

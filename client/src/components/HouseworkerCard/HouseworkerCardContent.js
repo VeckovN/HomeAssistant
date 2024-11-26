@@ -6,12 +6,7 @@ import HouseworkerCommentModal from './HouseworkerCommentModal';
 import '../../sass/components/_houseworkerCard.scss';
 
 const HouseworkerCardContent = ({
-    comments,
-    onCommentSubmit, 
-    postCommentRef, 
-    allCommentsLoadedRef,
-    onCommentDelete,
-    onCloseComment, 
+    socket,
     houseworkerProps,
     isClient,
     clientUsername,
@@ -23,31 +18,32 @@ const HouseworkerCardContent = ({
     onCloseRateHandler,
     onRateHandler,
     showRateInputCssClass,
+    clickedHouseworker,
     onCommentHandler,
     contactMessageRef,
     onContactHandler,
+    onCloseComment,
     commentClick,
-    onLoadMoreComments
 }) =>{
     const loadDefaultImageOnError = e =>{
         e.target.onerror = null;
         e.target.src = `assets/userImages/userDefault.png`;
     }
     const ratingValue = houseworkerRating !=null ? houseworkerRating : 0;
+    
+    console.log("HouseworkerProp: ", houseworkerProps);
+
     return (
         <>
-            {commentClick.current && comments &&
+            {commentClick.current &&
             //when the comments is not null show the modal
                 <HouseworkerCommentModal
-                    comments ={comments}
-                    commentsLoading = {commentClick.current}
+                    socket={socket}
+                    isClient={isClient}
                     clientUsername={clientUsername}
-                    onCommentSubmit ={onCommentSubmit}
-                    postCommentRef ={postCommentRef}
-                    allCommentsLoadedRef={allCommentsLoadedRef}
-                    onCommentDelete={onCommentDelete}
-                    onCloseComment = {onCloseComment}
-                    onLoadMoreComments={onLoadMoreComments}
+                    houseworker={clickedHouseworker}
+                    commentClick={commentClick}
+                    onCloseComment={onCloseComment}
                 />
             }
 

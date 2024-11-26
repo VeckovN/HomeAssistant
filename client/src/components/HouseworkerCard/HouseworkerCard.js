@@ -1,14 +1,12 @@
-import React from 'react';
+import React, {useState, useRef} from 'react';
 import {useSelector} from 'react-redux'
 import axios from 'axios';
 import HouseworkerCardContent from './HouseworkerCardContent.js';
-import useHouseworkerComment from '../../hooks/Houseworker/useHouseworkerComment.js'
 import useHouseworkerRating from '../../hooks/Houseworker/useHouseworkerRating.js';
 import useHouseworkerContact from '../../hooks/Houseworker/useHouseworkerContact.js';
 
 axios.defaults.withCredentials = true;
 
-//@Todo //Custom Hook for useFetch
 const HouseworkersCard = (props) =>{
     const socket = props.socket;
     const userAuth = useSelector((state) => state.auth.user)
@@ -16,20 +14,36 @@ const HouseworkersCard = (props) =>{
     const clientUsername = userAuth?.username;
     const clientID = userAuth?.userID;
 
-    const {
-        comments, 
-        postCommentRef, 
-        commentClick, 
-        allCommentsLoadedRef,
-        houseworkerUsername, 
-        onCommentHandler, 
-        onCommentSubmit, 
-        onCommentDelete,
-        onCloseComment,
-        onLoadMoreComments
-    } = useHouseworkerComment(socket, isClient, clientUsername)
+    //houseworker which comment modal is showned
+    const [houseworker, setHouseworker] = useState({
+        username:'',
+        id:''
+    })
+    const commentClick = useRef(false);
+
+    const onCommentHandler = (e) =>{
+        if(!isClient){
+            toast.error("You must be logged in",{
+                className:"toast-contact-message"
+            })
+            return 
+        }
+        setHouseworker({
+            username:e.target.value,
+            id:e.target.id
+        })
+        commentClick.current = true;
+    }
+
+    const onCloseComment = ()=>{
+        setHouseworker(prevState =>({
+            ...prevState,
+            username:''
+        }))
+        commentClick.current = false;
+        // pageNumberRef.current = 0;
+    }
     
-    //Here the houseworkerProfessions is fetched as well
     const {
         rate, 
         houseworkerRating,
@@ -51,13 +65,7 @@ const HouseworkersCard = (props) =>{
         return (
             <>
                 <HouseworkerCardContent 
-                    houseworkerUsername ={houseworkerUsername}
-                    comments ={comments}
-                    allCommentsLoadedRef={allCommentsLoadedRef}
-                    onCommentSubmit ={onCommentSubmit}
-                    postCommentRef ={postCommentRef}
-                    onCommentDelete={onCommentDelete}
-                    onCloseComment = {onCloseComment}
+                    socket={socket}
                     houseworkerProps={props}
                     isClient={isClient}
                     clientUsername={clientUsername}
@@ -69,18 +77,16 @@ const HouseworkersCard = (props) =>{
                     onCloseRateHandler={onCloseRateHandler}
                     onRateHandler={onRateHandler}
                     showRateInputCssClass={showRateInputCssClass}
+                    clickedHouseworker={houseworker}
                     onCommentHandler={onCommentHandler}
                     contactMessageRef={contactMessageRef}
                     onContactHandler={onContactHandler}
+                    onCloseComment={onCloseComment}
                     commentClick={commentClick}
-                    onLoadMoreComments={onLoadMoreComments}
                 />
             </>
         )
     }
 }
 
-//memo ensures that houseworker that exist(rendered) are not re-render again(because their context(props) are not changing) 
-//AFTER TESTING 'memo' CAUSES MORE LOAD TIMES THAN WITHOUT IT
-// export default memo(HouseworkersCard);
 export default HouseworkersCard;

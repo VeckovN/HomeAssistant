@@ -1,10 +1,23 @@
 import { useEffect, useRef } from "react";
 import Modal from "../../components/UI/Modal.js";
 import CommentItem from "../../components/UI/CommentItem";
+import useHouseworkerComment from "../../hooks/Houseworker/useHouseworkerComment.js";
 import '../../sass/components/_houseworkerCommentModal.scss';
 
-const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, postCommentRef, allCommentsLoadedRef, onCloseComment, onCommentDelete, onLoadMoreComments}) =>{
+const HouseworkerCommentModal = ({socket, isClient, clientUsername, houseworker, commentClick, onCloseComment}) =>{
     const observerTarget = useRef(null);
+
+    const handleCloseComment = () =>{
+        onCloseComment();
+    }
+    const {
+        comments, 
+        postCommentRef, 
+        allCommentsLoadedRef, 
+        onCommentSubmit, 
+        onCommentDelete,
+        onLoadMoreComments
+    } = useHouseworkerComment(socket, isClient, clientUsername, houseworker, commentClick)
 
     const options = {
         threshold: 0.3,
@@ -35,7 +48,7 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
     const commentBodyContext = 
         <>
             <div className='comment-container'>
-            {comments.length > 0 ?
+            {comments?.length > 0 ?
                 <>
                 {comments.map(comm => {
                     const isClientComment = clientUsername === comm.from;
@@ -64,15 +77,16 @@ const HouseworkerCommentModal = ({comments, clientUsername, onCommentSubmit, pos
 
     return(
         <>
-
-        <Modal
-            HeaderContext = {commentHeaderContext}
-            BodyContext = {commentBodyContext}
-            FooterContext = {null}
-            onCloseModal={onCloseComment}
-        />
-        
+        {commentClick.current && comments && 
+            <Modal
+                HeaderContext = {commentHeaderContext}
+                BodyContext = {commentBodyContext}
+                FooterContext = {null}
+                onCloseModal={handleCloseComment}
+            />
+        }
         </>
+        
     )
 }
 
