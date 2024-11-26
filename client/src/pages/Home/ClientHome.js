@@ -1,6 +1,5 @@
 import {useState, useEffect, useRef} from 'react'
 import {useSelector} from 'react-redux';
-import {handlerError} from '../../utils/ErrorUtils.js';
 import useClient from '../../hooks/useClient.js';
 import HouseworkerCard from '../../components/HouseworkerCard/HouseworkerCard.js'
 import { getHouseworkersCount } from '../../services/houseworker.js';
@@ -46,18 +45,17 @@ const ClientHome = ({socket}) =>{
             setHouseworkerCount(count);
         }
         catch(err){
-            handlerError(err);
+            console.log(err);
         }
     }
 
-    //THIS CAUSED RE_RENDERING ON EVERY DATA CHANGE ITS CHANGE  setHouseworkerData(houseworkerList); THAT AGAIN CAUSE RE_REDNERING
     useEffect(()=>{
         let houseworkerList;
         data ? 
         houseworkerList = data.map((user,index) =>
             (
             <HouseworkerCard
-                // key={`card-${user.id}`}
+                key={`${user.id}-${index}`}
                 recommended={user.recommended}
                 socket={socket}
                 id={user.id}
@@ -109,9 +107,7 @@ const ClientHome = ({socket}) =>{
                 <div className='filter-houseworkers-container'>
                     <div className='filter-options'>
                         <Filter 
-                        //This FilterDataHandler is different on every render by default - so memo(Filter) won't work to prevent Filter unnecessary re-rendering
-                        //so i had to this filterDataHandler made unique (frize on first fucntion creating -> useCallback on filterDataHandler in useClient )
-                        filterOptions={filterDataHanlderWithScroll}
+                            filterOptions={filterDataHanlderWithScroll}
                         />
                     </div>
                     
