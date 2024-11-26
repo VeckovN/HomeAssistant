@@ -1,36 +1,30 @@
 import {useState, useEffect} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {getConversationCount, getHomeInfo} from '../../services/houseworker.js'
 import Spinner from '../../components/UI/Spinner.js';
-import { logout } from '../../store/auth-slice.js';
 import HouseworkerProfessionItem from '../../components/HouseworkerProfessionItem.js';
 import GradeIcon from '@mui/icons-material/Grade';
 
 import '../../sass/pages/_houseworkerHome.scss';
 
 const HouseworkerHome = () =>{
-
     const {user} = useSelector((state) => state.auth)
     const [conversationCount, setConversationCount] = useState('');
     const [homeInfo, setHomeInfo] = useState({});
     const [loading, setLoading] = useState(true);
 
-    const dispatch = useDispatch();
-
     //Spinner should be showned until these 3 functions are executed
-    //PromisAll will solve this problem(garantees that after executing all these func the loading state is changed  )
     const fetchData = async () =>{
         try{
             const [countConv, homeInfo] = await Promise.all([
                 getConversationCount(user.userID),
                 getHomeInfo(user.username),
             ]);
-            
             setConversationCount(countConv);
             setHomeInfo(homeInfo);
         }catch(err){
             console.error("Error during fetching PromisAll data")
-        }finally{ //after all funcs executions
+        }finally{
             setLoading(false);
         }
     }
@@ -38,7 +32,6 @@ const HouseworkerHome = () =>{
     useEffect(()=>{
        fetchData();
     },[])
-
 
     return (
 
@@ -74,7 +67,6 @@ const HouseworkerHome = () =>{
                         </div>
 
                         <div className='rating-box'>
-                            {/* <div>Your rate</div> */}
                             <div className='rate-box-container'>
                                 <div id='rate-label'>Your rate</div>
                                 <div className='rate-box'>
@@ -110,7 +102,6 @@ const HouseworkerHome = () =>{
                     </div>
 
                     <div className='profile-professions-container'>
-                        {/* make component for each profession */}
                             {homeInfo.professions?.map( el => (
                                 <HouseworkerProfessionItem professionTitle={el} key={`pr-${el}`}/>
                             ))}
