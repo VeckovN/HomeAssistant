@@ -30,8 +30,6 @@ const HouseworkerCardContent = ({
         e.target.src = `assets/userImages/userDefault.png`;
     }
     const ratingValue = houseworkerRating !=null ? houseworkerRating : 0;
-    
-    console.log("HouseworkerProp: ", houseworkerProps);
 
     return (
         <>
