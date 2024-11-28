@@ -12,8 +12,6 @@ This is a full-stack web application that connects clients with house workers fo
 In other words, the application enables customers to search for, filter, and get in contact with house workers according to location, profession, and age, using more criteria.
 Houseworkers can show their skills, rating, and reviews, aside from communicating with prospective clients.
 
-2. This is a full-stack web application project that aims to connect clients with houseworkers, making the job matching process smooth and professional. The clients can easily search, filter, and connect with houseworkers based on location, profession, age, and other criteria. Houseworkers, in turn, can showcase their expertise, build their reputation through ratings and reviews, and communicate directly with prospective clients. It gives reason to ease of use, real-time communication, and recommendations on the platform, making it apt for professional relationship management and task management.
-
 ## Technologies
 * Frontend: HTML5, SCSS, ReactJS, Redux Toolkit<br />
 * Backend: NodeJS, Express <br />
