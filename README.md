@@ -1,11 +1,15 @@
 # HomeAssistant
 
 ## Table of Contents
+ * [Technical Documentation](#technical-documentation)
  * [Project Overview](#project-overview)
  * [Technologies](#technologies)
  * [Core Features](#core-features)
  * [Setup](#setup)
  * [App Pages](#app-pages)
+
+## Technical Documentation
+https://docs.google.com/document/d/1aOVzuddG7fOWAt-W2SW6L6mZmHCbq7oB62SIredRe0s/edit?usp=sharing
 
 ## Project Overview
 This is a full-stack web application that connects clients with house workers for professional services. It involves real-time communication, user recommendations, and efficient filtering.
@@ -43,12 +47,16 @@ Houseworkers can show their skills, rating, and reviews, aside from communicatin
 4. Dynamic Room Management
    - Users will create, join, or leave chat rooms.
    - Redis Sorted Sets track recent activity for room prioritization.
+  
+5. Redis Session and Caching
+   - Session Management: Redis is used to manage cookie-based sessions, ensuring secure and efficient user authentication.
+   - Caching: Frequently accessed data, such as recently filtered users and recommended houseworkers, is cached in Redis for improved performance.
 
-5. User Feedback
+6. User Feedback
    - Houseworkers can be commented on and rated by clients.
    - Real-time ratings and reviews update.
 
-6. User Presence and Typing Indicators
+7. User Presence and Typing Indicators
    - Online users and typing status can be tracked using SocketIO
 
 ## Setup 
