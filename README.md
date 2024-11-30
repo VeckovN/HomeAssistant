@@ -17,17 +17,16 @@ In other words, the application enables customers to search for, filter, and get
 Houseworkers can show their skills, rating, and reviews, aside from communicating with prospective clients.
 
 ## Technologies
-* Frontend: HTML5, SCSS, ReactJS, Redux Toolkit<br />
-* Backend: NodeJS, Express <br />
+* Frontend: HTML5, SCSS, ReactJS, Redux Toolkit
+* Backend: NodeJS, Express
 * Databases:
   - Neo4j for persistent user data and relationship-based recommendations
   - Redis for caching, session storage, and real-time data management
-* Real-time: Socket.IO <br />
-* Authorization: Cookie - Session-based <br />
-* Design(Houseworker Part): Figma <br />
+* Real-time: Socket.IO 
+* Authorization: Cookie - Session-based
+* Design(Houseworker Part): Figma 
 
 ## User Types 
- - Guest
  - Client
  - Houseworker
 
