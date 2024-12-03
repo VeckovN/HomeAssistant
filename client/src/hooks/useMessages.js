@@ -75,23 +75,16 @@ const useMessages = (socket, user) =>{
     const fetchAllRooms = ( async () =>{  
         try{
             const data = await getUserRooms(user.username); //roomID, users{}
-            // dispatch({type:"SET_ROOMS", data:data}) 
             dispatch({type:"SET_ROOMS", data:data.rooms}) 
-
-            //When user has conversations
-            // if(data.length > 0){
+            
             if(data.rooms.length > 0){
-                    //display first room as active
-
                 const roomID = data.rooms[0].roomID;
                 const users = data.rooms[0].users;
                 dispatch({type:"SET_ROOM_INFO", ID:roomID, usersArray:users});
 
                 emitRoomJoin(socket, roomID);
                 //reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:user.userID}));
-
                 const messages = await getMessagesByRoomID(roomID)
-                
                 dispatch({type:"SET_ROOM_MESSAGES", data:messages})
             }
             else{
@@ -283,8 +276,8 @@ const useMessages = (socket, user) =>{
 
             const onlineStatus = getOnlineUserStatus(newUserID);
             
-            if(isPrivate){                    
-                const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath, online:onlineStatus};
+            const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath, online:onlineStatus, notifications};
+            if(isPrivate){              
                 emitCreteUserGroup(socket, {data:groupData});
                 //check newUserID in onlineUsers state
                 //update client room view
@@ -293,9 +286,8 @@ const useMessages = (socket, user) =>{
                 //Scroll to bottom(new added room)
             }
             else{ 
-                const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath, online:onlineStatus, notifications};
-                emitUserAddedToChat(socket, {data:groupData});
-                
+                // const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath, online:onlineStatus, notifications};
+                emitUserAddedToChat(socket, {data:groupData});       
                 dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUserID:newUserID, newUsername:username, picturePath:newUserPicturePath, online:onlineStatus});
                 toast.info("User is added to the room: "+  newRoomID);
             }
