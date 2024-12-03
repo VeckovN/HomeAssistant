@@ -217,18 +217,16 @@ server.listen(5000, ()=>{
         })
 
         socket.on("createUserGroup", ({data}) =>{
-            const {newUserID, newUsername, roomID, newRoomID, clientID ,clientUsername, newUserPicturePath} = data;                        
+            const {newRoomID, roomID, clientID, notifications} = data;                        
             const users = newRoomID.split(':');
             const notifyUsers = users.filter(el => el!=clientID);
 
-            const notifyObj = {
-                newHouseworkerID:newUserID, 
-                clientUsername: clientUsername, 
-                newHouseworkerUsername:newUsername
-            }
+            // const roomKey = `room:${roomID}`;
+            // io.to(roomKey).emit("createUserToGroupChangeInRoom", newRoomID) //entered chat p
 
             notifyUsers.forEach(id =>{
-                io.to(`user:${id}`).emit('createUserToGroupNotify', notifyObj);
+                const matchedNotification = notifications.find(notification => notification.to === id);
+                io.to(`user:${id}`).emit('createUserToGroupNotify', matchedNotification);
                 //send data for chat room update
                 io.to(`user:${id}`).emit('createUserGroupChange', data);
             })

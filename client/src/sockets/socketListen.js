@@ -14,9 +14,7 @@ const playSound = (soundName) =>{
     }
 }
 
-// export const listenForCommentNotification = async(socket) => {
 export const listenForCommentNotification = async(socket, reduxDispatch) => {
-    // socket.on(`privateCommentNotify`, (client_username) =>{
     socket.on(`privateCommentNotify`, (comm) =>{
 
         const {commentID, comment, fromUsername, date} = comm.newComment;
@@ -81,13 +79,12 @@ export const listenOnMessageInRoom = (socket, dispatch) =>{
 export const listenOnMessageReceive = (socket, dispatch) =>{
     socket.on("messagePage", (contextObj) =>{
         const {roomID, lastMessage} = contextObj;
-        console.log("listenOnMessageReceive ContextOBJ:  ", contextObj);
         dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:roomID, message:lastMessage}) 
     })
 }
 
 //only for houseworker (because client contanct houseworker on homePage and won't be able to see changing from message page)
-export const listenOnFirstMessageReceive = (socket, dispatch, enterRoomAfterAction) =>{
+export const listenOnFirstMessageReceive = (socket, dispatch) =>{
     socket.on("firstMessageConversation", (contextObj) =>{
         const {roomID, from, fromUsername, lastMessage} = contextObj;
         dispatch({type:'CREATE_CONVERSATION', roomID:roomID, clientID:from, clientUsername:fromUsername, message:lastMessage, clientPicturePath:null, online:true})  
@@ -96,11 +93,8 @@ export const listenOnFirstMessageReceive = (socket, dispatch, enterRoomAfterActi
 
 export const listenOnCreateUserGroupInRoom  = (socket, dispatch, enterRoomAfterAction) =>{
     socket.on("createUserGroupChangeInRoom", (context) =>{
-        console.log("listenOnCreateUserGroupInRoom ,: ", context);
         const {newUserID, newUsername, roomID, newRoomID, currentMember, clientUsername, newUserPicturePath, online} = context;
-        //If the newly added user is the current user, create a new group and display it
         dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, newUserID:newUserID, currentMember:currentMember, newUsername:newUsername, picturePath:newUserPicturePath, online})
-        console.log(" listenOnCreateUserGroupInRoom EnterRoomAfterAction: ", newRoomID);
         enterRoomAfterAction(newRoomID, true);
     })
 }
@@ -108,19 +102,18 @@ export const listenOnCreateUserGroupInRoom  = (socket, dispatch, enterRoomAfterA
 export const listenOnCreateUserGroup = (socket, dispatch, self_id) =>{
     socket.on("createUserGroupChange", (context) =>{
         let {newUserID, newUsername, roomID, newRoomID, currentMember, clientUsername, newUserPicturePath, online} = context;
-        //If the newly added user is the current user, create a new group and display it
         if(self_id == newUserID){
             newUsername = clientUsername;
             newUserPicturePath = null
             online = true
         }
 
-        //check does is private 
+        //check is it private 
         dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, newUserID:newUserID, currentMember:currentMember, newUsername:newUsername, picturePath:newUserPicturePath, online})
     })
 }
 
-export const listenOnAddUserToGroup = (socket, dispatch, self_id, enterRoomAfterAction) =>{
+export const listenOnAddUserToGroup = (socket, dispatch, self_id) =>{
     socket.on("addUserToGroupChange", (context) =>{
         const {newUserID, newUsername, roomID, newRoomID, currentMember, clientUsername, newUserPicturePath, online} = context;
         //If the newly added user is the current user, create a new group and display it
@@ -137,8 +130,7 @@ export const listenOnAddUserToGroup = (socket, dispatch, self_id, enterRoomAfter
     })
 }
 
-///io.to(roomKey).emit("addUserToGroupChangeInRoom": than trigger enterToNewRoomAction because 
-//it's wathcing that room and pointer on that room must be changed 
+
 export const listenOnAddUserToGroupInRoom  = (socket, enterRoomAfterAction) =>{
     socket.on("addUserToGroupChangeInRoom", (newRoomID) =>{
         console.log(" listenOnAddUserToGroupInRoom EnterRoomAfterAction: ", newRoomID);
@@ -150,10 +142,8 @@ export const listenOnKickUserFromGroup = (socket, dispatch, self_id) =>{
     socket.on("kickUserFromGroupChange", (context) =>{
         const {roomID, newRoomID, kickedUsername, kickedUserID} = context;
 
-        if(kickedUserID === self_id){
-            // dispatch({type:"DELETE_ROOM", data:roomID})
+        if(kickedUserID === self_id)
             dispatch({type:"DELETE_ROOM_AFTER_USER_KICK", data:roomID})
-        }
         else
             dispatch({type:"KICK_USER_FROM_GROUP", roomID, newRoomID, username:kickedUsername})        
     })
@@ -163,13 +153,11 @@ export const listenOnKickUserFromGroupInRoom  = (socket, self_id, enterRoomAfter
     socket.on("kickUserFromGroupChangeInRoom", (context) =>{
         const {firstRoomID, kickedUserID, newRoomID} = context;
         //kicked user -> newRoomID is deleted so enterFirst/last room
-        if(kickedUserID === self_id){
+        if(kickedUserID === self_id)
             enterRoomAfterAction(firstRoomID, true);
-        }
-        else{
-            //enter room without reading unread messages
+        else
             enterRoomAfterAction(newRoomID, false);
-        }
+        
     })
 }
 
@@ -180,38 +168,25 @@ export const listenOnDeleteUserFromGroup = (socket, dispatch) =>{
     })
 }
 
-export const listenOnCreateUserNotification = (socket, self_id) =>{
-    socket.on(`createUserToGroupNotify`, (messageObj) =>{
-        const {newHouseworkerID, clientUsername, newHouseworkerUsername} = messageObj;
+export const listenOnCreateUserNotification = (socket, reduxDispatch) =>{
+    socket.on(`createUserToGroupNotify`, (notification) =>{
+        const notificationMessage = notification.message;
+        toast.info(notificationMessage,{
+            className:"toast-contact-message"
+        })
 
-        //only one user gets the notification (tne newly added one)
-        if(newHouseworkerID == self_id){
-            toast.info(`Client ${clientUsername} added you to the group`,{
-                className:"toast-contact-message"
-            })
-        }
-        else{
-            //Notification for existing members(clients) in the chat, excluding the sender and new added client
-            toast.info(`Client ${clientUsername} added the ${newHouseworkerUsername} to group`,{
-                className:"toast-contact-message"
-            })
-        }
-
+        reduxDispatch(addNotification(notification));
         playSound(announcementSound);
     })
 }
 
-export const listenOnAddUserToGroupNotification = (socket, self_id, reduxDispatch) =>{
+export const listenOnAddUserToGroupNotification = (socket, reduxDispatch) =>{
     socket.on("addUserToGroupNotify", (notification) =>{
 
         const notificationMessage = notification.message;
         toast.info(notificationMessage,{
             className:"toast-contact-message"
         })
-
-        // if(kickedUser === self_id){
-        //     //Remove unreadMessagesCount of roomID
-        // }
 
         reduxDispatch(addNotification(notification));
         playSound(announcementSound);
@@ -220,15 +195,12 @@ export const listenOnAddUserToGroupNotification = (socket, self_id, reduxDispatc
 
 export const listenOnKickUserFromGroupNotification = (socket, self_id, reduxDispatch) =>{
     socket.on("kickUserFromGroupNotify", (data) =>{
-        console.log("Listen kickUserFromGroup Not :", data);
         const {roomID, newRoomID, kickedUserID, notification} = data;
         const message = notification.message;
 
         toast.info(message,{
             className:"toast-contact-message"
         })
-
-        console.log("selfID: ", self_id + " kickedUserID: ", kickedUserID);
 
         if(self_id != kickedUserID){
             reduxDispatch(forwardUnreadMessages({
