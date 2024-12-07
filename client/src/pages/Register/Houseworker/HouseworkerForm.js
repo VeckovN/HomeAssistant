@@ -6,8 +6,17 @@ import '../../../sass/pages/Register/_registerHouseworker.scss';
 
 const HouseworkerForm = ({register, errors, getValues, cityField, professionField, avatarField, handleSubmit, onRemoveAvatarHandler, onChangeHouseworkerProfessionsHandler, onChangeProffesionsHandler, onChangeImageHandler, onChangeCityHandler, onSubmitHandler,  profession_options, city_options}) =>{
 
-    const inputs =[{id:'1', name:'username', type:'text', label:"Username"}, {id:'2', name:'email' , type:'text', label:"Email", autoComplete:"off"}, {id:'3',name:'password', type:'password', label:"Password", autoComplete:"new-password"}, {id:'4',name:'confirmPassword', type:'password', label:"Confirm Password", autoComplete:"new-password"}, 
-    {id:'5',name:'firstName' , type:'text', label:"First Name", placeholder:"Enter first name"}, {id:'6',name:'lastName', type:'text', label:"Last name", placeholder:"Enter last name"}, {id:'7', name:'age' , type:'number', label:"Age"}, {id:'8', name:'address' , type:'text', label:"Address"}, {id:'9', name:'phoneNumber' , type:'number', label:"Phone number", placeholder:"Enter phone number"}]
+    const inputs = [
+        {id:'1', name:'username', type:'text', label:"Username"}, 
+        {id:'2', name:'email' , type:'text', label:"Email", autoComplete:"off"}, 
+        {id:'3',name:'password', type:'password', label:"Password", autoComplete:"new-password"}, 
+        {id:'4',name:'confirmPassword', type:'password', label:"Confirm Password", autoComplete:"new-password"}, 
+        {id:'5',name:'firstName' , type:'text', label:"First Name", placeholder:"Enter first name"}, 
+        {id:'6',name:'lastName', type:'text', label:"Last name", placeholder:"Enter last name"}, 
+        {id:'7', name:'age' , type:'number', label:"Age"}, 
+        {id:'8', name:'address' , type:'text', label:"Address"}, 
+        {id:'9', name:'phoneNumber' , type:'number', label:"Phone number", placeholder:"Enter phone number"}
+    ]
 
     return (
         <div className='register-user-container'>
