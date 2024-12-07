@@ -2,44 +2,40 @@ const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-const clientRoute = require('./routes/clients')
-const houseworkerRoute = require('./routes/houseworkers');
-const authRoute = require('./routes/auth');
-const chatRoute = require('./routes/chat');
 const dotenv = require('dotenv');
 const path = require('path');
-const {sendMessage} = require('./model/Chat.js')
 const {client:redisClient, RedisStore, } = require('./db/redis');
 const upload = require('./utils/Multer.js');
 const {register} = require('./controller/auth')
 const { udpateHouseworker} = require('./controller/houseworkerController.js')
+const listeners = require('./sockets/listeners');
+
+const clientRoute = require('./routes/clients')
+const houseworkerRoute = require('./routes/houseworkers');
+const authRoute = require('./routes/auth');
+const chatRoute = require('./routes/chat');
 
 dotenv.config();
 
+const app = express();
 
-const app = express()
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-//multer config
+
+//static assets
 app.use("/assetss", express.static(path.join(__dirname, "public/assets")));
 
 var corsOptions={
-    //access is allowed to everyone
     origin:"http://localhost:3000", //react app
     methods: "POST, PUT, GET, HEAD, PATCH, DELETE",
     credentials: true,
 }
 app.use(cors(corsOptions));
 
-
-// SAVE Sesssion middleware to varibale becaseu it needs to be used for socket io middleware
 const sessionMiddleware = session({
     store: new RedisStore({ client: redisClient }),
-    //if false = we don't re-save the session, so we are not saving the same object every time
     resave:false, 
-    //if false =we only want to create session when the user is logged in (We saving something in session only when is user logged in)
-    //if true = session will be created even user not logged in ()
     saveUninitialized:false,
     name:"sessionLog",
     secret: "aKiqn12$%5s@09~1s1",
@@ -47,16 +43,15 @@ const sessionMiddleware = session({
         //for deploy set the secure to TURE, TURE DONSN'T STORE COOKIE ON BROWSER in DEVELOPMENT(using postman and etc.)
         secure:false, //our cookies works wiht false -if false - any HTTP call which is NOT HTTPS and it doesn't have SSL can access our cookies(can access this app in general)
         httpOnly: true, //if true - the  web page can't access the cookie in JS
-        maxAge: 1000 * 95 * 10, //session max age in ms
+        maxAge: 1000 * 95 * 10, 
     }
 })
-//SESSION 
 app.use(sessionMiddleware);
-
 
 //Socket Server Init
 var Server = require("http").Server;
 var server = Server(app);
+
 var io = require("socket.io")(server, {
     cors: {
         origin:"http://localhost:3000", //react app
@@ -72,225 +67,23 @@ io.use(function(socket, next) {
 
 //#region Routes
 
-//app.post("/api/auth/register", upload.single("picture"), register);
-//app.post('/api/register', upload.any("picture"), register);
+//File upload routes
 app.post('/api/register', upload.any("avatar"), register);
 app.post('/api/houseworkerupdate', upload.any("avatar"), udpateHouseworker); //route for updating houseworker with avatar
+
+//Api routes
 app.use("/api/clients", clientRoute);
 app.use("/api/houseworker", houseworkerRoute);
-app.use("/api/" , authRoute);
+app.use("/api/", authRoute);
 app.use('/api/chat', chatRoute);
 
-app.get("/api/", (req,res)=>{
-    console.log("SESSSSSLogion3333333333333: " + JSON.stringify(req.session))
-    if(req.session.user)
-        // return res.redirect(`/${req.session.user.type}`) // /client or /houseworker
-       return res.send("Session works")
-    return res.send("Session doesen't works")  
-})
 //#endregion Routes
 
-
 server.listen(5000, ()=>{
-    io.on('connection', async(socket)=>{
-        console.log("CONNECTION INITIALIZED : socketID: " + socket.id);
-        const ID = socket.handshake.query.userID; //use handshake for static data
-
-        //listen on onlineUser event (/thissocket.id could be identifier as well as userID )
-        socket.on("addOnlineUser", (userData) =>{
-            const data ={type:"Add", userID: userData.userID};
-            //cleear distinction between storing user data (Hash) and tracking online users (Set).
-            //for every registerd user there is HASH (user:{id} -> usenrame, password, imagePath)()
-            redisClient.sadd(`onlineUsers`, userData.userID ,(err,res) =>{
-                if(err){
-                    console.log("Error with adding user to onlineUser set");
-                }
-                else{
-                    console.log(`User ${userData.userID} hass been added to onlineUser set`);
-                    io.emit('newOnlineUser', data);
-                }
-            });
-        })  
-
-        //every user on socket init join the room * used to send end receive data for concrete user
-        //instead of broadcasting with io.emit('dynamicName') because it's less efficient and not good performance
-        socket.on('joinRoom', (userID)=>{
-            socket.join(`user:${userID}`);
-        })
-
-        socket.on('leaveRoom', userID =>{
-            socket.leave(`user:${userID}`);
-        })
-
-
-        //Chat rooms
-        socket.on("chatRoom.join", id =>{ //listen on 'room.join' event
-            socket.join(`room:${id}`); //join room -> room:1:2 example or group room:1:5:7
-        })
-    
-        socket.on("chatRoom.leave", id =>{
-            console.log("You left the room: " + id);
-            socket.leave(`room:${id}`)
-        })
-
-        socket.on("commentNotification", (commentObj) =>{
-            const houseworkerID = commentObj.newComment.houseworkerID;
-            //optimization
-            //use JoinedRoom instead of dynamicName emit for 'newCommentChange', it's broadCasting the unnecessary traffics (data)
-            io.to(`user:${houseworkerID}`).emit('privateCommentNotify', commentObj);
-            io.to(`user:${houseworkerID}`).emit(`newCommentChange`, commentObj.newComment);
-        })
-
-        socket.on("ratingNotification", (ratingObj) =>{
-            const houseworkerID = ratingObj.houseworkerID;
-            io.emit(`privateRatingNotify-${houseworkerID}`, ratingObj);
-        })
-
-        socket.on("message", ({data})=>{ 
-            try{
-                const roomKey = data.roomKey;
-                io.to(roomKey).emit("messageRoom", data) //entered chat page(view)
-
-                const {from, roomID, fromUsername, lastMessage, unreadMessArray, createRoomNotification, contact} = data;
-                const users = roomID.split(':');
-                const notifyUsers = users.filter(el => el!=from);
-
-                notifyUsers.forEach(id =>{
-                    const unreadUser = unreadMessArray.find(el => el.recipientID == id);
-                    const unreadUpdateStatus = unreadUser ? unreadUser.updateStatus : null;
-
-                    let notificationData ={
-                        roomID, 
-                        fromUsername, 
-                        fromUserID:from, 
-                        userID:id, 
-                        lastMessage, 
-                        unreadUpdateStatus:unreadUpdateStatus, 
-                        createRoomNotification:createRoomNotification
-                    }
-
-                    //on conversation start *client sent message through contact home page (not from chat)
-                    if(contact)
-                        io.to(`user:${id}`).emit("firstMessageConversation" , data);
-                    else
-                        io.to(`user:${id}`).emit("messagePage" , data);
-                
-                    io.to(`user:${id}`).emit("messageResponseNotify" , notificationData);
-                })
-            }
-            catch(error){
-                console.error("Error Handling message: ", error);
-            }
-        })
-
-        socket.on("startTypingRoom", ({roomID, user}) =>{
-            try{
-                const {userID, username} = user;
-                const roomKey = `room:${roomID}`
-
-                const sender ={
-                    senderID:userID, 
-                    senderUsername:username
-                }
-                io.to(roomKey).emit("typingMessageStart", sender) 
-            }
-            catch(err){
-                console.error("errpr: " , err);
-            }
-        })
-
-        socket.on("stopTypingRoom", ({roomID, user}) =>{
-            try{
-                const {userID, username} = user;
-                const roomKey = `room:${roomID}`
-
-                const sender ={
-                    senderID:userID, 
-                    senderUsername:username
-                }
-                //send it in room (sender should check does is he sender userID === senderID and dont show (...))
-                io.to(roomKey).emit("typingMessageStop", sender) 
-            }
-            catch(err){
-                console.error("errpr: " , err);
-            }
-        })
-
-        socket.on("createUserGroup", ({data}) =>{
-            const {newRoomID, roomID, clientID, notifications} = data;                        
-            const users = newRoomID.split(':');
-            const notifyUsers = users.filter(el => el!=clientID);
-
-            // const roomKey = `room:${roomID}`;
-            // io.to(roomKey).emit("createUserToGroupChangeInRoom", newRoomID) //entered chat p
-
-            notifyUsers.forEach(id =>{
-                const matchedNotification = notifications.find(notification => notification.to === id);
-                io.to(`user:${id}`).emit('createUserToGroupNotify', matchedNotification);
-                //send data for chat room update
-                io.to(`user:${id}`).emit('createUserGroupChange', data);
-            })
-        })
-
-        socket.on("addUserToGroup", ({data}) =>{
-            const {newRoomID, roomID, clientID, notifications} = data;
-            const users = newRoomID.split(':');
-
-            const roomKey = `room:${roomID}`;
-            io.to(roomKey).emit("addUserToGroupChangeInRoom", newRoomID) //entered chat p
-
-            const notifyUsers = users.filter(el => el!=clientID);
-            notifyUsers.forEach(id =>{
-                const matchedNotification = notifications.find(notification => notification.to === id);
-                io.to(`user:${id}`).emit("addUserToGroupNotify" , matchedNotification);
-                io.to(`user:${id}`).emit("addUserToGroupChange" , data);
-            })
-        })
-
-        socket.on("kickUserFromGroup", (data) =>{
-            const {firstRoomID, roomID, newRoomID, kickedUserID, clientID, notifications} = data;
-            const users = roomID.split(":");
-            const notifyUsers = users.filter(el => el!=clientID);
-
-            const roomKey = `room:${roomID}`;
-            //user's that are in the room right now
-            io.to(roomKey).emit("kickUserFromGroupChangeInRoom", {kickedUserID, newRoomID, firstRoomID}) //entered chat p
-           
-            notifyUsers.forEach(id =>{
-                const matchedNotification = notifications.find(notification => notification.to === id);
-                io.to(`user:${id}`).emit("kickUserFromGroupNotify" , {roomID, newRoomID, kickedUserID, notification:matchedNotification});
-                io.to(`user:${id}`).emit("kickUserFromGroupChange" , data);
-            });
-
-        });
-
-        socket.on("deleteUserRoom", (data) =>{
-            const {roomID, clientID, notifications} = data;   
-            const users = roomID.split(':');
-            const notifyUsers = users.filter(el => el!=clientID);
-
-            notifyUsers.forEach(id =>{
-                const matchedNotification = notifications.find(notification => notification.to === id);
-
-                io.to(`user:${id}`).emit("deleteUserRoomNotify" , {roomID:roomID, ...matchedNotification});
-                io.to(`user:${id}`).emit("deleteUserRoomChange" , data);
-            })
-        })
-
-        socket.on('disconnect', async()=>{
-            //handshake query prop (ID) is used for disconnection.
-            redisClient.srem("onlineUsers", ID, (err,res)=>{
-                if(err){
-                    console.log("Error with removing user from onlineUser set");
-                }
-                else{
-                    console.log(`User ${ID} hass been removed to onlineUser set`);
-                    const data ={type:"Remove", userID:ID};
-                    io.emit('newOnlineUser', data);
-                }
-            });
-        })
-    })
-    
     console.log("SERVER at 5000 port");
+    
+    io.on('connection', async(socket)=>{
+        console.log("CONNECTED INTITIALIZED: socketID: " + socket.id);
+        listeners(io, socket, redisClient);
+    })
 })
