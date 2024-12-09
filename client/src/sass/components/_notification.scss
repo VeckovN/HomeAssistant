@@ -1,6 +1,7 @@
 @use '../abstracts/colors' as *;
 @use '../abstracts/fonts' as *;
 @use '../base/typography' as *;
+@use '../abstracts/brakepoints' as *;
 
 .notification-box{
 
@@ -9,6 +10,34 @@
         color:$white;
         font-size: $fs-em-2;
         padding:.2em 0em .3em 0em;
+
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        .notification-exit-sign{
+            display: none;
+        }
+
+        @include sm-breakpoint{
+
+            .notification-exit-sign{
+                color:white;
+                display: unset;
+
+                border:none;
+                background: none;
+            
+                color:$white;
+                font-size: $fs-em-6;
+                font-weight: 700;
+                cursor: pointer;
+
+                &:hover{
+                    color:rgb(167, 15, 15);
+                }
+            }
+        }
     }
 
     .notifications-list{
@@ -17,6 +46,11 @@
         .notification{
             display: flex;
             padding: .5em;
+            font-size: $fs-em-4;
+
+            @include xs-breakpoint{
+                font-size: $fs-em-5;
+            }
             
             &-context-image{
                 padding-right: 1em;
