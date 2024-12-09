@@ -40,7 +40,6 @@ const Sidebar = () => {
     const closeOpenedViewsHandler = () =>{
         setIsOpenNotification(false);
         setIsOpen(false);
-
     }
 
     const toogleSideBarMenuHanlder = () =>{
@@ -162,7 +161,7 @@ const Sidebar = () => {
             <section className='sidebar-context-container'>
                 {isOpenNotification &&  
                     <div className='notifications-container'>
-                        <HouseworkerNotification closeNotifications={closeNotificationHandler}/>
+                        <HouseworkerNotification  closeNotificationAndMenuView={closeOpenedViewsHandler} closeNotification={closeNotificationHandler}/>
                     </div>
                 }
                 <Outlet />

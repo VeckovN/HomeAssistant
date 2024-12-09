@@ -5,7 +5,7 @@ import NotificationList from './NotificationList';
 
 import '../../sass/components/_notification.scss';
 
-const HouseworkerNotification = ({closeNotifications}) =>{
+const HouseworkerNotification = ({closeNotificationAndMenuView, closeNotification}) =>{
 
     const dispatch = useDispatch();
     const {notifications, totalNotificationsCount, batchNumber} = useSelector((state) => state.notifications)
@@ -24,7 +24,7 @@ const HouseworkerNotification = ({closeNotifications}) =>{
         }
 
         navigator(path);
-        closeNotifications();
+        closeNotificationAndMenuView();
     }
 
     const returnPath = (type) =>{
@@ -43,7 +43,7 @@ const HouseworkerNotification = ({closeNotifications}) =>{
         <div className='notification-box'>
             <div className='notification-box-title'>
                 <div>Notifications</div>
-                <div className='notification-exit-sign' onClick={closeNotifications}>X</div>
+                <div className='notification-exit-sign' onClick={closeNotification}>X</div>
             </div>
             
             {notifications.length > 0 ?(
