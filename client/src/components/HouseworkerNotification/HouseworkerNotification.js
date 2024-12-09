@@ -42,7 +42,8 @@ const HouseworkerNotification = ({closeNotifications}) =>{
     return(
         <div className='notification-box'>
             <div className='notification-box-title'>
-                Notifications
+                <div>Notifications</div>
+                <div className='notification-exit-sign' onClick={closeNotifications}>X</div>
             </div>
             
             {notifications.length > 0 ?(
