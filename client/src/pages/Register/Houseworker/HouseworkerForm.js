@@ -116,7 +116,7 @@ const HouseworkerForm = ({register, errors, getValues, cityField, professionFiel
                                     <input 
                                         className='input-field'
                                         type='number'
-                                        placeholder="Enter working hour"
+                                        placeholder="Enter € / hour "
                                         name={el} //selected profession
                                         // value //entered value
                                         onChange={onChangeHouseworkerProfessionsHandler}
