@@ -63,17 +63,18 @@
     
                 .working-hours{
                     margin:.3em 0;
-                    display: flex;
-                    justify-content: center;
                     align-self: center;
     
                     label{
                         margin:0 .5em;
+                        text-align: center;
                     }
     
                     input{
                         @extend %input-style;
-                        width: 6em;
+                        border-bottom:2px solid #505050;
+                        text-align: center;
+                        width: 7.5em;
                 
                         &:focus{
                             color:$grey-1;
