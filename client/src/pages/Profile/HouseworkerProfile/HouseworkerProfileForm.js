@@ -1,5 +1,5 @@
 import { city_options } from '../../../utils/options';
-import HouseworkerProfessions from '../../../components/HouseworkerProfessions.js';
+import HouseworkerProfessions from '../../../components/HouseworkerProfessions/HouseworkerProfessions.js'
 import HouseworkerInputs from '../../../components/HouseworkerInputs.js';
 import Spinner from '../../../components/UI/Spinner.js';
 import '../../../sass/pages/_houseworkerProfile.scss';
