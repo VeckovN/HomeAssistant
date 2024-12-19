@@ -52,7 +52,6 @@ export const resetUserUnreadMessagesCount = createAsyncThunk(
 export const resetUsersUnreadMessagesbyRoomID = createAsyncThunk(
     'unreadMessages/resetUsersUnreadMessagesbyRoomID ',
     async({roomID, clientID}, thunkAPI) =>{
-        console.log("Reset passed varaiubles: ", roomID , 's:  ',clientID)
         try{
             const response = await resetUsersUnreadMessagesCount(roomID, clientID);
             return {roomID:roomID, removedCount:response.removedClientUnreadCount}
@@ -106,13 +105,8 @@ const unreadMessagesSlice = createSlice({
                 (el) => el.roomID === action.payload.roomID
             )
 
-            console.log("ACTION ", action);
-            console.log("Action RoomID: ", action.payload.roomI);
-            console.log("messageIndex: ", messageIndex);
-
             if(messageIndex !== -1){
                 const removedCount = parseInt(state.unreadMessages[messageIndex].count);
-                console.log("RemovedCount: ", removedCount);
                 state.unreadCount -= removedCount;
 
                 state.unreadMessages = state.unreadMessages.filter(

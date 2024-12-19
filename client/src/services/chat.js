@@ -26,7 +26,6 @@ export const getMessagesByRoomID = async(roomID) =>{
 }
 
 export const getMoreMessagesByRoomID = async(roomID, pageNumber) =>{
-    console.log("\n PAGE NUMBER: " , pageNumber);
     try{
         const result = await axiosSession.get(BASE_URL + `chat/room/message/${roomID}/${pageNumber}`)
         const messages = result.data;

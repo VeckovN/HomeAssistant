@@ -46,7 +46,6 @@ const unreadCommentsSlice = createSlice({
     reducers:{
         //this is Sync action to update totalUnread and unread.count prop without calling Async
         updateUnreadComments: (state, action) =>{
-            console.log("Action payload: ", action.payload);
             state.unreadComments.push(action.payload.newUpdateComment);
             state.unreadCommentsCount += 1;
         },

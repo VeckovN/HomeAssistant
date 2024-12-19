@@ -91,7 +91,6 @@ export const MessagesReducer = (state, action) =>{
                 })
             }
         case "SET_ROOM_MESSAGE_WITH_ROOM_INFO":
-            console.log("roommmm mm mm : " ,action);
             return{
                 ...state,
                 roomMessages: action.messages,

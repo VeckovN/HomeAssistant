@@ -66,11 +66,9 @@ export const listenFormMessage = async(socket, reduxDispatch) =>{
       })
 }
 
-
 //users Joined in room (room.join(io.to(roomKey).emit()) listen for these events
 export const listenOnMessageInRoom = (socket, dispatch) =>{
     socket.on("messageRoom", (contextObj) =>{
-        console.log("messageRoom ContextOBJ:  ", contextObj);
         dispatch({type:"SEND_MESSAGE", data:contextObj})
     })
 }
@@ -119,21 +117,17 @@ export const listenOnAddUserToGroup = (socket, dispatch, self_id) =>{
         //If the newly added user is the current user, create a new group and display it
         if(newUserID == self_id)
         {
-            dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, newUserID:newUserID, currentMember:currentMember, newUsername:clientUsername, picturePath:null, online:true})
-            console.log("CREATE_NEW_GROUP");
+            dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, newUserID:newUserID, currentMember:currentMember, newUsername:clientUsername, picturePath:null, online:true});
         }
         else{
             //Update othercaht members by adding the new user to the group
             dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUserID:newUserID, newUsername:newUsername, picturePath:newUserPicturePath, online:online});    
-            console.log("ADD_USER_TO_GROUP");
         }        
     })
 }
 
-
 export const listenOnAddUserToGroupInRoom  = (socket, enterRoomAfterAction) =>{
     socket.on("addUserToGroupChangeInRoom", (newRoomID) =>{
-        console.log(" listenOnAddUserToGroupInRoom EnterRoomAfterAction: ", newRoomID);
         enterRoomAfterAction(newRoomID, true);
     })
 }

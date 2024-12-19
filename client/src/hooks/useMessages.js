@@ -45,7 +45,6 @@ const useMessages = (socket, user) =>{
 
     useEffect(() => {
         if(socket && user){
-            console.log("socket && user");
             listenOnMessageInRoom(socket, dispatch);
             listenOnMessageReceive(socket, dispatch);
             listenOnFirstMessageReceive(socket, dispatch, enterRoomAfterAction);

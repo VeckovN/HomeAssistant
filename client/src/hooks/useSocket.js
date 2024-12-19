@@ -25,7 +25,6 @@ const useSocket = (user) =>{
                 const userData ={userID:user.userID, userUsername:user.username}
                 socketRef.current.emit('addOnlineUser', userData);
                 socketRef.current.emit('joinRoom', user.userID);
-                console.log("SOCEKT: joinRoom: " ,user.userID);
             });
     
             socketRef.current.on('disconnect', () => {
@@ -34,7 +33,6 @@ const useSocket = (user) =>{
                 socketRef.current = null;
             });
 
-            console.log("user.type: " , user.type);
             if(user.type === "Houseworker"){
                 listenForCommentNotification(socketRef.current, reduxDispatch); 
                 listenForRatingNotfication(socketRef.current, user.userID, reduxDispatch); 

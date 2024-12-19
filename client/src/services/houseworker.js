@@ -90,7 +90,6 @@ export const getComments = async(username, pageNumber) =>{
 
 export const getUnreadComments = async(username) =>{
     try{
-        console.log("USS NA", username);
         const result = await axiosSession.get(BASE_URL + `houseworker/comments/unread/${username}`);
         const comms = result.data;
         return comms;

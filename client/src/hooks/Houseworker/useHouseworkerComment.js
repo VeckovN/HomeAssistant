@@ -14,7 +14,6 @@ const useHouseworkerComment = (socket, isClient, clientUsername, houseworker, co
     useEffect(()=>{
         if(commentClick.current == true && houseworker.username !='') //if is clicked or newComment added
         {
-            console.log("\n getHouseworkerComments \n")
             getHouseworkerComments();
         }    
     },[houseworker.username])

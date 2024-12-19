@@ -49,7 +49,6 @@ const useClient = (user) =>{
 
     //on every serachedData and filterData change reFeatch houseworkers
     useEffect(()=>{
-        console.log("pageNUmberRef. useEffect ", pageNumberRef.current);
         fetchData(pageNumberRef.current);
     },[searchedData, filteredData, user])
     //user because on logout(user change) houseworkers should be fetch again (recommended users removed)
@@ -84,9 +83,6 @@ const useClient = (user) =>{
             if(houseworkers.length >0){ 
                 //if is new houseworkers fetched then contcatenate it with older houseworkers
                 if(pageNumberRef.current > 0){
-                    console.log("Recoomme: ", recommendedData);
-                    console.log("\n hos: ", houseworkers);
-                    console.log("SHW :" , showRecommended);
 
                     setData(prev =>([
                         ...prev,
@@ -97,7 +93,6 @@ const useClient = (user) =>{
                     if(user!== null && !showRecommended){
                         const recommendedDataRes = await fetchRecommended(houseworkers);
                         setRecommendedDate({daa:"ASAS"});
-                        console.log("SSSSSSSSSSSSSS: ", recommendedDataRes);
                         //exclude houseworker that are same as recommendedDataRes
                         setData([...recommendedDataRes, ...houseworkers]);
                         setShowRecommended(true);
