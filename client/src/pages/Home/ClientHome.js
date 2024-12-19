@@ -45,7 +45,7 @@ const ClientHome = ({socket}) =>{
             setHouseworkerCount(count);
         }
         catch(err){
-            console.log(err);
+            console.error(err);
         }
     }
 
