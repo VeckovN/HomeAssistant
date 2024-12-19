@@ -915,7 +915,7 @@ const getRecordedNotifications = async(username, offset, size) =>{
 const getMoreRecordedNotifications = async(username, batchNumber) =>{
     try{
         const userID = await getUserIdByUsername(username);
-        const size = 6;
+        const size = 10;
         const offset = size * batchNumber;
         const endIndex = offset + size -1; 
 
