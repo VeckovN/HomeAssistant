@@ -10,8 +10,6 @@ const getHouseworkerByUsername = async(req,res)=>{e
         res.status(200).json(houseworkerData);
     }
     catch(err){
-        // console.log("ERROR GetHouseworkerBYUsername: " + err);
-        // res.status(404).json({error:'GetHouseworkerBYUsername Error'});
         console.error(err);
         res.status(500).json({error: err.message || "Error getting houseworker"});
     }

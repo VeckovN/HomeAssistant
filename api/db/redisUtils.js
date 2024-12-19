@@ -3,7 +3,6 @@ const {formatDate} = require('../utils/dateUtils');
 
 const getUserIdByUsername = async (username)=>{
     const user = await get(`username:${username}`); //user:{userID}
-    console.log("USERRRRR : "  + user);
     let userID = user.split(':')[1]; //[user, {userID}]
     return userID
 }

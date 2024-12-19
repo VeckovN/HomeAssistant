@@ -218,7 +218,6 @@ const getHouseworkerFirstRoomID = async(userID) =>{
         const userRoomKey = `user:${userID}:rooms`;
         //get first room with highest score 
         const result = await zrangerevscores(userRoomKey, 0, 0);
-        console.log("result: ", result);
         return result[0]; 
     }
     catch(error){

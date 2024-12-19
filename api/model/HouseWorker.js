@@ -725,7 +725,6 @@ const create = async(houseworkerObject)=>{
 
         const professionsArray = JSON.parse(houseworkerProfessions);
         professionsArray.forEach(profession =>{
-            console.log("PROF: " + profession.label + " Working_hour: " + profession.working_hour + '\n');
             addProfession(username, profession.label, profession.working_hour)
         })
 
@@ -762,7 +761,7 @@ const update = async(username, newUserValue, newHouseworkerValue)=>{
             const oldImagePath = path.join(__dirname, '../../../client/public/assets/userImages', oldImageFileName);
             fs.unlink(oldImagePath, (err) =>{
                 if(err){
-                    console.log("Faield to delete old imgage: ", err);
+                    console.error("Faield to delete old imgage: ", err);
                 }
             })
 

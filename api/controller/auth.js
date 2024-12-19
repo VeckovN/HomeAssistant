@@ -102,7 +102,7 @@ const login = async(req,res)=>{
     //same error message for userNotFound and inncorectPassword
     try{
         if(req.session.user){
-            console.log("REQ SESSIUN USER EXIST: ", req.session.user);
+            //console.log("REQ SESSIUN USER EXIST: ", req.session.user);
             return res.send(req.session.user)
              // //return same user
             // return res.json({connect:"You are still logged in"});
@@ -144,7 +144,6 @@ const login = async(req,res)=>{
 
 const logout = async(req,res)=>{
 
-    console.log("LOOGOUTTT: " + JSON.stringify(req.session))
     if(req.session.user){
 
         req.session.destroy((err)=>{
@@ -159,15 +158,11 @@ const logout = async(req,res)=>{
 }
 
 const putPicturePathToRedisUsers = async(req,res) =>{
-
     const usersInfo = await userModel.getAllUsersnameWithPicturePath();
-    console.log("CONTROLLER USER INFO", usersInfo);
-
     try{
         await Promise.all(usersInfo.map(async (el) =>{
             let userID = parseInt(el.id);
             let hsetKey = `user:${userID}`
-            console.log(`${hsetKey} picturePath ${el.picturePath}`);
             await hset(hsetKey, 'picturePath', el.picturePath);
         }));
 

@@ -27,11 +27,10 @@ router.post('/changePassword', async(req,res) =>{
 
     try{
         const result = await UserModel.changePassword(username, password);
-        console.log("RES PASSWOD: " + JSON.stringify(result));
         res.send(result);
     }
     catch(err){
-        console.log(err);
+        console.error(err);
         res.status(400);
     }
 })

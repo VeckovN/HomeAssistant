@@ -149,7 +149,6 @@ const getAllComments = async (username)=>{
         const comments = result.records.map(rec=>{
             //rec.get(0) is first node -> Comment node --- rec.get(0).properties -> (context='example comentar')
             //rec.get(1) is seccodn node -> Houseworker node --- rec.get(1).properties ->(username="Sara", working_hours='200')
-            //console.log("re: " + rec.get(0) + "re2: " +rec.get(1));
             return {comment:rec.get(0), houseworker:rec.get(1)}
         });
 
@@ -324,7 +323,6 @@ const create = async(clientObject)=>{
         const interestsArray = interests.split(',');
         //add professions
         interestsArray.forEach(interest => {
-            console.log("PT: " + interest); 
             addInterest(username, interest);
         });
 
