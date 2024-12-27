@@ -6,7 +6,7 @@ import useSocket from './hooks/useSocket';
 import Register from './pages/Register/Register.js'
 import ClientRegister from './pages/Register/Client/ClientRegister.js';
 import HouseworkerRegister from './pages/Register/Houseworker/HouseworkerRegister.js';
-import Login from './pages/Login.js';
+import Login from './pages/Login/Login.js';
 import Comments from './pages/CommentsList.js';
 
 import ClientProfile from './pages/Profile/ClientProfile/ClientProfile.js';
