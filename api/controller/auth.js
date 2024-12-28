@@ -1,58 +1,30 @@
 const bcrypt = require('bcrypt');
-const {client:redisClient, sub} = require('../db/redis.js');
-// const sharp = require('sharp');
-//express-session
-//To store confidential session data, we can use the express-session package.
-// It stores the session data on the server and gives the client
-//a session ID to access the session data. 
-
+const {getUserIdByUsername} = require('../db/redisUtils.js');
 const clientModel = require('../model/Client');
 const houseworkerModel = require('../model/HouseWorker');
 const userModel = require('../model/User');
 const chatModel = require('../model/Chat');
 
-const {getUserIdByUsername} = require('../db/redisUtils.js');
+const {cloudinary} = require('../utils/cloudinaryConfig.js');
 
 const register = async (req,res)=>{
-
     try{
         const {username,password,type, ...otherData} = req.body;
         const hashedPassword = bcrypt.hashSync(password, 12);
 
-        //*TODO BackUp the projects and Upgrade NodeJS 
-        //Sharp module support: Node-API v9, including Node.js >= 18.17.0  
-        
-        //CURRENT NodeJS Version Doesn't support Sharp module 
-        //image compression
-        // const file = req.files[0];
-        // if(file){
-        //     try{
-        //         const compressedBuffer = await sharp(file.path)
-        //             .jpeg({quality: 70})
-        //             .toBuffer();
+        let picturePathCloudinary = null;
+        if (req.files && req.files[0]) { // Check for file in req.files array
+            const file = req.files[0];
+            const uploadResult = await cloudinary.uploader.upload(file.path, {
+                folder: 'avatars', // Optional folder for organization
+            });
+            picturePathCloudinary = uploadResult.secure_url; // Cloudinary URL
+        }
 
-        //         console.log("CompressedBuffer", compressedBuffer);
-        //         console.log("\n CompressBuffer size: " + compressedBuffer.length)
+        console.log("\n picturePathCloudinary: ", picturePathCloudinary);
+        //real path to stored image (all users just use this path to dispaly image with src)
+        //picturePathCloudinary: https://res.cloudinary.com/dwcncwmpb/image/upload/v1735382754/avatars/wvsgq7k9nbg84q8k5fpk.jpg
 
-        //         // if(compressedBuffer.length > 50 * 1024){
-        //         //     compressedBuffer = await sharp(compressedBuffer) // Use the existing buffer
-        //         //     .jpeg({ quality: 70}) // Adjust quality as needed
-        //         //     .toBuffer();
-        //         // }
-
-        //         await sharp(compressedBuffer)
-        //             .toFile(`../../client/public/assets/userImages/${file.filename}`)
-            
-        //     }catch(commpressionError){
-        //         console.error("Error compressing image", commpressionError);
-        //         //just notify user, the uncompressed image will exist 
-        //     }
-        // }
-        //if is image size above 50kb
-
-
-        // const picturePath = req.files[0].filename;
-        //if picturePath exists
         const picturePath = req.files[0]?.filename;
         const userData = {username, password:hashedPassword, picturePath:picturePath, ...otherData};
         const userExists = await userModel.checkUser(username);
@@ -94,18 +66,14 @@ const register = async (req,res)=>{
     }catch(error){
         console.error("Error during registration", error);
         return res.status(500).json({error:"An unexpected register error occurred"});
-    }
-     
+    }    
 }
 
 const login = async(req,res)=>{
     //same error message for userNotFound and inncorectPassword
     try{
         if(req.session.user){
-            //console.log("REQ SESSIUN USER EXIST: ", req.session.user);
             return res.send(req.session.user)
-             // //return same user
-            // return res.json({connect:"You are still logged in"});
         }
     
         const {username, password} = req.body;
@@ -143,9 +111,7 @@ const login = async(req,res)=>{
 }
 
 const logout = async(req,res)=>{
-
     if(req.session.user){
-
         req.session.destroy((err)=>{
             if(err)
                 return res.json({error:err.message}).status(400);
@@ -154,7 +120,6 @@ const logout = async(req,res)=>{
     }
     else
         return res.json({error:"You're not logged"})
-   
 }
 
 const putPicturePathToRedisUsers = async(req,res) =>{
