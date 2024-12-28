@@ -8,6 +8,7 @@ import {useForm, useController} from 'react-hook-form'
 import {zodResolver} from "@hookform/resolvers/zod";
 import {clientRegisterSchema } from '../../../library/zodTypes.js';
 import ClientForm from './ClientForm.js';
+import {registerService} from '../../../services/auth.js';
 
 const ClientRegister = () =>{
     const initialState ={
@@ -41,18 +42,34 @@ const ClientRegister = () =>{
     //     return <Spiner></Spiner>
     // }
 
-    const onSubmitHandler = (data) =>{
+    // const onSubmitHandler = (data) =>{
+    const onSubmitHandler = async (data) =>{
         const formData = new FormData();
         for(const key in data){
             formData.append(key, data[key]);
         }
         formData.append('type', 'Client');
 
-        dispatch(clientRegister(formData));
+        const response = await registerService(formData);
+        console.log("RESSSPONSEEE: ", response);
         navigate('/login');
         toast.success("You have successfully created account",{
             className:'toast-contact-message'
         })
+
+        // dispatch(clientRegister(formData))
+        //     .unwrap()
+        //     .then((res)=>{ //res from clientRegister dispatch
+        //         console.log("RESSS : ", res);
+        //         navigate('/login');
+
+        //         toast.success("You have successfully created account",{
+        //             className:'toast-contact-message'
+        //         })
+        //     })
+        //     .catch((rejectedValue) =>{
+        //         console.log("CATCH ERROR VAL: ", rejectedValue);
+        //     })
 
     }
 
