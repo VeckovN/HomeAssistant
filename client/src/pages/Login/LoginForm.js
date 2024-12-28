@@ -7,9 +7,8 @@ const LoginForm = ({register, errors, handleSubmit, onSubmitHandler}) =>{
                 <div className="login_context">
 
                     <picture className="login-image">
-                        <source srcSet="../../assets/images/loginBackground.webp" type="../../assets/images/webp"/>
                         <img
-                            src={require('../../assets/images/loginBackground.jpg')}
+                            src={'https://res.cloudinary.com/dwcncwmpb/image/upload/v1735390606/Images/joeuwl5rz6imrlihigdt-loginBackground.jpg'}
                             alt="Login Image"
                             className="login-image"
                         />
