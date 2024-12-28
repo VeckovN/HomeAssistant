@@ -9,9 +9,8 @@ body {
   margin: 0;
   height: 100%;
   width: 100%;
-  // width: 100%;
   
-  @include bg-image(url("../../../public/assets/clientPage1New.jpg"));
+  @include bg-image(url("https://res.cloudinary.com/dwcncwmpb/image/upload/v1735407853/Images/q4zxy1tlblfs0eimhppm-background.jpg"));
   background-attachment: fixed;
 }
   
