@@ -1,8 +1,6 @@
-
-import {useDispatch} from 'react-redux';
+import {useState} from 'react';
 import {useNavigate } from 'react-router-dom';
 import {toast} from 'react-toastify'; //need be imported in App.js
-import {register as clientRegister} from '../../../store/auth-slice'
 import { city_options, profession_options } from '../../../utils/options';
 import {useForm, useController} from 'react-hook-form'
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -11,6 +9,9 @@ import ClientForm from './ClientForm.js';
 import {registerService} from '../../../services/auth.js';
 
 const ClientRegister = () =>{
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+
     const initialState ={
         username:'',
         email:'',
@@ -25,52 +26,35 @@ const ClientRegister = () =>{
     }
 
     const {register, handleSubmit, control, formState: {errors, isSubmitting}, getValues} = useForm({
-        defaultValues: initialState,
-        // defaultValues: initialStateN, 
+        defaultValues: initialState, 
         resolver: zodResolver(clientRegisterSchema)
     })
     const {field:cityField} = useController({name:"city", control});
     const {field:avatarField} = useController({name:"avatar", control});
     const {field:interestField} = useController({name:"interests", control});
 
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-
-
-    //set spinner when is loading true
-    // if(loading){
-    //     return <Spiner></Spiner>
-    // }
-
-    // const onSubmitHandler = (data) =>{
     const onSubmitHandler = async (data) =>{
         const formData = new FormData();
         for(const key in data){
             formData.append(key, data[key]);
         }
+
         formData.append('type', 'Client');
 
-        const response = await registerService(formData);
-        console.log("RESSSPONSEEE: ", response);
-        navigate('/login');
-        toast.success("You have successfully created account",{
-            className:'toast-contact-message'
-        })
-
-        // dispatch(clientRegister(formData))
-        //     .unwrap()
-        //     .then((res)=>{ //res from clientRegister dispatch
-        //         console.log("RESSS : ", res);
-        //         navigate('/login');
-
-        //         toast.success("You have successfully created account",{
-        //             className:'toast-contact-message'
-        //         })
-        //     })
-        //     .catch((rejectedValue) =>{
-        //         console.log("CATCH ERROR VAL: ", rejectedValue);
-        //     })
-
+        setLoading(true);
+        try{
+            await registerService(formData);
+            navigate('/login');
+            toast.success("You have successfully created account",{
+                className:'toast-contact-message'
+            })
+        }
+        catch(error){
+            console.error(error);
+        }
+        finally{
+            setLoading(false);
+        }
     }
 
     const onCityChangeHandler = (option) =>{
@@ -102,6 +86,7 @@ const ClientRegister = () =>{
             cityField={cityField}
             avatarField={avatarField}
             interestField={interestField}
+            loading={loading}
             city_options={city_options}
             profession_options={profession_options}
             handleSubmit={handleSubmit}

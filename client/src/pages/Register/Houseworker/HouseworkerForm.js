@@ -1,10 +1,11 @@
 import FormInput from '../../../utils/FormInput.js';
 import FormSelect from '../../../utils/FormSelect.js';
+import Spinner from '../../../components/UI/Spinner.js';
 
 import '../../../sass/pages/Register/_registerUser.scss';
 import '../../../sass/pages/Register/_registerHouseworker.scss';
 
-const HouseworkerForm = ({register, errors, getValues, cityField, professionField, avatarField, handleSubmit, onRemoveAvatarHandler, onChangeHouseworkerProfessionsHandler, onChangeProffesionsHandler, onChangeImageHandler, onChangeCityHandler, onSubmitHandler,  profession_options, city_options}) =>{
+const HouseworkerForm = ({register, errors, getValues, cityField, loading, professionField, avatarField, handleSubmit, onRemoveAvatarHandler, onChangeHouseworkerProfessionsHandler, onChangeProffesionsHandler, onChangeImageHandler, onChangeCityHandler, onSubmitHandler,  profession_options, city_options}) =>{
 
     const inputs = [
         {id:'1', name:'username', type:'text', label:"Username"}, 
@@ -20,7 +21,6 @@ const HouseworkerForm = ({register, errors, getValues, cityField, professionFiel
 
     return (
         <div className='register-user-container'>
-            {/* <div className='form-title'>Houseworker registration</div> */}
             <form className='houseworker-form' onSubmit ={handleSubmit(onSubmitHandler)} encType="multipart/form-data">
                 <div className='form-title'>Houseworker registration</div>
 
@@ -107,9 +107,7 @@ const HouseworkerForm = ({register, errors, getValues, cityField, professionFiel
                         </div>
 
                         <div className='working-hour-container'>
-                            {  //list profession
-                                // data.professions.map((el,index) => (
-                                //getValues.professions
+                            {  
                                 getValues('professions')?.map((el,index) => (    
                                 <div className='working-hours' key={index}>
                                     <label><b>{el}</b></label>
@@ -142,9 +140,12 @@ const HouseworkerForm = ({register, errors, getValues, cityField, professionFiel
                     </div>
                 </div>
 
-
                 <div className ='register-button-container'>
-                    <button type='submit'className='btn'>Register</button>
+                    {loading ? (
+                        <Spinner />
+                    ):(
+                        <button type='submit'className='btn'>Register</button>
+                    )}
                 </div>
 
             </form>

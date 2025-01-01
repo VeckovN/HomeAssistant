@@ -1,5 +1,6 @@
 import FormInput from '../../../utils/FormInput';
 import FormSelect from '../../../utils/FormSelect';
+import Spinner from '../../../components/UI/Spinner';
 
 import '../../../sass/pages/Register/_registerUser.scss';
 import '../../../sass/pages/Register/_registerClient.scss';
@@ -10,6 +11,7 @@ const ClientForm = ({
     cityField,
     avatarField,
     interestField,
+    loading,
     city_options,
     profession_options,
     handleSubmit,
@@ -119,9 +121,13 @@ const ClientForm = ({
                 </div>
 
                 <div className ='register-button-container'>
-                    <button type='submit' className='btn'>Register</button>
-                </div>
-
+                    {loading ? (
+                        <Spinner />
+                    ):(
+                        <button type='submit'className='btn'>Register</button>
+                    )}
+                </div>  
+                              
             </form>
         </div>
     )

@@ -1,14 +1,17 @@
-import { useDispatch} from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import {register as registerHouseworker} from '../../../store/auth-slice';
+import {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {toast} from 'react-toastify';
 import HouseworkerForm from './HouseworkerForm';
-import { city_options, profession_options } from '../../../utils/options';
+import {city_options, profession_options} from '../../../utils/options';
 import {useForm, useFieldArray ,useController} from 'react-hook-form'
 import {zodResolver} from "@hookform/resolvers/zod";
-import { houseworkerRegisterSchema } from '../../../library/zodTypes';
+import {houseworkerRegisterSchema} from '../../../library/zodTypes';
+import {registerService} from '../../../services/auth';
 
 const HouseworkerRegister = () =>{
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+
     const initialState ={
         username:'',
         email:'',
@@ -35,19 +38,14 @@ const HouseworkerRegister = () =>{
     const {field:cityField} = useController({name:"city", control});
     const {field:avatarField} = useController({name:"avatar", control});
     const {field:professionField} = useController({name:"professions", control});
-    //for every professionsField (selected) must exist object {label, workingHour}
-    //houseworkerProfessionField should be [{label:"professionName" workingHour:"--"}, {labeel , workingHour} if other exists]
     const { fields:houseworkerProfessionsFields, append, remove } = useFieldArray({
-        control, // control props comes from useForm (optional: if you are using FormContext)
-        name: "houseworkerProfessions", // unique name for your Field Array
-      });
+        control, 
+        name: "houseworkerProfessions", // unique name for Field Array
+    });
     
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-
     const onSubmitHandler = async (data,event ) =>{
         event.preventDefault();
-        //check does profession working hours entered
+      
         if(getValues('professions') && houseworkerProfessionsFields.length == 0){
             toast.error("You have to enter working hour for profession",{
                 className:'toast-contact-message'
@@ -63,17 +61,23 @@ const HouseworkerRegister = () =>{
             else
                 formData.append(key, data[key]);         
         }
+
         formData.append('type', 'Houseworker');
 
-        // for (const [key, value] of formData.entries()) {        
-        //     console.log(`${key}: ${value}`);
-        // }
-
-        dispatch(registerHouseworker(formData));
-        navigate('/login');
-        toast.success("You have successfully created account",{
-            className:'toast-contact-message'
-        })
+        setLoading(true);
+        try{
+            await registerService(formData);
+            navigate('/login');
+            toast.success("You have successfully created account",{
+                className:'toast-contact-message'
+            })
+        }
+        catch(error){
+            console.error(error);
+        }
+        finally{
+            setLoading(false);
+        }
     }
 
     const onChangeCityHandler = (option) =>{
@@ -118,6 +122,7 @@ const HouseworkerRegister = () =>{
             errors={errors}
             getValues={getValues}
             cityField={cityField}
+            loading={loading} 
             professionField={professionField}
             avatarField={avatarField}
             onRemoveAvatarHandler={onRemoveAvatarHandler}
