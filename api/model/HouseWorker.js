@@ -1,8 +1,9 @@
 const {driver} = require('../db/neo4j');
 const { set ,get, expire, zadd, zrem, zrangerevscores} = require('../db/redis');
-const {getUserIdByUsername, updateUserPicturePath, getUserPicturePath, getNotificationsByOffset, getNotificationsUnreadCount, getNotificationsUnreadTotalCount} = require('../db/redisUtils');
+const {getUserIdByUsername, updateUserPicturePath, getUserPicturePath, getUserPicturePublicId, getNotificationsByOffset, getNotificationsUnreadCount, getNotificationsUnreadTotalCount} = require('../db/redisUtils');
 const path = require('path');
 const fs = require('fs');
+const {cloudinary} = require('../utils/cloudinaryConfig.js');
 
 const findByUsername = async (username)=>{
     const session = driver.session();
@@ -749,18 +750,18 @@ const create = async(houseworkerObject)=>{
 const update = async(username, newUserValue, newHouseworkerValue)=>{
     const session = driver.session(); 
     try{
-        const result = await session.run(`
-            MATCH (n:User { username: $houseworker})
-            SET n += $object
-            RETURN n
-        `,{houseworker:username, object:newUserValue}
-        )
-
-        //check does picturePath is changing
+        let {file, picturePath, ...newUserData} = newUserValue;
         if(newUserValue.file){
+            const oldImagePublicID = await getUserPicturePublicId(username);
+            try{
+                const cloudResult = await cloudinary.uploader.destroy(oldImagePublicID);
+                console.log("Cloud result on removing Image: ", cloudResult);
+            }
+            catch(error){
+                console.error("Failed to delete image: ", error);
+            }
 
-            //delete cloudinary image
-            
+            //delete image from src folder(multer -> not cloudinary )
             const oldImageFileName = await getUserPicturePath(username);
             const oldImagePath = path.join(__dirname, '../../../client/public/assets/userImages', oldImageFileName);
             fs.unlink(oldImagePath, (err) =>{
@@ -769,10 +770,39 @@ const update = async(username, newUserValue, newHouseworkerValue)=>{
                 }
             })
 
-            await updateUserPicturePath(username, newUserValue.picturePath);
+            try{
+                const uploadResult = await cloudinary.uploader.upload(newUserValue.file.path, {
+                    folder: 'avatars', // Optional folder for organization
+                });
+                const newPicturePath = uploadResult.secure_url; // Cloudinary URL
+                const newPicturePublicId = uploadResult.public_id;
+
+                newUserData ={
+                    ...newUserData,
+                    picturePath:newPicturePath,
+                    picturePublicId:newPicturePublicId
+                }
+
+                console.log("newPicturePath: ",newPicturePath + "\n");
+                console.log("newPicturePublicId: ", newPicturePublicId);
+
+                await updateUserPicturePath(username, newPicturePath, newPicturePublicId);
+            }
+            catch(error){
+                console.error("Failed to upload image: ", error);
+            }
         }
 
-        const houseworkerResult = await session.run(`
+        console.log("\n newUserData: ", newUserData);
+
+        const result = await session.run(`
+            MATCH (n:User { username: $houseworker})
+            SET n += $object
+            RETURN n
+        `,{houseworker:username, object:newUserData}
+        )
+
+        await session.run(`
             MATCH(n:User {username:$houseworker})-[:IS_HOUSEWORKER]->(h)
             SET h += $object
             RETURN h

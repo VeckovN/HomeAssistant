@@ -287,13 +287,15 @@ const udpateHouseworker = async(req, res) =>{
 
         //picturePath is part of UserModal 
         const picturePath = req.files[0]?.filename;
+        const file = req.files[0];
         const {address, phone_number, description, city, professions, ...userModalInfo} = newData;
-        const newUserInfo ={...userModalInfo, picturePath}; //userModal update info
+        const newUserInfo ={...userModalInfo, file, picturePath}; //userModal update info
         const newHouseworkerInfo = {address, phone_number, description}; //houseworkerModal update info (city and professions seperated request)
         await houseworkerModel.update(username, newUserInfo, newHouseworkerInfo);
 
         if(city)
             await userModel.updateCityRelation(username, city);
+        
         res.status(200).send("Successfuly updated!!!");
     }
     catch(err){
