@@ -1,6 +1,8 @@
 import Select from 'react-select';
 
-const HouseworkerInputs = ({houseworkerData,register, errors, watch, cityField, avatarField, city_options, onChangeCityHandler, onChangeAvatarHandler, onRemoveAvatarHandler}) =>{
+const HouseworkerInputs = ({houseworkerData, register, errors, watch, cityField, avatarField, city_options, onChangeCityHandler, onChangeAvatarHandler, onRemoveAvatarHandler}) =>{
+    
+    console.log("HouseworkerData: ", houseworkerData);
     const loadDefaultImageOnError = e =>{
         e.target.onerror = null;
         e.target.src = `assets/userImages/userDefault.png`;
@@ -169,29 +171,34 @@ const HouseworkerInputs = ({houseworkerData,register, errors, watch, cityField, 
                 />
                 <label htmlFor="inputFile" className="custom-file-button">Choose File</label>
                 <div className='avatar-place'>
-                    {/* set avatarField.value on page */}
                     {(avatarField.value || houseworkerData.picturePath) && (
                         <div className='avatar-preview-container'>
-                            {avatarField.value ?
+                            {avatarField.value ? (
                             <>
-                            <img
-                                //show Choosen Avatar Form
-                                src={URL.createObjectURL(avatarField.value)}
-                                alt="avatar"
-                            />
-                            <button onClick={onRemoveAvatarHandler} className='remove-avatar-btn'>
-                                Remove Image
-                            </button>
+                                <img
+                                    //display Choosen Avatar Form
+                                    src={URL.createObjectURL(avatarField.value)}
+                                    alt="avatar"
+                                />
+                                <button onClick={onRemoveAvatarHandler} className='remove-avatar-btn'>
+                                    Remove Image
+                                </button>
                             </>
-                            :
-                            <img
-                                //Just show stored avatar from file
-                                src={`assets/userImages/${houseworkerData.picturePath}`}
-                                onError={loadDefaultImageOnError}
-                                alt="avatar"
-                            />
-                            }
-                            
+                            ) 
+                            : houseworkerData.avatar ? (
+                                <img
+                                    //display uploaded file image
+                                    src={URL.createObjectURL(houseworkerData.avatar)} 
+                                    alt="avatar"
+                                />
+                            ) : (
+                                <img
+                                    src={houseworkerData.picturePath} //Cloudinary url link -path
+                                    onError={loadDefaultImageOnError}
+                                    alt="avatar"
+                                />
+                            )   
+                        } 
                         </div>
                     )}
                 </div>
