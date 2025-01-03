@@ -6,14 +6,14 @@ const notificationType = "chatGroup";
 
 //With username(same username as in Neo4j) we got userID(same user but in redis)
 //with userKey(user:{userID}) we can access to userINFO in Redis DB ()
-const createUser = async(username, hashedPassword, picturePath) =>{
+const createUser = async(username, hashedPassword, picturePath, picturePublicId) =>{
     try{
         const usernameKey = `username:${username}`;
         const freeID = await incr("total_users"); //total_users is data in Redis(number of users)
         const userKey = `user:${freeID}`;
     
         await set(usernameKey, userKey)
-        await hmset(userKey, ["username", username, "password", hashedPassword, "picturePath", picturePath]);
+        await hmset(userKey, ["username", username, "password", hashedPassword, "picturePath", picturePath, "picturePublicId", picturePublicId]);
         
         return {success:true, id:freeID, username};
     }
