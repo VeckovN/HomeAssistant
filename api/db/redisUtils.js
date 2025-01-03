@@ -24,10 +24,16 @@ const getUserPicturePath = async(username) =>{
     return picturePath;
 }
 
-const updateUserPicturePath = async(username, picturePath) =>{
+const getUserPicturePublicId = async(username) =>{
+    const userID = await getUserIdByUsername(username);
+    const [picturePublicId] = await hmget(`user:${userID}`, "picturePublicId");
+    return picturePublicId;
+}
+
+const updateUserPicturePath = async(username, picturePath, picturePublicId) =>{
     const userID = await getUserIdByUsername(username);
     const userKey= `user:${userID}`
-    await hmset(userKey, ['picturePath', picturePath]);
+    await hmset(userKey, ['picturePath', picturePath, 'picturePublicId', picturePublicId]);
 }
 
 const getUnreadMessageCountByRoomID = async(userID, roomID) =>{
@@ -85,6 +91,7 @@ module.exports = {
     getUsernameByUserID,
     getUserInfoByUserID,
     getUserPicturePath,
+    getUserPicturePublicId,
     updateUserPicturePath,
     getUnreadMessageCountByRoomID,
     recordNotification,
