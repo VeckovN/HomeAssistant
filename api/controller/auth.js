@@ -12,21 +12,26 @@ const register = async (req,res)=>{
         const {username,password,type, ...otherData} = req.body;
         const hashedPassword = bcrypt.hashSync(password, 12);
 
-        let picturePathCloudinary = null;
+        let picturePath = null;
         if (req.files && req.files[0]) { // Check for file in req.files array
             const file = req.files[0];
-            const uploadResult = await cloudinary.uploader.upload(file.path, {
-                folder: 'avatars', // Optional folder for organization
-            });
-            picturePathCloudinary = uploadResult.secure_url; // Cloudinary URL
+            try{
+                const uploadResult = await cloudinary.uploader.upload(file.path, {
+                    folder: 'avatars', // Optional folder for organization
+                });
+                picturePath = uploadResult.secure_url; // Cloudinary URL
+                picturePublicId = uploadResult.public_id;
+            }
+            catch(error){
+                console.error("Failed to upload image: ", error);
+            }
         }
 
-        console.log("\n picturePathCloudinary: ", picturePathCloudinary);
+        console.log("\n picturePathCloudinary: ", picturePath, " publicID: ", picturePublicId);
         //real path to stored image (all users just use this path to dispaly image with src)
         //picturePathCloudinary: https://res.cloudinary.com/dwcncwmpb/image/upload/v1735382754/avatars/wvsgq7k9nbg84q8k5fpk.jpg
 
-        const picturePath = req.files[0]?.filename;
-        const userData = {username, password:hashedPassword, picturePath:picturePath, ...otherData};
+        const userData = {username, password:hashedPassword, picturePath:picturePath, picturePublicId:picturePublicId, ...otherData};
         const userExists = await userModel.checkUser(username);
         const emailExist = await userModel.checkEmail(username);
 
@@ -36,7 +41,7 @@ const register = async (req,res)=>{
             return res.status(400).json({error:"User with this email exists"}) 
         
         try{
-            const redisUser = await chatModel.createUser(username, hashedPassword, picturePath);
+            const redisUser = await chatModel.createUser(username, hashedPassword, picturePath, picturePublicId);
 
             if(redisUser.success){
                 userData.id = Number(redisUser.id);
@@ -44,10 +49,9 @@ const register = async (req,res)=>{
                 try{
                     if(type=='Client'){
                         await clientModel.create(userData);
-                        //assign user to the session after creating the user /request from client(set the sesson to client)
                         res.status(200).send({success:true, message:"Client Sucessfully created"});
                     }
-                    else if(type=='Houseworker'){ //houseworker
+                    else if(type=='Houseworker'){
                         await houseworkerModel.create(userData);
                         res.status(200).send({success:true, message:"Houseworker  Sucessfully created"});
                     }

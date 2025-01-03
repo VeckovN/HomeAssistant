@@ -687,7 +687,7 @@ const getHouseworkersCount = async() =>{
 
 const create = async(houseworkerObject)=>{
     const session = driver.session();
-    const {id, username, email, password, firstName, lastName, picturePath, address, description, city, gender, age, phoneNumber,professions, houseworkerProfessions} = houseworkerObject;
+    const {id, username, email, password, firstName, lastName, picturePath, picturePublicId, address, description, city, gender, age, phoneNumber,professions, houseworkerProfessions} = houseworkerObject;
 
     try{
         const result = await session.run(`
@@ -699,7 +699,8 @@ const create = async(houseworkerObject)=>{
                     password:$password, 
                     first_name:$firstName,
                     last_name:$lastName,
-                    picturePath:$picturePath
+                    picturePath:$picturePath,
+                    picturePublicId:$picturePublicId
                 }
                 ) 
                 -[:IS_HOUSEWORKER]->
@@ -720,7 +721,7 @@ const create = async(houseworkerObject)=>{
             MERGE(user)-[h:LIVES_IN]->(c)
             RETURN user,g.type,c.name
         `
-        ,{id:id ,username:username, email:email, password:password, firstName:firstName, lastName:lastName, picturePath:picturePath, address:address, description:description ,city:city, gender:gender, age:age, phoneNumber:phoneNumber}
+        ,{id:id ,username:username, email:email, password:password, firstName:firstName, lastName:lastName, picturePath:picturePath, picturePublicId:picturePublicId, address:address, description:description ,city:city, gender:gender, age:age, phoneNumber:phoneNumber}
         )
 
         const professionsArray = JSON.parse(houseworkerProfessions);
@@ -756,7 +757,10 @@ const update = async(username, newUserValue, newHouseworkerValue)=>{
         )
 
         //check does picturePath is changing
-        if(newUserValue.picturePath){
+        if(newUserValue.file){
+
+            //delete cloudinary image
+            
             const oldImageFileName = await getUserPicturePath(username);
             const oldImagePath = path.join(__dirname, '../../../client/public/assets/userImages', oldImageFileName);
             fs.unlink(oldImagePath, (err) =>{
