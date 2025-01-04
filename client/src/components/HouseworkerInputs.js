@@ -1,12 +1,9 @@
 import Select from 'react-select';
+import ProfileAvatar from './ProfileAvatar';
 
 const HouseworkerInputs = ({houseworkerData, register, errors, watch, cityField, avatarField, city_options, onChangeCityHandler, onChangeAvatarHandler, onRemoveAvatarHandler}) =>{
     
     console.log("HouseworkerData: ", houseworkerData);
-    const loadDefaultImageOnError = e =>{
-        e.target.onerror = null;
-        e.target.src = `assets/userImages/userDefault.png`;
-    }
     return(
     <>
         <div className='profile-input-card'>
@@ -161,50 +158,14 @@ const HouseworkerInputs = ({houseworkerData, register, errors, watch, cityField,
             <div className='input-errors'>{errors.description?.message}</div>
         </div>
 
-        <div className='profile-avatar-container'>
-            <label className='label-input'>Profile Avatar</label>
-            <div className='form-group'>
-                <input 
-                    type="file" 
-                    id="inputFile"
-                    onChange={onChangeAvatarHandler}
-                />
-                <label htmlFor="inputFile" className="custom-file-button">Choose File</label>
-                <div className='avatar-place'>
-                    {(avatarField.value || houseworkerData.picturePath) && (
-                        <div className='avatar-preview-container'>
-                            {avatarField.value ? (
-                            <>
-                                <img
-                                    //display Choosen Avatar Form
-                                    src={URL.createObjectURL(avatarField.value)}
-                                    alt="avatar"
-                                />
-                                <button onClick={onRemoveAvatarHandler} className='remove-avatar-btn'>
-                                    Remove Image
-                                </button>
-                            </>
-                            ) 
-                            : houseworkerData.avatar ? (
-                                <img
-                                    //display uploaded file image
-                                    src={URL.createObjectURL(houseworkerData.avatar)} 
-                                    alt="avatar"
-                                />
-                            ) : (
-                                <img
-                                    src={houseworkerData.picturePath} //Cloudinary url link -path
-                                    onError={loadDefaultImageOnError}
-                                    alt="avatar"
-                                />
-                            )   
-                        } 
-                        </div>
-                    )}
-                </div>
-
-                <div className='input-error'>{errors.avatar?.message}</div>
-            </div>
+        <div className='profile-avatar'>
+            <ProfileAvatar
+                userData={houseworkerData}
+                avatarField={avatarField}
+                errors={errors}
+                onChangeAvatarHandler={onChangeAvatarHandler}
+                onRemoveAvatarHandler={onRemoveAvatarHandler}
+            />
         </div>
     </>
     )

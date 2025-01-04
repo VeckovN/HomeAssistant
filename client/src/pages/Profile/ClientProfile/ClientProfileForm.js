@@ -1,9 +1,9 @@
 import Select from 'react-select';
 import Spinner from '../../../components/UI/Spinner.js';
+import ProfileAvatar from '../../../components/ProfileAvatar.js';
 import '../../../sass/pages/_clientProfile.scss';
 
-const ClientProfileForm = ({loading, clientData, cityField, errors, register, watch, city_options,handleSubmit ,onSubmitUpdate,onSubmitUpdateHandler, onCityChangeHandler }) =>{
-
+const ClientProfileForm = ({loading, clientData, cityField, avatarField, errors, register, watch, city_options, handleSubmit, onSubmitUpdate,onSubmitUpdateHandler, onCityChangeHandler, onChangeAvatarHandler, onRemoveAvatarHandler}) =>{
     const customStyles = {
         control: base => ({
           ...base,
@@ -127,9 +127,16 @@ const ClientProfileForm = ({loading, clientData, cityField, errors, register, wa
                         </div>
                         <br></br>
 
-                        <div className='professions'>
-                            
+                        <div className='profile-avatar'>
+                            <ProfileAvatar
+                                userData={clientData}
+                                avatarField={avatarField}
+                                errors={errors}
+                                onChangeAvatarHandler={onChangeAvatarHandler}
+                                onRemoveAvatarHandler={onRemoveAvatarHandler}
+                            />
                         </div>
+
                         <div className='profile-submit'>
                             <button type='submit' className='update-button'>Update</button>
                         </div>
