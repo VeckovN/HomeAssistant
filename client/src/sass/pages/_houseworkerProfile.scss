@@ -171,17 +171,6 @@
                 }
             }
 
-            .profile-avatar-container{
-                margin:.4em 0;   
-                @include flex-with-direction-center($direction:column);
-                @extend %avatar-form-style;
-
-                .label-input{
-                    color:$black;
-                    font-weight: 600;
-                }
-            }
-
             .profile-submit{    
                 display: flex;
                 justify-content: center;

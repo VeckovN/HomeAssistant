@@ -103,6 +103,21 @@
 
             }
 
+            .profile-avatar{
+                width: 300px;
+                margin-bottom: 1em;
+                padding: .5em 0em;
+
+                background-color:$background-white-1;
+                border-radius: 8px;
+
+                @include xs-breakpoint{
+                    padding: .1em 0em;
+                    //clamp(min, preferred, max)
+                    width: clamp(150px, 90%, 300px);
+                }
+            }
+
             .profile-submit{    
                 display: flex;
                 justify-content: center;
