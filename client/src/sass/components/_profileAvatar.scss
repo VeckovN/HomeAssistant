@@ -1,0 +1,17 @@
+@use '../abstracts/mixins' as *;
+@use '../abstracts/colors' as *;
+@use '../abstracts/placeholders' as *;
+@use '../abstracts/fonts' as *;
+@use '../base/typography' as *;
+@use '../abstracts/brakepoints' as *;
+
+.profile-avatar-container{
+    margin:.4em 0;   
+    @include flex-with-direction-center($direction:column);
+    @extend %avatar-form-style;
+
+    .label-input{
+        color:$black;
+        font-weight: 600;
+    }
+}
