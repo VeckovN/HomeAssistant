@@ -50,7 +50,8 @@ const HouseworkerCardContent = ({
                     
                     <div className="img-box">
                         <img
-                            src={`assets/userImages/${houseworkerProps.picturePath}`}
+                            src={`${houseworkerProps.picturePath}`}
+                            // src={`assets/userImages/${houseworkerProps.picturePath}`}
                             onError={loadDefaultImageOnError}
                             loading="lazy"
                             alt="avatar"
