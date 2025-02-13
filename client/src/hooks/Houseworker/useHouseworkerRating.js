@@ -21,7 +21,9 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
             setLoadingRating(false);
         }
         catch(err){
-            handlerError(err);
+            //just console it, don't alert
+            console.error(err);
+            // handlerError(err);
         }
     }
 
