@@ -5,7 +5,8 @@ const {
     register,
     login,
     logout,
-    putPicturePathToRedisUsers
+    putPicturePathToRedisUsers,
+    userSeeder
 }
 = require('../controller/auth');
 
@@ -18,7 +19,7 @@ const router = express.Router();
 router.post('/login', login);
 router.get('/logout', logout)
 router.get('/redisUser', putPicturePathToRedisUsers);
-
+router.post('/userSeed', userSeeder);
 
 //authenticated user change password 
 router.post('/changePassword', async(req,res) =>{
