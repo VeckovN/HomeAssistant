@@ -51,7 +51,7 @@
             text-align: center;
             animation:  enterLabDown .7s;
         }
-        .users-count-message{
+        .second-info{
             & span{
                 font-weight: 600;
                 color: $nav-hover-color;
@@ -62,7 +62,9 @@
 
             animation: enterLabUp .7s;
         }
-
+    }
+    .info-section-client{
+        padding: .5rem 0;
     }
 
     .houseworker-content-section{

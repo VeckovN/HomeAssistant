@@ -88,16 +88,19 @@ const ClientHome = ({socket}) =>{
 
     return (
         <main className='home-container'>
-
+            {!user ?
             <section className='info-section'>
                 <div className='info'>
                     Find People that can help you in your daily Home jobs
                 </div>
-                
-                <div className='users-count-message'>
-                    <span>{houseworkerCount}</span> Currently Users registerd That Offer Jobs
+                <div className='second-info'>
+                    Choose from experts who are willing to assist you.
                 </div>
             </section>
+            :
+            <section className='info-section-client'>
+            </section>  
+        }
 
             <section className='houseworker-content-section'>
                 <div className='search-box'>
