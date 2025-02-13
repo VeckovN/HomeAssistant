@@ -21,6 +21,7 @@ const ClientProfile = () =>{
         defaultValues: initialState
     })
     const {field:cityField} = useController({name:"city", control});
+    const {field:avatarField} = useController({name:"avatar", control});
     const [clientData, setClientData] = useState({})
     const [loading, setLoading] = useState(true);
 
@@ -45,13 +46,27 @@ const ClientProfile = () =>{
 
     const onSubmitUpdate = async(updatedData) =>{
         try{
+            console.log("UpdateData:" , updatedData);        
+            const formData = new FormData();
             let newData = {};
-            //without re-fetching just override ClientData with updatedData
-            Object.keys(updatedData).forEach(key =>{
-                if(updatedData[key] != '' && key!='picture'){
-                    newData[key] = updatedData[key];
+            console.log("OBject>etnries: ", Object.entries(updatedData));
+
+            Object.entries(updatedData).forEach(([key, value]) => {
+                if (value !== '' && value !== undefined) {
+                    formData.append(key, value);
+                    newData[key] = value;
                 }
-            })
+            });
+        
+            const avatarFile = watch('avatar');  // Assuming you're using react-hook-form
+            console.log("avatart File watch: ", avatarFile);
+            console.log("avatarFile[0]: ", avatarFile[0]);
+            if (avatarFile) {
+                // formData.append('file', avatarFile[0]);  // Appending file to FormData
+                formData.append('file', avatarFile);  // Appending file to FormData
+                newData['file'] = avatarFile;
+            }
+        
 
             if(Object.keys(newData).length == 0){
                 toast.error("You didn't enter any value",{
@@ -60,7 +75,13 @@ const ClientProfile = () =>{
                 return;
             }
 
-            await updateClient(newData);
+            for (let [key, value] of formData.entries()) {
+                console.log(`\nFORM ${key}: ${value} `);
+            }
+            console.log("\n NewData: ", newData);
+
+            // await updateClient(newData);
+            await updateClient(formData);
             toast.success("Successfuly updated!")
 
             Object.keys(newData).forEach(key =>{
@@ -84,11 +105,21 @@ const ClientProfile = () =>{
             cityField.onChange("");
     }
 
+    const onChangeAvatarHandler = (event) =>{
+        avatarField.onChange(event.target.files[0]);
+    }
+
+    const onRemoveAvatarHandler = (event) =>{
+        event.preventDefault();
+        avatarField.onChange(null);
+    }
+
     return(
         <ClientProfileForm 
             loading={loading}
             clientData={clientData}
             cityField={cityField}
+            avatarField={avatarField}
             errors={errors}
             register={register}
             watch={watch} 
@@ -96,6 +127,8 @@ const ClientProfile = () =>{
             handleSubmit={handleSubmit}
             onSubmitUpdate={onSubmitUpdate}
             onCityChangeHandler={onCityChangeHandler}
+            onChangeAvatarHandler={onChangeAvatarHandler}
+            onRemoveAvatarHandler={onRemoveAvatarHandler}
         />
         
     )

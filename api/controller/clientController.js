@@ -113,9 +113,13 @@ const createClient = async(req,res)=>{
 }
 
 const udpateClient = async(req,res)=>{
-    try{
-        const newInfo = req.body;
+        console.log("Body: ", req.body);
+        const file = req.files[0];
+        const newInfo = {...req.body, file};
         const username = req.session.user.username;
+
+        console.log("NEW INFOOOO : ", newInfo);
+    try{
 
         if(newInfo.email){
             const emailExists = await userModel.checkEmail(newInfo.email)
@@ -127,8 +131,9 @@ const udpateClient = async(req,res)=>{
         //hash password if is password updated
         if(newInfo.password)
             newInfo.password = bcrypt.hashSync(newInfo.password, 12);
-        
-        await clientModel.update(username,newInfo);
+
+
+        await clientModel.update(username, newInfo);
         //chech if city is necessery to update
         if(newInfo.city)
             await userModel.updateCityRelation(username, newInfo.city);

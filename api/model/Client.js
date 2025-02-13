@@ -1,6 +1,6 @@
 const {driver} = require('../db/neo4j');
 const { set, get, expire } = require('../db/redis');
-const {recordNotification, getUserIdByUsername} = require('../db/redisUtils');
+const {recordNotification, getUserIdByUsername, updateUserPicturePath, getUserPicturePath, getUserPicturePublicId} = require('../db/redisUtils');
 
 const notificationType="comment";
 
@@ -199,9 +199,7 @@ const commentHouseworker = async(client, houseworker, comment)=>{
 
 const deleteComment = async(username, commentID)=>{
     const session = driver.session();
-
     try{
-
         const comment_id = parseInt(commentID);
         const result = await session.run(`
         MATCH(n:Client {username:$client})
@@ -293,7 +291,7 @@ const create = async(clientObject)=>{
         const result = await session.run(`
         CREATE (n:User 
             {
-                id:$id,
+                id: toInteger($id),
                 username:$username, 
                 email:$email, 
                 password:$password, 
@@ -347,12 +345,70 @@ const create = async(clientObject)=>{
 const update = async(username, newValue)=>{
     const session = driver.session();
     try{
+        console.log("newValue: ", newValue);
+        let {file, ...newUserData} = newValue;
+
+        if(file){
+            const oldImagePublicID = await getUserPicturePublicId(username);
+            try{
+                const cloudResult = await cloudinary.uploader.destroy(oldImagePublicID);
+                console.log("Cloud result on removing Image: ", cloudResult);
+            }
+            catch(error){
+                console.error("Failed to delete image: ", error);
+            }
+
+            //delete image from src folder(multer -> not cloudinary )
+            const oldImageFileName = await getUserPicturePath(username);
+            const oldImagePath = path.join(__dirname, '../../../client/public/assets/userImages', oldImageFileName);
+            fs.unlink(oldImagePath, (err) =>{
+                if(err){
+                    console.error("Faield to delete old imgage: ", err);
+                }
+            })
+
+            try{
+                const uploadResult = await cloudinary.uploader.upload(file.path, {
+                    folder: 'avatars', // Optional folder for organization
+                });
+                const newPicturePath = uploadResult.secure_url; // Cloudinary URL
+                const newPicturePublicId = uploadResult.public_id;
+
+                newUserData ={
+                    ...newUserData,
+                    picturePath:newPicturePath,
+                    picturePublicId:newPicturePublicId
+                }
+
+                console.log("newPicturePath: ",newPicturePath + "\n");
+                console.log("newPicturePublicId: ", newPicturePublicId);
+
+                await updateUserPicturePath(username, newPicturePath, newPicturePublicId);
+            }
+            catch(error){
+                console.error("Failed to upload image: ", error);
+            }
+        }
+
         const result = await session.run(`
             MATCH (n:User { username: $client})
             SET n += $object
             RETURN n
-        `,{client:username, object:newValue}
+        `,{client:username, object:newUserData}
         )
+
+        //if username is changed -> change Client Node {username}
+        // if(newUserData.username){
+        //     const result = await session.run(`
+        //         MATCH(n:User {username:$client})-[:IS_CLIENT]->(h)
+        //         SET h.username = $newUsername
+        //         RETURN h
+        //     `,{client:username, newUsername:newUserData.username}
+        //     )
+        // }
+
+        console.log("newUserData: ", newUserData);
+
         return result.records[0].get(0).properties;
     }
     catch(error){
