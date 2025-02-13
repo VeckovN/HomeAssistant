@@ -164,45 +164,84 @@ const userSeeder = async(req,res)=>{
 
     const genders = ['Male', 'Female']; // Only male and female
 
-    const generateClient = () => ({
-        username: faker.internet.username(),
-        email: faker.internet.email(),
-        password: 'same',
-        firstName: faker.person.firstName(),
-        lastName: faker.person.lastName(),
-        picturePath: faker.image.avatar(),
-        picturePublicId: faker.string.uuid(),
-        city: faker.helpers.arrayElement(city_options),
-        gender: faker.helpers.arrayElement(genders),
-        interests: faker.helpers.arrayElements(profession_options, faker.number.int({ min: 1, max: 3 })).join(',')
-    });
+
+    const uploadImageToCloudinary = async (imageUrl) => {
+        try{
+            const uploadResult = await cloudinary.uploader.upload(imageUrl, {
+                folder: 'avatars', // Optional folder for organization
+            });
+            console.log("uploadResult: ", uploadResult);
+            return {
+                picturePath: uploadResult.secure_url, // Cloudinary URL
+                picturePublicId: uploadResult.public_id // Public ID for future reference
+            };
+        }
+        catch(error){
+            console.error("Failed to upload image: ", error);
+            return {picturePath:null, picturePublicId:null};
+        }
+    }
+
+    const generateClient = () => {
+    // const generateClient = async () => {
+        //uploading to cloudinary
+        // const imageUrl = faker.image.avatar()
+        // const {picturePath, picturePublicId} = await uploadImageToCloudinary(imageUrl);
+
+        return{
+            username: faker.internet.username(),
+            email: faker.internet.email(),
+            password: 'same',
+            firstName: faker.person.firstName(),
+            lastName: faker.person.lastName(),
+            // picturePath,
+            // picturePublicId,
+            picturePath: faker.image.avatar(),
+            picturePublicId: faker.string.uuid(),
+            city: faker.helpers.arrayElement(city_options),
+            gender: faker.helpers.arrayElement(genders),
+            interests: faker.helpers.arrayElements(profession_options, faker.number.int({ min: 1, max: 3 })).join(',')
+        }
+
+    };
     
-    const generateHouseworker = () => ({
-        username: faker.internet.username(),
-        email: faker.internet.email(),
-        password: 'same',
-        firstName: faker.person.firstName(),
-        lastName: faker.person.lastName(),
-        picturePath: faker.image.avatar(),
-        picturePublicId: faker.string.uuid(),
-        address: faker.location.streetAddress(),
-        description: faker.lorem.sentence(),
-        phoneNumber: faker.phone.number(),
-        age: faker.number.int({ min: 18, max: 65 }),
-        city: faker.helpers.arrayElement(city_options),
-        gender: faker.helpers.arrayElement(genders),
-        houseworkerProfessions: JSON.stringify(
-            faker.helpers.arrayElements(profession_options, faker.number.int({ min: 1, max: 3 })).map(prof => ({
-                label: prof,
-                working_hour: faker.number.int({ min: 5, max: 12 }) // Random working hours
-            }))
-        )
-    });
+    const generateHouseworker = () => {
+    // const generateHouseworker = async () => {
+        // const imageUrl = faker.image.avatar()
+        // const {picturePath, picturePublicId} = await uploadImageToCloudinary(imageUrl);
+        // console.log("picturePath: ", picturePath);
+        // console.log("picturePublicId: ", picturePublicId);
+
+        return{
+            username: faker.internet.username(),
+            email: faker.internet.email(),
+            password: 'same',
+            firstName: faker.person.firstName(),
+            lastName: faker.person.lastName(),
+            // picturePath,
+            // picturePublicId,
+            picturePath: faker.image.avatar(), 
+            picturePublicId: faker.string.uuid(),
+            address: faker.location.streetAddress(),
+            description: faker.lorem.sentence(),
+            phoneNumber: faker.phone.number(),
+            age: faker.number.int({ min: 18, max: 65 }),
+            city: faker.helpers.arrayElement(city_options),
+            gender: faker.helpers.arrayElement(genders),
+            houseworkerProfessions: JSON.stringify(
+                faker.helpers.arrayElements(profession_options, faker.number.int({ min: 1, max: 3 })).map(prof => ({
+                    label: prof,
+                    working_hour: faker.number.int({ min: 5, max: 12 }) // Random working hours
+                }))
+            )
+        }
+    };
 
     try{
         const seedClients = async (count) => {
             const users = [];
             for (let i = 0; i < count; i++) {
+                // const user = await generateClient();
                 const user = generateClient();
                 try {
                     const hashedPassword = bcrypt.hashSync(user.password, 12);
@@ -224,6 +263,7 @@ const userSeeder = async(req,res)=>{
         const seedHouseworkers = async (count) => {
             const users = [];
             for (let i = 0; i < count; i++) {
+                // const user = await generateHouseworker();
                 const user = generateHouseworker();
                 try {
                     const hashedPassword = bcrypt.hashSync(user.password, 12);
@@ -257,13 +297,6 @@ const userSeeder = async(req,res)=>{
         return res.status(500).json({error:"Error seeding users"});
     }                
 }
-
-
-//REmove all users without Nodes as (profeession, gender, ) to avoid deleteing all nodes
-const removeAllUsers = async(req,res)=>{ 
-
-}
-
 
 module.exports ={
     register,
