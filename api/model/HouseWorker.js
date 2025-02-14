@@ -314,6 +314,51 @@ const findByUsernameAndDelete = async (username)=>{
     }
 }
 
+const getRandomUsernames = async(count) =>{
+    const session = driver.session();
+    try{
+        const clientsResult = await session.run(`
+            MATCH (n:User)-[:IS_HOUSEWORKER]->(:HouseWorker)
+            RETURN n.username AS username 
+            ORDER BY rand() 
+            LIMIT toInteger($count)
+        `, {count:count});
+
+        const clients = clientsResult.records.map(record => record.get('username'));
+        return clients;
+    } 
+    catch(error){
+        console.error("Error getting random client's username :", error.message); 
+        throw new Error("Failed to get random username's. Please try again later.");
+    }
+    finally {
+        session.close();
+    }
+}
+
+const getRandomUsernamesAndID = async(count) =>{
+    const session = driver.session();
+    try{
+        const clientsResult = await session.run(`
+            MATCH (n:User)-[:IS_HOUSEWORKER]->(:HouseWorker) 
+            RETURN n.id AS id, n.username AS username
+            ORDER BY rand() 
+            LIMIT toInteger($count)
+        `, {count:count});
+
+        const clients = clientsResult.records.map(record => ({
+            id: record.get('id'), //get(0) the first returned value
+            username: record.get('username') //get(0) the first returned value
+        }));
+
+        return clients;
+
+    }catch(error){
+        console.error("Error getting random client's username :", error.message); 
+        throw new Error("Failed to get random username's. Please try again later.");
+    }
+}
+
 const getGender = async(username)=>{
     const session = driver.session();
     try{
@@ -996,6 +1041,8 @@ module.exports ={
     getInfo,
     findAllWithFilters,
     findByUsernameAndDelete,
+    getRandomUsernames,
+    getRandomUsernamesAndID,
     getGender,
     getAge,
     getRatings,
