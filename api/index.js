@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use("/assetss", express.static(path.join(__dirname, "public/assets")));
 
 var corsOptions={
-    origin:"http://localhost:3000", //react app
+    origin: process.env.CLIENT_URL,
     methods: "POST, PUT, GET, HEAD, PATCH, DELETE",
     credentials: true,
 }
@@ -38,10 +38,12 @@ const sessionMiddleware = session({
     resave:false, 
     saveUninitialized:false,
     name:"sessionLog",
-    secret: "aKiqn12$%5s@09~1s1",
+    // secret: "aKiqn12$%5s@09~1s1",
+    secret: process.env.SESSION_SECRET,
     cookie:{
         //for deploy set the secure to TURE, TURE DONSN'T STORE COOKIE ON BROWSER in DEVELOPMENT(using postman and etc.)
-        secure:false, //our cookies works wiht false -if false - any HTTP call which is NOT HTTPS and it doesn't have SSL can access our cookies(can access this app in general)
+        // secure:false, //our cookies works wiht false -if false - any HTTP call which is NOT HTTPS and it doesn't have SSL can access our cookies(can access this app in general)
+        secure: process.env.NODE_ENV === "production", // true only in production, in dev will be false (above explained)
         httpOnly: true, //if true - the  web page can't access the cookie in JS
         maxAge: 1000 * 95 * 10, 
     }
@@ -54,7 +56,7 @@ var server = Server(app);
 
 var io = require("socket.io")(server, {
     cors: {
-        origin:"http://localhost:3000", //react app
+        origin:process.env.CLIENT_URL, //react app
         methods: ["POST", "PUT", "GET", "DELETE", "OPTIONS", "HEAD"],
         credentials: true,
     },
