@@ -4,8 +4,7 @@ const clientModel = require('../model/Client');
 const houseworkerModel = require('../model/HouseWorker');
 const userModel = require('../model/User');
 const chatModel = require('../model/Chat');
-const {cloudinary} = require('../utils/cloudinaryConfig.js');
-const {faker} = require('@faker-js/faker'); 
+const {uploadToCloudinaryBuffer} = require('../utils/cloudinaryConfig.js');
 
 const register = async (req,res)=>{
     try{
@@ -13,23 +12,23 @@ const register = async (req,res)=>{
         const hashedPassword = bcrypt.hashSync(password, 12);
 
         let picturePath = null;
-        if (req.files && req.files[0]) { // Check for file in req.files array
-            const file = req.files[0];
+        let picturePublicId = null;
+        if (req.files && req.files.avatar) {
+            const file = req.files.avatar;
             try{
-                const uploadResult = await cloudinary.uploader.upload(file.path, {
-                    folder: 'avatars', // Optional folder for organization
-                });
+                if (req.files.avatar.size > 5 * 1024 * 1024) {
+                     return res.status(400).json({ error: 'File is too large. Max 5MB allowed.' });
+                }
+                
+                const uploadResult = await uploadToCloudinaryBuffer(file.data, 'avatars')
                 picturePath = uploadResult.secure_url; // Cloudinary URL
                 picturePublicId = uploadResult.public_id;
             }
             catch(error){
                 console.error("Failed to upload image: ", error);
+                res.status(400).json({error: "Image uplaod failed"});
             }
         }
-
-        console.log("\n picturePathCloudinary: ", picturePath, " publicID: ", picturePublicId);
-        //real path to stored image (all users just use this path to dispaly image with src)
-        //picturePathCloudinary: https://res.cloudinary.com/dwcncwmpb/image/upload/v1735382754/avatars/wvsgq7k9nbg84q8k5fpk.jpg
 
         const userData = {username, password:hashedPassword, picturePath:picturePath, picturePublicId:picturePublicId, ...otherData};
         const userExists = await userModel.checkUser(username);
@@ -75,7 +74,6 @@ const register = async (req,res)=>{
 }
 
 const login = async(req,res)=>{
-    //same error message for userNotFound and inncorectPassword
     try{
         if(req.session.user){
             return res.send(req.session.user)
@@ -90,11 +88,8 @@ const login = async(req,res)=>{
         const userInfo = user.props;
     
         const match = bcrypt.compareSync(password, userInfo.password); 
-        //password from client and hashed password from DB
-        //if(user && match){ //both is unecessery because if match is true then 100% is user true
         if(match){
-            //Take UserID from redisDB for chat purpose
-            try{ //because get method return promise (need to be try-catched) 
+            try{
                 const userID = await getUserIdByUsername(username);
                 req.session.user = {username:username, type:userType, userID:userID}
                 
@@ -105,7 +100,6 @@ const login = async(req,res)=>{
             }
         }
         else
-            // return res.status(401).json({error: "Incorrect username or password", errorType:"password"});
             return res.status(401).json({error: "Incorrect username or password, please try again", errorType:"input"});
             //THIS should be caught as error.response - to get error object
             //and then error.response.data.error to get this json prop      
@@ -143,9 +137,24 @@ const putPicturePathToRedisUsers = async(req,res) =>{
     }
 }
 
+const changePassword = async(req, res) => {
+    const username = req.body.username
+    const password = req.body.password;
+
+    try{
+        const result = await UserModel.changePassword(username, password);
+        res.send(result);
+    }
+    catch(err){
+        console.error(err);
+        res.status(400);
+    }
+}
+
 module.exports ={
     register,
     login,
     logout,
+    changePassword,
     putPicturePathToRedisUsers,
 }
