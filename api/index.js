@@ -3,11 +3,8 @@ const cors = require('cors');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
-const path = require('path');
+const fileUpload = require('express-fileupload');
 const {client:redisClient, RedisStore, } = require('./db/redis');
-const upload = require('./utils/Multer.js');
-const {register} = require('./controller/auth')
-const { udpateHouseworker} = require('./controller/houseworkerController.js')
 const listeners = require('./sockets/listeners');
 
 const clientRoute = require('./routes/clients')
@@ -22,9 +19,7 @@ const app = express();
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
-//static assets
-app.use("/assetss", express.static(path.join(__dirname, "public/assets")));
+app.use(fileUpload());
 
 var corsOptions={
     origin: process.env.CLIENT_URL,
@@ -38,13 +33,11 @@ const sessionMiddleware = session({
     resave:false, 
     saveUninitialized:false,
     name:"sessionLog",
-    // secret: "aKiqn12$%5s@09~1s1",
     secret: process.env.SESSION_SECRET,
     cookie:{
-        //for deploy set the secure to TURE, TURE DONSN'T STORE COOKIE ON BROWSER in DEVELOPMENT(using postman and etc.)
-        // secure:false, //our cookies works wiht false -if false - any HTTP call which is NOT HTTPS and it doesn't have SSL can access our cookies(can access this app in general)
-        secure: process.env.NODE_ENV === "production", // true only in production, in dev will be false (above explained)
+        secure: process.env.NODE_ENV === "production",
         httpOnly: true, //if true - the  web page can't access the cookie in JS
+        sameSite: "none",
         maxAge: 1000 * 95 * 10, 
     }
 })
@@ -67,19 +60,11 @@ io.use(function(socket, next) {
     sessionMiddleware(socket.request, socket.request.res || {}, next);
 });
 
-//#region Routes
-
-//File upload routes
-app.post('/api/register', upload.any("avatar"), register);
-app.post('/api/houseworkerupdate', upload.any("avatar"), udpateHouseworker); //route for updating houseworker with avatar
-
 //Api routes
 app.use("/api/clients", clientRoute);
 app.use("/api/houseworker", houseworkerRoute);
 app.use("/api/", authRoute);
 app.use('/api/chat', chatRoute);
-
-//#endregion Routes
 
 server.listen(5000, ()=>{
     console.log("SERVER at 5000 port");
