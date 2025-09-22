@@ -93,7 +93,12 @@ const login = async(req,res)=>{
                 const userID = await getUserIdByUsername(username);
                 req.session.user = {username:username, type:userType, userID:userID}
                 
-                return res.send(req.session.user)
+                //Ensure session is saved before sending response (in production the cookie session isn't stored)
+                req.session.save((err) => {
+                    if (err) return res.status(500).json({ error: "Session save failed" });
+                    res.send(req.session.user);
+                });
+                // return res.send(req.session.user)
             }
             catch(error){
                 return res.status(500).json({error: "Can't get the redis ID"})
