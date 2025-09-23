@@ -21,10 +21,14 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(fileUpload());
 
+app.set("trust proxy", 1); // trust Render’s proxy
+
 var corsOptions={
     origin: process.env.CLIENT_URL,
     methods: "POST, PUT, GET, HEAD, PATCH, DELETE",
     credentials: true,
+    optionsSuccessStatus: 200, // For legacy browser support
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With']
 }
 app.use(cors(corsOptions));
 
@@ -38,7 +42,7 @@ const sessionMiddleware = session({
         secure: process.env.NODE_ENV === "production",
         httpOnly: true, //if true - the  web page can't access the cookie in JS
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        maxAge: 1000 * 95 * 10, 
+        maxAge: 1000 * 60 * 60, 
     }
 })
 app.use(sessionMiddleware);
@@ -49,7 +53,7 @@ var server = Server(app);
 
 var io = require("socket.io")(server, {
     cors: {
-        origin:process.env.CLIENT_URL, //react app
+        origin:process.env.CLIENT_URL, 
         methods: ["POST", "PUT", "GET", "DELETE", "OPTIONS", "HEAD"],
         credentials: true,
     },
