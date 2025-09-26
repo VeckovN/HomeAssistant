@@ -1,11 +1,10 @@
 import { ThrowErorr } from '../utils/ErrorUtils'
-const BASE_URL = 'http://localhost:5000/api/'
+import { authenticatedAxios } from '../utils/AxiosConfig'
 
-import { axiosSession } from '../utils/AxiosInterceptors'
 
 export const getUserRooms = async(username) =>{
     try{
-        const result = await axiosSession.get(BASE_URL + `chat/rooms/${username}`)
+        const result = await authenticatedAxios.get(`/chat/rooms/${username}`)
         const data = result.data;
         return data;
     }
@@ -16,7 +15,7 @@ export const getUserRooms = async(username) =>{
 
 export const getMessagesByRoomID = async(roomID) =>{
     try{
-        const result = await axiosSession.get(BASE_URL + `chat/room/${roomID}/messages?offset=0&size=16`)
+        const result = await authenticatedAxios.get(`/chat/room/${roomID}/messages?offset=0&size=16`)
         const messages = result.data;
         return messages;
     }
@@ -27,7 +26,7 @@ export const getMessagesByRoomID = async(roomID) =>{
 
 export const getMoreMessagesByRoomID = async(roomID, pageNumber) =>{
     try{
-        const result = await axiosSession.get(BASE_URL + `chat/room/message/${roomID}/${pageNumber}`)
+        const result = await authenticatedAxios.get(`/chat/room/message/${roomID}/${pageNumber}`)
         const messages = result.data;
         return messages;
     }
@@ -38,7 +37,7 @@ export const getMoreMessagesByRoomID = async(roomID, pageNumber) =>{
 
 export const deleteRoom = async(roomID) =>{
     try{
-        const result = await axiosSession.delete(BASE_URL +`chat/room/delete/${roomID}`);
+        const result = await authenticatedAxios.delete(`/chat/room/delete/${roomID}`);
         return result.data;
     }
     catch(err){
@@ -48,7 +47,7 @@ export const deleteRoom = async(roomID) =>{
 
 export const addUserToRoom = async(roomInfo) =>{
     try{
-        const result = await axiosSession.post( BASE_URL + 'chat/room/addUser',roomInfo);
+        const result = await authenticatedAxios.post('/chat/room/addUser',roomInfo);
         return result;
     }
     catch(err){
@@ -58,7 +57,7 @@ export const addUserToRoom = async(roomInfo) =>{
 
 export const removeUserFromGroup = async(roomInfo) =>{
     try{
-        const result = await axiosSession.delete(BASE_URL + `chat/room/removeUser/${roomInfo.roomID}/${roomInfo.username}`);
+        const result = await authenticatedAxios.delete(`/chat/room/removeUser/${roomInfo.roomID}/${roomInfo.username}`);
         return result;
     }
     catch(err){
@@ -68,7 +67,7 @@ export const removeUserFromGroup = async(roomInfo) =>{
 
 export const sendMessageToUser = async(messageObj) =>{
     try{
-        const result = await axiosSession.post(BASE_URL + 'chat/room/message', messageObj);
+        const result = await authenticatedAxios.post('/chat/room/message', messageObj);
         return result.data;
     }
     catch(err){
@@ -78,7 +77,7 @@ export const sendMessageToUser = async(messageObj) =>{
 
 export const getOnlineUsers = async(userID) =>{
     try{
-        const result = await axiosSession.get(BASE_URL + `chat/room/onlineUsers/${userID}`);
+        const result = await authenticatedAxios.get(`/chat/room/onlineUsers/${userID}`);
         return result.data;
     }
     catch(err){
@@ -88,7 +87,7 @@ export const getOnlineUsers = async(userID) =>{
 
 export const getFirstRoomID = async(userID) =>{
     try{
-        const result = await axiosSession.get(BASE_URL + `chat/room/firstRoom/${userID}`);
+        const result = await authenticatedAxios.get(`/chat/room/firstRoom/${userID}`);
         return result.data;
     }
     catch(err){
@@ -98,7 +97,7 @@ export const getFirstRoomID = async(userID) =>{
 
 export const getFriendsList = async(userID) =>{
     try{
-        const result = await axiosSession.get(BASE_URL + `chat/room/friends/${userID}`);
+        const result = await authenticatedAxios.get(`/chat/room/friends/${userID}`);
         return result.data;
     }
     catch(err){
@@ -109,7 +108,7 @@ export const getFriendsList = async(userID) =>{
 
 export const getAllUnreadMessages = async(username) =>{
     try{
-        const result = await axiosSession.get(BASE_URL + `chat/room/unread/${username}`);
+        const result = await authenticatedAxios.get(`/chat/room/unread/${username}`);
         return result.data;
     }
     catch(err){
@@ -119,7 +118,7 @@ export const getAllUnreadMessages = async(username) =>{
 
 export const getUnreadTotalCountMessages = async(userID) =>{
     try{
-        const result = await axiosSession.get(BASE_URL + `chat/room/unread/count/${userID}`);
+        const result = await authenticatedAxios.get(`/chat/room/unread/count/${userID}`);
         return result.data;
     }
     catch(err){
@@ -129,7 +128,7 @@ export const getUnreadTotalCountMessages = async(userID) =>{
 
 export const resetUnreadMessagesCount = async(roomID, userID) =>{
     try{
-        const result = await axiosSession.delete(BASE_URL + `chat/room/unread/delete/${roomID}/${userID}`);
+        const result = await authenticatedAxios.delete(`/chat/room/unread/delete/${roomID}/${userID}`);
         return result.data;
     }
     catch(err){
@@ -139,7 +138,7 @@ export const resetUnreadMessagesCount = async(roomID, userID) =>{
 
 export const resetUsersUnreadMessagesCount = async(roomID, clientID) =>{
     try{
-        const result = await axiosSession.delete(BASE_URL + `chat/room/unread/delete/all/${roomID}/${clientID}`);
+        const result = await authenticatedAxios.delete(`/chat/room/unread/delete/all/${roomID}/${clientID}`);
         return result.data;
     }
     catch(err){
@@ -149,7 +148,7 @@ export const resetUsersUnreadMessagesCount = async(roomID, clientID) =>{
 
 export const forwardUnreadMessagesFromOldToNewRoom = async(roomData) =>{
     try{
-        const result = await axiosSession.put(BASE_URL + `chat/room/unread/forward/`, roomData);
+        const result = await authenticatedAxios.put(`/chat/room/unread/forward/`, roomData);
         return result.data;
     }
     catch(err){

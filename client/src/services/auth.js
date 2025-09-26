@@ -1,24 +1,23 @@
-import axios from 'axios'
-axios.defaults.withCredentials = true;
-const BASE_URL = 'http://localhost:5000/api/'
+// import axios from 'axios'
+// axios.defaults.withCredentials = true;
+import { ThrowErorr } from '../utils/ErrorUtils';
+import { baseAxios } from '../utils/AxiosConfig';
 
-//axios default
 export const loginService = async(user)=>{
     try{
-        const response = await axios.post(BASE_URL + '/login', user);
+        const response = await baseAxios.post('/login', user);
         return response;
     }
     catch(err){
-        console.error(err);
+        ThrowErorr(err);
     }
 }
 
-//axios default
 export const registerService = async(userFormData) =>{
     try{
-        const response = await axios({
+        const response = await baseAxios({
             method: 'post',
-            url: 'http://localhost:5000/api/register',
+            url: '/register',
             data: userFormData,
             headers: {
                 'Content-Type': `multipart/form-data`,
@@ -27,12 +26,11 @@ export const registerService = async(userFormData) =>{
         return response;
     }
     catch(err){
-        console.error(err);
+        ThrowErorr(err);
     }
 }
 
-//axios default
-export const logutService = async() =>{
-    await axios.get('http://localhost:5000/api/logout');
+export const logoutService = async() =>{
+    await baseAxios.get('/logout');
 }
 
