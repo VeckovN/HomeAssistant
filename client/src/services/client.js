@@ -1,13 +1,9 @@
-// import axios from 'axios'
-// axios.defaults.withCredentials = true;
 import { ThrowErorr } from '../utils/ErrorUtils'
-const BASE_URL = 'http://localhost:5000/api/'
-
-import { axiosSession } from '../utils/AxiosInterceptors'
+import { authenticatedAxios } from '../utils/AxiosConfig';
 
 export const getUserData = async() =>{
     try{
-        const result = await axiosSession.get(BASE_URL + `clients/info`)
+        const result = await authenticatedAxios.get(`/clients/info`)
         const client_data = result.data;
         return client_data;
     }
@@ -18,7 +14,7 @@ export const getUserData = async() =>{
 
 export const updateClient = async(formData) =>{
     try{
-        await axiosSession.put(BASE_URL + `clients/update/`, formData, {
+        await authenticatedAxios.put(`/clients/update/`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 // 'Content-Type': 'application/json',
@@ -36,17 +32,16 @@ export const updateClient = async(formData) =>{
 export const deleteComment = async(client_username, comment_id) =>{
     try{
         const params = {client_username: client_username, comment_id: comment_id}
-        await axiosSession.delete(BASE_URL + `clients/comment`, {params})
+        await authenticatedAxios.delete(`/clients/comment`, {params})
     }
     catch(err){
         ThrowErorr(err);
     }
 }
 
-//axios default
 export const getRecommended= async(username) =>{
     try{
-        const result = await axiosSession.get(BASE_URL + `clients/recommended/${username}`);
+        const result = await authenticatedAxios.get(`/clients/recommended/${username}`);
         const recommendedData = result.data;
         return recommendedData;
     }
