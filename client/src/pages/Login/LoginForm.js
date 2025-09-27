@@ -1,6 +1,6 @@
+import Spinner from "../../components/UI/Spinner";
 
-
-const LoginForm = ({register, errors, handleSubmit, onSubmitHandler}) =>{
+const LoginForm = ({register, errors, isLoading, handleSubmit, onSubmitHandler}) =>{
     return (
         <>
             <div className ='login_container'>
@@ -37,7 +37,6 @@ const LoginForm = ({register, errors, handleSubmit, onSubmitHandler}) =>{
                             </div>
                         </div>
 
-
                         <form onSubmit={handleSubmit(onSubmitHandler)} className='login_form'>
                             <div className='input_container'>
                                 <input
@@ -61,9 +60,16 @@ const LoginForm = ({register, errors, handleSubmit, onSubmitHandler}) =>{
                                 <div className="input_error">{errors.password?.message}</div>
                             </div>
 
-                            <div className ='button_container'>
-                                <button type='submit' className='btn'>Log in</button>
-                            </div>
+                            {isLoading 
+                            ? 
+                                <div className='login_loading'>
+                                    <Spinner color="rgba(0,12,12,1)" />
+                                </div>
+                            :
+                                <div className ='button_container'>
+                                    <button type='submit' className='btn'>Log in</button>
+                                </div>
+                            }
 
                         </form>
                     </div>

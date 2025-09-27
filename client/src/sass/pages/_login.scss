@@ -31,7 +31,7 @@
     color:white;
 
     @include sm-breakpoint{
-        width: 80%;
+        width: 90%;
         min-width: 350px;
     }
 
@@ -122,7 +122,7 @@
 }
 
 .login_form{
-    @include flex-with-direction($direction:column);
+    @include flex-with-direction-center($direction:column);
     padding:1em 2em;
     width: 100%;
 }
@@ -183,7 +183,7 @@
 
 .button_container{
     padding: 1rem 1.2rem;
-
+    width: 100%;
     button{
         height: 2.3em;
         width: 100%;
@@ -209,3 +209,8 @@
     letter-spacing: .01rem;
 }
 
+.login_loading{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
