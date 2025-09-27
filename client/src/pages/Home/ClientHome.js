@@ -12,7 +12,6 @@ import '../../sass/pages/_clientHome.scss';
 
 const ClientHome = ({socket}) =>{
     const {user} = useSelector((state) => state.auth);
-    // const {data, loading, searchDataHanlder, filterDataHandler } = useClient(user);
     const {initialData, newData, initialLoading, scrollInfiniteLoading, searchDataHanlder, filterDataHandler } = useClient(user);
     const [houseworkerData, setHouseworkerData] = useState([]); //List of HouseworkerCard
     const [houseworkerCount, setHouseworkerCount] = useState([]);
@@ -82,11 +81,10 @@ const ClientHome = ({socket}) =>{
             setHouseworkerData(houseworkerCards);
         }
         else{
-            // setHouseworkerCount([]);
             setHouseworkerData([]);
         }
         
-    },[initialData]) //on initialData
+    },[initialData])
 
     useEffect(() => {
         if(newData && newData.length > 0){
@@ -133,13 +131,8 @@ const ClientHome = ({socket}) =>{
                             filterOptions={filterDataHanlderWithScroll}
                         />
                     </div>
-                    
-                    {/* BUG:
-                        The loading Spinner is dispaying after every HouseworkerData Refrech (search, filter or any other manupulations -> WOKRS FINE beacause it's re-frech data and render houseworkers from start -> like pageNumber = 0)
-                        BUT: when is new houseworkers fetched (With Scrolling to bottom ) The Whole HousewokreData is changed and Spinner is dispayed on top of page 
-                        not on last (or before first new fetched houseworker)
-                        SOO THAT TRIGGER TO WHOLE housewokrerDATA -> housewokre-list got re-render instead to new fetched housewokre got Attached to exsiting houseworkers (that already dispalyed)
-                    */}
+                
+                
                     <div ref={scrollElemenetRef} className="houseworker-list">   
                         {initialLoading ? (
                             <Spinner/>

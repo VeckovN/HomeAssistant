@@ -120,11 +120,13 @@
                     padding-bottom: 1em;
                 }
 
-                #none{
+                #no-matches{
+                    margin-top:3em;
                     color:$black;
                     font-weight: 700;
                     font-size:$fs1;
                 }
+
             }
         }
 
@@ -139,6 +141,43 @@
             
         //     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         // }
+    }
+
+    .infinite-loading-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        
+        height: 40px;
+        min-height: 40px;
+        padding-top:10em;
+
+        // Ensure it takes full width and centers properly
+        flex-basis: 100%;
+        
+        // Subtle animation for smooth appearance
+        animation: fadeInUp 0.3s ease-out;
+
+        @include lg-breakpoint {
+            height: 25px;
+            min-height: 25px;
+            padding-top:3em;
+        }
+
+        @include sm-breakpoint {
+            height: 20px;
+            min-height: 20px;
+            padding-top:1em;
+        }
+        
+        @include xs-breakpoint {
+            height: 25px;
+            min-height: 25px;
+            padding-top:2em;
+        }
+
     }
 
     @keyframes fadeIn {

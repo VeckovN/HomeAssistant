@@ -5,14 +5,15 @@ import {getRecommended} from '../services/client.js'
 import { toast } from 'react-toastify';
 import debounce from 'lodash/debounce';
 
-
-//* Commit: removed errorHandler (just show error in console -> don't display as notification alert)
 const useClient = (user) =>{
-    //fetched(houseworker) Data based on filtered and searched Data
-    const [data, setData] = useState([]);
+    const [initialData, setInitialData] = useState([]);
+    const [newData, setNewData] = useState([]); //data on scroll 
+
+    const [initialLoading, setInitialLoading] = useState(true);
+    const [scrollInfiniteLoading, setScrollInfiniteLoading] = useState(false);
+
     const [showRecommended, setShowRecommended] = useState(false);
     const [recommendedData, setRecommendedDate] = useState([]);
-    const [loading, setLoading] = useState(true);
 
     //filtered data will be reset on compoent re-rendering(on every scroll )
     //that i stored filter data in localStorage
@@ -23,13 +24,11 @@ const useClient = (user) =>{
     
     const debouncedHandleScroll = debounce(() =>{   
         const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
-        const triggerThreshold = scrollableHeight - 200; 
-        // if (window.scrollY >= triggerThreshold) {
-        //pageNumberRef.current -1 prevent refetching houseworker after is fetched and there isn't new one.
+        const triggerThreshold = scrollableHeight - 400; 
         if (window.scrollY >= triggerThreshold && pageNumberRef.current != -1) {
             const newPage =  pageNumberRef.current+ 1;
             pageNumberRef.current = newPage;
-            fetchData(newPage);
+            fetchData(newPage, false);
         }
     }, 50);
     
@@ -49,80 +48,87 @@ const useClient = (user) =>{
 
     //on every serachedData and filterData change reFeatch houseworkers
     useEffect(()=>{
-        fetchData(pageNumberRef.current);
+        fetchData(0, true); 
+        pageNumberRef.current = 0;   //pageNUmberRef.current is 0 but i want to ensure it anyways
+        setNewData([]); //Clear any pending new data
+
     },[searchedData, filteredData, user])
     //user because on logout(user change) houseworkers should be fetch again (recommended users removed)
 
-    const fetchData = async(pageNubmer)=>{
+
+    const fetchData = async(pageNubmer, isInitialLoad = true)=>{
+
+        if(isInitialLoad){
+            setInitialLoading(true);
+            setNewData([]); // Clear new data on fresh start
+        }
+        else{
+            setScrollInfiniteLoading(true);
+            setNewData([]); // Clear previous new data before fetching
+        }
+
         //pageNumber on initialization
         let queryParams = {pageNumber:pageNubmer}
         const savedFilteredData = JSON.parse(localStorage.getItem('filteredData'));
         const savedSearchedData = JSON.parse(localStorage.getItem('searchedData'));
 
         if(savedFilteredData!=null){
+            //Filter option could be:{ profession:[], city:, gender:, age: }
             queryParams = {...queryParams, ...savedFilteredData};
-            //Filter option could be:{
-            //     profession:[],
-            //     city:,
-            //     gender:,
-            //     age:,
-            // }
         }
         if(savedSearchedData!=null){
+            //Search option could be:{ Age:asc or desc, Rating:asc or desc, Name:'nov'}  
             queryParams = {...queryParams, ...savedSearchedData};
-            //Search option could be:{
-            //  Age:asc or desc, 
-            //     Rating:asc or desc, 
-            //     Name:'nov'
-            //
         }
         try{
             const params = new URLSearchParams(queryParams);
-            // console.log("URL: " + `http://localhost:5000/api/houseworker/filter?/${params}`);
             const houseworkers = await getHouseworkerByFilter(params);
             if(houseworkers.length >0){ 
                 //if is new houseworkers fetched then contcatenate it with older houseworkers
-                if(pageNumberRef.current > 0){
-
-                    setData(prev =>([
-                        ...prev,
-                        ...houseworkers
-                    ]))
-                }
-                else{
+                if(isInitialLoad){
                     if(user!== null && !showRecommended){
                         const recommendedDataRes = await fetchRecommended(houseworkers);
                         setRecommendedDate({daa:"ASAS"});
-                        //exclude houseworker that are same as recommendedDataRes
-                        setData([...recommendedDataRes, ...houseworkers]);
+                        setInitialData([...recommendedDataRes, ...houseworkers]);
                         setShowRecommended(true);
                     }
                     else{
-                        setData(houseworkers);
+                        setInitialData(houseworkers);
                     }
-                    
+                }
+                else{
+                    setNewData(houseworkers);
                 }
             }
             else{
                 //if houseworekrs exist on page then delete scroll event(prevent to go on next page)
                 if(pageNumberRef.current > 0){
-                    //set the PagenubmerRef to -1 to prevent fetching user that doesn't exist
-                    //and showing this messages more times
+                    if(pageNubmer.current !== -1){
+                        toast.info("No more houseworkers",{
+                            className:"toast-contact-message"
+                        })
+
+                    }
                     pageNumberRef.current = -1;
-                    toast.info("No more houseworkers",{
-                        className:"toast-contact-message"
-                    })
                 }
-                else{ //or on first page if there ins't houseworkers
-                    setData(null);
+                else{
+                    setInitialData([]);
                 }
             }   
-            
-            setLoading(false);
+        
         }
         catch(err){
             console.error(err);     
         }  
+        finally {
+            //Claer appropriate loading states
+            if(isInitialLoad){
+                setInitialLoading(false);
+            }
+            else{
+                setScrollInfiniteLoading(false);
+            }
+        }
     }
 
     const fetchRecommended = async(houseworkers) =>{
@@ -167,9 +173,7 @@ const useClient = (user) =>{
         pageNumberRef.current = 0;
 
     },[searchedData]);
-    // },[]);
 
-    //On every re-rendering this function will be differentand without using useCallback and Filter component will be re-rendered(unnecessary)
     const filterDataHandler = useCallback((filterObj) =>{
         //filteredData is passed data from Children Component (Filter)
         pageNumberRef.current = 0;
@@ -177,7 +181,7 @@ const useClient = (user) =>{
         localStorage.setItem('filteredData', JSON.stringify(filterObj));
     },[filteredData]);
 
-    return {data, loading, setLoading, pageNumberRef, searchDataHanlder, filterDataHandler}
+    return {initialData, newData, initialLoading, scrollInfiniteLoading, pageNumberRef, searchDataHanlder, filterDataHandler}
 }
 
 export default useClient;
