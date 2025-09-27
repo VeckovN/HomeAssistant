@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef} from 'react'
+import {useState, useEffect, useRef, useCallback} from 'react'
 import {useSelector} from 'react-redux';
 import useClient from '../../hooks/useClient.js';
 import HouseworkerCard from '../../components/HouseworkerCard/HouseworkerCard.js'
@@ -12,7 +12,8 @@ import '../../sass/pages/_clientHome.scss';
 
 const ClientHome = ({socket}) =>{
     const {user} = useSelector((state) => state.auth);
-    const {data, loading, searchDataHanlder, filterDataHandler } = useClient(user);
+    // const {data, loading, searchDataHanlder, filterDataHandler } = useClient(user);
+    const {initialData, newData, initialLoading, scrollInfiniteLoading, searchDataHanlder, filterDataHandler } = useClient(user);
     const [houseworkerData, setHouseworkerData] = useState([]); //List of HouseworkerCard
     const [houseworkerCount, setHouseworkerCount] = useState([]);
     const scrollElemenetRef = useRef(null);
@@ -49,11 +50,9 @@ const ClientHome = ({socket}) =>{
         }
     }
 
-    useEffect(()=>{
-        let houseworkerList;
-        data ? 
-        houseworkerList = data.map((user,index) =>
-            (
+
+    const createHouseworkerCard = ((user, index) => {
+        return(
             <HouseworkerCard
                 key={`${user.id}-${index}`}
                 recommended={user.recommended}
@@ -71,11 +70,32 @@ const ClientHome = ({socket}) =>{
                 age={user.age}
                 phone_number={user.phone_number}
             />
-            )
         )
-        : houseworkerList =[]       
-            setHouseworkerData(houseworkerList)
-    },[data]);
+    }); //only re-create function on 'socket' changes -> new connection or maybe left it emoty [] -> on component mount
+    // },[]);
+
+    useEffect(() =>{
+        if(initialData){
+            const houseworkerCards = initialData.map((user, index) =>
+                createHouseworkerCard(user,index)
+            );
+            setHouseworkerData(houseworkerCards);
+        }
+        else{
+            // setHouseworkerCount([]);
+            setHouseworkerData([]);
+        }
+        
+    },[initialData]) //on initialData
+
+    useEffect(() => {
+        if(newData && newData.length > 0){
+            const newHouseworkerCards = newData.map((user, index) =>
+                createHouseworkerCard(user, `new-${index}`)
+            );
+            setHouseworkerData(prevData => [...prevData, newHouseworkerCards]);
+        }
+    },[newData])
 
     useEffect(()=>{
         fetchHouseworkerCount();
@@ -114,14 +134,29 @@ const ClientHome = ({socket}) =>{
                         />
                     </div>
                     
+                    {/* BUG:
+                        The loading Spinner is dispaying after every HouseworkerData Refrech (search, filter or any other manupulations -> WOKRS FINE beacause it's re-frech data and render houseworkers from start -> like pageNumber = 0)
+                        BUT: when is new houseworkers fetched (With Scrolling to bottom ) The Whole HousewokreData is changed and Spinner is dispayed on top of page 
+                        not on last (or before first new fetched houseworker)
+                        SOO THAT TRIGGER TO WHOLE housewokrerDATA -> housewokre-list got re-render instead to new fetched housewokre got Attached to exsiting houseworkers (that already dispalyed)
+                    */}
                     <div ref={scrollElemenetRef} className="houseworker-list">   
-                        {loading ? <Spinner/> :
-                        <>
-                            {houseworkerData &&
-                                houseworkerData.length > 0 ? houseworkerData : <h3 id='no-matches'>No Found Housewokrers</h3> 
-                            }
-                        </>
-                        }   
+                        {initialLoading ? (
+                            <Spinner/>
+                        ) : (
+                            <>
+                                 {houseworkerData.length > 0 ? (
+                                    <>
+                                        {houseworkerData}
+                                        <div className='infinite-loading-container'>
+                                            {scrollInfiniteLoading && <Spinner className=''/>}
+                                        </div>
+                                    </>
+                                ) : (
+                                    <h3 id='no-matches'>No Found Housewokrers</h3> 
+                                )}
+                            </>
+                        )}    
                     </div>   
                 </div>
 
