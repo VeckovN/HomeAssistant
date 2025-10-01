@@ -22,6 +22,22 @@ const uploadToCloudinaryBuffer = (fileBuffer, folder = '') => {
     });
 };
 
+const updateToCloudinaryBuffer = (fileBuffer, publicId) =>{
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            {
+                public_id: publicId,
+                overwrite: true,
+                invalidate: true //invalidates CDN cache
+            },
+            (error, result) => {
+                if(error) reject(error);
+                else resolve(result);
+            }
+        );
+        stream.end(fileBuffer);
+    });
+};
 
 const uploadToCloudinaryFile = (filePath, folder = '') => {
     return cloudinary.uploader.upload(filePath, folder ? { folder } : {});
@@ -30,5 +46,6 @@ const uploadToCloudinaryFile = (filePath, folder = '') => {
 module.exports = { 
     cloudinary, 
     uploadToCloudinaryBuffer, 
-    uploadToCloudinaryFile 
+    uploadToCloudinaryFile,
+    updateToCloudinaryBuffer
 }; 

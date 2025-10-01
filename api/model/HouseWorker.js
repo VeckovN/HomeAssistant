@@ -1,9 +1,7 @@
 const {driver} = require('../db/neo4j');
 const { set ,get, expire, zadd, zrem, zrangerevscores} = require('../db/redis');
 const {getUserIdByUsername, updateUserPicturePath, getUserPicturePath, getUserPicturePublicId, getNotificationsByOffset, getNotificationsUnreadCount, getNotificationsUnreadTotalCount} = require('../db/redisUtils');
-const path = require('path');
-const fs = require('fs');
-const {cloudinary} = require('../utils/cloudinaryConfig.js');
+const {updateToCloudinaryBuffer} = require('../utils/cloudinaryConfig');
 
 const findByUsername = async (username)=>{
     const session = driver.session();
@@ -796,49 +794,19 @@ const update = async(username, newUserValue, newHouseworkerValue)=>{
     const session = driver.session(); 
     try{
         let {file, picturePath, ...newUserData} = newUserValue;
-        if(newUserValue.file){
-            const oldImagePublicID = await getUserPicturePublicId(username);
+        if(file){
             try{
-                const cloudResult = await cloudinary.uploader.destroy(oldImagePublicID);
-                console.log("Cloud result on removing Image: ", cloudResult);
-            }
-            catch(error){
-                console.error("Failed to delete image: ", error);
-            }
-
-            //delete image from src folder(multer -> not cloudinary )
-            const oldImageFileName = await getUserPicturePath(username);
-            const oldImagePath = path.join(__dirname, '../../../client/public/assets/userImages', oldImageFileName);
-            fs.unlink(oldImagePath, (err) =>{
-                if(err){
-                    console.error("Faield to delete old imgage: ", err);
-                }
-            })
-
-            try{
-                const uploadResult = await cloudinary.uploader.upload(newUserValue.file.path, {
-                    folder: 'avatars', // Optional folder for organization
-                });
-                const newPicturePath = uploadResult.secure_url; // Cloudinary URL
-                const newPicturePublicId = uploadResult.public_id;
-
-                newUserData ={
-                    ...newUserData,
-                    picturePath:newPicturePath,
-                    picturePublicId:newPicturePublicId
-                }
-
-                console.log("newPicturePath: ",newPicturePath + "\n");
-                console.log("newPicturePublicId: ", newPicturePublicId);
-
-                await updateUserPicturePath(username, newPicturePath, newPicturePublicId);
+                const cuurentPicturePublicID = await getUserPicturePublicId(username);
+                const uploadResult = await updateToCloudinaryBuffer(file.data, cuurentPicturePublicID)
+                const newPicturePath = uploadResult.secure_url; 
+                await updateUserPicturePath(username, newPicturePath); //update Redis DB
+                newUserData.picturePath = newPicturePath; //update neo4j DB as well
             }
             catch(error){
                 console.error("Failed to upload image: ", error);
+                throw new Error;
             }
         }
-
-        console.log("\n newUserData: ", newUserData);
 
         const result = await session.run(`
             MATCH (n:User { username: $houseworker})

@@ -1,6 +1,7 @@
 const {driver} = require('../db/neo4j');
 const { set, get, expire } = require('../db/redis');
-const {recordNotification, getUserIdByUsername, updateUserPicturePath, getUserPicturePath, getUserPicturePublicId} = require('../db/redisUtils');
+const {recordNotification, getUserIdByUsername, updateUserPicturePath, getUserPicturePublicId} = require('../db/redisUtils');
+const {updateToCloudinaryBuffer} = require('../utils/cloudinaryConfig');
 
 const notificationType="comment";
 
@@ -21,9 +22,6 @@ const findByUsername = async (username)=>{
             const node = singleRecord.get(0);
             //to get all properties 
             const client = node.properties;
-
-            //THIS IS A PROMISE, We return a promise Because we used await to take get result from session.run
-            //return object without password
             return client;
         }
     }
@@ -34,7 +32,6 @@ const findByUsername = async (username)=>{
     finally{//close session regardless of the outcome
         session.close();
     }
-    
 }
 
 const getCity = async(username)=>{
@@ -116,7 +113,6 @@ const findAll = async ()=>{
     finally{
         session.close();
     }
-    
 }
 
 const findByUsernameAndDelete = async (username)=>{
@@ -179,7 +175,6 @@ const getRandomUsernamesAndID = async(count) =>{
         throw new Error("Failed to get random username's. Please try again later.");
     }
 }
-
 
 const getAllComments = async (username)=>{
     const session = driver.session();
@@ -270,7 +265,6 @@ const deleteComment = async(username, commentID)=>{
     }
 }
 
-
 const rateHouseworker = async(clientID, clientUsername, houseworkerUsername, rating)=>{
     const session = driver.session();
     //MARGE - ON MATCH SET - when Relationship exist we wanna set new rating value not to create another relationsip
@@ -325,7 +319,6 @@ const addInterest = async(username, interest) =>{
 }
 
 const create = async(clientObject)=>{
-
     const session = driver.session();
     const {id, username, email, password, firstName, lastName, picturePath, picturePublicId, city, gender, interests} = clientObject;
 
@@ -382,54 +375,24 @@ const create = async(clientObject)=>{
     finally{
         session.close();
     }
-
 }
 
 const update = async(username, newValue)=>{
     const session = driver.session();
     try{
-        console.log("newValue: ", newValue);
         let {file, ...newUserData} = newValue;
 
         if(file){
-            const oldImagePublicID = await getUserPicturePublicId(username);
             try{
-                const cloudResult = await cloudinary.uploader.destroy(oldImagePublicID);
-                console.log("Cloud result on removing Image: ", cloudResult);
-            }
-            catch(error){
-                console.error("Failed to delete image: ", error);
-            }
-
-            //delete image from src folder(multer -> not cloudinary )
-            const oldImageFileName = await getUserPicturePath(username);
-            const oldImagePath = path.join(__dirname, '../../../client/public/assets/userImages', oldImageFileName);
-            fs.unlink(oldImagePath, (err) =>{
-                if(err){
-                    console.error("Faield to delete old imgage: ", err);
-                }
-            })
-
-            try{
-                const uploadResult = await cloudinary.uploader.upload(file.path, {
-                    folder: 'avatars', // Optional folder for organization
-                });
-                const newPicturePath = uploadResult.secure_url; // Cloudinary URL
-                const newPicturePublicId = uploadResult.public_id;
-
-                newUserData ={
-                    ...newUserData,
-                    picturePath:newPicturePath,
-                    picturePublicId:newPicturePublicId
-                }
-
-                console.log("newPicturePath: ",newPicturePath + "\n");
-                console.log("newPicturePublicId: ", newPicturePublicId);
-
-                await updateUserPicturePath(username, newPicturePath, newPicturePublicId);
+                const cuurentPicturePublicID = await getUserPicturePublicId(username);
+                const uploadResult = await updateToCloudinaryBuffer(file.data, cuurentPicturePublicID)
+                const newPicturePath = uploadResult.secure_url; 
+                await updateUserPicturePath(username, newPicturePath); //update Redis DB
+                newUserData.picturePath = newPicturePath; //update neo4j DB as well
             }
             catch(error){
                 console.error("Failed to upload image: ", error);
+                throw new Error;
             }
         }
 
@@ -439,18 +402,6 @@ const update = async(username, newValue)=>{
             RETURN n
         `,{client:username, object:newUserData}
         )
-
-        //if username is changed -> change Client Node {username}
-        // if(newUserData.username){
-        //     const result = await session.run(`
-        //         MATCH(n:User {username:$client})-[:IS_CLIENT]->(h)
-        //         SET h.username = $newUsername
-        //         RETURN h
-        //     `,{client:username, newUsername:newUserData.username}
-        //     )
-        // }
-
-        console.log("newUserData: ", newUserData);
 
         return result.records[0].get(0).properties;
     }
