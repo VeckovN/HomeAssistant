@@ -35,14 +35,11 @@ export const getHouseworkersCount = async() =>{
     }
 }
 
-export const updateHouseworker = async(newData) =>{
+export const updateHouseworker = async(formData) =>{
     try{
-        await authenticatedAxios({
-            method: 'post',
-            url: '/update',
-            data: newData,
+         await authenticatedAxios.put(`/houseworker/update/`, formData, {
             headers: {
-                'Content-Type': `multipart/form-data`,
+                'Content-Type': 'multipart/form-data',
             },
         });
     }

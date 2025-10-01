@@ -30,10 +30,10 @@ const getUserPicturePublicId = async(username) =>{
     return picturePublicId;
 }
 
-const updateUserPicturePath = async(username, picturePath, picturePublicId) =>{
+const updateUserPicturePath = async(username, newPicturePath) =>{
     const userID = await getUserIdByUsername(username);
     const userKey= `user:${userID}`
-    await hmset(userKey, ['picturePath', picturePath, 'picturePublicId', picturePublicId]);
+    await hmset(userKey, ['picturePath', newPicturePath]);
 }
 
 const getUnreadMessageCountByRoomID = async(userID, roomID) =>{
@@ -43,7 +43,6 @@ const getUnreadMessageCountByRoomID = async(userID, roomID) =>{
 
     return countNumber;
 }
-
 
 const recordNotification = async(fromID, toID, type, message) =>{
     const timestamps = Date.now(); //used for score value (miliseconds)

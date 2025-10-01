@@ -1,14 +1,11 @@
-import {useState, useEffect} from 'react';
-import {toast} from 'react-toastify';
 import {handlerError} from '../../../utils/ErrorUtils.js';
 import HouseworkerProfileForm from './HouseworkerProfileForm';
 import {profession_options} from '../../../utils/options';
 import {getUserData, getProfessions, updateHouseworker} from '../../../services/houseworker.js';
-import {useForm, useController} from 'react-hook-form';
+import useProfileUpdate from '../../../hooks/useProfileUpdate.js';
 
 const HouseworkerProfile = () =>{
-
-    const initalStateForm = {
+    const initialState = {
         email:'',
         password:'',
         passwordRepeat:'',
@@ -20,32 +17,15 @@ const HouseworkerProfile = () =>{
         description:''
     }
 
-    const {register, handleSubmit, watch,reset, control, formState: {errors, isSubmitSuccessful}} = useForm({
-        defaultValues: initalStateForm
-    })
-    const {field:cityField} = useController({name:"city", control});
-    const {field:avatarField} = useController({name:"avatar", control});
-    const [houseworkerData, setHouseworkerData] = useState({}) //fetched (showned) data
-    const [loading, setLoading] = useState(true);
-
-    useEffect(()=>{
-        fetchData();
-    }, [])
-
-    useEffect(()=>{
-        reset({...initalStateForm})
-    },[isSubmitSuccessful])
-
     const getNotOwnedProfessions = (houseworker_professions) =>{
         const profession_format = houseworker_professions?.map(el =>({value: el.profession, label: el.profession + " " + el.working_hour +'€'}))
         const professions = profession_options.filter((option) =>{
-            //return only not same object
             return !profession_format.some((mine) => mine.value === option.value)
         })
         return {professions, profession_format};
     }
 
-    const fetchData = async() =>{
+    const fetchHouseworkerData = async() =>{
         try{
             const houseworkerResult = await getUserData();
             const houseworker_professions = await getProfessions(); //from users
@@ -53,61 +33,33 @@ const HouseworkerProfile = () =>{
             const {professions:not_owned_professions, profession_format } = getNotOwnedProfessions(houseworker_professions);
             const newHouseworker = {...houseworkerResult, professions:[...profession_format], not_owned_professions:[...not_owned_professions]}
 
-            setHouseworkerData(newHouseworker);
-            setLoading(false);
+            return newHouseworker;
         }
         catch(err){
             handlerError(err);
         }
     }
 
-    const onSubmitUpdate = async (submitData)=>{
-        try{
-            let newData = {};
-            Object.keys(submitData).forEach(key =>{
-                if(submitData[key] != '' && submitData[key] !=undefined){ //undefined for avatar(file)
-                    //data object wiht only updated props (for HTTP request)
-                    newData[key] = submitData[key];
-                }
-            })
+    const {
+        register,
+        handleSubmit,
+        watch,
+        errors,
+        cityField,
+        avatarField,
+        userData: houseworkerData,
+        setUserData: setHouseworkerData,
+        loading,
+        onSubmitUpdate,
+        onCityChangeHandler,
+        onChangeAvatarHandler,
+        onRemoveAvatarHandler,
+    } = useProfileUpdate({
+        initialState,
+        fetchUserData: fetchHouseworkerData,
+        updateUserData: updateHouseworker
+    })
 
-            if(Object.keys(newData).length == 0){
-                toast.error("You didn't enter any value",{
-                    className:'toast-contact-message'
-                })
-                return;
-            }
-
-            await updateHouseworker(newData);
-            toast.success("Successfully updated")
-
-            Object.keys(newData).forEach(key =>{
-                setHouseworkerData(prev =>({
-                    ...prev,
-                    [key] : newData[key]  //BECAUSE 'key' is STRING and MUST use [] 
-                }))
-            })
-        }
-        catch(err){
-            handlerError(err);
-        }
-    }
-
-    const onChangeCityHandler = (option) =>{
-        if(option !== null)
-            cityField.onChange(option.value);
-        else
-            cityField.onChange("");
-    }
-
-    const onChangeAvatarHandler = (event) =>{
-        avatarField.onChange(event.target.files[0]);
-    }
-    
-    const onRemoveAvatarHandler = (event) =>{
-        event.preventDefault();
-        avatarField.onChange(null);
-    }
 
     return(
         <HouseworkerProfileForm 
@@ -117,7 +69,7 @@ const HouseworkerProfile = () =>{
             watch={watch}
             cityField={cityField}
             avatarField={avatarField}
-            onChangeCityHandler={onChangeCityHandler}
+            onChangeCityHandler={onCityChangeHandler}
             onChangeAvatarHandler={onChangeAvatarHandler}
             onRemoveAvatarHandler={onRemoveAvatarHandler}
             handleSubmit={handleSubmit}
@@ -127,6 +79,6 @@ const HouseworkerProfile = () =>{
             getNotOwnedProfessions={getNotOwnedProfessions}
         />
     )
-}
+} 
 
 export default HouseworkerProfile;
