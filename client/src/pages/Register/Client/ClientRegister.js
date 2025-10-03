@@ -7,6 +7,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {clientRegisterSchema } from '../../../library/zodTypes.js';
 import ClientForm from './ClientForm.js';
 import {registerService} from '../../../services/auth.js';
+import { handlerError } from '../../../utils/ErrorUtils.js';
 
 const ClientRegister = () =>{
     const navigate = useNavigate();
@@ -50,7 +51,7 @@ const ClientRegister = () =>{
             })
         }
         catch(error){
-            console.error(error);
+            handlerError(error);
         }
         finally{
             setLoading(false);
