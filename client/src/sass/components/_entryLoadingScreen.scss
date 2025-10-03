@@ -1,0 +1,322 @@
+@use '../abstracts/fonts' as *;
+@use '../base/typography' as *;
+@use '../abstracts/colors' as *;
+@use '../abstracts/brakepoints' as *;
+
+
+.entry-loading-screen{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    // background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: linear-gradient(135deg, #202033 0%, #1c253f 50%, #1e3c61 100%);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 30vh;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.6s ease-out;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 20% 50%, rgba(52, 152, 219, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(155, 89, 182, 0.1) 0%, transparent 50%);
+        animation: backgroundShift 8s ease-in-out infinite;
+    }
+
+     &.fade-out {
+        opacity: 0;
+    }
+}
+
+.entry-loading-render-text{
+    width: 60%;
+    padding:.3rem 1rem 0rem 1rem;
+    position: absolute;
+    top:0;
+    left:0;
+    font-size: $fs5;
+    opacity: 0;
+    visibility: hidden;
+
+    @include md-breakpoint{
+        width: 80%;
+        // font-size: $fs6;
+    }
+    @include sm-breakpoint{
+        width: 100%;
+        font-size: $fs6;
+        padding:.3rem .6rem 0rem .6rem;
+    }
+}
+
+.fade-in-render-deploy{
+    opacity: 1;
+    visibility: visible;
+    animation: fadeInScale .5s ease-out;
+
+    @include sm-breakpoint{
+        text-align: center;
+    }
+}
+
+.logo-container {
+    // margin-bottom: 4rem;
+    margin:.4em 0em;
+    animation: fadeInScale .5s ease-out;
+
+    .logo {   
+        font-family:'MADE Soulmaze', sans-serif;
+        font-size:1.8em;
+        font-weight: 800;
+        color: $white;
+        letter-spacing: .1rem;
+        transition: color .3s;
+        // animation: name duration timing-function delay iteration-count direction fill-mode;
+        animation: titleGlow 1.4s ease-in-out infinite; 
+
+        span:first-child{
+            color:white;
+            transition: color .2s;
+        }
+
+        span:last-child{
+            color: $nav-hover-color;
+            transition: color .2s;
+        }
+
+        &:hover span:first-child{
+            color: $nav-hover-color;
+        }
+
+        &:hover span:last-child{
+            color:white;
+        }
+
+        @include md-breakpoint{
+            font-size:1.6em;
+        }
+
+        @include sm-breakpoint{
+            font-size:1.5em;
+        }
+
+        @include xs-breakpoint{
+            font-size:1.4em;
+        }
+    }
+}
+
+.loading-container {
+    // text-align: center;
+    color: white;
+    max-width: 500px;
+    padding: 3rem 2rem;
+    z-index: 1;
+
+    .loading-text-container{
+        display: flex;
+        justify-content: center;
+        
+        .loading-text{
+            margin-right:.2em;
+            font-size:$fs2;
+            animation:fadeIn .8s ease-in;
+
+            @include md-breakpoint{
+                font-size:$fs3;
+            }
+
+            @include sm-breakpoint{
+                font-size:$fs4;
+            }
+
+            @include xs-breakpoint{
+                font-size:$fs5;
+            }
+        }
+    }
+
+    .pulse-indicator-container{
+        margin-left:.2em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.8s ease-out 0.6s both;
+    }
+
+    .pulse-indicator {
+        width: 10px;
+        height: 10px;
+        background: #3498db;
+        border-radius: 50%;
+        position: relative;
+        box-shadow: 0 0 10px rgba(52, 152, 219, 0.6);
+        animation: pulse 2s ease-in-out infinite;
+        text-align: center;
+
+        &::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            border-radius: 50%;
+            animation: ripple 2s ease-out infinite;
+        }
+    }
+
+    .spinner-ring {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        margin: .4em auto 0rem;
+
+        div {
+            position: absolute;
+            width: 64px;
+            height: 64px;
+            top: 8px;
+            left: 8px;
+            border: 3px solid transparent;
+            border-radius: 50%;
+            animation: spinRing 1.5s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+            
+            &:nth-child(1) {
+                border-top-color: #3498db;
+                animation-delay: -0.45s;
+            }
+            
+            &:nth-child(2) {
+                border-top-color: #447da3;
+                animation-delay: -0.3s;
+            }
+            
+            &:nth-child(3) {
+                border-top-color: #758b9b;
+                animation-delay: -0.15s;
+            }
+        }
+    }
+
+}
+
+.app-content {
+    width: 100%;
+    height: 100%;
+
+    opacity: 0;
+    transition: opacity 0.4s ease-in;
+
+    &.fade-in {
+        opacity: 1;
+    }
+}
+
+
+@keyframes backgroundShift {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes titleGlow {
+    0%, 100% {
+        filter: brightness(1);
+    }
+    50% {
+        filter: brightness(1.2);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes spinRing {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes textPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(3);
+        opacity: 0;
+    }
+}
