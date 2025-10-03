@@ -44,9 +44,9 @@
                 overflow-anchor: none;
                 
                 display: flex;
-                flex-direction: column-reverse;
+                flex-direction: column;
                 align-items: center;
-                position: sticky;
+                // position: sticky; //not needed for scrolling a container from top
 
                 @extend %scrollbar-commnet-style;
 

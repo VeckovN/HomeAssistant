@@ -12,7 +12,8 @@
     overflow-y: auto;
 
     display: flex;
-    flex-direction: column-reverse;
+    // flex-direction: column-reverse;
+    flex-direction: column;
     align-items: center;
    
     @extend %scrollbar-commnet-style;
@@ -29,12 +30,11 @@
         }
     }
 
-    .comment-targetOb{
+    .comment-target{
         visibility: hidden;
-        width: 1px;
+        padding:.2em 0em;
     }
 }
-
 
 .comment-input{
     position: relative;
