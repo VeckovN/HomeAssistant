@@ -119,7 +119,6 @@ const Sidebar = () => {
                         </div>
                         {
                             menuItem1.map((el, index) =>(
-                                // <NavLink to={el.path} onClick={()=> setIsOpen(false)} key={'el-'+index}  
                                 <NavLink to={el.path} onClick={closeOpenedViewsHandler} key={'el-'+index}  
                                     className={({ isActive}) =>
                                     isActive ? "sidebar-menu-link active-link" : "sidebar-menu-link"
@@ -138,7 +137,6 @@ const Sidebar = () => {
                     <div className="menu-option">
                         {
                              menuItem2.map((el, index) =>(
-                                // <NavLink to={el.path} onClick={()=> setIsOpen(false)} key={'el-'+index}
                                 <NavLink to={el.path} onClick={closeOpenedViewsHandler} key={'el-'+index}
                                     className={({ isActive}) =>
                                     isActive ? "sidebar-menu-link active-link" : "sidebar-menu-link"
@@ -148,13 +146,18 @@ const Sidebar = () => {
                                 </NavLink>
                             ))
                         }
-                        <div className='line'/>
-                        <div className='sidebar-menu-link logout' onClick={logoutHandler}>
+                    
+                    </div>
+
+                    <div className='line'/>
+
+                    <div className="menu-option">
+                         <div className='sidebar-menu-link logout' onClick={logoutHandler}>
                             <div className='sidebar-menu-icon'><FontAwesomeIcon icon={faArrowRightFromBracket} /></div>
                             <div className='sidebar-menu-name'>Logout</div>
                         </div>
-                        
                     </div>
+
                 </div>
             </section>
             
