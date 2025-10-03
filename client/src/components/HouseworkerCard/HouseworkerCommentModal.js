@@ -20,7 +20,9 @@ const HouseworkerCommentModal = ({socket, isClient, clientUsername, houseworker,
     } = useHouseworkerComment(socket, isClient, clientUsername, houseworker, commentClick)
 
     const options = {
-        threshold: 0.3,
+        root: null, 
+        rootMargin: '100px',
+        threshold: 0.3, 
     };
 
     useEffect(() => {
@@ -50,9 +52,10 @@ const HouseworkerCommentModal = ({socket, isClient, clientUsername, houseworker,
             <div className='comment-container'>
             {comments?.length > 0 ?
                 <>
-                {comments.map(comm => {
+                {comments.map((comm, index) => {
                     const isClientComment = clientUsername === comm.from;
                     return(
+                        <>
                         <CommentItem
                             key={`comm-${comm.commentID}`}
                             onDeleteCommentHandler={isClientComment ? onCommentDelete : undefined}
@@ -62,12 +65,18 @@ const HouseworkerCommentModal = ({socket, isClient, clientUsername, houseworker,
                             comment={comm.comment}
                             new={comm.new}
                         />
+
+                        {/* observer before last 2-3 items */}
+                        {index === comments.length - 3 && (
+                            <div className="comment-target" ref={observerTarget}></div>
+                        )}
+                        </>
                     )}
                 )}
                 </>
                 : <div className='no-comments-modal'>Client doesn't have comments</div>
                 }
-                <div className='comment-targetOb' ref={observerTarget}>Target</div>
+
             </div>
             <div className='comment-input'>
                 <input type='text' name="postComment"  ref={postCommentRef} placeholder='Post comment'/>
