@@ -8,10 +8,9 @@ import {listenOnMessageInRoom, listenOnAddUserToGroup, listenOnCreateUserGroup, 
 import {emitRoomJoin, emitLeaveRoom, emitCreteUserGroup, emitUserAddedToChat, emitKickUserFromChat, emitUserDeleteRoom} from '../sockets/socketEmit.js';
 import {getUserRooms, deleteRoom, addUserToRoom, removeUserFromGroup, getMessagesByRoomID, getMoreMessagesByRoomID, getOnlineUsers, getFirstRoomID} from '../services/chat.js';
 import {resetUserUnreadMessagesCount, resetUsersUnreadMessagesbyRoomID, forwardUnreadMessagesToNewRoom} from '../store/unreadMessagesSlice.js';
+import {setCurrentRoom, clearCurrentRoom} from "../store/currentRoomSlice.js";
 import {sendMessage} from "../utils/MessageUtils/handleMessage.js";
 
-//Commit: Set show menu to false on room delete action, and other.. check for it
-//Commit: Add redux reset unread messages for all rooms
 const useMessages = (socket, user) =>{
     const initialState = {
         loading:true,
@@ -21,7 +20,7 @@ const useMessages = (socket, user) =>{
         houseworkers:'',
         roomsAction:'', //for handling different state.rooms update actions
         typingUsers:[],
-        onlineUsers:[], //only importants users() that is necessary for Online flag 
+        onlineUsers:[], 
     }
     const [state, dispatch] = useReducer(MessagesReducer, initialState);
     const [showMenu, setShowMenu] = useState(false);
@@ -29,7 +28,9 @@ const useMessages = (socket, user) =>{
     const [showChatView, setShowChatView] = useState(false);
     const [showMoreRoomUsers, setShowMoreRoomUsers] = useState({});
     const pageNumberRef = useRef(0); 
-
+    const currentRoomIDRef = useRef(null);
+    
+    const {unreadMessages} = useSelector((state) => state.unreadMessages);
     const reduxDispatch = useDispatch();
 
     const onShowMenuToggleHandler = () =>  setShowMenu(prev => !prev);
@@ -58,7 +59,22 @@ const useMessages = (socket, user) =>{
         }
     },[socket])
 
-    const fetchMoreMessages  = (async (roomID, pageNumber) =>{
+    useEffect(() => {
+        currentRoomIDRef.current = state.roomInfo?.roomID || null;
+    }, [state.roomInfo?.roomID]);
+
+    useEffect(() => {
+        return () => {
+            // Clear current room when leaving Messages page
+            //useRef is used to track
+            if(currentRoomIDRef.current) {
+                emitLeaveRoom(socket, currentRoomIDRef.current);
+            }
+            reduxDispatch(clearCurrentRoom());
+        };
+    }, []);
+
+    const fetchMoreMessages = (async (roomID, pageNumber) =>{
         try{
             const messages = await getMoreMessagesByRoomID(roomID, pageNumber);
 
@@ -71,7 +87,7 @@ const useMessages = (socket, user) =>{
         }
     })
 
-    const fetchAllRooms = ( async () =>{  
+    const fetchAllRooms = (async () =>{  
         try{
             const data = await getUserRooms(user.username); //roomID, users{}
             dispatch({type:"SET_ROOMS", data:data.rooms}) 
@@ -80,11 +96,17 @@ const useMessages = (socket, user) =>{
                 const roomID = data.rooms[0].roomID;
                 const users = data.rooms[0].users;
                 dispatch({type:"SET_ROOM_INFO", ID:roomID, usersArray:users});
+                reduxDispatch(setCurrentRoom({currentRoomID: roomID}))
 
                 emitRoomJoin(socket, roomID);
-                //reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:user.userID}));
                 const messages = await getMessagesByRoomID(roomID)
                 dispatch({type:"SET_ROOM_MESSAGES", data:messages})
+
+                // Clear unread count if this room had any
+                const unreadMessagesExists = unreadMessages.some(el => el.roomID === roomID);
+                if(unreadMessagesExists){
+                    reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:user.userID}))
+                }
             }
             else{
                 dispatch({type:"SET_ROOM_INFO", ID:null, usersArray:[]});
@@ -135,7 +157,8 @@ const useMessages = (socket, user) =>{
             pageNumberRef.current = 0; //reset page number on entering new room
 
             if(state.roomInfo.roomID !='' && state.roomInfo.roomID != roomID){
-                emitLeaveRoom(socket, state.roomInfo.roomID);;
+                emitLeaveRoom(socket, state.roomInfo.roomID);
+                reduxDispatch(clearCurrentRoom());
             }
 
             emitRoomJoin(socket, roomID);
@@ -143,6 +166,7 @@ const useMessages = (socket, user) =>{
             setIsLoadingMessages(true);
             const messages = await getMessagesByRoomID(roomID);
             dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
+            reduxDispatch(setCurrentRoom({currentRoomID: roomID}))
 
             // reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:user.userID}))
             setIsLoadingMessages(false);
@@ -205,6 +229,7 @@ const useMessages = (socket, user) =>{
                 const removedRoomID = state.roomInfo.roomID;
                 emitLeaveRoom(socket, removedRoomID);
                 dispatch({type:"RESET_ROOMS"});
+                reduxDispatch(clearCurrentRoom());
                 setShowMenu(false);
             }
         }
@@ -342,6 +367,15 @@ const useMessages = (socket, user) =>{
             }
             try{
                 sendMessage(socket, messageObj);
+
+                const unreadMessagesExists = unreadMessages.some(el => el.roomID === fromRoomID);
+                if(unreadMessagesExists){
+                    reduxDispatch(resetUserUnreadMessagesCount({
+                        roomID: fromRoomID, 
+                        userID:user.userID
+                    }))
+                }
+
                 dispatch({type:'SET_LAST_ROOM_MESSAGE', roomID:fromRoomID, message:message})
             }
             catch(err){

@@ -124,7 +124,7 @@ const Chat = ({
 
     return(     
         <>
-            <div className="header-chat">    
+            <div className={`header-chat ${user.type=="Houseworker" ? 'houseworker' : ''}`}>    
                 {showChatView && 
                 <section className='rooms-container-chat-view'>
                     <div className='chat-view-button-container'>
@@ -202,17 +202,29 @@ const Chat = ({
             </div>
 
             <div className="footer-chat" >
-
                 <input
                     type='text'
                     className={`write-message ${showMenu && 'showMenu'} `}
                     placeholder={`Type your message here`}
                     name='message-text'
                     ref={messageInputRef}
-                    onKeyDown={startTypingHandler}
+                    onKeyDown={(e) => {
+                        startTypingHandler();
+                        if(e.key === 'Enter'){
+                            e.preventDefault();
+                            onSendHandler();
+                        }
+                    }}
                     disabled={showMenu || !conversation}
                 />
-                <button className={`send-icon ${showMenu && 'showMenu'}` } onClick={onSendHandler} disabled={showMenu || !conversation}><SendIcon/></button>
+                
+                <button 
+                    className={`send-icon ${showMenu && 'showMenu'}` } 
+                    onClick={onSendHandler} 
+                    disabled={showMenu || !conversation}
+                >
+                    <SendIcon/>
+                </button>
             </div>
             
         </>

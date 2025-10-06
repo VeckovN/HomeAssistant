@@ -5,6 +5,7 @@ import authSlice from './auth-slice';
 import unreadMessagesSlice from './unreadMessagesSlice';
 import unreadCommentsSlice from './unreadCommentSlice';
 import notificationsSlice from './notificationsSlice';
+import currentRoomSlice from './currentRoomSlice';
 
 const authPersistConfig = {
   key:'auth',
@@ -81,8 +82,8 @@ const store = configureStore({
     auth: persistedAuthReducer,
     unreadMessages:persistedUnreadMessagesReducer,
     unreadComments:persistedUnreadCommentsReducer,
-    notifications:persistedNotificationsReducer
-    //other slices...
+    notifications:persistedNotificationsReducer,
+    currentRoom: currentRoomSlice.reducer
   },
 
   middleware:(getDefaultMiddleware)=>
