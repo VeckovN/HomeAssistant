@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {useSelector} from 'react-redux';
 import useMessages from '../hooks/useMessages';
 import Chat from '../components/Chat/Chat.js';
@@ -30,10 +31,18 @@ const Messages = ({socket, connected}) =>{
         onShowRoomsButtonHandler
     } = useMessages(socket, user);
 
+
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, []);
+
     return (
     <div className={`container-${user.type === "Houseworker" ? "houseworker" : "client"}`}> 
         {state.loading ? <Spinner className='profile-spinner'/> :
-        <div className='messages-container'>
+        <div className={`messages-container ${user.type === "Houseworker" ? "houseworker" : "client"} `}>
             <section className={`rooms-container ${showChatView ? 'no-display' : ''}`}>
                 <div className='room-chat-header'>
                     <div className='header-label'>Chat Rooms</div>

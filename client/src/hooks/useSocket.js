@@ -1,18 +1,30 @@
 import {useState, useRef, useEffect} from 'react';
 import {io} from "socket.io-client";
 import {listenForCommentNotification, listenForRatingNotfication, listenFormMessage, listenOnCreateUserNotification, listenOnAddUserToGroupNotification, listenOnDeleteUserRoomNotification, listenOnKickUserFromGroupNotification} from '../sockets/socketListen';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+
+const SOCKET_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://homeassistant-ed5z.onrender.com"
+    : "http://127.0.0.1:5000";
 
 const useSocket = (user) =>{
     const socketRef = useRef(null);
+    const currentRoomIDRef = useRef(null);
     const reduxDispatch = useDispatch();
     const [connected, setConnected] = useState(false);
 
+    const currentRoomID = useSelector((state) => state.currentRoom?.currentRoomID);
+
+    //send new fetched currentRoomID to listenFormMessage listener
+    useEffect(() =>{
+        currentRoomIDRef.current = currentRoomID;
+    }, [currentRoomID])
+
     useEffect(() => {
         if (user) {
-            // Create a new socket instance if it doesn't exist
             if (!socketRef.current) {
-                const socket = io('http://127.0.0.1:5000', { 
+                const socket = io(SOCKET_URL, { 
                     withCredentials: true, 
                     //Handshake
                     query: {userID: user.userID}   
@@ -41,9 +53,9 @@ const useSocket = (user) =>{
                 listenOnAddUserToGroupNotification(socketRef.current, reduxDispatch);
                 listenOnKickUserFromGroupNotification(socketRef.current, user.userID, reduxDispatch);
             }
-                listenFormMessage(socketRef.current, reduxDispatch); //Listen for message notifications (both users)
             
-               
+            listenFormMessage(socketRef.current, reduxDispatch, () => currentRoomIDRef.current); //Listen for message notifications (both users)
+            
             return () => {
                 if (socketRef.current) {
                     socketRef.current.disconnect(); 
