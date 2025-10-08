@@ -1,9 +1,8 @@
-import {useState} from 'react';
+import {useState, useMemo, memo} from 'react';
 
 import '../../sass/components/_chatMenu.scss';
 
-const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onKickUserFromGroupHandler, onDeleteRoomHandler}) =>{
-    
+const ChatMenu = memo(({houseworkers, roomInfo, onAddUserToGroupHanlder, onKickUserFromGroupHandler, onDeleteRoomHandler}) =>{
     const [selectedUsername, setSelectedUsername] = useState(''); //clicked username form list
     const [searchTerm, setSearchTerm] = useState(''); // entered houseworker username(not selected)
 
@@ -13,13 +12,13 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onKic
     const SelectedHandler = (username) => setSelectedUsername(username); 
     const SelectedKickUserHandler = (username) => setSelectedKickUsername(username);
 
-    const ChangeSearchInputHandler = (e, roomID) =>{
+    const ChangeSearchInputHandler = (e) =>{
         if(selectedUsername!='')
             setSelectedUsername('')
         setSearchTerm(e.target.value);
     }
 
-    const ChangeSearchKickInputHandler = (e, roomID) =>{
+    const ChangeSearchKickInputHandler = (e) =>{
         if(selectedKickUsername!='')
             setSelectedKickUsername('')
         setSearchKickTerm(e.target.value);
@@ -36,6 +35,33 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onKic
         setSearchKickTerm('');
         onKickUserFromGroupHandler(roomID, username);
     }
+
+    const filteredHouseworkers = useMemo(() =>{
+        if(!searchTerm || selectedUsername) return [];
+        
+        const searchInput = searchTerm.toLowerCase();
+
+        return houseworkers
+            .filter(item => {
+                const usernameMatch = item.username.toLowerCase();
+                const usernameStartsWithSerachInput = usernameMatch.startsWith(searchInput);
+                const isNotInRoomUsers = !roomInfo.users?.some(user => user.username === item.username);
+                return usernameStartsWithSerachInput && isNotInRoomUsers
+            })
+            .slice(0, 10);
+    },[houseworkers, searchTerm, selectedUsername, roomInfo.users])
+
+    const filteredKickUsers = useMemo(() =>  {
+        if (!searchKickTerm || selectedKickUsername) return [];
+
+        const searchInput = searchKickTerm.toLowerCase();
+        return roomInfo.users
+            .filter(item => {
+                const usernameMatch = item.username.toLowerCase();
+                return usernameMatch.startsWith(searchInput);
+            })
+            .slice(0, 5);
+    },[roomInfo.users, searchKickTerm, selectedKickUsername]);
     
     return (
     <div className='chat-menu-container'>
@@ -48,22 +74,13 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onKic
                         className='menu-search-input'
                         placeholder='Enter houseworker username'
                         type='text'
-                        onChange={(e)=> ChangeSearchInputHandler(e, roomInfo.roomID)}  
+                        onChange={(e)=> ChangeSearchInputHandler(e)}  
                         value={selectedUsername!='' ? selectedUsername : searchTerm}                  
                     />
                 </div>
                 <div className='dropdown-list'>
                     {
-                    houseworkers.filter(item => {
-                        const searchInput = searchTerm.toLowerCase();
-                        const usernameMatch = item.username.toLowerCase();
-
-                        const usernameStartsWithSerachInput = searchInput && usernameMatch.startsWith(searchInput);
-                        const isNotInRoomUsers = !roomInfo.users?.some(user => user.username === item.username);
-
-                        return usernameStartsWithSerachInput && isNotInRoomUsers && selectedUsername==''
-                    })
-                    .map((item) =>(
+                    filteredHouseworkers.map((item) =>(
                         <div className='dropdown-row' key={item.id} >
                             <div
                                 onClick={() => SelectedHandler(item.username)}
@@ -71,7 +88,6 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onKic
                             </div>
                         </div>
                     ))
-                    .slice(0,10)//render 10 items in list
                     }
                 </div>
                 <div className='user-button'>
@@ -95,28 +111,20 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onKic
                             className='menu-search-input'
                             placeholder='Enter houseworker username'
                             type='text'
-                            onChange={(e)=> ChangeSearchKickInputHandler(e, roomInfo.roomID)}   
+                            onChange={(e)=> ChangeSearchKickInputHandler(e)}   
                             value={selectedKickUsername!='' ? selectedKickUsername : searchKickTerm}                
                         />
                     </div>
                     <div className='dropdown-list'>
                         {
                         // show only room members 
-                        roomInfo.users.filter(item => {
-                            const searchInput = searchKickTerm.toLowerCase();
-                            const usernameMatch = item.username.toLowerCase();
-
-                            const usernameStartsWithSerachInput = searchInput && usernameMatch.startsWith(searchInput);
-                            return usernameStartsWithSerachInput  && selectedKickUsername ==''
-                        })
-                        .map((item) =>(
+                        filteredKickUsers.map((item) =>(
                             <div
                                 key={`user-${item.username}`} 
                                 onClick={() => SelectedKickUserHandler(item.username)}
                                 className='dropdown-row'>{item.username}
                             </div>
                         ))
-                        .slice(0,5)//render 5 items in list
                         }
                     </div>
                     <div className='user-button'>
@@ -138,5 +146,5 @@ const ChatMenu = ({houseworkers, rooms, roomInfo, onAddUserToGroupHanlder, onKic
         </div>
     </div>
     )
-}
+});
 export default ChatMenu;

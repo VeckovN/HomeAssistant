@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, memo } from 'react';
 import {useSelector} from 'react-redux';
 import useMessages from '../hooks/useMessages';
 import Chat from '../components/Chat/Chat.js';
@@ -7,8 +7,7 @@ import Spinner from '../components/UI/Spinner.js';
 
 import '../sass/pages/_messages.scss';
 
-const Messages = ({socket, connected}) =>{
-    
+const Messages = memo(({socket}) =>{
     const {user} = useSelector((state) => state.auth)
     const {
         state, 
@@ -19,8 +18,6 @@ const Messages = ({socket, connected}) =>{
         pageNumberRef,
         onShowMenuToggleHandler,
         onUsersFromChatOutHanlder,
-        onAddTypingUserHandler, 
-        onRemoveTypingUserHandler,
         fetchMoreMessages,
         onRoomClickHanlder,
         onDeleteRoomHandler,
@@ -30,7 +27,6 @@ const Messages = ({socket, connected}) =>{
         onShowMoreUsersFromChatHandler,
         onShowRoomsButtonHandler
     } = useMessages(socket, user);
-
 
     useEffect(() => {
         document.body.style.overflow = 'hidden';
@@ -51,7 +47,6 @@ const Messages = ({socket, connected}) =>{
                 <Rooms 
                     rooms={state.rooms}
                     roomInfo={state.roomInfo}
-                    unread={state.unreadMessages}
                     showMoreRoomUsers={showMoreRoomUsers}
                     onRoomClickHanlder={onRoomClickHanlder}
                     onShowMoreUsersFromChatHandler={onShowMoreUsersFromChatHandler}
@@ -75,8 +70,6 @@ const Messages = ({socket, connected}) =>{
                     onDeleteRoomHandler={onDeleteRoomHandler}
                     onShowMenuToggleHandler={onShowMenuToggleHandler}
                     fetchMoreMessages={fetchMoreMessages}
-                    onAddTypingUserHandler={onAddTypingUserHandler}
-                    onRemoveTypingUserHandler={onRemoveTypingUserHandler}
                 />
                 
             </section>
@@ -84,7 +77,7 @@ const Messages = ({socket, connected}) =>{
         }
     </div>
     )
-}
+});
 
 export default Messages;
 

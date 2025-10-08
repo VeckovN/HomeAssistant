@@ -121,6 +121,17 @@ export const MessagesReducer = (state, action) =>{
                     return room;
                 })
             };
+        case "UPDATE_ONLINE_STATUS":
+            return {
+                ...state,
+                rooms: state.rooms.map(room => ({
+                    ...room,
+                    users: room.users.map(user => ({
+                        ...user,
+                        online: state.onlineUsers.includes(user.userID)
+                    }))
+                }))
+            };
         case "KICK_USER_FROM_GROUP":
             return{
                 ...state,
