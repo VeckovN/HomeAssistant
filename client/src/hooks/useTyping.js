@@ -1,7 +1,6 @@
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect, useRef, useCallback} from 'react';
 
 const useTyping = (startTypingMessageSendEmit, stopTypingMessageEmit) =>{
-    
     const [isTyping, setIsTyping] = useState(false);
     const [isKeyPressed, setIsKeyPressed] = useState(false);
     const cooldownRef = useRef(0);
@@ -29,7 +28,7 @@ const useTyping = (startTypingMessageSendEmit, stopTypingMessageEmit) =>{
         return () => clearInterval(interval);
     }, [isTyping, stopTypingMessageEmit])
 
-    const startTypingHandler = () =>{
+    const startTypingHandler = useCallback(() =>{
         //inovoked on every key press
         if(!isKeyPressed && !isTyping){
             setIsKeyPressed(true);
@@ -37,15 +36,17 @@ const useTyping = (startTypingMessageSendEmit, stopTypingMessageEmit) =>{
             setIsTyping(true);
             startTypingMessageSendEmit();
         }
-    }
+    },[isKeyPressed, isTyping, startTypingMessageSendEmit])
 
-    const stopTypingOnSendMessage = () =>{
+    const stopTyping = useCallback(() =>{
         setIsTyping(false);
         setIsKeyPressed(false);
         cooldownRef.current = 0;
-    }
+        stopTypingMessageEmit();
+    },[stopTypingMessageEmit])
 
-    return {isTyping, isKeyPressed, cooldownRef, startTypingHandler, stopTypingOnSendMessage}
+
+    return {isTyping, isKeyPressed, cooldownRef, startTypingHandler, stopTyping}
 }
 
 

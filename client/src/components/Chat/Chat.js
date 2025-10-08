@@ -25,10 +25,8 @@ const Chat = ({
     onKickUserFromGroupHandler, 
     onDeleteRoomHandler, 
     onShowMenuToggleHandler,
-    onAddTypingUserHandler,
-    onRemoveTypingUserHandler
  }) =>{
-
+    
     const {rooms, roomMessages, roomInfo, houseworkers, typingUsers} = state;
 
     const messageInputRef = useRef();
@@ -44,47 +42,9 @@ const Chat = ({
     const stopTypingMessageEmit = () =>{
         if(!socket) return;
         socket.emit("stopTypingRoom", {roomID:roomInfo.roomID, user})
-        stopTypingOnSendMessage();
     }
 
-    const {startTypingHandler, stopTypingOnSendMessage} = useTyping(startTypingMessageSendEmit, stopTypingMessageEmit);
-
-    const listenOnUserTyping = () =>{
-        //listen only for one interval -> Don't reapeat on Interval re-rendering
-        socket.on("typingMessageStart", (sender) =>{
-            const {senderID, senderUsername} = sender;
-
-            if(senderID == user.userID)
-                return;
-            
-            const data = {userID:senderID, username:senderUsername}
-            onAddTypingUserHandler(data); 
-        })
-    }   
-
-    const listenOnUserStopTyping = () =>{
-        socket.on("typingMessageStop", (sender) =>{
-            const {senderID, senderUsername} = sender;
-
-            if(senderID == user.userID)
-                return;
-            
-            const data = {userID:senderID, username:senderUsername}
-            onRemoveTypingUserHandler(data);
-        })
-    }
-
-    //use UseEffect to listen only once (to avoid to this listen set on component re-rednering)
-    useEffect(() =>{
-        listenOnUserTyping();
-        listenOnUserStopTyping();
-
-        return () =>{
-            socket.off("typingMessageStart", listenOnUserTyping)
-            socket.off("typingMessageStop", listenOnUserStopTyping)
-        }
-    },[])
-
+    const {startTypingHandler, stopTyping} = useTyping(startTypingMessageSendEmit, stopTypingMessageEmit);
     
     const onSendHandler = () =>{
         const message = messageInputRef.current.value;
@@ -94,7 +54,7 @@ const Chat = ({
 
         onSendMessageHandler({message, fromRoomID});
         lastMessageRef.current?.scrollIntoView({behavior: 'instant', block: 'nearest'});
-        stopTypingMessageEmit();
+        stopTyping();
     }
 
     const options = {
@@ -178,8 +138,6 @@ const Chat = ({
                     <>
                     {roomMessages?.length >0 ?   
                     (
-                        //prevent to re-render only when the props are changed(memo used in RoomMessages)
-                        //(not on typingUser changes)
                         <ChatMessages
                             roomMessages={roomMessages}
                             user={user}

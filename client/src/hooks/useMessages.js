@@ -1,4 +1,4 @@
-import {useReducer, useState, useRef, useEffect} from "react";
+import {useReducer, useState, useRef, useEffect, useCallback} from "react";
 import {useDispatch, useSelector} from 'react-redux';
 import {toast} from 'react-toastify';
 import {handlerError} from "../utils/ErrorUtils.js";
@@ -11,7 +11,10 @@ import {resetUserUnreadMessagesCount, resetUsersUnreadMessagesbyRoomID, forwardU
 import {setCurrentRoom, clearCurrentRoom} from "../store/currentRoomSlice.js";
 import {sendMessage} from "../utils/MessageUtils/handleMessage.js";
 
+//COMMIT: Optimized to precent Rooms re-rendering on typingNotification receving, on Opening Menu options
+
 const useMessages = (socket, user) =>{
+
     const initialState = {
         loading:true,
         rooms:[],
@@ -33,16 +36,52 @@ const useMessages = (socket, user) =>{
     const {unreadMessages} = useSelector((state) => state.unreadMessages);
     const reduxDispatch = useDispatch();
 
-    const onShowMenuToggleHandler = () =>  setShowMenu(prev => !prev);
-    const onUsersFromChatOutHanlder = () => setShowMoreRoomUsers({});
+    const onShowMenuToggleHandler = () => {
+        setShowMenu(prev => !prev);
+    }
+    const onUsersFromChatOutHanlder = useCallback(() => {
+        setShowMoreRoomUsers({})
+    },[]);
 
-    const onAddTypingUserHandler = (userInfo) =>{
+
+    const onAddTypingUserHandler = useCallback((userInfo) =>{
         dispatch({type:"SET_TYPING_USER", data:userInfo});
-    }
+    }, []);
 
-    const onRemoveTypingUserHandler = (userInfo) =>{
+    const onRemoveTypingUserHandler = useCallback((userInfo) =>{
         dispatch({type:"REMOVE_TYPING_USER", data:userInfo});
-    }
+    }, []);
+
+    const enterRoomAfterAction = useCallback(async(roomID, read) =>{
+        //don't applie logic if is clicked on the same room
+        if(roomID === state.roomInfo.roomID)
+                return;
+        try{
+            if(read)
+                reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:user.userID}))
+        
+            pageNumberRef.current = 0; //reset page number on entering new room
+
+            if(state.roomInfo.roomID !='' && state.roomInfo.roomID != roomID){
+                emitLeaveRoom(socket, state.roomInfo.roomID);
+                reduxDispatch(clearCurrentRoom());
+            }
+
+            emitRoomJoin(socket, roomID);
+
+            setIsLoadingMessages(true);
+            const messages = await getMessagesByRoomID(roomID);
+            dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
+            reduxDispatch(setCurrentRoom({currentRoomID: roomID}))
+            setIsLoadingMessages(false);
+
+            if(showMenu)
+                setShowMenu(false);
+        }
+        catch(err){
+            handlerError(err); 
+        }
+    },[socket, reduxDispatch])
 
     useEffect(() => {
         if(socket && user){
@@ -56,8 +95,32 @@ const useMessages = (socket, user) =>{
             listenOnKickUserFromGroup(socket, dispatch, user.userID);
             listenOnKickUserFromGroupInRoom(socket, user.userID, enterRoomAfterAction);
             listenNewOnlineUser(socket, dispatch, user.userID);
+
+            //Typing listeners
+            const handleTypingStart = (sender) => {
+                const {senderID, senderUsername} = sender;
+                if(senderID == user.userID) return;
+                onAddTypingUserHandler({userID:senderID, username:senderUsername}); 
+            }
+
+            const handleTypingStop = (sender) => {
+                const {senderID, senderUsername} = sender;
+                if(senderID == user.userID) return;
+                onRemoveTypingUserHandler({userID:senderID, username:senderUsername});
+            }
+
+
+            socket.on("typingMessageStart", handleTypingStart);
+            socket.on("typingMessageStop", handleTypingStop);
+
+
+            return () => {
+                socket.off("typingMessageStart", handleTypingStart);
+                socket.off("typingMessageStop", handleTypingStop);
+            };
+
         }
-    },[socket])
+    },[socket, user]) 
 
     useEffect(() => {
         currentRoomIDRef.current = state.roomInfo?.roomID || null;
@@ -74,7 +137,7 @@ const useMessages = (socket, user) =>{
         };
     }, []);
 
-    const fetchMoreMessages = (async (roomID, pageNumber) =>{
+    const fetchMoreMessages = async (roomID, pageNumber) =>{
         try{
             const messages = await getMoreMessagesByRoomID(roomID, pageNumber);
 
@@ -85,9 +148,9 @@ const useMessages = (socket, user) =>{
         catch(err){
             handlerError(err);
         }
-    })
+    }
 
-    const fetchAllRooms = (async () =>{  
+    const fetchAllRooms = useCallback(async () =>{  
         try{
             const data = await getUserRooms(user.username); //roomID, users{}
             dispatch({type:"SET_ROOMS", data:data.rooms}) 
@@ -118,9 +181,9 @@ const useMessages = (socket, user) =>{
         catch(err){
             handlerError(err);
         }
-    });
+    },[socket, reduxDispatch, unreadMessages]);
 
-    const getAllHouseworkers = async() =>{
+    const getAllHouseworkers = useCallback(async() =>{
         try{
             const houseworkerResult = await getHouseworkers();
             dispatch({type:"SET_HOUSEWORKERS", data:houseworkerResult});
@@ -128,9 +191,9 @@ const useMessages = (socket, user) =>{
         catch(err){
             handlerError(err);
         }
-    }
+    },[])
 
-    const getOnlineChatUsers = async() =>{
+    const getOnlineChatUsers = useCallback(async() =>{
         try{
             const onlineUsers = await getOnlineUsers(user.userID);
             dispatch({type:"SET_ONLINE_USER", data:onlineUsers});
@@ -138,48 +201,15 @@ const useMessages = (socket, user) =>{
         catch(err){
             handlerError(err);
         }
-    }
+    },[])
 
-    const getOnlineUserStatus = (userID) =>{
+    const getOnlineUserStatus = useCallback((userID) =>{
         const status = state.onlineUsers.includes(userID);
         return status;
-    }
-    
-    const enterRoomAfterAction = async(roomID, read) =>{
-        try{
-            if(read)
-                reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:user.userID}))
-        
-            //don't applie logic if is clicked on the same room
-            if(roomID === state.roomInfo.roomID)
-                return;
+    },[state.onlineUsers])
 
-            pageNumberRef.current = 0; //reset page number on entering new room
 
-            if(state.roomInfo.roomID !='' && state.roomInfo.roomID != roomID){
-                emitLeaveRoom(socket, state.roomInfo.roomID);
-                reduxDispatch(clearCurrentRoom());
-            }
-
-            emitRoomJoin(socket, roomID);
-
-            setIsLoadingMessages(true);
-            const messages = await getMessagesByRoomID(roomID);
-            dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID})
-            reduxDispatch(setCurrentRoom({currentRoomID: roomID}))
-
-            // reduxDispatch(resetUserUnreadMessagesCount({roomID, userID:user.userID}))
-            setIsLoadingMessages(false);
-
-            if(showMenu)
-                setShowMenu(false);
-        }
-        catch(err){
-            handlerError(err); 
-        }
-    }
-
-    const onRoomClickHanlder = ( async e =>{
+    const onRoomClickHanlder = useCallback(async (e) =>{
         const roomID = e.target.value;
         try{
             await enterRoomAfterAction(roomID, true);
@@ -188,9 +218,9 @@ const useMessages = (socket, user) =>{
         catch(err){
             handlerError(err);
         }
-    })
+    },[enterRoomAfterAction]);
 
-    const onDeleteRoomHandler = async(e) => {   
+    const onDeleteRoomHandler = useCallback(async(e) => {   
         const roomID = e.target.value;
         try{
             const notifications = await deleteRoom(roomID);
@@ -213,7 +243,7 @@ const useMessages = (socket, user) =>{
         catch(err){
             handlerError(err);
         }
-    }
+    },[socket, reduxDispatch])
 
     useEffect(()=>{
         //onDelete function for deleting room from state.rooms (is Async)
@@ -241,9 +271,9 @@ const useMessages = (socket, user) =>{
             }
             dispatch({type:"RESET_ROOM_ACTION"});
         }
-    },[state.rooms])
+    },[state.rooms, state.roomsAction, socket, reduxDispatch, enterRoomAfterAction])
 
-    const MessagesAfterRoomsAction = async(roomID)=>{
+    const MessagesAfterRoomsAction = useCallback(async(roomID)=>{
         try{
             const messages = await getMessagesByRoomID(roomID)
             dispatch({type:"SET_ROOM_MESSAGE_WITH_ROOM_INFO", messages:messages, ID:roomID});
@@ -252,27 +282,26 @@ const useMessages = (socket, user) =>{
         catch(err){
             handlerError(err);
         }
-    }
+    },[]);
 
     useEffect(() =>{
         fetchAllRooms();
         getAllHouseworkers();
         getOnlineChatUsers();
-    },[])
+    // },[])
+    }, [fetchAllRooms, getAllHouseworkers, getOnlineChatUsers]);
 
-    const showNewOnlineUsers = async() =>{
+    const showNewOnlineUsers = useCallback(async() =>{
         const data = await getUserRooms(user.username); //roomID, users{}) 
         dispatch({type:"SET_ROOMS", data:data.rooms}) 
-    }
+    },[])
 
-    useEffect(() =>{
-        //triger re-rendering the rooms (only when the new online user exist) and chat view but   
-        //don't override roomInfo: current visited chat
-        showNewOnlineUsers()
-    },[state.onlineUsers]) //has changed in socketListener
+    useEffect(() => {
+        if (!state.onlineUsers.length || !state.rooms.length) return;
+        dispatch({ type: "UPDATE_ONLINE_STATUS" });
+    }, [state.onlineUsers]);
 
-
-    const onAddUserToGroupHanlder = (async(roomID, username)=>{
+    const onAddUserToGroupHanlder = useCallback(async(roomID, username)=>{
         if(username == ""){
             toast.info("Select user that you want to add in room",{
                 className:"toast-contact-message"
@@ -300,19 +329,43 @@ const useMessages = (socket, user) =>{
 
             const onlineStatus = getOnlineUserStatus(newUserID);
             
-            const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath, online:onlineStatus, notifications};
+            const groupData = {
+                newUserID, 
+                newUsername:username, 
+                roomID, newRoomID, 
+                currentMember:currentUser, 
+                clientID:user.userID,
+                clientUsername:user.username, 
+                newUserPicturePath, 
+                online:onlineStatus, 
+                notifications};
             if(isPrivate){              
                 emitCreteUserGroup(socket, {data:groupData});
                 //check newUserID in onlineUsers state
                 //update client room view
-                dispatch({type:"CREATE_NEW_GROUP" , roomID:roomID, newRoomID:newRoomID, currentMember:currentUser, newUserID:newUserID, newUsername:username, picturePath:newUserPicturePath, online:onlineStatus})
+                dispatch({ type:"CREATE_NEW_GROUP", 
+                    roomID:roomID, 
+                    newRoomID:newRoomID, 
+                    currentMember:currentUser, 
+                    newUserID:newUserID, 
+                    newUsername:username, 
+                    picturePath:newUserPicturePath, 
+                    online:onlineStatus
+                })
                 toast.info("A Group with "+ username + " has been created");
                 //Scroll to bottom(new added room)
             }
             else{ 
                 // const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath, online:onlineStatus, notifications};
                 emitUserAddedToChat(socket, {data:groupData});       
-                dispatch({type:"ADD_USER_TO_GROUP", roomID:roomID, newRoomID:newRoomID, newUserID:newUserID, newUsername:username, picturePath:newUserPicturePath, online:onlineStatus});
+                dispatch({ type:"ADD_USER_TO_GROUP", 
+                    roomID:roomID, 
+                    newRoomID:newRoomID,
+                    newUserID:newUserID, 
+                    newUsername:username, 
+                    picturePath:newUserPicturePath, 
+                    online:onlineStatus
+                });
                 toast.info("User is added to the room: "+  newRoomID);
             }
 
@@ -321,9 +374,9 @@ const useMessages = (socket, user) =>{
         catch(err){
             handlerError(err);
         }
-    });
+    },[state.rooms, socket, user.userID, user.username, enterRoomAfterAction]);
 
-    const onKickUserFromGroupHandler = async(roomID, username) =>{
+    const onKickUserFromGroupHandler = useCallback(async(roomID, username) =>{
         if(username == ""){
             toast.error("Select user that you want to kick from room",{
                 className:"toast-contact-message"
@@ -355,9 +408,9 @@ const useMessages = (socket, user) =>{
         catch(err){
             handlerError(err);
         }
-    }
+    },[socket, reduxDispatch, enterRoomAfterAction])
 
-    const onSendMessageHandler = async({message, fromRoomID}) =>{        
+    const onSendMessageHandler = useCallback(async({message, fromRoomID}) =>{        
         if(message != ''){
             const messageObj = {
                 message:message,
@@ -386,10 +439,13 @@ const useMessages = (socket, user) =>{
             toast.error("Empty message cannot be sent",{
                 className:'toast-contact-message'
             })
-    }
+    },[socket, unreadMessages, reduxDispatch])
 
-    const onShowMoreUsersFromChatHandler = ({roomID, users}) => setShowMoreRoomUsers({roomID, users});
-    const onShowRoomsButtonHandler = () => {setShowChatView(false)}
+    const onShowMoreUsersFromChatHandler = useCallback(({roomID, users}) => 
+        setShowMoreRoomUsers({roomID, users})
+    ,[]);
+
+    const onShowRoomsButtonHandler = () => useCallback(() => {setShowChatView(false)}, []);
 
     return {
         state, 
