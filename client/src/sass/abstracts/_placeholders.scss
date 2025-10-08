@@ -129,26 +129,26 @@
 }
 
 %profile-submit-button{  
-        display: flex;
-        justify-content: center;
+    display: flex;
+    justify-content: center;
 
-        .update-button{
-            height: 2.5em;
-            width: 6em;
+    .update-button{
+        height: 2.5em;
+        width: 6em;
 
-            border:none;
-            border-radius: $border-radisu-xsm;
-            font-family: $font-family-3;
-            background-color: $white;
-            cursor: pointer;
+        border:none;
+        border-radius: $border-radisu-xsm;
+        font-family: $font-family-3;
+        background-color: $white;
+        cursor: pointer;
 
-            font-weight: 500;
+        font-weight: 500;
 
-            &:hover{
-                background-color: $grey-2;
-                font-weight: 550;
-            }
+        &:hover{
+            background-color: $grey-2;
+            font-weight: 550;
         }
+    }
 }
 
 %profile-update-button{
@@ -171,8 +171,6 @@
         color:$black-1;
     }
 }
-
-
 
 %form-input-error{
     font-size: $fs6;
@@ -361,6 +359,12 @@
     }
 }
 
-
-
-
+%unread-message-style{
+    color:rgb(179, 7, 7);
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    text-align: center;
+    border:none;
+    border-radius: 10%;
+}
