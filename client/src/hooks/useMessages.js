@@ -11,8 +11,6 @@ import {resetUserUnreadMessagesCount, resetUsersUnreadMessagesbyRoomID, forwardU
 import {setCurrentRoom, clearCurrentRoom} from "../store/currentRoomSlice.js";
 import {sendMessage} from "../utils/MessageUtils/handleMessage.js";
 
-//COMMIT: Optimized to precent Rooms re-rendering on typingNotification receving, on Opening Menu options
-
 const useMessages = (socket, user) =>{
 
     const initialState = {
@@ -445,7 +443,7 @@ const useMessages = (socket, user) =>{
         setShowMoreRoomUsers({roomID, users})
     ,[]);
 
-    const onShowRoomsButtonHandler = () => useCallback(() => {setShowChatView(false)}, []);
+    const onShowRoomsButtonHandler = useCallback(() => {setShowChatView(false)}, []);
 
     return {
         state, 
