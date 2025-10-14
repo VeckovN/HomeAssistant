@@ -39,7 +39,7 @@ const Messages = memo(({socket}) =>{
     <div className={`container-${user.type === "Houseworker" ? "houseworker" : "client"}`}> 
         {state.loading ? <Spinner className='profile-spinner'/> :
         <div className={`messages-container ${user.type === "Houseworker" ? "houseworker" : "client"} `}>
-            <section className={`rooms-container ${showChatView ? 'no-display' : ''}`}>
+            <section className={`rooms-container ${showChatView ? 'no-display' : ''} ${user.type === "Client" ? 'client' : ''}`}>
                 <div className='room-chat-header'>
                     <div className='header-label'>Chat Rooms</div>
                 </div>
@@ -54,7 +54,7 @@ const Messages = memo(({socket}) =>{
                 />
             </section>
 
-            <section className={`chat-container ${showChatView ? 'display' : ''}`}>
+            <section className={`chat-container ${showChatView ? 'display' : ''} ${user.type === "Client" ? 'client' : ''}`}>
                 <Chat 
                     socket={socket}
                     state={state}
