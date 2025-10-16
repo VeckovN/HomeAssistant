@@ -389,7 +389,7 @@ const removeUserFromRoomID = async(clientID, roomID, username) =>{
             
             if(id !== clientID){
                 //notify other users
-                const message = `The houseworker ${username} has been kicked from the group by ${clientUsername}`;
+                const message = `The houseworker ${username} has been kicked out of the group by ${clientUsername}`;
                 const notification = await recordNotification(clientID, id, notificationType, message);
                 notificationsArray.push(notification);   
             }
@@ -398,7 +398,7 @@ const removeUserFromRoomID = async(clientID, roomID, username) =>{
         //find sorted set and remove user from it (id) room:3:6:22:123 where messages are stored
         await rename(currentRoomKey, newRoomKey);
 
-        const messageObj = JSON.stringify({message:`User ${username} has been kicked from the chat`, from:'Server', date:dateFormat, roomID:newRoomID})
+        const messageObj = JSON.stringify({message:`User ${username} has been kicked out of the chat`, from:'Server', date:dateFormat, roomID:newRoomID})
         await zadd(newRoomKey, timestamps, messageObj);
 
         return {

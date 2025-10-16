@@ -251,7 +251,7 @@ const deleteComment = async(username, commentID)=>{
 
         //get username of deleted User comment -> (Belongs to 'm' than his/her username)
         // const houseworker = 
-        // const message = `The user ${username} has been deleted the comment`;
+        // const message = `The user ${username} has deleted the comment`;
         // const notificationID = await recordNotificationbyUsername(houseworker, notificationType, message);
 
         return result.records[0];
@@ -283,7 +283,7 @@ const rateHouseworker = async(clientID, clientUsername, houseworkerUsername, rat
         const rateValue = result.records[0].get(0);
 
         const houseworkerID = await getUserIdByUsername(houseworkerUsername);
-        const message = `The user ${clientUsername} has been rated you with ${rateValue} `;
+        const message = `The user ${clientUsername} has rated you with ${rateValue} `;
         const notification = await recordNotification(clientID, houseworkerID, notificationType, message);
 
         return {notification:notification};
