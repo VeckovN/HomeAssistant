@@ -89,7 +89,8 @@ module.exports = (io, socket, redisClient) => {
 
             const sender ={
                 senderID:userID, 
-                senderUsername:username
+                senderUsername:username,
+                roomID: roomID
             }
             io.to(roomKey).emit("typingMessageStart", sender) 
         }
@@ -105,7 +106,8 @@ module.exports = (io, socket, redisClient) => {
 
             const sender ={
                 senderID:userID, 
-                senderUsername:username
+                senderUsername:username,
+                roomID: roomID
             }
             //send it in room (sender should check does is he sender userID === senderID and dont show (...))
             io.to(roomKey).emit("typingMessageStop", sender) 
