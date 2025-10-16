@@ -12,12 +12,11 @@ import {setCurrentRoom, clearCurrentRoom} from "../store/currentRoomSlice.js";
 import {sendMessage} from "../utils/MessageUtils/handleMessage.js";
 
 const useMessages = (socket, user) =>{
-
-    const initialState = {
+    const initialState = { 
         loading:true,
         rooms:[],
         roomMessages: [], //current room messages
-        roomInfo:{}, //current room Info (roomID, users) AND ictureURL
+        roomInfo:{}, //current room Info (roomID, users)
         houseworkers:'',
         roomsAction:'', //for handling different state.rooms update actions
         typingUsers:[],
@@ -40,6 +39,10 @@ const useMessages = (socket, user) =>{
     const onUsersFromChatOutHanlder = useCallback(() => {
         setShowMoreRoomUsers({})
     },[]);
+
+     const getCurrentRoomID = useCallback(() => {
+        return currentRoomIDRef.current;
+    }, []);
 
 
     const onAddTypingUserHandler = useCallback((userInfo) =>{
@@ -83,7 +86,8 @@ const useMessages = (socket, user) =>{
 
     useEffect(() => {
         if(socket && user){
-            listenOnMessageInRoom(socket, dispatch);
+            // listenOnMessageInRoom(socket, dispatch);
+            listenOnMessageInRoom(socket, dispatch, getCurrentRoomID);
             listenOnMessageReceive(socket, dispatch);
             listenOnFirstMessageReceive(socket, dispatch, enterRoomAfterAction);
             listenOnCreateUserGroup(socket, dispatch, user.userID);
@@ -96,21 +100,26 @@ const useMessages = (socket, user) =>{
 
             //Typing listeners
             const handleTypingStart = (sender) => {
-                const {senderID, senderUsername} = sender;
+                console.log("SEENDERRR : ", sender);
+                const {senderID, senderUsername, roomID: typingRoomID} = sender;
                 if(senderID == user.userID) return;
-                onAddTypingUserHandler({userID:senderID, username:senderUsername}); 
+            
+                if(typingRoomID === getCurrentRoomID()){
+                    onAddTypingUserHandler({userID:senderID, username:senderUsername}); 
+                }
             }
 
             const handleTypingStop = (sender) => {
-                const {senderID, senderUsername} = sender;
+                const {senderID, senderUsername, roomID: typingRoomID} = sender;
                 if(senderID == user.userID) return;
-                onRemoveTypingUserHandler({userID:senderID, username:senderUsername});
+                
+                if(typingRoomID === getCurrentRoomID()){
+                    onRemoveTypingUserHandler({userID:senderID, username:senderUsername});
+                }
             }
-
 
             socket.on("typingMessageStart", handleTypingStart);
             socket.on("typingMessageStop", handleTypingStop);
-
 
             return () => {
                 socket.off("typingMessageStart", handleTypingStart);
@@ -128,8 +137,9 @@ const useMessages = (socket, user) =>{
         return () => {
             // Clear current room when leaving Messages page
             //useRef is used to track
-            if(currentRoomIDRef.current) {
-                emitLeaveRoom(socket, currentRoomIDRef.current);
+            const currentRoomID = getCurrentRoomID();
+            if(currentRoomID) {
+                emitLeaveRoom(socket, currentRoomID);
             }
             reduxDispatch(clearCurrentRoom());
         };
@@ -286,8 +296,7 @@ const useMessages = (socket, user) =>{
         fetchAllRooms();
         getAllHouseworkers();
         getOnlineChatUsers();
-    // },[])
-    }, [fetchAllRooms, getAllHouseworkers, getOnlineChatUsers]);
+    },[])
 
     const showNewOnlineUsers = useCallback(async() =>{
         const data = await getUserRooms(user.username); //roomID, users{}) 
@@ -297,7 +306,7 @@ const useMessages = (socket, user) =>{
     useEffect(() => {
         if (!state.onlineUsers.length || !state.rooms.length) return;
         dispatch({ type: "UPDATE_ONLINE_STATUS" });
-    }, [state.onlineUsers]);
+    }, [state.onlineUsers.length]);
 
     const onAddUserToGroupHanlder = useCallback(async(roomID, username)=>{
         if(username == ""){

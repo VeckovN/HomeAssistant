@@ -29,13 +29,25 @@ export const emitUserDeleteRoom = (socket, groupObj) =>{
 }
 
 export const emitRoomJoin = (socket, roomID) =>{
-    socket.emit('chatRoom.join', roomID);
+    if (socket && socket.connected) {
+        socket.emit('chatRoom.join', roomID);
+    }
 }
 
 export const emitLeaveRoom = (socket, roomID) =>{
-    socket.emit('chatRoom.leave', roomID);
+    if (socket && socket.connected) {
+        socket.emit('chatRoom.leave', roomID);
+    }
 }
 
+export const emitStartTyping = (socket, roomID, user) =>{
+    if (socket && socket.connected) {
+        socket.emit("startTypingRoom", {roomID, user})
+    }
+}
 
-
-
+export const emitStopTyping = (socket, roomID, user) =>{
+    if (socket && socket.connected) {
+        socket.emit("stopTypingRoom", {roomID, user})
+    }
+}

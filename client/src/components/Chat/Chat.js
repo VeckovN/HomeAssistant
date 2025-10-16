@@ -1,5 +1,6 @@
 import {useRef, useEffect} from 'react';
 import useTyping from '../../hooks/useTyping';
+import { emitStartTyping, emitStopTyping } from '../../sockets/socketEmit';
 import TypingUsers from './TypingUsers';
 import ChatMenu from './ChatMenu'; 
 import ChatMessages from './ChatMessages';
@@ -36,12 +37,12 @@ const Chat = ({
 
     const startTypingMessageSendEmit = () =>{
         if(!socket) return;
-        socket.emit("startTypingRoom", {roomID:roomInfo.roomID, user})
+        emitStartTyping(socket, roomInfo.roomID, user);
     }
 
     const stopTypingMessageEmit = () =>{
         if(!socket) return;
-        socket.emit("stopTypingRoom", {roomID:roomInfo.roomID, user})
+        emitStopTyping(socket, roomInfo.roomID, user);
     }
 
     const {startTypingHandler, stopTyping} = useTyping(startTypingMessageSendEmit, stopTypingMessageEmit);
