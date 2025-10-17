@@ -2,43 +2,43 @@
 @use '../../abstracts/colors' as *;
 @use '../../abstracts/fonts' as *;
 @use '../../abstracts/brakepoints' as *;
-
+@use '../../abstracts/keyframes' as *;
 
 .register-container{
-    //background-color: rgba(219, 226, 226, 0.788);
-    background-color: $background-black-6;
     width: 100%;
     height: 100%;
-   
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2em 0;
+    background-color: $background-black-9;
+
     .register-options{
         width: 100%;
-        position:absolute;
-        top:40%;
-        left:50%;
-        transform: translate(-50% , -50%);
+        height: 25vh;
+        
         @include flex-with-direction-center();
 
         @include xs-breakpoint{
-            width: 90%;
-            top:47%;
-            gap:3em;
+            height: 100%;
             flex-direction: column-reverse;
         }
 
         .register-item{
-            width: 15rem;
-            height: 10rem;
+            max-width: 15rem;            
             margin:0em 2em;
 
+            animation: popLight 0.8s ease-out;
+
             @include sm-breakpoint{
-                width: 50%;
-                height: 9rem;
                 margin:0 1em;
             }
 
             @include xs-breakpoint{
-                margin:2em 0em 3em 0em;
-                width: 50%;
+                margin:3em 0em 6em 0em;
+                max-height: 10em;
+                max-width: 12rem;
             }
 
             .register-link{
@@ -48,7 +48,7 @@
                 border-radius: .8em;
 
                 &:hover{
-                    background-color: $background-black-9;
+                    background-color: $background-black-8;
                 }
 
                 .avatar-container{
@@ -86,11 +86,25 @@
                     font-size: 1.2em;
                     font-weight: 700;
                     color:$grey-3;
+
+                    animation-duration: 0.5s;
+                    animation-timing-function: ease-out;
+                    animation-delay: 0.1s;
+                    animation-fill-mode: forwards;
+
+                    @include xs-breakpoint{
+                        font-size:1.1em;
+                    }
+
+                    &-left {
+                        animation: slideLeft;
+                    }
+                    
+                    &-right {
+                        animation: slideRight;
+                    }
                 }
             }
-
-            
-
         }
 
     }

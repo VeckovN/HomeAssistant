@@ -3,7 +3,7 @@
 @use '../abstracts/colors' as *;
 @use '../base/typography' as *;
 @use '../abstracts/brakepoints' as *;
-
+@use '../abstracts/keyframes' as *;
 
 .comment{
     position: relative;
@@ -83,24 +83,11 @@
 }
 
 .new-comment{
-    animation: enterLabUp .3s;
+    animation: slideDown .3s;
 }
 
 .unread-comment{
-    background-color: $black-7;
+    background-color: $black-1;
     color:$grey-4;
     font-size: $fs-em-5;
-    
-}
-
-@keyframes enterLabUp {
-    0% {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }

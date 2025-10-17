@@ -4,35 +4,33 @@
 @use '../../abstracts/colors' as *;
 @use '../../base/typography' as *;
 @use '../../abstracts/brakepoints' as *;
+@use '../../abstracts/keyframes' as *;
 
 .register-user-container{
-    background-color: $background-white-2;
+    background-color: $background-black-9;
     color:$grey-2;
-    //containre wans't on full page( there was space between bottom and container
-    //this fixed it
     min-height: 100vh;
 
     padding:4rem 0rem;
     @include flex-container($direction:column ,$justify:space-evenly, $align:center);
     
-
     form{
         font-family: $font-family-2;
         width: 60%;
         margin-top:2em;
         padding:1.4rem 1rem;
 
-        box-shadow: -1px 1px 30px 10px rgba(0,0,0,0.65);
+        box-shadow: 1px 1px 16px 10px rgba(68, 68, 68, 0.65);
         @include flex-with-direction-center($direction:column);        
         
-        // width: 40%;
-        // max-width: 450px;
-        // min-width:350px;
-    
-        //@include flex-with-direction-center($direction:column);
         border-radius: 1rem;
         background-color: $black-4;
         color:$grey-1;
+
+        opacity:0;
+        animation: slideUp .3s ease-in forwards;
+        // 'forwards' ensures that the element keeps the final state of the animation
+        // (in this case, opacity: 1 from the end of the slideUp keyframes) after the animation finishes.
 
         .form-title{
             font-size:$fs1;
@@ -64,7 +62,6 @@
                         
                     }
                 }
-
             }
 
             .selectors{
@@ -85,7 +82,6 @@
                 
                 }
             }
-
         }
 
         .label-input{

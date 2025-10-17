@@ -3,6 +3,7 @@
 @use '../base/typography' as *;
 @use '../abstracts/mixins' as *;
 @use '../abstracts/brakepoints' as *;
+@use '../abstracts/keyframes' as *;
 
 .houseworker-card-empty{
     @include flex-with-direction-center($direction:column);
@@ -37,12 +38,11 @@
     @include lg-breakpoint {
         top:10px;
     }
-    // $mdBrakepoint: 768px;
+
     @include md-breakpoint {
         max-width:36em;
     }
 
-    // $smBrakepoint: 576px;
     @include sm-breakpoint{
         min-width: 24em;
         margin:1.5em .5em 4em .5em;
@@ -51,8 +51,6 @@
     @include xs-breakpoint{
         min-width: 15em;
         height: 32em;
-        // width: 100%;
-        // max-width: 20em;
         margin:1.5em .2em 1em .2em;
     }
 
@@ -641,9 +639,4 @@
 
 .form-message button:hover{
     background-color: rgb(192, 126, 3); 
-}
-
-@keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
 }
