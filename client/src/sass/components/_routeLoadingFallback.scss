@@ -18,9 +18,14 @@
     opacity: 0;
   }
 
-  .route-loading-text {
-    color: white;
-    font-size: 0.9rem;
-    font-weight: 400;
+  .loading-screen-content{
+    margin-bottom:8rem;
+
+    .route-loading-text {
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 400;
+    }
   }
+
 }

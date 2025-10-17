@@ -13,7 +13,7 @@ const Register = () =>{
                                 <img className='avatar' src='https://res.cloudinary.com/dwcncwmpb/image/upload/v1735391545/Images/qmqbpleuwsltxg9dluh3-clientRegister.jpg'></img>
                             </picture>
                         </div>
-                        <div className='register-label'>Client</div>
+                        <div className='register-label register-label-left'>Client</div>
                     </Link>
                 </div>
 
@@ -24,7 +24,7 @@ const Register = () =>{
                                 <img className='avatar'src='https://res.cloudinary.com/dwcncwmpb/image/upload/v1735391595/Images/fkjarilxvvaqltijdglh-hwRegister.jpg'></img>
                             </picture>
                         </div>
-                        <div className='register-label'>Houseworker</div>
+                        <div className='register-label register-label-right'>Houseworker</div>
                     </Link>
                 </div>
 
