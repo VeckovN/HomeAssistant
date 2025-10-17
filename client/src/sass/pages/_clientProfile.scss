@@ -4,15 +4,19 @@
 @use '../abstracts/brakepoints' as *;
 @use '../base/typography' as *;
 @use '../abstracts/mixins' as *;
+@use '../abstracts/keyframes' as *;
 
 .profile-container{
     @include flex-with-direction-center($direction:column);
     min-height: 90vh;
-    padding:5rem 0em;
-    background-color: $background-white-2;
+    padding:8rem 0em;
+    // width: 100vw;
+    width: 100%;
+    background-color: $background-black-9;
 
     @include sm-breakpoint{
         font-size: $fs5;
+        padding:7rem 0em;
     }
 
     .profile-spinner{
@@ -23,6 +27,8 @@
     .cl-profile-form{
         @extend %profile-form-style;
         @include flex-with-direction-center($direction:column);
+        
+        animation: slideRight .4s ease-in forwards;
 
         @include sm-breakpoint{
             width: 100%;
@@ -59,6 +65,7 @@
             }
 
             .profile-input-card{
+                position:relative;
                 width: 90%;
                 margin:.2em 0em;
                 @extend %profile-input-card-style;
@@ -74,7 +81,8 @@
                     top:-2em;
     
                     font-size: $fs-em-3;
-                    font-weight: 600;
+                    font-weight: 500;
+                    // color:black;
     
                     @include sm-breakpoint{
                         font-size:$fs-em-4;

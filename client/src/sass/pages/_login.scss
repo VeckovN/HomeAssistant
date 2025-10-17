@@ -3,6 +3,7 @@
 @use '../abstracts/colors' as *;
 @use '../base/typography' as *;
 @use '../abstracts/brakepoints' as *;
+@use '../abstracts//keyframes' as *;
 
 .login_container{
     @include flex-with-direction-center($direction:column);
@@ -11,9 +12,9 @@
     min-height: 650px;
     padding: 10em 0;
     font-family: $font-family-2;
-    background-color: $background-black-6;
-
+    background-color: $background-black-9;
 }
+
 .login_context{
     position: relative;
     width: 80vw;
@@ -24,11 +25,12 @@
     
     @include flex-with-direction-center();
     
-    // box-shadow: 6px 5px 5px 10px rgba(255, 255, 255, 0.11), inset 5px 5px 10px 0px rgba(255,255,255,0.65);
     box-shadow: -1px 1px 25px 5px $grey-2;
     padding: 6em 3em;
     border-radius:.4em;
     color:white;
+
+    animation: slideRight 0.5s ease-out forwards;
 
     @include sm-breakpoint{
         width: 90%;
@@ -52,15 +54,17 @@
         color:white;
     }
 
-    .context-item{
+    .context-item {
         position: absolute;
         left:2em;
-        // width: 40%;
         width: 25em;
         height: 70%;
 
         @include flex-with-direction-center($direction:column);
         color:$black;
+
+        animation: slideRight 0.5s ease-out 0.3s forwards;
+        opacity: 0;
 
         @include sm-breakpoint{
             position: absolute;
@@ -69,9 +73,6 @@
             height: 30%;
         }
 
-        @include xs-breakpoint{
-
-        }
     }
 
     .demo_accounts{
@@ -144,12 +145,8 @@
         font-size: $fs5;
         font-weight: 600;
 
-        // &:focus{
-        //     color:$black;
-        //     border-color:$black-3;
-        // }
 
-        &.error{ //.login_input.error
+        &.error{ 
             border-color: rgba(235, 1, 1, 0.938);            
         }
 
@@ -178,8 +175,6 @@
         }
     }
 }
-
-
 
 .button_container{
     padding: 1rem 1.2rem;

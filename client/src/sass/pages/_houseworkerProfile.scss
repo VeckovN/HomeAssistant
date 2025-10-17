@@ -4,11 +4,14 @@
 @use '../abstracts/fonts' as *;
 @use '../base/typography' as *;
 @use '../abstracts/brakepoints' as *;
+@use '../abstracts/keyframes' as *;
 
 .hs-profile-container{
     @include flex-with-direction-center($direction:column);
     min-height: 100vh;    
     padding:2.5rem 0em;
+
+    animation: scaleUp .8s ease-in;
 
     .profile-spinner{
         position:absolute;
@@ -33,7 +36,6 @@
         }
 
         @include xs-breakpoint{
-            // font-size: $fs-em-3;
             margin:0em 0 1.5em 0;
         }
     }
