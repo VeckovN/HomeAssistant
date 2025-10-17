@@ -11,6 +11,8 @@
         min-width: 550px;
         max-width: 800px;
 
+        background-color: $black-3;
+
         @include sm-breakpoint{
             width: 95%;
             min-width: 250px;
@@ -37,7 +39,6 @@
                 align-items: flex-end;
     
                 @include sm-breakpoint{
-                    // background-color: red;
                     width: 100%;
                     margin:1em .5em 1em 0em;
                     padding-left: .0em;
@@ -92,7 +93,7 @@
                     resize: none;
                 }
             }
-
+            
         }
     }
 

@@ -1,11 +1,14 @@
 @use '../../base/typography' as *;
 @use '../../abstracts/mixins' as *;
 @use '../../abstracts/brakepoints' as *;
+@use '../../abstracts/colors' as *;
 
 .register-user-container{
     .client-form{
         min-width: 400px;
         max-width: 450px;
+        
+        background-color: $black-3;
 
         @include xs-breakpoint{
             width: 100%;
@@ -29,12 +32,7 @@ form{
                 width: 100% !important;
             }
         }
-
     }
-    .cl-selectors{
-        // @include flex-with-direction-center($direction:column);
-    }
-
 
     .interest-container{
         margin:.2em 0;
