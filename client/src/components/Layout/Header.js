@@ -11,9 +11,9 @@ const Header = () =>{
     const {user} = useSelector((state) => state.auth)
     const {unreadCount} = useSelector((state) => state.unreadMessages);
     
-    const logoutHandler = () =>{
-        dispatch(logout());
+    const logoutHandler = async () =>{
         setShowMenu(false);
+        await dispatch(logout());
     }
 
     const removeShowMenuHandler = () =>{
