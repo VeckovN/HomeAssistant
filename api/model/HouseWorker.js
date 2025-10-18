@@ -92,18 +92,14 @@ const findAll = async ()=>{
 const checkFilterHouseworkerInCache = async (filters)=>{
     const filter = JSON.stringify(filters);
     try{
-        //fillter will be key in REDIS DB
-        const data = await get(filter); //this is clasic string -> that is ok structure for this
-        //becasue we store houseworkers as JSON()
+        const data = await get(filter); 
 
         if(data){
-            //cache hit
-            const dataObj = JSON.parse(data);
+            const dataObj = JSON.parse(data);  //stored as JSON
             return dataObj
         }
         else{
-            //no houseworker with filters in DB
-            return null;
+            return null; //no houseworker with filters in DB
         }
     }
     catch(error){
@@ -131,7 +127,6 @@ const findAllWithFilters = async(filters)=>{
     try{
         const catchData = await checkFilterHouseworkerInCache(filters);
         if(catchData==null){
-            //SET and WITH after MATCH(h)<-[r:RATED] if exists
             var queryNeo4j = `
                 Match(n:User)-[:IS_HOUSEWORKER]->(h:HouseWorker) \n
                 MATCH(n)-[:LIVES_IN]->(c:City)
@@ -172,9 +167,9 @@ const findAllWithFilters = async(filters)=>{
             //AGE
             if((ageTo!=undefined && ageTo!= '')||( ageFrom!=undefined && ageFrom!= '')){
                 if(where.trim().length > 5)
-                    where+=` AND h.age >= '${ageFrom}' AND h.age <='${ageTo}' `
+                    where+=` AND h.age >= ${ageFrom} AND h.age <=${ageTo} `
                 else
-                    where+=`h.age > '${ageFrom}' AND h.age < '${ageTo}' `
+                    where+=`h.age > ${ageFrom} AND h.age < ${ageTo} `
             }
 
             //PROFESSIONS
@@ -269,7 +264,7 @@ const findAllWithFilters = async(filters)=>{
                 return userInfo;
             })
 
-            // //STORE(CATCH) FILTERED HOYUSEWORKER IN REDIS 
+            //Store(catch) filtered houseworker in redis
             await set(JSON.stringify(filters), JSON.stringify(houseworkers))
             await expire(JSON.stringify(filters), 10*60); //TTL 10 min
             
@@ -765,7 +760,7 @@ const create = async(houseworkerObject)=>{
             MERGE(user)-[h:LIVES_IN]->(c)
             RETURN user,g.type,c.name
         `
-        ,{id:id ,username:username, email:email, password:password, firstName:firstName, lastName:lastName, picturePath:picturePath, picturePublicId:picturePublicId, address:address, description:description ,city:city, gender:gender, age:age, phoneNumber:phoneNumber}
+        ,{id:id ,username:username, email:email, password:password, firstName:firstName, lastName:lastName, picturePath:picturePath, picturePublicId:picturePublicId, address:address, description:description ,city:city, gender:gender, age:Number(age), phoneNumber:phoneNumber}
         )
 
         const professionsArray = JSON.parse(houseworkerProfessions);
