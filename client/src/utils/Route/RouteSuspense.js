@@ -5,7 +5,6 @@ import HashLoader from 'react-spinners/HashLoader'
 import '../../sass/components/_routeLoadingFallback.scss'
 
 const RouteLoadingFallback = ({client}) => {
-    console.log("client: ", client);
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
