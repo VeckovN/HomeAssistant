@@ -41,12 +41,10 @@ export const login = createAsyncThunk(
                     return response.data;
                 }
                 else
-                    //put taken erron from server to action.payload (this will be persist in redux state)
-                    return thunkAPI.rejectWithValue(response.data.error)//this is action.payload for message in useCase.login rejected
+                    return thunkAPI.rejectWithValue(response.data.error) //this is action.payload for message in useCase.login rejected
             }
         }
         catch(err){
-            // const message = (err.response && err.response.data.error) || err.message || err
             const errorObj = (err.response && err.response.data) || err.message || err
             //return response.data -> contains {error:'message' errorType:'input'}
             //to get "error" prop - return res.status(401).json({error: "Incorrect username or password", errorType:true -> for set error input});
@@ -86,7 +84,7 @@ const authSlice = createSlice({
     initialState,
     reducers:{
         //reduce function ( dispatch(addItemToCart)) example
-        //for other ASYNC function we will use TRUNK func
+        //for other ASYNC function the TRUNK func will be used
         reset:(state)=>{
             state.message=' '
             state.success=false
@@ -97,7 +95,6 @@ const authSlice = createSlice({
     extraReducers: (builder) =>{
         builder
             .addCase(register.pending, (state)=>{
-                //what we wanna do when the state goes on the register actions  pending
                 state.loading = true;
             })
             .addCase(register.fulfilled, (state, action)=>{
@@ -141,7 +138,6 @@ const authSlice = createSlice({
                 state.success = true;
                 state.message = "Your session expired"
             })
-            
     }
 })
 

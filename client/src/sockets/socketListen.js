@@ -73,11 +73,10 @@ export const listenFormMessage = async(socket, reduxDispatch, getCurrentUserRoom
         }
         
         reduxDispatch(updateUnreadMessages({roomID, unreadUpdateStatus}))
-        // playSound(messageSound);
       })
 }
 
-//users Joined in room (room.join(io.to(roomKey).emit()) listen for these events
+//users Joined in room 'room.join(io.to(roomKey).emit()' listen for these events
 export const listenOnMessageInRoom = (socket, dispatch, getCurrentRoomID) =>{
     socket.on("messageRoom", (contextObj) =>{
 
@@ -85,10 +84,7 @@ export const listenOnMessageInRoom = (socket, dispatch, getCurrentRoomID) =>{
         const messageRoomID = contextObj.roomID;
 
         if(currentRoomID === messageRoomID) {
-            console.log('[ACTION] Message belongs to current room, dispatching');
             dispatch({type:"SEND_MESSAGE", data:contextObj})
-        } else {
-            console.log('[SKIP] Message from different room, ignoring', {currentRoomID, messageRoomID});
         }
     })
 }

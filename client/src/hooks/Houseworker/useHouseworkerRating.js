@@ -6,7 +6,6 @@ import {getProfessionsAndRating} from '../../services/houseworker.js';
 import {emitRatingNotification} from '../../sockets/socketEmit.js';
 
 const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsername) =>{
-
     const [rate, setRate] = useState(''); //value from input
     const [showRateInput, setShowRateInput] = useState();
     const [houseworkerRating, setHouseworkerRating] = useState(null); //houseworker current ranking value
@@ -21,7 +20,6 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
             setLoadingRating(false);
         }
         catch(err){
-            //just console it, don't alert
             console.error(err);
             // handlerError(err);
         }
@@ -49,7 +47,7 @@ const useHouseworkerRating = (socket, isClient, clientUsername, houseworkerUsern
             })
             return 
         }
-        //when rate value doesn't exist , again click on Rate button will close input
+       
         if(rate == ''){
             setShowRateInput(prev => !prev);
         }

@@ -5,7 +5,6 @@ import {getRoomIdInOrder} from '../../utils/Helper';
 import {sendMessage} from '../../utils/MessageUtils/handleMessage.js';
 
 const useHouseworkerContact = (socket, isClient, userID, client_username) =>{
-
     const contactMessageRef = useRef(null);
 
     const onContactHandler = async(e)=>{

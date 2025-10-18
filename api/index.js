@@ -75,7 +75,6 @@ server.listen(5000, ()=>{
     console.log("SERVER at 5000 port");
     
     io.on('connection', async(socket)=>{
-        console.log("CONNECTION INTITIALIZED: socketID: " + socket.id);
         listeners(io, socket, redisClient);
     })
 })

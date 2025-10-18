@@ -83,7 +83,6 @@ const useHouseworkerComment = (socket, isClient, clientUsername, houseworker, co
                 }
             
                 const commentResult = await postComment(newPostComment);
-                console.log("commentResult", commentResult);
 
                 toast.success("Comment successfully posted",{
                     className:'toast-contact-message'
@@ -111,7 +110,6 @@ const useHouseworkerComment = (socket, isClient, clientUsername, houseworker, co
                 else
                     setComments([newComment])
                 
-                    
                 postCommentRef.current.value='';
                     
             }

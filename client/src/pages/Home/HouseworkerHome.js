@@ -13,7 +13,6 @@ const HouseworkerHome = () =>{
     const [homeInfo, setHomeInfo] = useState({});
     const [loading, setLoading] = useState(true);
 
-    //Spinner should be showned until these 3 functions are executed
     const fetchData = async () =>{
         try{
             const [countConv, homeInfo] = await Promise.all([

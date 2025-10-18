@@ -34,7 +34,6 @@ const HouseworkerCardContent = ({
     return (
         <>
             {commentClick.current &&
-            //when the comments is not null show the modal
                 <HouseworkerCommentModal
                     socket={socket}
                     isClient={isClient}
@@ -51,7 +50,6 @@ const HouseworkerCardContent = ({
                     <div className="img-box">
                         <img
                             src={`${houseworkerProps.picturePath}`}
-                            // src={`assets/userImages/${houseworkerProps.picturePath}`}
                             onError={loadDefaultImageOnError}
                             loading="lazy"
                             alt="avatar"
@@ -127,7 +125,6 @@ const HouseworkerCardContent = ({
                             <div className='rating-box'>
                                 <div className='div-text-rating'>
                                     <div>{isClient ? 
-                                        //NOT OPTIMIZED FOR REDERING MORE COMPONENTS
                                         <Rating 
                                             name="half-rating-read" 
                                             size="small"

@@ -5,12 +5,10 @@ import useUser from '../../hooks/useUser.js';
 import FilterForm from './FilterForm.js';
 
 const Filter = (prop) =>{
-    
     const [cities, setCities] = useState();
     const [professions, setProfessions] = useState();
     const {data:filters, onChange, onChangeProffesions, onChangeCity} = useUser({});
    
-    //concurrent requests to different endpoints - impl in Service with axios.all
     const fetchData =  async () =>{
         try{
             const result = await getProfessionsAndCities();
@@ -26,12 +24,11 @@ const Filter = (prop) =>{
         fetchData();
     },[])
     
-    //sending filter options to parrent commpoent using prop.filterOptions ->passed funtion to this commponent
+    //sending filter options to parent commponet using prop.filterOptions ->passed funtion to this commponent
     const filterClickHanlder = (e) =>{
         prop.filterOptions(filters);
     }
 
-    //cities_options will be only recalcualted when cities are changed
     const city_options = useMemo(() => cities?.map(city =>({ value: city, label: city })), [cities]);
     const professions_options = useMemo(()=>professions?.map(profession => ({
         value:profession.title,

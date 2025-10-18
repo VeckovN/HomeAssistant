@@ -1,5 +1,3 @@
-// import axios from 'axios'
-// axios.defaults.withCredentials = true;
 import { ThrowErorr } from '../utils/ErrorUtils';
 import { baseAxios } from '../utils/AxiosConfig';
 

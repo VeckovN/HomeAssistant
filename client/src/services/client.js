@@ -17,7 +17,6 @@ export const updateClient = async(formData) =>{
         await authenticatedAxios.put(`/clients/update/`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
-                // 'Content-Type': 'application/json',
             },
         });
 

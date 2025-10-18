@@ -14,8 +14,7 @@ const ScrollToTopHome = () =>{
             if (window.scrollY >= scrollThreshold)
                 setButtonState({showButton:true, delayedHide:false})
             else {
-                setButtonState(prev => ({...prev, delayedHide:true}));
-                // setButtonState({showButton:false, delayedHide:true})                    
+                setButtonState(prev => ({...prev, delayedHide:true}));                   
             }
         }
 

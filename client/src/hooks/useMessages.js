@@ -86,7 +86,6 @@ const useMessages = (socket, user) =>{
 
     useEffect(() => {
         if(socket && user){
-            // listenOnMessageInRoom(socket, dispatch);
             listenOnMessageInRoom(socket, dispatch, getCurrentRoomID);
             listenOnMessageReceive(socket, dispatch);
             listenOnFirstMessageReceive(socket, dispatch, enterRoomAfterAction);
@@ -100,7 +99,6 @@ const useMessages = (socket, user) =>{
 
             //Typing listeners
             const handleTypingStart = (sender) => {
-                console.log("SEENDERRR : ", sender);
                 const {senderID, senderUsername, roomID: typingRoomID} = sender;
                 if(senderID == user.userID) return;
             
@@ -363,7 +361,6 @@ const useMessages = (socket, user) =>{
                 //Scroll to bottom(new added room)
             }
             else{ 
-                // const groupData = {newUserID, newUsername:username, roomID, newRoomID, currentMember:currentUser, clientID:user.userID ,clientUsername:user.username, newUserPicturePath, online:onlineStatus, notifications};
                 emitUserAddedToChat(socket, {data:groupData});       
                 dispatch({ type:"ADD_USER_TO_GROUP", 
                     roomID:roomID, 

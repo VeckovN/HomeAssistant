@@ -57,7 +57,7 @@ export const updateProfessionWorkingHour = async(profession, working_hour) =>{
     }
 }
 
-//user of authenticated user(username taken from  session data)
+//user of authenticated user(username taken from session data)
 export const getAuthenticatedUserComments = async(pageNumber) =>{
     try{
         const result = await authenticatedAxios.get(`/houseworker/ourcomments/${pageNumber}`);
