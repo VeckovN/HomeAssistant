@@ -4,7 +4,6 @@ const chatModel = require("../model/Chat"); // Adjust path based on your structu
 const clientModel = require("../model/Client");
 // const houseworkerModel = require("../models/houseworkerModel");
 
-
 // Predefined options
 const city_options = [
     'Beograd', 'Novi Sad', 'Nis', 'Kragujevac', 'Subotica', 'Leskovac', 'Pancevo', 
@@ -18,47 +17,21 @@ const profession_options = [
     'Elderly Caregiver', 'Pet Sitter', 'Home Health Aide', 'Personal Shopper', 'Butler'
 ];
 
-const genders = ['Male', 'Female']; // Only male and female
-
-
-const uploadImageToCloudinary = async (imageUrl) => {
-    try{
-        const uploadResult = await cloudinary.uploader.upload(imageUrl, {
-            folder: 'avatars', // Optional folder for organization
-        });
-        console.log("uploadResult: ", uploadResult);
-        return {
-            picturePath: uploadResult.secure_url, // Cloudinary URL
-            picturePublicId: uploadResult.public_id // Public ID for future reference
-        };
-    }
-    catch(error){
-        console.error("Failed to upload image: ", error);
-        return {picturePath:null, picturePublicId:null};
-    }
-}
+const genders = ['Male', 'Female'];
 
 const generateClient = () => {
-// const generateClient = async () => {
-    //uploading to cloudinary
-    // const imageUrl = faker.image.avatar()
-    // const {picturePath, picturePublicId} = await uploadImageToCloudinary(imageUrl);
-
     return{
         username: faker.internet.username(),
         email: faker.internet.email(),
         password: 'same',
         firstName: faker.person.firstName(),
         lastName: faker.person.lastName(),
-        // picturePath,
-        // picturePublicId,
         picturePath: faker.image.avatar(),
         picturePublicId: faker.string.uuid(),
         city: faker.helpers.arrayElement(city_options),
         gender: faker.helpers.arrayElement(genders),
         interests: faker.helpers.arrayElements(profession_options, faker.number.int({ min: 1, max: 3 })).join(',')
     }
-
 };
 
 const seedClients = async (count) => {
@@ -75,7 +48,6 @@ const seedClients = async (count) => {
                 user.password = hashedPassword;
                 await clientModel.create(user);
                 users.push(user);
-                // console.log("Seed user: ", user);
             }
         } catch (error) {
             console.error(` Error creating Client:`, error);
@@ -83,8 +55,6 @@ const seedClients = async (count) => {
     }
     return users;
 };
-
-// const clientsData = await seedClients(clientCount);
 
 module.exports = { seedClients };
  

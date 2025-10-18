@@ -7,18 +7,17 @@ const { seedRatesToRandom, seedRatesToHouseworker } = require("./seedRates");
 (async () => {
     try {
         //Seed Users
-        const clients = await seedClients(10);
+        const clients = await seedClients(2);
         console.log("Client Seeded Users: ", clients);
 
-        const houseworkers = await seedHouseworkers(5);
+        const houseworkers = await seedHouseworkers(20);
         console.log("Houseworker Seeded Users: ", houseworkers);
-
 
         //Seed comments:
         const comments = await seedCommentsToRandom(2, 2); //clientCount, houseworkerCount
         console.log("User Comments seeds: ", comments);
 
-        const houseworkerUsername = "Sara221";
+        const houseworkerUsername = "Sara22";
         const houseworkerComments = await seedCommentsToHouseworker(houseworkerUsername, 5); 
         console.log(`Houseworker ${houseworkerUsername} seeds: `, houseworkerComments);
         

@@ -4,7 +4,7 @@ const faker = require("@faker-js/faker").faker;
 
 const seedRatesToRandom = async(clientCount, houseworkerCount) =>{
     try{        
-        // const clients = ['Veckov', 'Justina61', 'Holden35']; //Or pass array of hardcoded  clients:
+        // const clients = ['Veckov', 'Justina61']; //Or pass array of hardcoded  clients:
         const clients = await clientModel.getRandomUsernamesAndID(clientCount);
         const houseworkers = await houseworkerModel.getRandomUsernamesAndID(houseworkerCount);
 
@@ -22,8 +22,7 @@ const seedRatesToRandom = async(clientCount, houseworkerCount) =>{
             console.log(`randClient: =--ID:${randClient.id} ===Username: ${randClient.username}`)
             console.log(`randHouseworker: =--ID:${randHouseWorker.id} ===Username: ${randHouseWorker.username}`)
             const result = await clientModel.rateHouseworker(randClient.id, randClient.username, randHouseWorker.username, rating);
-            //the reusult is notification object
-            
+
             ratingArray.push(result);
         }
 
@@ -44,8 +43,7 @@ const seedRatesToHouseworker = async (houseworkerUsername, clientsCount) =>{
             return;
         }
 
-        //ofc. clients can be hardcoded: 
-        //const clients = ['Veckov', 'Justina61', 'Holden35'];
+        //const clients = ['Veckov', 'Justina61',];
         const clients = await clientModel.getRandomUsernamesAndID(clientsCount);
 
         if(clients.length === 0 ){

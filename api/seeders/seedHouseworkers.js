@@ -3,7 +3,6 @@ const faker = require("@faker-js/faker").faker;
 const chatModel = require("../model/Chat"); // Adjust path based on your structure
 const houseworkerModel = require("../model/HouseWorker");
 
-
 // Predefined options
 const city_options = [
     'Beograd', 'Novi Sad', 'Nis', 'Kragujevac', 'Subotica', 'Leskovac', 'Pancevo', 
@@ -20,38 +19,13 @@ const profession_options = [
 const genders = ['Male', 'Female']; // Only male and female
 
 
-const uploadImageToCloudinary = async (imageUrl) => {
-    try{
-        const uploadResult = await cloudinary.uploader.upload(imageUrl, {
-            folder: 'avatars', // Optional folder for organization
-        });
-        console.log("uploadResult: ", uploadResult);
-        return {
-            picturePath: uploadResult.secure_url, // Cloudinary URL
-            picturePublicId: uploadResult.public_id // Public ID for future reference
-        };
-    }
-    catch(error){
-        console.error("Failed to upload image: ", error);
-        return {picturePath:null, picturePublicId:null};
-    }
-}
-
 const generateHouseworker = () => {
-// const generateHouseworker = async () => {
-    // const imageUrl = faker.image.avatar()
-    // const {picturePath, picturePublicId} = await uploadImageToCloudinary(imageUrl);
-    // console.log("picturePath: ", picturePath);
-    // console.log("picturePublicId: ", picturePublicId);
-
     return{
         username: faker.internet.username(),
         email: faker.internet.email(),
         password: 'same',
         firstName: faker.person.firstName(),
         lastName: faker.person.lastName(),
-        // picturePath,
-        // picturePublicId,
         picturePath: faker.image.avatar(), 
         picturePublicId: faker.string.uuid(),
         address: faker.location.streetAddress(),
@@ -90,8 +64,6 @@ const seedHouseworkers = async (count) => {
     }
     return users;
 };
-
-// const clientsData = await seedClients(clientCount);
 
 module.exports = { seedHouseworkers };
  
