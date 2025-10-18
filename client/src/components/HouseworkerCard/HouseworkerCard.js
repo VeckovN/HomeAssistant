@@ -15,7 +15,6 @@ const HouseworkersCard = (props) =>{
     const clientUsername = userAuth?.username;
     const clientID = userAuth?.userID;
 
-    //houseworker which comment modal is showned
     const [houseworker, setHouseworker] = useState({
         username:'',
         id:''
@@ -42,7 +41,6 @@ const HouseworkersCard = (props) =>{
             username:''
         }))
         commentClick.current = false;
-        // pageNumberRef.current = 0;
     }
     
     const {

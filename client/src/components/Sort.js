@@ -6,7 +6,6 @@ import SortButton from '../utils/SortButton.js'
 import '../sass/components/_sort.scss';
 
 const Sort = (prop) =>{
-
     const userAuth = useSelector((state) => state.auth.user)
     const isClient = userAuth && userAuth.type === "Client";
 
@@ -20,7 +19,6 @@ const Sort = (prop) =>{
             return 
         }
 
-        //toggle
         if(selectedOption === opt)
             setSelectedOption('')
         else

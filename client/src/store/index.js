@@ -13,8 +13,6 @@ const authPersistConfig = {
   whitelist:['user'], //only persist the 'user' part of the state
 }
 
-//unreadMessages PERSIST only WHEN the user is logged.
-
 // Custom Transform for Conditional Persistence of Unread Messages
 const conditionalTransform = createTransform(
   // Transform state on its way to being serialized and persisted.
@@ -56,7 +54,6 @@ const conditionalNotificationsTransform = createTransform(
 const unreadMessagesPersistConfig = {
   key:'unreadMessages',
   storage,
-  // whitelist:['unreadMessages','unreadCount'],
   transform:[conditionalTransform]
 }
 

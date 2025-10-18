@@ -1,5 +1,4 @@
 import {useState, useEffect, useRef, useCallback} from 'react';
-import {handlerError} from '../utils/ErrorUtils.js';
 import {getHouseworkerByFilter} from '../services/houseworker.js'
 import {getRecommended} from '../services/client.js'
 import { toast } from 'react-toastify';
@@ -121,7 +120,6 @@ const useClient = (user) =>{
             console.error(err);     
         }  
         finally {
-            //Claer appropriate loading states
             if(isInitialLoad){
                 setInitialLoading(false);
             }

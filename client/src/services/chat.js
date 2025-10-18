@@ -1,7 +1,6 @@
 import { ThrowErorr } from '../utils/ErrorUtils'
 import { authenticatedAxios } from '../utils/AxiosConfig'
 
-
 export const getUserRooms = async(username) =>{
     try{
         const result = await authenticatedAxios.get(`/chat/rooms/${username}`)
@@ -155,7 +154,3 @@ export const forwardUnreadMessagesFromOldToNewRoom = async(roomData) =>{
         ThrowErorr(err);
     }
 }
-
-
-
-

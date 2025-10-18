@@ -10,7 +10,7 @@ const initialState ={
 
 export const getHouseworkerUnreadComments = createAsyncThunk(
     'unreadComments/getHouseworkerUnreadComments',
-    async(username, thunkAPI) =>{ //user passed from register ( dispatch(register(userData) ))
+    async(username, thunkAPI) =>{ 
         try{
             const response = await getUnreadComments(username);
 
@@ -23,7 +23,7 @@ export const getHouseworkerUnreadComments = createAsyncThunk(
         }catch(err){
             const message = (err.response && err.response.data.error) || err.message || err
 
-            return thunkAPI.rejectWithValue(message); //that will actualy reject and send the message as payload:message
+            return thunkAPI.rejectWithValue(message);
         }
     }
 )
@@ -44,7 +44,6 @@ const unreadCommentsSlice = createSlice({
     name:'unreadComments',
     initialState,
     reducers:{
-        //this is Sync action to update totalUnread and unread.count prop without calling Async
         updateUnreadComments: (state, action) =>{
             state.unreadComments.push(action.payload.newUpdateComment);
             state.unreadCommentsCount += 1;
@@ -70,7 +69,7 @@ const unreadCommentsSlice = createSlice({
             })
             .addCase(getHouseworkerUnreadComments.rejected, (state,action) =>{
                 state.loading = false;
-                state.error = action.payload; //passed error from thunkAPI.rejectWithValue
+                state.error = action.payload;
             })    
 
             .addCase(markCommentsAsRead.pending, (state)=>{

@@ -80,7 +80,6 @@ const unreadMessagesSlice = createSlice({
     name:'unreadMessages',
     initialState,
     reducers:{
-        //this is Sync action to update totalUnread and unread.count prop without calling Async
         updateUnreadMessages: (state, action) =>{
             const {unreadUpdateStatus, roomID} = action.payload;
             if(unreadUpdateStatus){
@@ -152,12 +151,12 @@ const unreadMessagesSlice = createSlice({
             })
             .addCase(getUserUnreadMessages.rejected, (state,action) =>{
                 state.loading = false;
-                state.error = action.payload; //passed error from thunkAPI.rejectWithValue
+                state.error = action.payload;
             })    
 
             .addCase(resetUserUnreadMessagesCount.fulfilled, (state, action)=>{
                 state.unreadMessages = state.unreadMessages.filter(
-                    (el) => el.roomID !== action.payload.roomID //action.payload => roomID
+                    (el) => el.roomID !== action.payload.roomID 
                 ),
                 state.unreadCount = state.unreadCount - action.payload.removedCount;
                 state.loading = false;

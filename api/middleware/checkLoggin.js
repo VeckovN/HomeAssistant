@@ -32,13 +32,11 @@ const isLogged = (req,res,next)=>{
 const checkClient = (req,res,next)=>{
     if(!req.session.user){
         //if is authoriazied just move to the other middleware()
-        console.log("User isn't authenticated");
         return res.status(401).json({error:"User isn't authenticated"});        
     }
 
     //etc. if the user is logged as Houseworker and trying to access Client endpoint- return 403 status
     if(req.session.user.type === 'Houseworker'){
-        console.log("User ins't auhtorized");
         return res.status(403).json({error:"Forbidden for you"});
     }
         
@@ -57,7 +55,6 @@ const checkHouseworker = (req,res,next)=>{
         return res.status(401).json({error:"User isn't authenticated"})
 
     if(req.session.user.type === 'Client'){
-        console.log("User ins't auhtorized");
         return res.status(403).json({error:"Forbidden for you"});
     }
 

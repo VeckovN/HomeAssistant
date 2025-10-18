@@ -141,7 +141,6 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
         <HouseworkerProfessionsForm
             updatedData = {updatedData}
             houseworkerData ={houseworkerData}
-
             changeProfessionRef={changeProfessionRef}
             onChangeProfession={onChangeProfession}
             onChangeWorkingHour ={onChangeWorkingHour}
@@ -151,7 +150,6 @@ const HouseworkerProfessions = ({houseworkerData, setHouseworkerData, getNotOwne
             addProffesionRef={addProffesionRef}
             onChangeHouseworkerProfessions={onChangeHouseworkerProfessions}
             onAddProfessionHandler={onAddProfessionHandler}
-
             HouseworkerProfessions = {houseworkerData.professions}
             updatedProfession = {updatedData.profession}
             updatedWorkingHour ={updatedData.working_hour}

@@ -92,7 +92,6 @@ const useUser =(initialState)=>{
     
         setData((prev) =>{
             const updatedArray = [...prev.houseworker_professions]
-            //find the indef of object whihch the same label
             const existingObjectIndex = updatedArray.findIndex( item => item.label === name)
 
             if(value === "")
