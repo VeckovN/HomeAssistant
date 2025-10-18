@@ -28,6 +28,13 @@ const CommentsList = ({socket, user}) =>{
     },[comments])
 
     useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, []);
+
+    useEffect(() => {
         if (socket) { 
             socket.on(`newCommentChange`, (data) => {
                 setComments(prevComments => [data, ...prevComments]);

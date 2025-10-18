@@ -8,7 +8,7 @@
 .comment-container{
     width: 100%;
 
-    max-height: 500px; /* Set a maximum height */
+    max-height: 500px;
     overflow-y: auto;
 
     display: flex;
@@ -20,7 +20,6 @@
     
     .no-comments-modal{
         margin:1em 0em .5em 0em;
-        // font-family: $font-family-1;
         font-size: $fs-em-3;
         font-weight: 700;
         letter-spacing: .05em;
@@ -49,7 +48,6 @@
         margin:.4rem 0;
     }
 
-
     & input{
         height: 2.2em;
         width: 80%;
@@ -65,7 +63,6 @@
         color:white;
 
         border-radius: .3rem;
-
 
         @include xs-breakpoint{
             width: 60%;
