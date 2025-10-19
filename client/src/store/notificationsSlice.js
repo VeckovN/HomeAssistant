@@ -1,7 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {getNotifications, getMoreNotifications, markNotificationAsRead} from '../services/houseworker';
 
-
 const initialState ={
     notifications:[], //all user notifications
     unreadNotificationsCount:0,
@@ -138,6 +137,5 @@ const notificationsSlice = createSlice({
     }
 })
 
-// export const {updateUnreadComments, resetUnreadComments} = unreadCommentsSlice.actions;
 export const {resetNotifications, addNotification} = notificationsSlice.actions;
 export default notificationsSlice;

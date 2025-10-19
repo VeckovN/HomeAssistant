@@ -3,9 +3,7 @@ const Redis = require('ioredis');
 const dotenv = require('dotenv');
 dotenv.config();
 
-// const client = new Redis('redis://default:Ic4AULQZTPHR9QALfyqKW2jDJWDVi6Ro@redis-17664.c300.eu-central-1-1.ec2.cloud.redislabs.com:17664')
 const client = new Redis(process.env.REDIS_URL)
-
 let RedisStore = require("connect-redis")(session)
 
 // const incr = (key = "key") =>{
@@ -21,13 +19,11 @@ let RedisStore = require("connect-redis")(session)
 //     })
 // } 
 
-
 client.on('error', function(err) {
-    console.log('Redis error: ' + err);
+    console.error('Redis error: ' + err);
 }); 
 
 const resolvePromise = (resolve,reject)=>{
-    // console.log("TESSS");
     return (err,data)=>{
         if(err)
             reject(err)

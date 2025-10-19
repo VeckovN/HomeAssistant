@@ -1,9 +1,19 @@
-
 const extendSessionCookieMaxAge = (req,res) =>{
-    const newMaxAge = 1000 * 95 * 10;
-    const currentCookie = req.cookies.sessionLog;
-    // Set the updated cookie in the response headers
-    res.cookie('sessionLog', currentCookie, { maxAge: newMaxAge });
+    if(req.session){
+        const newMaxAge = 1000 * 60 * 60;
+
+        // Update Redis
+        req.session.cookie.maxAge = newMaxAge;
+        req.session.touch(); // Save the updated session to Redis (This will only update Redis TTL)
+
+        // Update browser cookie with FULL options
+        res.cookie('sessionLog', req.cookies.sessionLog, {
+            maxAge: newMaxAge,
+            httpOnly: true,
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            secure: process.env.NODE_ENV === "production",
+        });
+    }
 }
 
 //authentication check regardless of the type of user
@@ -22,14 +32,11 @@ const isLogged = (req,res,next)=>{
 const checkClient = (req,res,next)=>{
     if(!req.session.user){
         //if is authoriazied just move to the other middleware()
-        console.log("User isn't authenticated");
         return res.status(401).json({error:"User isn't authenticated"});        
     }
 
-    //Etc if logged Houseworker try to access Client endpoint- return 403 status
-    //and handle redirecting to login page(still loggedIn) we don't want to loggout this user
+    //etc. if the user is logged as Houseworker and trying to access Client endpoint- return 403 status
     if(req.session.user.type === 'Houseworker'){
-        console.log("User ins't auhtorized");
         return res.status(403).json({error:"Forbidden for you"});
     }
         
@@ -44,12 +51,10 @@ const checkClient = (req,res,next)=>{
 }
 
 const checkHouseworker = (req,res,next)=>{
-
     if(!req.session.user)
         return res.status(401).json({error:"User isn't authenticated"})
 
     if(req.session.user.type === 'Client'){
-        console.log("User ins't auhtorized");
         return res.status(403).json({error:"Forbidden for you"});
     }
 

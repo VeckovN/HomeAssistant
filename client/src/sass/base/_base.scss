@@ -1,22 +1,16 @@
 @use '../abstracts/mixins' as *;
+
 *{
-    box-sizing: border-box;
-    margin:0;
-    padding:0;
-  }
+  box-sizing: border-box;
+  margin:0;
+  padding:0;
+}
   
 body {
   margin: 0;
   height: 100%;
   width: 100%;
   
-  @include bg-image(url("https://res.cloudinary.com/dwcncwmpb/image/upload/v1735407853/Images/q4zxy1tlblfs0eimhppm-background.jpg"));
+  @include bg-image(url("https://res.cloudinary.com/dwcncwmpb/image/upload/v1760554041/q4zxy1tlblfs0eimhppmNew_w7nrin.jpg"));
   background-attachment: fixed;
 }
-  
-//This modes in _root.scss
-/* set a div's haight to cover the full screen */
-  //   #root{
-  //     height: 100%;
-  //     width: 100%;
-  //   }

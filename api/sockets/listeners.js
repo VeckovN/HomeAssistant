@@ -14,7 +14,6 @@ module.exports = (io, socket, redisClient) => {
     })
 
     socket.on("chatRoom.leave", id =>{
-        console.log("You left the room: " + id);
         socket.leave(`room:${id}`)
     })
 
@@ -23,10 +22,9 @@ module.exports = (io, socket, redisClient) => {
         const data ={type:"Add", userID: userData.userID};
         redisClient.sadd(`onlineUsers`, userData.userID ,(err,res) =>{
             if(err){
-                console.log("Error with adding user to onlineUser set");
+                console.error("[Redis Error] Error with adding user to onlineUser set", err);
             }
             else{
-                console.log(`User ${userData.userID} hass been added to onlineUser set`);
                 io.emit('newOnlineUser', data);
             }
         });
@@ -89,12 +87,13 @@ module.exports = (io, socket, redisClient) => {
 
             const sender ={
                 senderID:userID, 
-                senderUsername:username
+                senderUsername:username,
+                roomID: roomID
             }
             io.to(roomKey).emit("typingMessageStart", sender) 
         }
         catch(err){
-            console.error("errpr: " , err);
+            console.error("Error: " , err);
         }
     })
 
@@ -105,13 +104,14 @@ module.exports = (io, socket, redisClient) => {
 
             const sender ={
                 senderID:userID, 
-                senderUsername:username
+                senderUsername:username,
+                roomID: roomID
             }
             //send it in room (sender should check does is he sender userID === senderID and dont show (...))
             io.to(roomKey).emit("typingMessageStop", sender) 
         }
         catch(err){
-            console.error("errpr: " , err);
+            console.error("Error: " , err);
         }
     })
 
@@ -180,10 +180,9 @@ module.exports = (io, socket, redisClient) => {
         //handshake query prop (ID) is used for disconnection.
         redisClient.srem("onlineUsers", ID, (err,res)=>{
             if(err){
-                console.log("Error with removing user from onlineUser set");
+                console.error("[Redis Error] Error with removing user from onlineUser set", err);
             }
             else{
-                console.log(`User ${ID} hass been removed to onlineUser set`);
                 const data ={type:"Remove", userID:ID};
                 io.emit('newOnlineUser', data);
             }

@@ -1,9 +1,7 @@
 const {driver} = require('../db/neo4j');
 const { set ,get, expire, zadd, zrem, zrangerevscores} = require('../db/redis');
 const {getUserIdByUsername, updateUserPicturePath, getUserPicturePath, getUserPicturePublicId, getNotificationsByOffset, getNotificationsUnreadCount, getNotificationsUnreadTotalCount} = require('../db/redisUtils');
-const path = require('path');
-const fs = require('fs');
-const {cloudinary} = require('../utils/cloudinaryConfig.js');
+const {updateToCloudinaryBuffer} = require('../utils/cloudinaryConfig');
 
 const findByUsername = async (username)=>{
     const session = driver.session();
@@ -94,18 +92,14 @@ const findAll = async ()=>{
 const checkFilterHouseworkerInCache = async (filters)=>{
     const filter = JSON.stringify(filters);
     try{
-        //fillter will be key in REDIS DB
-        const data = await get(filter); //this is clasic string -> that is ok structure for this
-        //becasue we store houseworkers as JSON()
+        const data = await get(filter); 
 
         if(data){
-            //cache hit
-            const dataObj = JSON.parse(data);
+            const dataObj = JSON.parse(data);  //stored as JSON
             return dataObj
         }
         else{
-            //no houseworker with filters in DB
-            return null;
+            return null; //no houseworker with filters in DB
         }
     }
     catch(error){
@@ -133,7 +127,6 @@ const findAllWithFilters = async(filters)=>{
     try{
         const catchData = await checkFilterHouseworkerInCache(filters);
         if(catchData==null){
-            //SET and WITH after MATCH(h)<-[r:RATED] if exists
             var queryNeo4j = `
                 Match(n:User)-[:IS_HOUSEWORKER]->(h:HouseWorker) \n
                 MATCH(n)-[:LIVES_IN]->(c:City)
@@ -174,9 +167,9 @@ const findAllWithFilters = async(filters)=>{
             //AGE
             if((ageTo!=undefined && ageTo!= '')||( ageFrom!=undefined && ageFrom!= '')){
                 if(where.trim().length > 5)
-                    where+=` AND h.age >= '${ageFrom}' AND h.age <='${ageTo}' `
+                    where+=` AND h.age >= ${ageFrom} AND h.age <=${ageTo} `
                 else
-                    where+=`h.age > '${ageFrom}' AND h.age < '${ageTo}' `
+                    where+=`h.age > ${ageFrom} AND h.age < ${ageTo} `
             }
 
             //PROFESSIONS
@@ -271,7 +264,7 @@ const findAllWithFilters = async(filters)=>{
                 return userInfo;
             })
 
-            // //STORE(CATCH) FILTERED HOYUSEWORKER IN REDIS 
+            //Store(catch) filtered houseworker in redis
             await set(JSON.stringify(filters), JSON.stringify(houseworkers))
             await expire(JSON.stringify(filters), 10*60); //TTL 10 min
             
@@ -767,7 +760,7 @@ const create = async(houseworkerObject)=>{
             MERGE(user)-[h:LIVES_IN]->(c)
             RETURN user,g.type,c.name
         `
-        ,{id:id ,username:username, email:email, password:password, firstName:firstName, lastName:lastName, picturePath:picturePath, picturePublicId:picturePublicId, address:address, description:description ,city:city, gender:gender, age:age, phoneNumber:phoneNumber}
+        ,{id:id ,username:username, email:email, password:password, firstName:firstName, lastName:lastName, picturePath:picturePath, picturePublicId:picturePublicId, address:address, description:description ,city:city, gender:gender, age:Number(age), phoneNumber:phoneNumber}
         )
 
         const professionsArray = JSON.parse(houseworkerProfessions);
@@ -796,49 +789,19 @@ const update = async(username, newUserValue, newHouseworkerValue)=>{
     const session = driver.session(); 
     try{
         let {file, picturePath, ...newUserData} = newUserValue;
-        if(newUserValue.file){
-            const oldImagePublicID = await getUserPicturePublicId(username);
+        if(file){
             try{
-                const cloudResult = await cloudinary.uploader.destroy(oldImagePublicID);
-                console.log("Cloud result on removing Image: ", cloudResult);
-            }
-            catch(error){
-                console.error("Failed to delete image: ", error);
-            }
-
-            //delete image from src folder(multer -> not cloudinary )
-            const oldImageFileName = await getUserPicturePath(username);
-            const oldImagePath = path.join(__dirname, '../../../client/public/assets/userImages', oldImageFileName);
-            fs.unlink(oldImagePath, (err) =>{
-                if(err){
-                    console.error("Faield to delete old imgage: ", err);
-                }
-            })
-
-            try{
-                const uploadResult = await cloudinary.uploader.upload(newUserValue.file.path, {
-                    folder: 'avatars', // Optional folder for organization
-                });
-                const newPicturePath = uploadResult.secure_url; // Cloudinary URL
-                const newPicturePublicId = uploadResult.public_id;
-
-                newUserData ={
-                    ...newUserData,
-                    picturePath:newPicturePath,
-                    picturePublicId:newPicturePublicId
-                }
-
-                console.log("newPicturePath: ",newPicturePath + "\n");
-                console.log("newPicturePublicId: ", newPicturePublicId);
-
-                await updateUserPicturePath(username, newPicturePath, newPicturePublicId);
+                const cuurentPicturePublicID = await getUserPicturePublicId(username);
+                const uploadResult = await updateToCloudinaryBuffer(file.data, cuurentPicturePublicID)
+                const newPicturePath = uploadResult.secure_url; 
+                await updateUserPicturePath(username, newPicturePath); //update Redis DB
+                newUserData.picturePath = newPicturePath; //update neo4j DB as well
             }
             catch(error){
                 console.error("Failed to upload image: ", error);
+                throw new Error;
             }
         }
-
-        console.log("\n newUserData: ", newUserData);
 
         const result = await session.run(`
             MATCH (n:User { username: $houseworker})

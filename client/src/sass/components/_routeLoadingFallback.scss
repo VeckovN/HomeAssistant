@@ -1,0 +1,31 @@
+
+.route-loading-fallback {
+  position: absolute; /* not fixed, so it stays inside layout */
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+
+  &.client{
+    top:4em;
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+
+  &.fade-out {
+    opacity: 0;
+  }
+
+  .loading-screen-content{
+    margin-bottom:8rem;
+
+    .route-loading-text {
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 400;
+    }
+  }
+
+}

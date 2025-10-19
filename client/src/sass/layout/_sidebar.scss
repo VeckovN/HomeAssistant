@@ -4,6 +4,7 @@
 @use '../base/typography' as *;
 @use '../abstracts/brakepoints' as *;
 @use '../abstracts/mixins' as *;
+@use '../abstracts/keyframes' as *;
 
 .sidebar-container{
     width: 100%;
@@ -15,28 +16,31 @@
     left:50%;
     transform: translateX(-50%);
 
-    background-color: rgba(0, 0, 0, 0.822);
+    background-color: $background-black-5;
+    min-height: 100vh; // Prevent height collapse during loading
 
     @include xl-breakpoint{
         position:unset;
         transform:translateX(0);
+        display: flex;
+        min-height: 100vh;
     }
 
     .notifications-container{
         position: absolute;
-        top:4em;
-        // left:14.3em;
+        top:3em;
         padding:1em 1em;    
         
-        max-height: 505px;
+        max-height: 570px;
         max-width: 500px;
         overflow:auto;
         
         @extend %scrollbar-chat-style;
-        
-        background-color: $black-5;
-        
+    
+        background-color: $black-5;    
         z-index: 20;
+
+        animation: slideRight .2s ease-in;
 
         @include md-breakpoint{
             left:4em;
@@ -106,7 +110,6 @@
             width: 3.5rem;
             width: 100%;
             height: 100%;
-
         }
 
         .sidebar-logo{            
@@ -152,7 +155,6 @@
 
             @include md-breakpoint(){
                 @include flex-with-direction-center($direction:column);
-
                 margin:.5em 0em;
             }
 
@@ -160,6 +162,8 @@
                 padding:0em .8em;
 
                 @include md-breakpoint{
+                    width: 80%;
+                    max-width: 300px;
                     padding:0em .1em;
                     margin: 0em;
                     display: flex;
@@ -167,6 +171,7 @@
                     align-items: center;
                 }
                 @include sm-breakpoint{
+                    width: 80%;
                     padding:0em .3em;
                     align-items:start;
                 }
@@ -276,23 +281,6 @@
                     }
                 }
 
-                // .notifications-container{
-                //     position: relative;
-                //     top:2em;
-                //     left:13.3em;
-                //     padding:1em 1em;    
-                    
-                //     max-height: 500px;
-                //     max-width: 500px;
-                //     overflow:auto;
-                    
-                //     @extend %scrollbar-chat-style;
-                    
-                //     background-color: $black-5;
-                    
-                //     z-index: 10;
-                // }
-
                 .logout{
                     padding-top:0em;
                     margin:0em;
@@ -313,8 +301,12 @@
                 width: 100%;
                 padding:0 .8em;
                 border-bottom: 1px solid rgba(80, 80, 80, 0.664);
-
                 margin:1em 0em;
+
+                @include md-breakpoint{
+                    width: 80%;
+                    max-width: 350px;
+                }
             }
         }
     }

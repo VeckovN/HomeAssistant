@@ -1,12 +1,10 @@
 import ReactDom from 'react-dom';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 
 import '../../sass/components/_modal.scss';
 
-//onCloseBV(click in background to close Modal)
-//const ModalViewOverlay = props =>{
-const ModalViewOverlay = ({HeaderContext, onCloseMV, BodyContext, FooterContext}) =>{
-    return <div className='modal'>
+const ModalViewOverlay = ({HeaderContext, fadeOut, onCloseMV, BodyContext, FooterContext}) =>{
+    return <div className={`modal ${fadeOut ? 'modal-out' : ''}`}>
         <div className='modal-container'>
             <div className='modal-container-header'>
                 <div className='context'>{HeaderContext}</div>
@@ -27,37 +25,41 @@ const ModalViewOverlay = ({HeaderContext, onCloseMV, BodyContext, FooterContext}
 }
 
 //this blackView will be showed across the 100% of widht and height 
-// const BackView = props =>{
-const BackView = ({onCloseBv}) =>{
-    return <div className='backView' onClick={onCloseBv}></div>
+const BackView = ({onCloseBv, fadeOut}) =>{
+    return <div className={`backView ${fadeOut ? 'backView-out' : ''}`} onClick={onCloseBv}></div>
 }
 
 //element from index(location where the modal will be displayed)
 const portalElement = document.getElementById('modal-portal');
 
-
-
 //OnCloseModal is functon from Component which use This Modal
-//const Modal = props=>{
 const Modal = ({onCloseModal, HeaderContext, BodyContext, FooterContext})=>{
+    const [fadeOut, setFadeOut] = useState(false);
 
-    //Prevent the background content from scrolling when a modal is open
     useEffect(() => {
         document.body.style.overflow = 'hidden';
     
-        // Cleanup function to remove the class when the component is unmounted or the modal is closed
         return () => {
           document.body.style.overflow = 'visible';
         };
       }, []);
 
+    const onCloseModalHanlder =() => {
+        setFadeOut(true);
+        setTimeout(() =>{
+            onCloseModal();
+        },500);
+    }
+
     return (
         <>
-            {ReactDom.createPortal(<BackView onCloseBv={onCloseModal}/>, portalElement)}
+            {/* {ReactDom.createPortal(<BackView onCloseBv={onCloseModal}/>, portalElement)} */}
+            {ReactDom.createPortal(<BackView fadeOut={fadeOut} onCloseBv={onCloseModalHanlder}/>, portalElement)}
 
             {ReactDom.createPortal(
                 <ModalViewOverlay
-                    onCloseMV={onCloseModal}
+                    fadeOut={fadeOut}
+                    onCloseMV={onCloseModalHanlder}
                     HeaderContext={HeaderContext}
                     BodyContext={BodyContext}
                     FooterContext={FooterContext}

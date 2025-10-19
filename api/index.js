@@ -11,6 +11,7 @@ const clientRoute = require('./routes/clients')
 const houseworkerRoute = require('./routes/houseworkers');
 const authRoute = require('./routes/auth');
 const chatRoute = require('./routes/chat');
+const healthRoute = require('./routes/health');
 
 dotenv.config();
 
@@ -20,7 +21,6 @@ app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(fileUpload());
-
 app.set("trust proxy", 1); // trust Render’s proxy
 
 var corsOptions={
@@ -69,12 +69,12 @@ app.use("/api/clients", clientRoute);
 app.use("/api/houseworker", houseworkerRoute);
 app.use("/api/", authRoute);
 app.use('/api/chat', chatRoute);
+app.use('/api/health', healthRoute);
 
 server.listen(5000, ()=>{
     console.log("SERVER at 5000 port");
     
     io.on('connection', async(socket)=>{
-        console.log("CONNECTED INTITIALIZED: socketID: " + socket.id);
         listeners(io, socket, redisClient);
     })
 })

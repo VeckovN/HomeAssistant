@@ -11,13 +11,9 @@ const Header = () =>{
     const {user} = useSelector((state) => state.auth)
     const {unreadCount} = useSelector((state) => state.unreadMessages);
     
-    let houseworker;
-    if(user)
-        houseworker = user.type === 'Houseworker' ? true : false;
-
-    const logoutHandler = () =>{
-        dispatch(logout());
+    const logoutHandler = async () =>{
         setShowMenu(false);
+        await dispatch(logout());
     }
 
     const removeShowMenuHandler = () =>{
@@ -64,10 +60,9 @@ const Header = () =>{
                 :
                 <>
                     <Link to='/profile' className='nav-link' onClick={removeShowMenuHandler}>Profile</Link>
-                    <Link to='/messages' className='nav-link' onClick={removeShowMenuHandler}>Messages</Link>
+                    <Link to='/messages' className='nav-link' onClick={removeShowMenuHandler} >Messages {unreadCount !=0 && <span className='menu-unread-header-message'>{unreadCount}</span>}</Link>
                     <button onClick={logoutHandler} className='nav-link-button '>Logout</button>
                 </>
-                
             }
 
         </div>

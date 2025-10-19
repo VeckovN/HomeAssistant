@@ -5,14 +5,13 @@ import authSlice from './auth-slice';
 import unreadMessagesSlice from './unreadMessagesSlice';
 import unreadCommentsSlice from './unreadCommentSlice';
 import notificationsSlice from './notificationsSlice';
+import currentRoomSlice from './currentRoomSlice';
 
 const authPersistConfig = {
   key:'auth',
   storage,
   whitelist:['user'], //only persist the 'user' part of the state
 }
-
-//unreadMessages PERSIST only WHEN the user is logged.
 
 // Custom Transform for Conditional Persistence of Unread Messages
 const conditionalTransform = createTransform(
@@ -55,7 +54,6 @@ const conditionalNotificationsTransform = createTransform(
 const unreadMessagesPersistConfig = {
   key:'unreadMessages',
   storage,
-  // whitelist:['unreadMessages','unreadCount'],
   transform:[conditionalTransform]
 }
 
@@ -81,8 +79,8 @@ const store = configureStore({
     auth: persistedAuthReducer,
     unreadMessages:persistedUnreadMessagesReducer,
     unreadComments:persistedUnreadCommentsReducer,
-    notifications:persistedNotificationsReducer
-    //other slices...
+    notifications:persistedNotificationsReducer,
+    currentRoom: currentRoomSlice.reducer
   },
 
   middleware:(getDefaultMiddleware)=>

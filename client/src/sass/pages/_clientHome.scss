@@ -4,11 +4,11 @@
 @use '../abstracts/colors' as *;
 @use '../abstracts/fonts' as *;
 @use '../abstracts/mixins' as *;
+@use '../abstracts/keyframes' as *;
 
 .home-container{
     position: relative;
     width: 100%;
-    // height: 100%;
     display:flex;
     flex-direction: column;
     padding: 4rem 0;
@@ -22,14 +22,13 @@
         justify-content: none;
         
         background:linear-gradient($background-black-3, $background-black-7);
-        // background:radial-gradient($background-black-7, $background-black-3);
         border-radius: 0 0 1em 1em;
 
         font-family: $font-family-3;
         font-weight: 600;
         color:$grey-1;
 
-        animation: enterDown 1s;
+        animation: slideDown 1s;
 
         @include lg-breakpoint{
             font-size: .8rem;
@@ -44,12 +43,11 @@
             font-size: .5rem;
         }
 
-
         .info{
             padding:.5em 0;
             font-size:1.8em;
             text-align: center;
-            animation:  enterLabDown .7s;
+            animation:  enterDown 1.2s;
         }
         .second-info{
             & span{
@@ -60,7 +58,7 @@
             font-weight: 500;
             text-align: center;
 
-            animation: enterLabUp .7s;
+            animation: slideUp 1.2s;
         }
     }
     .info-section-client{
@@ -68,7 +66,7 @@
     }
 
     .houseworker-content-section{
-        animation: enterElement .7s;
+        animation: slideLeft .7s;
 
         .search-box{
             position:relative;
@@ -76,7 +74,6 @@
             width: 100%;
 
             margin:1rem 0 .5rem 0;
-            // animation: fadeIn 1.5s;
             
             @include lg-breakpoint{
                 margin:2rem 0 .5rem 0;
@@ -92,10 +89,7 @@
                 display:flex;
                 flex-direction:column;
 
-                // animation: fadeIn 2s;
-
                 .filter-options{
-                    // background-color: aqua;
                     margin:1em 0;
                     display: flex;
                     flex-direction: row;
@@ -112,90 +106,57 @@
                 margin: -8em 0 4em 0;
                 padding-bottom: 3em;
 
-                // animation: fadeIn 1.2s;
-
                 @include lg-breakpoint {
                     width: 100%;
                     margin:2em 0 0 0;
                     padding-bottom: 1em;
                 }
 
-                #none{
+                #no-matches{
+                    margin-top:3em;
                     color:$black;
                     font-weight: 700;
                     font-size:$fs1;
                 }
+
             }
         }
-
-        // .scroll-div{
-        //     position: fixed;
-        //     bottom: 1em;
-        //     right:1em;
-        //     width:3em;
-        //     height: 3em;
-        //     border:none;
-        //     z-index: 10;
-            
-        //     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        // }
     }
 
-    @keyframes fadeIn {
-        0% { opacity: 0; }
-        100% { opacity: 1; }
-    }
-    @keyframes fadeOut {
-        0% { opacity: 1; }
-        100% { opacity: 0; }
-    }
+    .infinite-loading-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-    @keyframes enterElement{
-        0% {
-            opacity: 0;
-            transform: translateX(-100px);
-        }
-        100% {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
+        
+        height: 40px;
+        min-height: 40px;
+        padding-top:10em;
 
-    @keyframes enterDown {
-        0% {
-            opacity: 0;
-            transform: translateY(-100px);
-        }
-        100% {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+        // Ensure it takes full width and centers properly
+        flex-basis: 100%;
+        
+        animation: fadeInUp 0.3s ease-out;
 
-
-    @keyframes enterLabDown {
-        0% {
-            opacity: 0;
-            transform: translateY(-50px);
-        }
-        100% {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes enterLabUp {
-        0% {
-            opacity: 0;
-            transform: translateY(50px);
+        @include lg-breakpoint {
+            height: 25px;
+            min-height: 25px;
+            padding-top:3em;
         }
 
-        100% {
-            opacity: 1;
-            transform: translateY(0);
+        @include sm-breakpoint {
+            height: 20px;
+            min-height: 20px;
+            padding-top:1em;
         }
+        
+        @include xs-breakpoint {
+            height: 25px;
+            min-height: 25px;
+            padding-top:2em;
+        }
+
     }
 
 }
-
-

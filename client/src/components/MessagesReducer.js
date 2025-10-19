@@ -17,7 +17,6 @@ export const MessagesReducer = (state, action) =>{
                 ...state,
                 rooms: [...state.rooms, {roomID:action.newRoomID, users:[...action.currentMember, {userID:action.newUserID, username:action.newUsername, picturePath:action.picturePath, online:action.online}]}],
             }
-        //"Fix 'create conversation' case that conditionaly create room or just post last message if the room exists"
         case "CREATE_CONVERSATION": 
             const roomExists = state.rooms.some(room => room.roomID === action.roomID);
             if(roomExists){ //just post last message to the room that exists
@@ -87,7 +86,7 @@ export const MessagesReducer = (state, action) =>{
                             }
                         }
                     }
-                    return room; //return every room again(new state);
+                    return room;
                 })
             }
         case "SET_ROOM_MESSAGE_WITH_ROOM_INFO":
@@ -110,16 +109,26 @@ export const MessagesReducer = (state, action) =>{
                 ...state,
                 // roomMessages:[],
                 rooms: state.rooms.map(room =>{
-                    if(room.roomID === action.roomID){ //action-data = roomID
+                    if(room.roomID === action.roomID){
                         return{
                             ...room,
                             roomID:action.newRoomID,
-                            // users: [...room.users, {username:action.newUsername, picturePath:action.picturePath}],
                             users: [...room.users, {userID:action.newUserID ,username:action.newUsername, picturePath:action.picturePath, online:action.online}],
                         }
                     }
                     return room;
                 })
+            };
+        case "UPDATE_ONLINE_STATUS":
+            return {
+                ...state,
+                rooms: state.rooms.map(room => ({
+                    ...room,
+                    users: room.users.map(user => ({
+                        ...user,
+                        online: state.onlineUsers.includes(user.userID)
+                    }))
+                }))
             };
         case "KICK_USER_FROM_GROUP":
             return{

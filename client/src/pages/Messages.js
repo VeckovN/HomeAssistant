@@ -1,3 +1,4 @@
+import { useEffect, memo } from 'react';
 import {useSelector} from 'react-redux';
 import useMessages from '../hooks/useMessages';
 import Chat from '../components/Chat/Chat.js';
@@ -6,8 +7,7 @@ import Spinner from '../components/UI/Spinner.js';
 
 import '../sass/pages/_messages.scss';
 
-const Messages = ({socket, connected}) =>{
-    
+const Messages = memo(({socket}) =>{
     const {user} = useSelector((state) => state.auth)
     const {
         state, 
@@ -18,8 +18,6 @@ const Messages = ({socket, connected}) =>{
         pageNumberRef,
         onShowMenuToggleHandler,
         onUsersFromChatOutHanlder,
-        onAddTypingUserHandler, 
-        onRemoveTypingUserHandler,
         fetchMoreMessages,
         onRoomClickHanlder,
         onDeleteRoomHandler,
@@ -30,11 +28,18 @@ const Messages = ({socket, connected}) =>{
         onShowRoomsButtonHandler
     } = useMessages(socket, user);
 
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, []);
+
     return (
     <div className={`container-${user.type === "Houseworker" ? "houseworker" : "client"}`}> 
         {state.loading ? <Spinner className='profile-spinner'/> :
-        <div className='messages-container'>
-            <section className={`rooms-container ${showChatView ? 'no-display' : ''}`}>
+        <div className={`messages-container ${user.type === "Houseworker" ? "houseworker" : "client"} `}>
+            <section className={`rooms-container ${showChatView ? 'no-display' : ''} ${user.type === "Client" ? 'client' : ''}`}>
                 <div className='room-chat-header'>
                     <div className='header-label'>Chat Rooms</div>
                 </div>
@@ -42,7 +47,6 @@ const Messages = ({socket, connected}) =>{
                 <Rooms 
                     rooms={state.rooms}
                     roomInfo={state.roomInfo}
-                    unread={state.unreadMessages}
                     showMoreRoomUsers={showMoreRoomUsers}
                     onRoomClickHanlder={onRoomClickHanlder}
                     onShowMoreUsersFromChatHandler={onShowMoreUsersFromChatHandler}
@@ -50,7 +54,7 @@ const Messages = ({socket, connected}) =>{
                 />
             </section>
 
-            <section className={`chat-container ${showChatView ? 'display' : ''}`}>
+            <section className={`chat-container ${showChatView ? 'display' : ''} ${user.type === "Client" ? 'client' : ''}`}>
                 <Chat 
                     socket={socket}
                     state={state}
@@ -66,8 +70,6 @@ const Messages = ({socket, connected}) =>{
                     onDeleteRoomHandler={onDeleteRoomHandler}
                     onShowMenuToggleHandler={onShowMenuToggleHandler}
                     fetchMoreMessages={fetchMoreMessages}
-                    onAddTypingUserHandler={onAddTypingUserHandler}
-                    onRemoveTypingUserHandler={onRemoveTypingUserHandler}
                 />
                 
             </section>
@@ -75,7 +77,7 @@ const Messages = ({socket, connected}) =>{
         }
     </div>
     )
-}
+});
 
 export default Messages;
 

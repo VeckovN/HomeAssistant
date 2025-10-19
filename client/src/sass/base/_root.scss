@@ -15,11 +15,3 @@
   font-family:$font-family-1;
   font-size:$text-base-size;
 }
-
-// @include breakpoint(md) {
-//   :root {
-//       // you can manage typography editing only these 2 variables
-//       --text-base-size: 1.25em;
-//       --text-scale-ratio: 1.25;
-//   }
-// }

@@ -2,6 +2,7 @@
 @use '../abstracts/placeholders' as *;
 @use '../abstracts/colors' as *;
 @use '../base/typography' as *;
+@use '../abstracts/keyframes' as *;
 
 .typing-users{
     display: flex;
@@ -39,18 +40,6 @@
             }
             #dot3{
                 animation-delay: .6s;
-            }
-
-            @keyframes blink {
-                0%{
-                    opacity: .2;
-                }
-                20%{
-                    opacity: 1;
-                }
-                10%{
-                    opacity: .2;
-                }
             }
         }
     }

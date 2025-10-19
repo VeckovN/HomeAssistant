@@ -6,30 +6,23 @@
 
 .container-client{
     width:100%;
-    height: 100%;
+    height: 100vh;
 
+    max-height: 100vh;
     position:relative;
     display: flex;
     justify-content: center;
-    background-color: $background-white-2;
-
-    @include sm-breakpoint{
-        width:100%;
-        height: 100vh;
-        height: 100%;
-    }
+    background-color: $background-black-9;
 }
 
 .container-houseworker{
-    height: 100vh;
-    // height: 100%;
     width:100%;
+    height: 100vh;
+    max-height: 100vh;
 
     position:relative;
     display: flex;
     justify-content: center;
-
-    padding-bottom:3em;
 }
 
 .profile-spinner{
@@ -38,10 +31,9 @@
 }
 
 .messages-container{
-    width:90%;
-    // min-height: 100vh;
+    width:100%;
     max-width: 1100px;
-    margin:4em 0em 0em 0em;
+    height: 100dvh; // Dynamic viewport height (better for mobile with address bar)
 
     display:flex;
     align-items: center;
@@ -56,10 +48,7 @@
     @include sm-breakpoint{
         flex-direction: column;
         width:100%;
-
-        // height: 100%;
-        // min-height: 90vh;
-        // max-width: unset
+        height: 100dvh;
     }
 
     .rooms-container{
@@ -70,15 +59,13 @@
         width: 50%;
         min-width: 300px;
 
-        .no-display{
-            display:none;
+        &.client{
+            padding-top:4rem;
         }
 
         @include sm-breakpoint{
             height: 100%;
-            min-height: 400px;
-            // max-height: 600px;
-            width: 70%;
+            width: 100%;
             min-width: 350px;
 
             &.no-display{
@@ -87,7 +74,7 @@
         }
 
         @include xs-breakpoint{
-            width: 90%;
+            width: 100%;
             min-width: 250px;
         }
 
@@ -115,50 +102,44 @@
 
         .rooms{
             position: relative;
-            height: 90%;
+            // height: 90%;
+            height: calc(100% - 5.3em); // Take remaining height after header
             width:100%;
             display: flex;
             flex-direction: column;
-
             box-shadow: 0px 8px 10px rgba(0,0,0,0.20);
             overflow:hidden scroll;
             @extend %scrollbar-chat-style;
 
             @include sm-breakpoint{
                 background-color: $chat-mobile-header;
+                height: calc(100% - 5em);
             }
         }
     }
 
     .chat-container{
         display: flex;
-        flex-direction: column;
-       
+        flex-direction: column; 
         height: 100%;
         width: 80%;
-        // width: calc(80% - 85px);
-        // min-width: 500px;
+        flex:1;
 
-        // display:none;
+        overflow:hidden;
 
+        &.client{
+            padding-top:4rem;
+        }
+        
         @include sm-breakpoint{
-            height: 70%;
-            min-height: 400px;
-            // max-height: 500px;
-            width: 70%;
-            min-width: 300px;
-
+            width: 100%;
+            height: 100%;
             display:none;
 
             &.display{
-                display:unset;
+                display: flex; 
+                flex-direction: column;
             }
         }
-
-        @include xs-breakpoint{
-            width: 90%;
-        }
     }
-
-    
 }

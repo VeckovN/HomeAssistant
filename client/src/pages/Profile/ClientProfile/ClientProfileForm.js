@@ -1,14 +1,14 @@
 import Select from 'react-select';
 import Spinner from '../../../components/UI/Spinner.js';
 import ProfileAvatar from '../../../components/ProfileAvatar.js';
+import { city_options } from '../../../utils/options.js';
 import '../../../sass/pages/_clientProfile.scss';
 
-const ClientProfileForm = ({loading, clientData, cityField, avatarField, errors, register, watch, city_options, handleSubmit, onSubmitUpdate,onSubmitUpdateHandler, onCityChangeHandler, onChangeAvatarHandler, onRemoveAvatarHandler}) =>{
+const ClientProfileForm = ({loading, clientData, cityField, avatarField, errors, register, watch, handleSubmit, onSubmitUpdate, onSubmitUpdateHandler, onCityChangeHandler, onChangeAvatarHandler, onRemoveAvatarHandler}) =>{
     const customStyles = {
         control: base => ({
           ...base,
           height: 30,
-        //   minHeight: 40,
           maxHeight:35
         })
       };

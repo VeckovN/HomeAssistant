@@ -2,8 +2,6 @@ import Select from 'react-select';
 import ProfileAvatar from './ProfileAvatar';
 
 const HouseworkerInputs = ({houseworkerData, register, errors, watch, cityField, avatarField, city_options, onChangeCityHandler, onChangeAvatarHandler, onRemoveAvatarHandler}) =>{
-    
-    console.log("HouseworkerData: ", houseworkerData);
     return(
     <>
         <div className='profile-input-card'>

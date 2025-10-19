@@ -40,15 +40,6 @@ const profession_options = [
     { value:'Personal Shopper', label:"Personal Shopper" },
     { value:'Butler', label:"Butler" }
 ]
-// const interests_options = [
-//     { value:'Cistac', label:"Cistac" },
-//     { value:'Dadilja', label:"Dadilja" },
-//     { value:'Kuvar', label:"Kuvar" },
-//     { value:'Staratelj', label:"Staratelj" },
-//     { value:'Sobarica', label:"Sobarica" },
-//     { value:'Domacica', label:"Domacica" }
-// ]
-
 
 export {
     city_options, 

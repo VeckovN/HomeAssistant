@@ -3,22 +3,7 @@
 @use '../base/typography' as *;
 @use '../abstracts/mixins' as *;
 @use '../abstracts/brakepoints' as *;
-
-//this class doesn't exist in houseworkerCard
-// .main-container{
-//     display: -moz-flex;
-//     display:flex;
-//     flex-direction: column;
-// }
-
-// $text-xs
-// $text-sm 
-// $text-md 
-// $text-lg
-// $text-xl 
-// $text-xxl
-// $text-xxxl
-
+@use '../abstracts/keyframes' as *;
 
 .houseworker-card-empty{
     @include flex-with-direction-center($direction:column);
@@ -32,7 +17,6 @@
     position:relative;
     top:200px;
 }
-
 
 .houseworker-card{
     @include flex-with-direction-center($direction:column);
@@ -54,12 +38,11 @@
     @include lg-breakpoint {
         top:10px;
     }
-    // $mdBrakepoint: 768px;
+
     @include md-breakpoint {
         max-width:36em;
     }
 
-    // $smBrakepoint: 576px;
     @include sm-breakpoint{
         min-width: 24em;
         margin:1.5em .5em 4em .5em;
@@ -68,9 +51,7 @@
     @include xs-breakpoint{
         min-width: 15em;
         height: 32em;
-        // width: 100%;
-        // max-width: 20em;
-        margin:1.5em .2em 4em .2em;
+        margin:1.5em .2em 1em .2em;
     }
 
     .label-text{
@@ -137,7 +118,6 @@
         }
     }
 
-
     .houseworker-content{
         width: 100%;
         height: 100%;
@@ -159,6 +139,7 @@
        }
 
     }
+
     .recommended{
         background-color: $background-black-1;
         border:3px solid $color-hs-label;
@@ -227,7 +208,6 @@
             margin-top:0px;
         }
 
-        //Personal Info (POTENTIAL COMPONENT)
         .personal-info{
             width: 30%;
 
@@ -236,7 +216,6 @@
             }
         }
 
-        //Profession Info (POTENTIAL COMPONENT)
         .profession-info{
             width: 12rem;
             width: 30%;
@@ -293,8 +272,6 @@
 
         }
 
-
-        //Description INFO (POTENTIAL COMPONENT)
         .description-info{
             // width: 15rem;
             width: 40%;
@@ -419,7 +396,6 @@
 
                     }
 
-                    //button
                     .close-rate-button{
                         // $bg-color, $color, $bg-hover-color, $hover-color
                         @include rating-button($bg-color:rgb(182, 69, 69), $color:$white, $bg-hover-color:rgb(177, 46, 46), $hover-color:$black);
@@ -469,10 +445,6 @@
                     padding:.2em .3em;
                 }
 
-                // @include xs-breakpoint{
-                //     padding:.2em .3em;
-                // }
-
                 .comment-btn{
                     width: 6rem;
                     height: 2rem;
@@ -515,10 +487,7 @@
         }
     }
 
-    //COMMUNICATE (INPUT FIELD)
     .communicate-box{
-        // /* display: flex;
-        // flex-direction: column; */
         position: relative;
 
         display: flex;
@@ -577,13 +546,9 @@
             }
              
         }
-
-
     }
 
 }
-
-
 
 .houseworker-content-empty{
     width: 80%;
@@ -599,8 +564,6 @@
 
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0,0,0,.5);
-
-   /* transition:all 1s; */
    
 }
 .houseworker-content-empty h1{
@@ -657,11 +620,7 @@
     font-family: trebuchet ms;
     color: $white;
 
-    /* margin-left: 15rem; */
 }
-
-
-
 
 .form-message button{
     width:65px;
@@ -681,22 +640,3 @@
 .form-message button:hover{
     background-color: rgb(192, 126, 3); 
 }
-
-
-@keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-}
-
-// .rate-info{
-//     width:35rem;
-// }
-
-
-
-
-// .poruka{
-//     position:relative;
-//     left:4px;
-//     width: 100%;
-// } 

@@ -1,7 +1,6 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-// /https://stackoverflow.com/questions/43002444/make-axios-send-cookies-in-its-requests-automatically
-// TO SEND COOKIE force credentials to every Axios requests
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { loginService, registerService, logoutService } from '../services/auth';
 axios.defaults.withCredentials = true
 
 const initialState ={
@@ -12,23 +11,11 @@ const initialState ={
     loading: false,
 }
 
-//every Trunk has 3 states(pending, fulfilled, and rejected)
 export const register = createAsyncThunk(
-    'auth/register', //is action ,
+    'auth/register', 
     async(userFormData, thunkAPI) =>{ //user passed from register ( dispatch(register(userData) ))
         try{
-            alert("REDUX");
-            //THIS FETCH FUNCTION COULD BE IN SERVICE FOLDER (as Api Calls)
-            // const response = await axios.post('http://localhost:5000/api/register', user);
-            //with context-type multipart/form-data
-            const response = await axios({
-                method: 'post',
-                url: 'http://localhost:5000/api/register',
-                data: userFormData,
-                headers: {
-                    'Content-Type': `multipart/form-data`,
-                },
-            });
+            const response = await registerService(userFormData);
 
             if(response.data && response.data.error) {
                 console.error("Registration error:", response.data.error);
@@ -48,18 +35,16 @@ export const login = createAsyncThunk(
     'auth/login',
     async(user, thunkAPI) =>{
         try{
-            const response = await axios.post('http://localhost:5000/api/login', user);       
+            const response = await loginService(user);
             if(response.data){
                 if(!response.data.error){
                     return response.data;
                 }
                 else
-                    //put taken erron from server to action.payload (this will be persist in redux state)
-                    return thunkAPI.rejectWithValue(response.data.error)//this is action.payload for message in useCase.login rejected
+                    return thunkAPI.rejectWithValue(response.data.error) //this is action.payload for message in useCase.login rejected
             }
         }
         catch(err){
-            // const message = (err.response && err.response.data.error) || err.message || err
             const errorObj = (err.response && err.response.data) || err.message || err
             //return response.data -> contains {error:'message' errorType:'input'}
             //to get "error" prop - return res.status(401).json({error: "Incorrect username or password", errorType:true -> for set error input});
@@ -72,9 +57,8 @@ export const logout = createAsyncThunk(
     'auth/logout',
     async (trunkAPI) =>{
         try{
-            const response = await axios.get('http://localhost:5000/api/logout');
-            // // //httpOnly:true , cookie cannot be manipulated through JS
-         }
+            await logoutService();
+        }
          catch(error){
             const message =  error.message || error || (error.response.data.error && error.response.data && error.response)
             trunkAPI.rejectWithValue(message)
@@ -86,7 +70,7 @@ export const sessionExpired = createAsyncThunk(
     'auth/sessionExpired',
     async(trunkAPI) =>{
         try{
-            await axios.get('http://localhost:5000/api/logout');
+            await logoutService();
         }
         catch(error){
             const message =  error.message || error || (error.response.data.error && error.response.data && error.response)
@@ -100,7 +84,7 @@ const authSlice = createSlice({
     initialState,
     reducers:{
         //reduce function ( dispatch(addItemToCart)) example
-        //for other ASYNC function we will use TRUNK func
+        //for other ASYNC function the TRUNK func will be used
         reset:(state)=>{
             state.message=' '
             state.success=false
@@ -111,7 +95,6 @@ const authSlice = createSlice({
     extraReducers: (builder) =>{
         builder
             .addCase(register.pending, (state)=>{
-                //what we wanna do when the state goes on the register actions  pending
                 state.loading = true;
             })
             .addCase(register.fulfilled, (state, action)=>{
@@ -155,7 +138,6 @@ const authSlice = createSlice({
                 state.success = true;
                 state.message = "Your session expired"
             })
-            
     }
 })
 

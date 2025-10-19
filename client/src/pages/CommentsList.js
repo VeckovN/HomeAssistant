@@ -12,12 +12,11 @@ const CommentsList = ({socket, user}) =>{
     const dispatch = useDispatch();
     const [comments, setComments] = useState(null);
     const [loading, setLoading] = useState(true);
-    const endCommentsRef = useRef(null);
     const pageNumberRef = useRef(0);
     const observerTarget = useRef(null);
     const allCommentsLoadedRef = useRef(false);
 
-    //unmark unred messagers when the user visit it
+    //unmark unred commments when the user visit it
     useEffect(()=>{
         fetchComments();
         dispatch(markCommentsAsRead(user.username));
@@ -28,12 +27,17 @@ const CommentsList = ({socket, user}) =>{
         dispatch(markCommentsAsRead(user.username));
     },[comments])
 
-    //listen socket event
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, []);
+
     useEffect(() => {
         if (socket) { 
-            //Its emited to user-{userID} room that user joined and emit on newCommentchange Event of these room
             socket.on(`newCommentChange`, (data) => {
-                setComments(prevComments => [data.postComment, ...prevComments]);
+                setComments(prevComments => [data, ...prevComments]);
             });
 
             return () => {

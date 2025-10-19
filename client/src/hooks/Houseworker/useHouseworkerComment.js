@@ -48,21 +48,6 @@ const useHouseworkerComment = (socket, isClient, clientUsername, houseworker, co
         }
     }
 
-    // const onLoadMoreComments = useCallback(async(username) =>{
-    //     //pageNumber is > 0
-    //     const pageNumber = pageNumberRef.current + 1;
-    //     try{
-    //         const moreComms = await getComments(username, pageNumber);
-    //         setComments(oldComments =>[
-    //             moreComms,
-    //             ...oldComments
-    //         ]);
-    //     }
-    //     catch(err){
-    //         console.error(err);
-    //     }
-    // },[])
-
     const onCommentDelete = async (e, comment_id, from)=>{
         e.preventDefault();
         try{
@@ -106,7 +91,7 @@ const useHouseworkerComment = (socket, isClient, clientUsername, houseworker, co
                 const newComment = {
                     commentID:commentResult.commentID,
                     date:commentResult.commentDate,
-                    fromUsername: clientUsername,
+                    from: clientUsername,
                     houseworkerID: houseworker.id,
                     comment:newCommentContext,
                     read:false,
@@ -125,7 +110,6 @@ const useHouseworkerComment = (socket, isClient, clientUsername, houseworker, co
                 else
                     setComments([newComment])
                 
-                    
                 postCommentRef.current.value='';
                     
             }

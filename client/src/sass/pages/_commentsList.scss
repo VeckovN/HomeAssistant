@@ -4,11 +4,15 @@
 @use '../abstracts/colors' as *;
 @use '../abstracts/placeholders' as *;
 @use '../abstracts/brakepoints' as *;
+@use '../abstracts/keyframes' as *;
 
 .comments-container{
     height: 100vh;
+    // height:100dvh;
     position: relative;
     @include flex-with-direction-center($direction:column);
+
+    animation: scaleUp .6s ease-in;
 
     .comment-card{
         width: 80%;
@@ -38,15 +42,15 @@
             .comment-list{
                 width: 100%;;
                 height: 600px;
-                max-height: 80vh; /* Set a maximum height */
+                max-height: 80vh; 
                 font-size:$fs4;
                 overflow-y:auto;
                 overflow-anchor: none;
                 
                 display: flex;
-                flex-direction: column-reverse;
+                flex-direction: column;
                 align-items: center;
-                position: sticky;
+                // position: sticky; //not needed for scrolling a container from top
 
                 @extend %scrollbar-commnet-style;
 

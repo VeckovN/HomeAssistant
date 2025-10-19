@@ -1,5 +1,3 @@
-// $nav-background-color: black;
-// $nav-hover-color: #13a7ec;
 @use '../abstracts/colors' as c;
 @use '../abstracts/placeholders' as *;
 @use '../abstracts/fonts' as *;
@@ -13,6 +11,7 @@
     width:100%;
     height: 4rem;
     padding:0.5rem;
+    flex-shrink: 0;
 
     background-color: c.$nav-background-color;
     z-index:15;
@@ -29,7 +28,6 @@
         @include xs-breakpoint{
             font-size:$fs6;
             top:1.1rem;
-            // font-size:.85rem;
         }
     
         & a{
@@ -89,12 +87,9 @@
             top:1.4em;
         }
 
-
-
         &:hover >* {
             background-color: c.$nav-hover-color;
         }
-
 
         &-active :nth-child(1){
             transform: translate(-45%, 10px) rotate(45deg);
@@ -108,11 +103,10 @@
         &-active :nth-child(3){
             transform: translate(45%, -10px) rotate(45deg);
         }
-    
     }
 
     .nav-list{
-        position:absolute;       /*Ovo je za stavke logoint i register kada se izlogujete sa naloga*/
+        position:absolute;  
         top: 1.3rem;
         right:2em;
 
@@ -134,13 +128,13 @@
             top:-1.4em;
             right:.4em;
 
-            color:rgb(179, 7, 7);
-            width: 20px;
-            height: 20px;
-            background-color: white;
-            text-align: center;
-            border:none;
-            border-radius: 10%;
+            @extend %unread-message-style;
+        }
+
+        .menu-unread-header-message{
+            margin-left:.5em;
+
+            @extend %unread-message-style;
         }
 
         .nav-link{
@@ -161,7 +155,6 @@
                 color:#f55d4c;
             }
         }
-
     }
 }
 
@@ -204,13 +197,5 @@
                 color:#f7422e;
             }
         }
-        
     }
-
-}
-
-
-.fas{
-    color:White;
-    color:red;
 }

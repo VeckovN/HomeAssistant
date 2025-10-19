@@ -54,7 +54,7 @@ async function initNeo4j() {
             `CREATE INDEX comment_id_index IF NOT EXISTS FOR (c:Comment) ON (c.timestamp)`
         );
 
-        console.log("✅ Initial Neo4j setup done.");
+        console.log("Initial Neo4j setup done.");
 
     }
     catch(error){

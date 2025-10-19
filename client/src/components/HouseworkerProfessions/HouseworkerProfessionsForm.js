@@ -43,7 +43,6 @@ const HouseworkerProfessionsForm = ({
                                 </div>
                                 
                                 <div className = "delete-profession">
-                                    {/* without ()=> this function will be executed immediately , also pass the e(event) for e.preventDefault*/}
                                     <button onClick={(e) => onDeleteProfessionHandler(e, updatedData.profession)} >Delete</button>
                                 </div>
                             </div>
@@ -72,7 +71,7 @@ const HouseworkerProfessionsForm = ({
                             <input 
                                 placeholder='Enter €/hr' 
                                 type='number'
-                                name={el} //selected profession
+                                name={el} 
                                 onChange={onChangeHouseworkerProfessions}
                             />
                         </div>    

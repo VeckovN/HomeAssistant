@@ -14,7 +14,6 @@
 
     background-color: $black-5;
     border:none;
-    // border-bottom: solid 3px $black-1;
     border-bottom: solid 2px $grey-2;
     border-radius: 8px;
     cursor: pointer;
@@ -37,7 +36,6 @@
 
         font-weight: 700;
         font-size: $fs-em-6;
-        // border:2px solid red;
         background-color: $grey-1;
         color:$color-hs-6;
 
@@ -135,16 +133,19 @@
             font-size:$fs7;
             font-family: $message-font-family;
             z-index: 12;
+
+            max-width: 5em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     }
-
+    
     .room-contact{
         // height: 43px;
         // width:4em;
         white-space: nowrap;
         text-align: start;
-        // overflow: hidden;
-        // text-overflow: ellipsis;
 
         .name {
             margin: 0 0 0 20px;
@@ -168,12 +169,8 @@
     }
 
     .timer{
-        // height: 2em;
-        // width: 5em;
-        // margin-left: 10%;
         font-family:'Open Sans', sans-serif;
         font-size: 11px;
-        // white-space: nowrap;
         padding: 3px 8px;
         color:white;
         background-color: #515151 ;
@@ -197,11 +194,14 @@
         color:$color-hs-5;
     }
 
-
     .timer{
         position:absolute;
         right:.5em;
+        // bottom:.7em;
         margin-left: 15%;
+    }
+    .timer-bottom{
+        bottom:.7em;
     }
 }
 
@@ -230,14 +230,10 @@
 }
 @keyframes opacity-blink-unread {
     0%, 25%, 75%, 100% {
-        // background-color: $grey-1;
-        // color:$color-hs-6;
         opacity: .9;
     }
 
     50%{
-        // background-color: $black-2;
-        // color: $black-2;
         opacity: .1;
     }
 }
@@ -251,25 +247,6 @@
     border-radius: 8px;
 
     position:relative;
-
-    // &::before{
-    //     content: '';
-    //     // position:absolute;
-    //     width:.4em;
-    //     height: 100%;
-    //     background-color: #87a3ec;
-    // }
-
-    // &::after{
-    //     content: '';
-    //     position:absolute;
-    //     right:-.1em;
-    //     width:.3em;
-    //     height: 100%;
-    //     // border-radius: 20px 0px 0px 20px;
-    //     border-radius: 0px 20px 20px 0px;
-    //     background-color: $color-hs-5;
-    // }
 }
 
 

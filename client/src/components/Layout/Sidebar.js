@@ -1,8 +1,7 @@
-import { useState} from "react";
-import { NavLink, Outlet} from "react-router-dom";
+import { useState } from "react";
+import { NavLink, Outlet } from "react-router-dom";
 import {useDispatch, useSelector} from 'react-redux';
 import {logout} from '../../store/auth-slice'
-import { resetReduxStates } from "../../store/reset-states";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHouse } from '@fortawesome/free-solid-svg-icons';
@@ -47,10 +46,11 @@ const Sidebar = () => {
         if(isOpenNotification)
             setIsOpenNotification(false);
     }
-
+ 
     const logoutHandler = () =>{
-        resetReduxStates(dispatch);
-        dispatch(logout());
+        dispatch(logout()).unwrap().catch(error => {
+            console.error('Logout failed:', error);
+        });
     }
 
     const menuItem1 = [
@@ -119,7 +119,6 @@ const Sidebar = () => {
                         </div>
                         {
                             menuItem1.map((el, index) =>(
-                                // <NavLink to={el.path} onClick={()=> setIsOpen(false)} key={'el-'+index}  
                                 <NavLink to={el.path} onClick={closeOpenedViewsHandler} key={'el-'+index}  
                                     className={({ isActive}) =>
                                     isActive ? "sidebar-menu-link active-link" : "sidebar-menu-link"
@@ -138,7 +137,6 @@ const Sidebar = () => {
                     <div className="menu-option">
                         {
                              menuItem2.map((el, index) =>(
-                                // <NavLink to={el.path} onClick={()=> setIsOpen(false)} key={'el-'+index}
                                 <NavLink to={el.path} onClick={closeOpenedViewsHandler} key={'el-'+index}
                                     className={({ isActive}) =>
                                     isActive ? "sidebar-menu-link active-link" : "sidebar-menu-link"
@@ -148,13 +146,18 @@ const Sidebar = () => {
                                 </NavLink>
                             ))
                         }
-                        <div className='line'/>
-                        <div className='sidebar-menu-link logout' onClick={logoutHandler}>
+                    
+                    </div>
+
+                    <div className='line'/>
+
+                    <div className="menu-option">
+                         <div className='sidebar-menu-link logout' onClick={logoutHandler}>
                             <div className='sidebar-menu-icon'><FontAwesomeIcon icon={faArrowRightFromBracket} /></div>
                             <div className='sidebar-menu-name'>Logout</div>
                         </div>
-                        
                     </div>
+
                 </div>
             </section>
             

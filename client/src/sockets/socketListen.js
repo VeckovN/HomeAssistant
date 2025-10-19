@@ -17,15 +17,16 @@ const playSound = (soundName) =>{
 export const listenForCommentNotification = async(socket, reduxDispatch) => {
     socket.on(`privateCommentNotify`, (comm) =>{
 
-        const {commentID, comment, fromUsername, date} = comm.newComment;
-        toast.info(`You received Comment from ${fromUsername} `,{
+        //changed 'fromUsername' to 'from' 
+        const {commentID, comment, from, date} = comm.newComment;
+        toast.info(`You received Comment from ${from} `,{
             className:"toast-contact-message"
         })
 
         const notification = comm.notificationObj;
         reduxDispatch(addNotification(notification));
 
-        const newUpdateComment ={commentID, comment, from:fromUsername, date}
+        const newUpdateComment ={commentID, comment, from, date}
         reduxDispatch(updateUnreadComments({newUpdateComment}));
         playSound(announcementSound);
     })
@@ -45,8 +46,9 @@ export const listenForRatingNotfication = async(socket, self_id, reduxDispatch) 
     })
 }
 
-export const listenFormMessage = async(socket, reduxDispatch) =>{
+export const listenFormMessage = async(socket, reduxDispatch, getCurrentUserRoomID ) =>{
     socket.on("messageResponseNotify", (notifyObj) =>{
+        const currentUserRoomID = getCurrentUserRoomID();
         const {roomID, fromUsername, unreadUpdateStatus, createRoomNotification} = notifyObj;
 
         if(createRoomNotification){
@@ -54,22 +56,36 @@ export const listenFormMessage = async(socket, reduxDispatch) =>{
                 className:"toast-contact-message"
             })
             reduxDispatch(addNotification(createRoomNotification));
+            playSound(messageSound);
         }
         else{
+             // If user is viewing this room, Don't show message 
+            if(roomID === currentUserRoomID){
+                reduxDispatch(updateUnreadMessages({roomID, unreadUpdateStatus}))
+                return 
+            }
+
             toast.info(`You received Message from ${fromUsername}`,{
                 className:"toast-contact-message"
             })
+
+            playSound(messageSound);
         }
         
         reduxDispatch(updateUnreadMessages({roomID, unreadUpdateStatus}))
-        playSound(messageSound);
       })
 }
 
-//users Joined in room (room.join(io.to(roomKey).emit()) listen for these events
-export const listenOnMessageInRoom = (socket, dispatch) =>{
+//users Joined in room 'room.join(io.to(roomKey).emit()' listen for these events
+export const listenOnMessageInRoom = (socket, dispatch, getCurrentRoomID) =>{
     socket.on("messageRoom", (contextObj) =>{
-        dispatch({type:"SEND_MESSAGE", data:contextObj})
+
+        const currentRoomID = getCurrentRoomID();
+        const messageRoomID = contextObj.roomID;
+
+        if(currentRoomID === messageRoomID) {
+            dispatch({type:"SEND_MESSAGE", data:contextObj})
+        }
     })
 }
 

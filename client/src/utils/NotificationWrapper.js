@@ -8,7 +8,7 @@ const NotificationWrapper = ({children}) =>{
     const {user, message, error, success} = useSelector((state) => state.auth) //null when not exists
     const navigate = useNavigate();
 
-    //LISTENER FOR SHOWING Login NOTIFICATION
+    //listener for showing login notification
     useEffect(()=>{
         if(error)
             toast.error(message,{
@@ -22,14 +22,6 @@ const NotificationWrapper = ({children}) =>{
             })
         }
     },[user,error,success])
-
-     //useLayoutEffect is a version of useEffect that fires before the browser repaints the screen.
-    //use if notice any visual artifact.Since it runs synchronously may reduce performance
-    // useLayoutEffect( ()=>{
-    //     // document.documentElement.scrollTo(0,0);
-    //     window.scrollTo(0,0);
-    // },[pathname])
-
 
     return (
         <>

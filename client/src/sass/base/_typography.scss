@@ -1,12 +1,7 @@
-//h1, h2, h3 other headers 
-
 /* set base values */
 $text-base-size: 1em;
 $text-scale-ratio: 1.1;
 $line-height: 1.5;
-
-:root{    
-}
 
 // /* type scale */
 // $text-xs: calc(1em / $text-scale-ratio);
@@ -16,7 +11,6 @@ $line-height: 1.5;
 // $text-xl: calc(1em * $text-scale-ratio) * $text-scale-ratio * $text-scale-ratio;
 // $text-xxl: calc(1em * $text-scale-ratio) * $text-scale-ratio * $text-scale-ratio * $text-scale-ratio;
 // $text-xxxl: calc(1em * $text-scale-ratio * $text-scale-ratio * $text-scale-ratio * $text-scale-ratio * $text-scale-ratio);
-
 
 
 $fs1:1.3rem;
@@ -43,9 +37,3 @@ $fs-em-8:.6em;
 $fs-em-9:.5em;
 $fs-em-10:.4em;
 $fs-em-11:.3em;
-
-// h1,h2,h3,h4{
-
-// }
-
-// clamp(min, val, max)

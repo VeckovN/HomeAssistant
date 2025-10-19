@@ -1,6 +1,4 @@
-//Adding session timeout in a page in Reactjs
-//https://stackoverflow.com/questions/50036145/adding-session-timeout-in-a-page-in-reactjs
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {login, reset as resetRedux} from '../../store/auth-slice.js';
 import {getUserUnreadMessages} from '../../store/unreadMessagesSlice.js'
 import {getHouseworkerUnreadComments} from '../../store/unreadCommentSlice.js';
@@ -25,6 +23,7 @@ const Login = () =>{
     const {register, handleSubmit, reset, setError, setValue ,formState, formState:{isSubmitSuccessful}} = useForm({defaultValues:initialState, resolver: zodResolver(schema)});
     const {errors} = formState; 
     const dispatch = useDispatch();   
+    const loading = useSelector(state => state.auth.loading);
 
     const onSubmitHandler = (formValues) =>{
         //error is taken from trunk in redux -> return thunkAPI.rejectWithValue(message);
@@ -37,6 +36,7 @@ const Login = () =>{
                     dispatch(getHouseworkerUnreadComments(formValues.username));
                     dispatch(getHouseworkerNotifications(formValues.username));
                 }
+                dispatch(resetRedux());
             })
             .catch((rejectedValue) => {
                 const errorType = rejectedValue.errorType;
@@ -48,14 +48,15 @@ const Login = () =>{
                         setValue('password', '', { shouldValidate: false })
                     }
                 }
+                dispatch(resetRedux());
             });
-        dispatch(resetRedux());
     }
 
     return (
         <LoginForm 
             register={register}
             errors={errors}
+            isLoading={loading}
             handleSubmit={handleSubmit}
             onSubmitHandler={onSubmitHandler}
         />
