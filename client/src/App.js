@@ -47,7 +47,9 @@ function App() {
                   <ClientLayout />
               }>
                 <Route index path="/" element={
-                  <ClientHome socket={socket} />
+                  <RouteSuspense client={true}>
+                    <ClientHome socket={socket} />
+                  </RouteSuspense>
                 }/>
                 <Route path="/login" element={
                   <RouteSuspense client={true}>
@@ -125,13 +127,6 @@ function App() {
                     <PrivateRoute>
                       <HouseworkerProfile/>
                     </PrivateRoute>
-                  </RouteSuspense>
-                }/>
-                <Route path="/login" element={
-                  <RouteSuspense>
-                    <NotAuthRoute>
-                      <Login/>
-                    </NotAuthRoute>
                   </RouteSuspense>
                 }/>
                 <Route path="*" element={

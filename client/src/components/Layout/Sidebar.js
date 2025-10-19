@@ -1,8 +1,7 @@
-import { useState, startTransition} from "react";
-import { NavLink, Outlet, useNavigate} from "react-router-dom";
+import { useState } from "react";
+import { NavLink, Outlet } from "react-router-dom";
 import {useDispatch, useSelector} from 'react-redux';
 import {logout} from '../../store/auth-slice'
-import { resetReduxStates } from "../../store/reset-states";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHouse } from '@fortawesome/free-solid-svg-icons';
@@ -23,7 +22,6 @@ import '../../sass/layout/_sidebar.scss';
 
 const Sidebar = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const {unreadCount} = useSelector((state) => state.unreadMessages);
     const {unreadCommentsCount} = useSelector((state) => state.unreadComments)
@@ -49,22 +47,10 @@ const Sidebar = () => {
             setIsOpenNotification(false);
     }
  
-    const logoutHandler = async() =>{
-        try{
-            // Stop lazy loading and prevent Suspense errors during logout
-            navigate('/', { replace: true });
-
-            // Wrap state resets in startTransition to mark them as low-priority updates
-            // This prevents React errors when resetting multiple Redux slices during navigation
-            startTransition(() => {
-                resetReduxStates(dispatch);
-            });
-
-            await dispatch(logout()).unwrap();
-        }
-        catch (error){
+    const logoutHandler = () =>{
+        dispatch(logout()).unwrap().catch(error => {
             console.error('Logout failed:', error);
-        }
+        });
     }
 
     const menuItem1 = [
