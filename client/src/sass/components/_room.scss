@@ -112,10 +112,14 @@
 
     .room-info{
         display:flex;
+        align-items: center;
+        min-width: 0;
     }
 
-
     .photo{
+        //prevents shrinking due to 'min-width:0' in parrent container that 
+        //allowed chidrend to shrink within flex layout
+        flex-shrink: 0;
         margin-left:20px;
         width:3em;
         height: 3em;
@@ -142,23 +146,35 @@
     }
     
     .room-contact{
-        // height: 43px;
-        // width:4em;
         white-space: nowrap;
         text-align: start;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        min-width: 0; // allows flex children to shrink within flex layout
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
 
         .name {
             margin: 0 0 0 20px;
             font-family:'Montserrat', sans-serif;
             font-size: 11pt;
             color:$white;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .message {
             margin: 6px 0 0 20px;
-            // font-family:'Montserrat', sans-serif;
             font-family: $message-font-family;
             font-size: 9pt;
             color:$white;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     }
     .online{
@@ -176,6 +192,7 @@
         background-color: #515151 ;
         border: 1px solid $black;
         border-radius: 15px;
+        text-align: center;
     }
 }
 
