@@ -108,7 +108,7 @@ const Room = memo(({
                         </>
                         }
                     </div>
-                    <div className={`timer ${info.users.length === 4 ? 'timer-bottom' : ''} `}>{info.lastMessage?.dateDiff || "just now"}</div>
+                    <div className={`timer ${info.users.length >= 4 ? 'timer-bottom' : ''} `}>{info.lastMessage?.dateDiff || "just now"}</div>
                 </div>
 
                 :  
