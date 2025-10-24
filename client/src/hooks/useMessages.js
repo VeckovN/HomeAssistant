@@ -217,6 +217,9 @@ const useMessages = (socket, user) =>{
 
     const onRoomClickHanlder = useCallback(async (e) =>{
         const roomID = e.target.value;
+        if(showMenu)
+            setShowMenu(false);
+
         try{
             await enterRoomAfterAction(roomID, true);
             setShowChatView(true);  
@@ -224,7 +227,7 @@ const useMessages = (socket, user) =>{
         catch(err){
             handlerError(err);
         }
-    },[enterRoomAfterAction]);
+    },[enterRoomAfterAction, showMenu]);
 
     const onDeleteRoomHandler = useCallback(async(e) => {   
         const roomID = e.target.value;
