@@ -2,7 +2,7 @@ const houseworkerModel = require('../model/HouseWorker');
 const userModel = require('../model/User')
 const bcrypt = require('bcrypt');
 
-const getHouseworkerByUsername = async(req,res)=>{e
+const getHouseworkerByUsername = async(req,res)=>{
     const HouseworkerUsername = req.params.username;
     try{
         const result = await houseworkerModel.findByUsername(HouseworkerUsername);
@@ -285,9 +285,7 @@ const udpateHouseworker = async(req, res) =>{
         if(newData.password)
             newData.password = bcrypt.hashSync(newData.password, 12);
 
-        //picturePath is part of UserModal 
-        // const picturePath = req.files[0]?.filename;
-        const file = req.files.avatar;
+        const file = req.files?.avatar;
         const {address, phone_number, description, city, professions, ...userModalInfo} = newData;
         // const newUserInfo ={...userModalInfo, file, picturePath}; //userModal update info
         const newUserInfo ={...userModalInfo, file}; //userModal update info
