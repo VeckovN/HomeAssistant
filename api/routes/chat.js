@@ -16,33 +16,32 @@ const {
     getUnreadMessagesTotalCount,
     removeUnreadMessagesFromRoom,
     removeAllUnreadMessagesFromRoom,
-    setUnreadMessagesForUser,
     forwardUnreadMessages
 } = require('../controller/chatController'); 
 const router = express.Router();
 
-// "api/chat/"
-// '/room/:id/messages/offset=0?size=50 ->>>> with req.query we can take offset and size value from URL
-//http://localhost:5000/api/chat/room/1:2/messages?offset=0&size=50
-
-router.get('/room/:id/messages', isLogged, getMessages);
-router.get('/room/message/:id/:pageNumber', isLogged, getMoreMessages);
-//with query.params as /messages?roomID=0&pageNumber=10 // but not too smart to show roomID in urls
-// router.get('/room/messages/', isLogged, getMoreMessages); 
-router.post('/room/message', isLogged, postMessage);
-router.delete('/room/delete/:roomID', checkClient, deleteRoom);
-router.delete('/room/removeUser/:roomID/:username', checkClient, removeUserFromRoom);
-router.post('/room/addUser', checkClient, addUserToRoom);
-router.get('/room/onlineUsers/:userID', isLogged, getOnlineUsers)
-router.get('/room/firstRoom/:userID', isLogged, getFirstRoomID)
-router.get('/room/friends/:userID', isLogged, getFriendsList);
-router.get('/room/unread/:username', isLogged, getAllUnreadMessages);
-router.put('/room/unread/forward', isLogged, forwardUnreadMessages);
-router.get('/room/unread/count/:userID', isLogged, getUnreadMessagesTotalCount);
-router.delete('/room/unread/delete/all/:roomID/:clientID', isLogged, removeAllUnreadMessagesFromRoom);
-router.delete('/room/unread/delete/:roomID/:userID', isLogged, removeUnreadMessagesFromRoom);
-router.get('/conversationCount/:userID', checkHouseworker, getConversationCount);
 router.get('/rooms/:username', isLogged, getAllRooms);
+router.delete('/rooms/:roomID', checkClient, deleteRoom);
 
+router.get('/rooms/:roomID/messages', isLogged, getMessages);
+router.get('/rooms/:roomID/messages/:pageNumber', isLogged, getMoreMessages);
+router.post('/rooms/messages', isLogged, postMessage);
+
+router.post('/rooms/users', checkClient, addUserToRoom);
+router.delete('/rooms/:roomID/users/:username', checkClient, removeUserFromRoom);
+
+router.delete('/rooms/:roomID/unread/all/:clientID', isLogged, removeAllUnreadMessagesFromRoom);
+router.delete('/rooms/:roomID/unread/:userID', isLogged, removeUnreadMessagesFromRoom);
+
+router.get('/unread/:username', isLogged, getAllUnreadMessages);
+router.put('/unread/forward', isLogged, forwardUnreadMessages);
+router.get('/unread/count/:userID', isLogged, getUnreadMessagesTotalCount);
+
+router.get('/online-users/:userID', isLogged, getOnlineUsers)
+router.get('/friends/:userID', isLogged, getFriendsList);
+
+router.get('/users/:userID/firstRoom', isLogged, getFirstRoomID)
+
+router.get('/stats/conversation-count/:userID', checkHouseworker, getConversationCount);
 
 module.exports = router;

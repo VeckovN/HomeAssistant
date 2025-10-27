@@ -14,7 +14,6 @@ const getClientByUsername = (req,res)=>{
         //500 Internal Server Error for unexpected errors in fetching data
         res.status(500).json({error: err.message || "Error with client username"});
     });
-
 }
 
 const getClients = async(req,res)=>{
@@ -52,8 +51,6 @@ const getComments = async(req,res)=>{
         res.status(200).json(result);
     }
     catch(err){
-        // res.send(err).status(400);
-        // res.status(404).json({error:`Comments not found`});
         console.error(err);
         res.status(500).json({error: err.message || "Error finding comments"});
     }
@@ -68,7 +65,6 @@ const rateHouseworker = async (req,res)=>{
     }
     catch(err){
         console.error(err);
-        // 500 Internal Server Error for unexpected server errors during rating
         res.status(500).json({error: err.message || "Error rating houseworker"});
     }
 }
@@ -84,7 +80,6 @@ const deleteComment = async(req,res) =>{
         console.error(err);
         res.status(500).json({error: err.message || "Error deleting comment"});
     }
-    
 }
 
 const commentHouseworker = async(req, res)=>{
@@ -113,7 +108,7 @@ const createClient = async(req,res)=>{
 }
 
 const udpateClient = async(req,res)=>{
-    const file = req.files.avatar;
+    const file = req.files?.avatar;
     const newInfo = {...req.body, file};
     const username = req.session.user.username;
     try{
@@ -160,7 +155,7 @@ const getRecommendedHouseworkers = async(req,res)=>{
 }
 
 module.exports = {
-    getClientByUsername:getClientByUsername,
+    getClientByUsername,
     getClients:getClients,
     getComments:getComments, 
     rateHouseworker,

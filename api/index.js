@@ -66,7 +66,7 @@ io.use(function(socket, next) {
 
 //Api routes
 app.use("/api/clients", clientRoute);
-app.use("/api/houseworker", houseworkerRoute);
+app.use("/api/houseworkers", houseworkerRoute);
 app.use("/api/", authRoute);
 app.use('/api/chat', chatRoute);
 app.use('/api/health', healthRoute);

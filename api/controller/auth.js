@@ -126,40 +126,8 @@ const logout = async(req,res)=>{
         return res.json({error:"You're not logged"})
 }
 
-const putPicturePathToRedisUsers = async(req,res) =>{
-    const usersInfo = await userModel.getAllUsersnameWithPicturePath();
-    try{
-        await Promise.all(usersInfo.map(async (el) =>{
-            let userID = parseInt(el.id);
-            let hsetKey = `user:${userID}`
-            await hset(hsetKey, 'picturePath', el.picturePath);
-        }));
-
-        return res.send("SUCCESSFULLY PICTURE PUT TO REDIS");
-    }
-    catch(error){
-        console.error("Error with puting picturePath to Redis User hash")
-    }
-}
-
-const changePassword = async(req, res) => {
-    const username = req.body.username
-    const password = req.body.password;
-
-    try{
-        const result = await UserModel.changePassword(username, password);
-        res.send(result);
-    }
-    catch(err){
-        console.error(err);
-        res.status(400);
-    }
-}
-
 module.exports ={
     register,
     login,
-    logout,
-    changePassword,
-    putPicturePathToRedisUsers,
+    logout
 }

@@ -29,6 +29,6 @@ export const registerService = async(userFormData) =>{
 }
 
 export const logoutService = async() =>{
-    await baseAxios.get('/logout');
+    await baseAxios.post('/logout');
 }
 

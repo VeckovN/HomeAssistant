@@ -33,34 +33,40 @@ const {
 const router = express.Router();
 
 router.get('/', getHouseworkers); 
-router.put('/update', checkHouseworker, udpateHouseworker);
-//http://localhost:5000/api/houseworker/filter?gender=male&city=Beograd  --- "?" between filter and params
 router.get('/filter', getHouseworkerWithFilters);
-router.get('/info', checkHouseworker, getHouseworkerInfo )
-router.get('/count', getHouseworkerUsersCount)
 
-router.delete('/:username', checkHouseworker, deleteHouseworker);
-router.get('/rating', checkHouseworker, getRatings);
-router.get('/rating/:username', getRatingUsername);
-router.get('/comments/unread/:username', checkHouseworker, getHouseworkerUnreadComments);
-router.get('/comments/unread/mark/:username', checkHouseworker, markHouseworkerUnreadComments);
-router.get('/comments/:username/:pageNumber', checkClient, getComments);
-router.get('/comments/count/:username', getHouseworkerCommentsCount)
-router.get('/ourcomments/:pageNumber', checkHouseworker, getOurComments)
-router.get('/professions/', checkHouseworker, getProfessions)
-router.get('/professions/all', getAllProfessions)
-router.get('/professions/:username', getProfessionsByUsername)
-router.get('/notifications/:username/', checkHouseworker, getNotifications);
-router.get('/notifications/:username/:batchNumber', checkHouseworker, getMoreNotifications);
-router.put('/notifications/mark', checkHouseworker, markUnreadNotification);
-router.put('/notifications/mark/:notificationID', checkHouseworker, markUnreadNotification);
-
-router.delete('/professions/:profession', checkHouseworker, deleteProfession);
-router.put('/professions/update', checkHouseworker, updateProfessionWorkingHour);
+router.get('/stats/count', getHouseworkerUsersCount)
 router.get('/cities',  getCities);
-router.get('/:username', checkHouseworker, getHouseworkerByUsername);
-router.post('/professions/add', checkHouseworker, addProfession);
+
+router.put('/profile', checkHouseworker, udpateHouseworker);
+router.get('/profile', checkHouseworker, getHouseworkerInfo )
+
+router.get('/rating', checkHouseworker, getRatings);
+router.get('/:username/rating', getRatingUsername);
+
+router.get('/professions', checkHouseworker, getProfessions)
+router.put('/professions', checkHouseworker, updateProfessionWorkingHour);
+router.post('/professions', checkHouseworker, addProfession);
+router.get('/professions/all', getAllProfessions)
+router.delete('/professions/:profession', checkHouseworker, deleteProfession);
+
+router.get('/comments/my/:pageNumber', checkHouseworker, getOurComments)
+router.get('/:username/comments/unread', checkHouseworker, getHouseworkerUnreadComments);
+router.put('/:username/comments/unread/mark', checkHouseworker, markHouseworkerUnreadComments);
+router.get('/:username/comments/count', getHouseworkerCommentsCount)
+//this dynamic '/comments/:pageNumber' below other specific
+router.get('/:username/comments/:pageNumber', checkClient, getComments); 
+
+router.get('/:username/notifications', checkHouseworker, getNotifications);
+router.get('/:username/notifications/:batchNumber', checkHouseworker, getMoreNotifications);
+router.put('/notifications/mark', checkHouseworker, markUnreadNotification);
+//must be below /notifications/mark => due to this :notificationID that comes after it
+// router.put('/notifications/mark/:notificationID', checkHouseworker, markUnreadNotification);
+router.get('/:username/professions', getProfessionsByUsername)
+router.get('/:username/professions/summary', getHouseworkerProfessionsAndRating)
+
 router.get('/home/:username', isLogged, getHomeInfo);
-router.get('/professionsandrating/:username', getHouseworkerProfessionsAndRating)
+router.get('/:username', checkHouseworker, getHouseworkerByUsername);
+router.delete('/:username', checkHouseworker, deleteHouseworker);
 
 module.exports = router;

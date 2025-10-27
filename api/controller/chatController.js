@@ -1,10 +1,7 @@
 const chatModel = require('../model/Chat')
 
-//using req.query because url .../message?offset=0?size=50
-//BECASE THIS IS GET METHOD, if we wanna post/put we could use req.body to take value from body of request
-//http://localhost:5000/api/chat/room/1:2/messages?offset=0&size=50
 const getMessages = async(req,res)=>{
-    const roomID = req.params.id;
+    const roomID = req.params.roomID;
     const offset = req.query.offset;
     const size = req.query.size;
     try{
@@ -13,13 +10,12 @@ const getMessages = async(req,res)=>{
     }
     catch(err){
         console.error(err);
-        //err.message -> throwned error message from getMessage caller function
         res.status(500).json({error: err.message || "Message Errors"});
     }
 }
 
 const getMoreMessages = async(req,res) =>{
-    const roomID = req.params.id;
+    const roomID = req.params.roomID;
     const pageNumber = req.params.pageNumber;
     try{
         const messages = await chatModel.getMoreMessages(roomID, pageNumber);
