@@ -16,16 +16,18 @@ const {
 const router = express.Router();
 
 router.get('/', checkClient, getClients);
-router.put('/update', checkClient, udpateClient);
-router.get('/info', checkClient, getClientInfo)
+
+router.put('/profile', checkClient, udpateClient);
+router.get('/profile', checkClient, getClientInfo)
+
+router.get('/recommendations/:username' , isLogged, getRecommendedHouseworkers);
+
+router.post('/rating', checkClient, rateHouseworker);
+
+router.post('/comments', isLogged, commentHouseworker);
+router.get('/comments/:username',checkClient, getComments);
+router.delete('/comments', checkClient, deleteComment);
 
 router.get('/:username',checkHouseworker, getClientByUsername);
-router.delete('/comment', checkClient, deleteComment);
-router.get('/comments/:username',checkClient, getComments);
-router.get('/recommended/:username' , isLogged, getRecommendedHouseworkers);
-//HERE WONT WORK, because exists get route with one '/string' above 
-//just put it before router.get('/:username',
-router.post('/rate', checkClient, rateHouseworker);
-router.post('/comment', isLogged, commentHouseworker);
 
 module.exports = router;

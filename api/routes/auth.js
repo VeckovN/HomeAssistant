@@ -4,8 +4,6 @@ const {
     register,
     login,
     logout,
-    changePassword,
-    putPicturePathToRedisUsers
 }
 = require('../controller/auth');
 
@@ -13,8 +11,5 @@ const router = express.Router();
 
 router.post('/register', register);
 router.post('/login', login);
-router.get('/logout', logout)
-router.post('/changePassword', changePassword)
-router.get('/redisUser', putPicturePathToRedisUsers);
-
+router.post('/logout', logout) 
 module.exports = router;
