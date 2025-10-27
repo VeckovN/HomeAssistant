@@ -4,7 +4,8 @@ import { baseAxios, authenticatedAxios } from '../utils/AxiosConfig';
 
 export const getUserData = async() =>{
     try{
-        const result = await authenticatedAxios.get(`/houseworker/info`);
+        // const result = await authenticatedAxios.get(`/houseworkers/info`);
+        const result = await authenticatedAxios.get(`/houseworkers/profile`);
         const houseworkerResult = result.data;
         return houseworkerResult;
     }
@@ -15,7 +16,7 @@ export const getUserData = async() =>{
 
 export const getHouseworkers = async() =>{
     try{
-        const result = await baseAxios.get(`/houseworker`);
+        const result = await baseAxios.get(`/houseworkers`);
         const houseworkerResult = result.data;
         return houseworkerResult;
     }
@@ -26,7 +27,8 @@ export const getHouseworkers = async() =>{
 
 export const getHouseworkersCount = async() =>{
     try{
-        const result = await authenticatedAxios.get(`/houseworker/count`)
+        // const result = await authenticatedAxios.get(`/houseworkers/count`)
+        const result = await authenticatedAxios.get(`/houseworkers/stats/count`)
         const count = result.data;
         return count;
     }
@@ -37,7 +39,8 @@ export const getHouseworkersCount = async() =>{
 
 export const updateHouseworker = async(formData) =>{
     try{
-         await authenticatedAxios.put(`/houseworker/update/`, formData, {
+        //  await authenticatedAxios.put(`/houseworkers/update/`, formData, {
+         await authenticatedAxios.put(`/houseworkers/profile`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -50,7 +53,7 @@ export const updateHouseworker = async(formData) =>{
 
 export const updateProfessionWorkingHour = async(profession, working_hour) =>{
     try{
-        await authenticatedAxios.put(`/houseworker/professions/update/`, {profession, working_hour});
+        await authenticatedAxios.put(`/houseworkers/professions`, {profession, working_hour});
     }
     catch(err){
         ThrowErorr(err);
@@ -60,7 +63,8 @@ export const updateProfessionWorkingHour = async(profession, working_hour) =>{
 //user of authenticated user(username taken from session data)
 export const getAuthenticatedUserComments = async(pageNumber) =>{
     try{
-        const result = await authenticatedAxios.get(`/houseworker/ourcomments/${pageNumber}`);
+        // const result = await authenticatedAxios.get(`/houseworkers/ourcomments/${pageNumber}`);
+        const result = await authenticatedAxios.get(`/houseworkers/comments/my/${pageNumber}`);
         const comms = result.data;
         return comms;
     }
@@ -71,7 +75,8 @@ export const getAuthenticatedUserComments = async(pageNumber) =>{
 
 export const getComments = async(username, pageNumber) =>{
     try{
-        const result = await authenticatedAxios.get(`/houseworker/comments/${username}/${pageNumber}`);
+        // const result = await authenticatedAxios.get(`/houseworkers/comments/${username}/${pageNumber}`);
+        const result = await authenticatedAxios.get(`/houseworkers/${username}/comments/${pageNumber}`);
         const comms = result.data;
         return comms;
     }
@@ -82,7 +87,7 @@ export const getComments = async(username, pageNumber) =>{
 
 export const getUnreadComments = async(username) =>{
     try{
-        const result = await authenticatedAxios.get(`/houseworker/comments/unread/${username}`);
+        const result = await authenticatedAxios.get(`/houseworkers/${username}/comments/unread`);
         const comms = result.data;
         return comms;
     }
@@ -93,7 +98,7 @@ export const getUnreadComments = async(username) =>{
 
 export const markUnreadComments = async(username) =>{
     try{
-        const result = await authenticatedAxios.get(`/houseworker/comments/unread/mark/${username}`);
+        const result = await authenticatedAxios.put(`/houseworkers/${username}/comments/unread/mark`);
         const comms = result.data;
         return comms;
     }
@@ -104,7 +109,8 @@ export const markUnreadComments = async(username) =>{
 
 export const postComment = async(newComment) =>{
     try{
-        const result = await authenticatedAxios.post(`/clients/comment`, newComment);
+        // const result = await authenticatedAxios.post(`/clients/comment`, newComment);
+        const result = await authenticatedAxios.post(`/clients/comments`, newComment);
         const commentResult = result.data;
         return commentResult;
     }catch(err){
@@ -114,10 +120,12 @@ export const postComment = async(newComment) =>{
 
 export const rateUser = async(rateObject) =>{
     try{
-        const postResult = await authenticatedAxios.post('/clients/rate', rateObject)
+        // const postResult = await authenticatedAxios.post('/clients/rate', rateObject)
+        const postResult = await authenticatedAxios.post('/clients/rating', rateObject)
         const postResultData = postResult.data;
         //fetch newRate(new calcuation of avarage rate)
-        const result = await baseAxios.get(`/houseworker/rating/${rateObject.houseworker}`)
+        // const result = await baseAxios.get(`/houseworkers/rating/${rateObject.houseworkers}`)
+        const result = await baseAxios.get(`/houseworkers/${rateObject.houseworkers}/rating`)
         const newAvgRate = result.data;
         
         // rate:rateValue, notification:notification  - postResult
@@ -130,7 +138,8 @@ export const rateUser = async(rateObject) =>{
 
 export const getRating = async(username) =>{
     try{
-        const result = await baseAxios.get(`/houseworker/rating/${username}`)
+        // const result = await baseAxios.get(`/houseworkers/rating/${username}`)
+        const result = await baseAxios.get(`/houseworkers/${username}/rating`)
         const ratingValue = result.data;
         return ratingValue;
     }
@@ -143,7 +152,7 @@ export const getRating = async(username) =>{
 //get all professions of the user(based on session.user ) 
 export const getProfessions = async()=>{
     try{
-        const result = await baseAxios.get(`/houseworker/professions/`)
+        const result = await baseAxios.get(`/houseworkers/professions`)
         const professionsArray = result.data; 
         return professionsArray;
     }
@@ -154,7 +163,8 @@ export const getProfessions = async()=>{
 
 export const getProfessionsByUsername = async(username)=>{
     try{
-        const result = await baseAxios.get(`/houseworker/professions/${username}`)
+        // const result = await baseAxios.get(`/houseworkers/professions/${username}`)
+        const result = await baseAxios.get(`/houseworkers/${username}/professions`)
         const professionsArray = result.data; 
         return professionsArray;
     }
@@ -165,7 +175,8 @@ export const getProfessionsByUsername = async(username)=>{
 
 export const addProfession = async(label, working_hour) =>{
     try{
-        const result = await baseAxios.post('/houseworker/professions/add', {profession:label, working_hour:working_hour});
+        // const result = await baseAxios.post('/houseworkers/professions/add', {profession:label, working_hour:working_hour});
+        const result = await baseAxios.post('/houseworkers/professions', {profession:label, working_hour:working_hour});
         return result;
     }
     catch(err){
@@ -175,7 +186,7 @@ export const addProfession = async(label, working_hour) =>{
 
 export const deleteProfession = async(profession) =>{
     try{
-        const result = await baseAxios.delete(`/houseworker/professions/${profession}`);
+        const result = await baseAxios.delete(`/houseworkers/professions/${profession}`);
         return result;
     }
     catch(err){
@@ -185,7 +196,8 @@ export const deleteProfession = async(profession) =>{
 
 export const getCommentsCount = async(username) =>{
     try{
-        const result = await baseAxios.get(`/houseworker/comments/count/${username}`)
+        // const result = await baseAxios.get(`/houseworkers/comments/count/${username}`)
+        const result = await baseAxios.get(`/houseworkers/${username}/comments/count`)
         const count = result.data;
         return count;
     }catch(err){
@@ -195,7 +207,7 @@ export const getCommentsCount = async(username) =>{
 
 export const getUnreadCommentsCount = async(username) =>{
     try{
-        const result = await baseAxios.get(`/houseworker/comments/count/unread/${username}`)
+        const result = await baseAxios.get(`/houseworkers/comments/count/unread/${username}`)
         const count = result.data;
         return count;
     }catch(err){
@@ -205,7 +217,8 @@ export const getUnreadCommentsCount = async(username) =>{
 
 export const getConversationCount = async(userRedisID) =>{
     try{
-        const result = await baseAxios.get(`/chat/conversationCount/${userRedisID}`)
+        // const result = await baseAxios.get(`/chat/conversationCount/${userRedisID}`)
+        const result = await baseAxios.get(`/chat/stats/conversation-count/${userRedisID}`)
         const count = result.data;
         return count;
     }
@@ -216,7 +229,7 @@ export const getConversationCount = async(userRedisID) =>{
 
 export const getAllCities = async() =>{
     try{
-        const result = await baseAxios.get(`/houseworker/cities`);
+        const result = await baseAxios.get(`/houseworkers/cities`);
         const cities = result.data;
         return cities;
     }
@@ -228,7 +241,7 @@ export const getAllCities = async() =>{
 //get all professions that exist(provided by houseworkers)
 export const getAllProfessions = async() =>{
     try{
-        const result = await baseAxios.get(`/houseworker/professions/all`);
+        const result = await baseAxios.get(`/houseworkers/professions/all`);
         const professionsResult = result.data;
         return professionsResult;
     }
@@ -239,7 +252,7 @@ export const getAllProfessions = async() =>{
 
 export const getHouseworkerByFilter = async(params) =>{
     try{
-        const result = await baseAxios.get(`/houseworker/filter?${params}`);
+        const result = await baseAxios.get(`/houseworkers/filter?${params}`);
         const houseworkers = result.data;
         return houseworkers;
     }
@@ -250,7 +263,7 @@ export const getHouseworkerByFilter = async(params) =>{
 
 export const getHomeInfo= async(username) =>{
     try{
-        const result = await authenticatedAxios.get(`/houseworker/home/${username}`)
+        const result = await authenticatedAxios.get(`/houseworkers/home/${username}`)
         const homeInfo = result.data;
         return homeInfo;
     }
@@ -263,8 +276,8 @@ export const getHomeInfo= async(username) =>{
 export const getProfessionsAndCities = async() =>{
     try{
         const response = await axios.all([
-            await baseAxios.get('/houseworker/professions/all'),
-            await baseAxios.get('/houseworker/cities')
+            await baseAxios.get('/houseworkers/professions/all'),
+            await baseAxios.get('/houseworkers/cities')
         ]);
         return {houseworker_professions: response[0].data, houseworker_cities: response[1].data}
     }
@@ -277,11 +290,13 @@ export const getProfessionsAndCities = async() =>{
 export const getProfessionsAndRating = async(username) =>{
     try{
         // const response = await axios.all([
-        //     await axios.get(BASE_URL + `houseworker/professions/${username}`),
-        //     await axios.get(BASE_URL + `houseworker/rating/${username}`)
+        //     await axios.get(BASE_URL + `houseworkers/professions/${username}`),
+        //     await axios.get(BASE_URL + `houseworkers/rating/${username}`)
         // ])
         // return {professions:response[0].data, rating:response[1].data}
-        const result = await baseAxios.get(`/houseworker/professionsandrating/${username}`)
+        // const result = await baseAxios.get(`/houseworkers/professionsandrating/${username}`)
+        // const result = await baseAxios.get(`/houseworkers/professions/summary/${username}`)
+        const result = await baseAxios.get(`/houseworkers/${username}/professions/summary`)
         const houseworkerData = result.data;
 
         return {professions:houseworkerData.professions, rating:houseworkerData.avgRating}
@@ -294,7 +309,8 @@ export const getProfessionsAndRating = async(username) =>{
 
 export const getNotifications = async(username) =>{
     try{
-        const result = await authenticatedAxios.get(`/houseworker/notifications/${username}?offset=0&size=10`)
+        // const result = await authenticatedAxios.get(`/houseworkers/notifications/${username}?offset=0&size=10`)
+        const result = await authenticatedAxios.get(`/houseworkers/${username}/notifications?offset=0&size=10`)
         const notifications = result.data;
         return notifications;
     }
@@ -305,7 +321,8 @@ export const getNotifications = async(username) =>{
 
 export const getMoreNotifications = async(username, batchNumber) =>{
     try{
-        const result = await authenticatedAxios.get(`/houseworker/notifications/${username}/${batchNumber}`)
+        // const result = await authenticatedAxios.get(`/houseworkers/notifications/${username}/${batchNumber}`)
+        const result = await authenticatedAxios.get(`/houseworkers/${username}/notifications/${batchNumber}`)
         const notifications = result.data;
         return notifications;
     }
@@ -316,7 +333,7 @@ export const getMoreNotifications = async(username, batchNumber) =>{
 
 export const markNotificationAsRead = async(notificationID, batchNumber) =>{
     try{
-        await authenticatedAxios.put(`/houseworker/notifications/mark/`, {notificationID, batchNumber})
+        await authenticatedAxios.put(`/houseworkers/notifications/mark`, {notificationID, batchNumber})
     }
     catch(err){
         ThrowErorr(err);

@@ -3,7 +3,8 @@ import { authenticatedAxios } from '../utils/AxiosConfig';
 
 export const getUserData = async() =>{
     try{
-        const result = await authenticatedAxios.get(`/clients/info`)
+        // const result = await authenticatedAxios.get(`/clients/info`)
+        const result = await authenticatedAxios.get(`/clients/profile`)
         const client_data = result.data;
         return client_data;
     }
@@ -14,7 +15,8 @@ export const getUserData = async() =>{
 
 export const updateClient = async(formData) =>{
     try{
-        await authenticatedAxios.put(`/clients/update/`, formData, {
+        // await authenticatedAxios.put(`/clients/update/`, formData, {
+        await authenticatedAxios.put(`/clients/profile/`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -31,7 +33,8 @@ export const updateClient = async(formData) =>{
 export const deleteComment = async(client_username, comment_id) =>{
     try{
         const params = {client_username: client_username, comment_id: comment_id}
-        await authenticatedAxios.delete(`/clients/comment`, {params})
+        // await authenticatedAxios.delete(`/clients/comment`, {params})
+        await authenticatedAxios.delete(`/clients/comments`, {params})
     }
     catch(err){
         ThrowErorr(err);
@@ -40,7 +43,8 @@ export const deleteComment = async(client_username, comment_id) =>{
 
 export const getRecommended= async(username) =>{
     try{
-        const result = await authenticatedAxios.get(`/clients/recommended/${username}`);
+        // const result = await authenticatedAxios.get(`/clients/recommended/${username}`);
+        const result = await authenticatedAxios.get(`/clients/recommendations/${username}`);
         const recommendedData = result.data;
         return recommendedData;
     }
