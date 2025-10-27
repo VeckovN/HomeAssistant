@@ -66,7 +66,7 @@ Every user in the system has this base label, then an additional relationship in
 - `(User)-[:LIVES_IN]->(City)`
 
 **User example node**
-![UserNode](./images/data-model//1aneo4j.png)
+![UserNode](./images/data-model/node-user.png)
 
 
 
@@ -92,7 +92,7 @@ Username is also stored in USER node, the username cannot be updated so there ca
 - `(Client)-[:COMMENTED]->(Comment)` - Comments posted by client
 - `(Client)-[:RATED]->(HouseWorker)` - Ratings given by client
 
-![ClientNode](./images/data-model//2aneo4j.png)
+![ClientNode](./images/data-model/node-client.png)
 
 
 
@@ -119,7 +119,7 @@ Represents houseworkers who offer services.
 - `(HouseWorker)<-[:BELONGS_TO]-(Comment)` - Comments received
 - `(HouseWorker)<-[:RATED {rating: Integer}]-(Client)` - Ratings received
 
-![HouseworkerNode](./images/data-model//3aneo4j.png)
+![HouseworkerNode](./images/data-model/node-houseworker.png)
 
 #### 4. Profession
 Pre-created profession nodes representing services.
@@ -151,7 +151,7 @@ Pre-created profession nodes representing services.
 - Personal Shopper
 - Butler
 
-![ProfessionNode](./images/data-model//4aneo4j.png)
+![ProfessionNode](./images/data-model/node-profession.png)
 
 
 #### 5. Comment
@@ -174,7 +174,7 @@ User comments/reviews on houseworkers.
 - `(Client)-[:COMMENTED]->(Comment)`
 - `(Comment)-[:BELONGS_TO]->(HouseWorker)`
 
-![ProfessionNode](./images/data-model//5aneo4j.png)
+![ProfessionNode](./images/data-model/node-comment.png)
 
 
 #### 6. Gender
@@ -246,7 +246,7 @@ MERGE (c:City {name: $cityName})
 
 **Properties:** None
 
-![LivesInR](./images/data-model//r4Neo4j.png)
+![LivesInR](./images/data-model/rel-lives-in.png)
 
 
 #### 5. INTEREST
@@ -257,7 +257,7 @@ MERGE (c:City {name: $cityName})
 **Properties:** None
 
 **Example:** Limit 20 Interest Relationships 
-![InterestR](./images/data-model//rb5Neo4j.png)
+![InterestR](./images/data-model/rel-interest.png)
 
 **Usage:** 
 ```cypher
@@ -281,7 +281,7 @@ LIMIT 10
 }
 ```
 **Example:** Limit 10 Offers Relationships 
-![InterestR](./images/data-model//r6Neo4j.png)
+![InterestR](./images/data-model/rel-offers.png)
 
 **Usage:**
 ```cypher
@@ -305,7 +305,7 @@ MERGE (hw)-[r:OFFERS {working_hour: $hour}]->(p)
 ```
 
 **Example:** Limit 7 Rated Relationships 
-![Rated](./images/data-model//r7Neo4j.png)
+![Rated](./images/data-model/rel-rated.png)
 
 **Usage:**
 ```cypher
@@ -326,7 +326,7 @@ ON MATCH SET r.rating = $rating
 **Properties:** None
 
 **Example:** Client `Veckov's` 15 Posted comments
-![Commented](./images/data-model//r8Neo4j.png)
+![Commented](./images/data-model/rel-commented.png)
 
 
 #### 9. BELONGS_TO
@@ -337,7 +337,7 @@ ON MATCH SET r.rating = $rating
 **Properties:** None
 
 **Example:** Comments belongs to `Sara22` Houseworker 
-![BelongsTo](./images/data-model//r9Neo4j.png)
+![BelongsTo](./images/data-model/rel-belongs-to.png)
 
 
 
