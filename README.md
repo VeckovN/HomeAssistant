@@ -29,10 +29,10 @@ Houseworkers can show their skills, rating, and reviews, aside from communicatin
 The project includes detailed technical documentation covering architecture, data models, APIs, and WebSocket events. These files serve as a foundation for understanding the project structure and backend logic.
 
 ### Available Documentation:
-* **[Architecture Overview](./docs/architecture.md)** – System architecture and design patterns 🚧
+* **[Architecture Overview](./docs/architecture.md)** – System architecture and design patterns
 * **[Data Model](./docs/data-model.md)** – Database schema and relationships (Neo4j & Redis)
-* **[API Reference](./docs/api-reference.md)** – Complete REST API endpoint documentation ✅
-* **[WebSocket Events](./docs/websocket.events.md)** – Real-time event specifications 🚧
+* **[API Reference](./docs/api-reference.md)** – Complete REST API endpoint documentation
+* **[WebSocket Events](./docs/websocket.events.md)** – Real-time event specifications
 
 ## User Types 
  - Client
