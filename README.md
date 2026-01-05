@@ -1,4 +1,5 @@
-# HomeAssistant
+# HomeAssistant  
+🖥️ **Live App**: [Visit HomeAssistant App](https://homeassistantapp.netlify.app/)
 
 ## Table of Contents
  * [Technical Documentation](#technical-documentation)
@@ -58,8 +59,83 @@ Houseworkers can show their skills, rating, and reviews, aside from communicatin
 7. User Presence and Typing Indicators
    - Online users and typing status can be tracked using SocketIO
 
-## Setup 
-Install this project locally using npm:
+## Setup
+
+### Prerequisites
+Ensure you have the following installed and configured before running the project:
+
+- **Node.js** (v18 or higher)  
+- **Neo4j Database** (Local or cloud instance)  
+- **Redis Database** (Local or cloud instance)  
+- **Cloudinary Account** (For image uploads)
+
+---
+
+### Installation
+
+#### 1. Clone the Repository
+```bash
+git clone https://github.com/VeckovN/HomeAssistant.git
+cd HomeAssistant
+```
+
+#### 2. Install Backend Dependencies
+```bash
+cd api
+npm install
+```
+
+#### 3. Install Frontend Dependencies
+```bash
+cd ../client
+npm install
+```
+
+#### 4. Configure Environment Variables
+
+Copy the example environment file and add your credentials:
+```bash
+cd ../api
+cp .env.example .env
+```
+Edit api/.env with your actual credentials:
+```bash
+# Frontend URL (for CORS)
+CLIENT_URL=http://localhost:3000
+
+# Neo4j Database
+NEO4J_URI=bolt://localhost:7687
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=your_neo4j_password
+NEO4J_DATABASE=neo4j
+
+# Redis Database
+REDIS_USER=default
+REDIS_URL=redis://localhost:6379
+SESSION_SECRET=your_session_secret_key
+
+# Cloudinary (Image Uploads)
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+```
+
+#### 5. Start the Backend Server
+```bash
+cd api
+npm run start
+```
+API server will run on http://localhost:5000
+
+#### 5.Start the Frontend Application
+Open a new terminal and run:
+```bash
+cd client
+npm run start
+```
+React app will run on http://localhost:3000
+
+
 
 ## App Pages
 ### Home Page
