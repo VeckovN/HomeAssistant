@@ -753,7 +753,7 @@ const create = async(houseworkerObject)=>{
                     age:$age
                 })
             WITH n as user , m as houseworker
-            Match(g:Gender {type:$gender})
+            MERGE(g:Gender {type:$gender})
             MERGE(user)-[r:GENDER]->(g)
 
             MERGE(c:City {name:$city})

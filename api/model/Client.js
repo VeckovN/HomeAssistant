@@ -344,8 +344,9 @@ const create = async(clientObject)=>{
                 username:$username  
             })
         WITH n as user , m as client
-        MATCH(g:Gender {type:$gender})
-        CREATE(user)-[r:GENDER]->(g)
+        
+        MERGE(g:Gender {type:$gender})
+        MERGE(user)-[r:GENDER]->(g)
 
         MERGE(c:City {name:$city})
         MERGE(user)-[h:LIVES_IN]->(c)
