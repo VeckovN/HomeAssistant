@@ -51,11 +51,7 @@ const HouseworkerHome = () =>{
                             </div>
                         </div>                        
                     </div>
-
-                    <div className='image-container'>
-                        <div>Image</div>
-                    </div>
-
+                    
                 </section>
 
                 <section className='insight-info-section'>
