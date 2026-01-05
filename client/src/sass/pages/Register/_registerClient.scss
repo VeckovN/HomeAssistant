@@ -4,6 +4,8 @@
 @use '../../abstracts/colors' as *;
 
 .register-user-container{
+    z-index: 10;
+    
     .client-form{
         min-width: 400px;
         max-width: 450px;
