@@ -1,6 +1,6 @@
 const express = require('express');
 const {isLogged, checkClient, checkHouseworker} = require('../middleware/checkLoggin');
-
+const {apiReadLimiter, apiWriteLimiter} = require('../middleware/rateLimiter.js');
 const {
     getClientByUsername,
     getClients,
@@ -15,19 +15,19 @@ const {
 
 const router = express.Router();
 
-router.get('/', checkClient, getClients);
+router.get('/', checkClient, apiReadLimiter, getClients);
 
-router.put('/profile', checkClient, udpateClient);
-router.get('/profile', checkClient, getClientInfo)
+router.put('/profile', checkClient, apiWriteLimiter, udpateClient);
+router.get('/profile', checkClient, apiReadLimiter, getClientInfo)
 
-router.get('/recommendations/:username' , isLogged, getRecommendedHouseworkers);
+router.get('/recommendations/:username', isLogged, apiReadLimiter, getRecommendedHouseworkers);
 
-router.post('/rating', checkClient, rateHouseworker);
+router.post('/rating', checkClient, apiWriteLimiter, rateHouseworker);
 
-router.post('/comments', isLogged, commentHouseworker);
-router.get('/comments/:username',checkClient, getComments);
-router.delete('/comments', checkClient, deleteComment);
+router.post('/comments', isLogged, apiWriteLimiter, commentHouseworker);
+router.get('/comments/:username', checkClient, apiReadLimiter, getComments);
+router.delete('/comments', checkClient, apiWriteLimiter, deleteComment);
 
-router.get('/:username',checkHouseworker, getClientByUsername);
+router.get('/:username',checkHouseworker, apiReadLimiter, getClientByUsername);
 
 module.exports = router;

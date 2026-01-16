@@ -1,10 +1,11 @@
 const express = require('express');
+const { healthLimiter } = require('../middleware/rateLimiter.js');
 const { client } = require('../db/redis');
 const { driver } = require('../db/neo4j');
 
 const router = express.Router();
 
-router.get('/', async(req,res) =>{
+router.get('/', healthLimiter, async(req,res) =>{
     try{
         const redisPing = await client.ping();
     

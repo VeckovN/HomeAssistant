@@ -1,5 +1,6 @@
 const express = require('express');
 const {isLogged ,checkClient, checkHouseworker} = require('../middleware/checkLoggin.js')
+const {apiReadLimiter, chatLimiter} = require('../middleware/rateLimiter.js');
 const {
     getMessages,
     getMoreMessages,
@@ -20,28 +21,28 @@ const {
 } = require('../controller/chatController'); 
 const router = express.Router();
 
-router.get('/rooms/:username', isLogged, getAllRooms);
-router.delete('/rooms/:roomID', checkClient, deleteRoom);
+router.get('/rooms/:username', isLogged, apiReadLimiter, getAllRooms);
+router.delete('/rooms/:roomID', chatLimiter, checkClient, deleteRoom);
 
-router.get('/rooms/:roomID/messages', isLogged, getMessages);
-router.get('/rooms/:roomID/messages/:pageNumber', isLogged, getMoreMessages);
-router.post('/rooms/messages', isLogged, postMessage);
+router.get('/rooms/:roomID/messages', isLogged, apiReadLimiter, getMessages);
+router.get('/rooms/:roomID/messages/:pageNumber', isLogged, apiReadLimiter, getMoreMessages);
+router.post('/rooms/messages', isLogged, chatLimiter, postMessage);
 
-router.post('/rooms/users', checkClient, addUserToRoom);
-router.delete('/rooms/:roomID/users/:username', checkClient, removeUserFromRoom);
+router.post('/rooms/users', checkClient, chatLimiter, addUserToRoom);
+router.delete('/rooms/:roomID/users/:username', checkClient, chatLimiter, removeUserFromRoom);
 
 router.delete('/rooms/:roomID/unread/all/:clientID', isLogged, removeAllUnreadMessagesFromRoom);
 router.delete('/rooms/:roomID/unread/:userID', isLogged, removeUnreadMessagesFromRoom);
 
-router.get('/unread/:username', isLogged, getAllUnreadMessages);
+router.get('/unread/:username', isLogged, apiReadLimiter, getAllUnreadMessages);
 router.put('/unread/forward', isLogged, forwardUnreadMessages);
-router.get('/unread/count/:userID', isLogged, getUnreadMessagesTotalCount);
+router.get('/unread/count/:userID', isLogged, apiReadLimiter, getUnreadMessagesTotalCount);
 
-router.get('/online-users/:userID', isLogged, getOnlineUsers)
-router.get('/friends/:userID', isLogged, getFriendsList);
+router.get('/online-users/:userID', isLogged, apiReadLimiter, getOnlineUsers)
+router.get('/friends/:userID', isLogged, apiReadLimiter, getFriendsList);
 
-router.get('/users/:userID/firstRoom', isLogged, getFirstRoomID)
+router.get('/users/:userID/firstRoom', isLogged, apiReadLimiter, getFirstRoomID)
 
-router.get('/stats/conversation-count/:userID', checkHouseworker, getConversationCount);
+router.get('/stats/conversation-count/:userID', checkHouseworker, apiReadLimiter, getConversationCount);
 
 module.exports = router;
