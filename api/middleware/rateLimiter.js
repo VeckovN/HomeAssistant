@@ -1,6 +1,6 @@
-const rateLimit = require('express-rate-limit');
+const {rateLimit, ipKeyGenerator} = require('express-rate-limit');
 
-const getKey = (req) => req.ip; 
+const getKey = ipKeyGenerator();
 
 //Custom hanlders for rate limit 
 const rateLimitHandler = (req, res) => {
